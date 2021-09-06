@@ -29,6 +29,7 @@ This approach allows to use any sensor available in Zephyr.
 By default, the following sensors are used by the application:
 
 * Thingy:52 - built-in accelerometer (``LIS2DH``).
+* Thingy:53 - built-in accelerometer (``ADXL362``).
 * nRF52840 Development Kit - simulated sensor (``sensor_sim`` available in the |NCS|).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
@@ -40,6 +41,7 @@ The application uses `Edge Impulse's data forwarder`_ protocol to forward data t
 By default, the following transports are used:
 
 * Thingy:52 uses :ref:`nus_service_readme`.
+* Thingy:53 uses :ref:`nus_service_readme`.
 * nRF52840 Development Kit uses :ref:`zephyr:uart_api`.
 
 Machine learning model
@@ -51,7 +53,8 @@ The labels that are assigned by the machine learning model are specific to the g
 
 By default, the application uses pretrained machine leaning models deployed in `Edge Impulse studio`_:
 
-* On the Thingy:52, the model uses the data from the built-in accelerometer to recognize the following gestures:
+* Both Thingy:52 and Thingy:53 share the same machine learning model.
+  The model uses the data from the built-in accelerometer to recognize the following gestures:
 
   * ``idle`` - the device is placed on a flat surface.
   * ``updown`` - the device is moved in updown direction.
@@ -114,6 +117,10 @@ By default, the following buttons are used by the application:
 
   * The **SW2** button switches between data forwarding and running the machine learning model.
 
+* Thingy:53:
+
+  * The **SW3** button switches between data forwarding and running the machine learning model.
+
 * nRF52840 Development Kit:
 
   * **Button 1** switches between data forwarding and running a machine learning model.
@@ -131,7 +138,8 @@ The application defines common LED effects for both the machine learning results
 
 By default, the application uses the following LED effects:
 
-* On the Thingy:52, the Lightwell LEDs displays the application state in the RGB scale.
+* Thingy:52 and Thingy:53 display the application state in the RGB scale.
+  Thingy:52 uses the Lightwell LEDs and Thingy:53 uses the **LED1**.
 
   * If the device is returning the machine learning prediction results, the LED uses following predefined colors:
 
@@ -174,15 +182,23 @@ The application supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy52_nrf52832, nrf52840dk_nrf52840
+   :rows: thingy52_nrf52832, thingy53_nrf5340_cpuapp, nrf52840dk_nrf52840
 
 The available configurations use only built-in sensors or the simulated sensor signal.
 There is no need to connect any additional components to the board.
 
-.. note::
-   The Thingy:52 does not have the J-Link debug IC and the application configuration does not use a bootloader.
-   Use an external debugger to program the firmware.
-   See :ref:`zephyr:thingy52_nrf52832` documentation for details.
+Programming Thingy:52
+=====================
+
+The Thingy:52 does not have the J-Link debug IC and the application configuration does not use a bootloader.
+Use an external debugger to program the firmware.
+See :ref:`zephyr:thingy52_nrf52832` documentation for details.
+
+Programming Thingy:53
+=====================
+
+The Thingy:53 does not have the J-Link debug IC and the application uses MCUboot bootloader.
+See :ref:`ug_thingy53` for detailed description about working with Thingy:53 and information about how to program it.
 
 Custom model requirements
 =========================
@@ -203,7 +219,7 @@ Nordic UART Service requirements
 If you want to forward data over Nordic UART Service (NUS), you need an additional development kit that is able to run the :ref:`central_uart` sample.
 Check the sample Requirements section for the list of supported development kits.
 The sample is used to receive data over NUS and forward it to the host computer over UART.
-See `Testing with the Thingy:52`_ for how to test this solution.
+See `Testing with Thingy devices`_ for how to test this solution.
 
 .. _nrf_machine_learning_app_requirements_build_types:
 
@@ -222,6 +238,9 @@ The application supports the following build types:
 
 * ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
 * ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+
+The given board can also support some additional configurations of the nRF Machine Learning application.
+For example, the nRF52840 Development Kit supports ``ZDebugNUS`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -263,6 +282,16 @@ The following configuration files can be defined for any supported board:
   You must define a :file:`_def` file for every module that requires it and enable it in the configuration for the given board.
   The :file:`_def` files that are common for all the boards and build types are located in the :file:`applications/machine_learning/configuration/common` directory.
 
+Multi-image builds
+------------------
+
+The Thingy:53 uses multi-image build with the following child images:
+
+* MCUboot bootloader
+* Bluetooth HCI RPMsg
+
+See :ref:`ug_multi_image` for detailed information about multi-image builds and child image configuration.
+
 .. _nrf_machine_learning_app_configuration_build_types:
 
 Building and running
@@ -296,11 +325,11 @@ Selecting a build type from command line
 
 .. note::
    If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``ZDebugWithShell`` build type is not supported by the selected board, the following notification appears:
+   For example, if the ``ZDebugNUS`` build type is not supported by the selected board, the following notification appears:
 
    .. code-block:: console
 
-      Configuration file for build type ZDebugWithShell is missing.
+      Configuration file for build type ZDebugNUS is missing.
 
 Providing API key
 =================
@@ -318,18 +347,26 @@ Testing
 
 After programming the application to your development kit, you can test the nRF Machine Learning application.
 You can test running the machine learning model on an embedded device and forwarding data to `Edge Impulse studio`_.
-The detailed test steps for the nRF52840 Development Kit and the Thingy:52 are described in the following subsections.
+The detailed test steps for the nRF52840 Development Kit, the Thingy:52, and the Thingy:53 are described in the following subsections.
+
+Application logs
+----------------
+
+In most of the provided debug configurations, the application provides logs through the RTT.
+See :ref:`testing_rtt_connect` for detailed instructions about accessing the logs.
 
 .. note::
-   In provided debug configurations, the application provides logs through the RTT.
-   See :ref:`testing_rtt_connect` for detailed instructions about accessing the logs.
+   The Thingy:53 in the ``ZDebug`` configuration provides logs through the USB CDC ACM serial.
+   See :ref:`ug_thingy53` for detailed information about working with the Thingy:53.
 
-Testing with the Thingy:52
---------------------------
+   You can also use ``ZDebugRTT`` configuration to have the Thingy:53 use RTT for logs.
 
-After programming the application, perform the following steps to test the nRF Machine Learning application on the Thingy:52:
+Testing with Thingy devices
+---------------------------
 
-1. Turn on the Thingy:52.
+After programming the application, perform the following steps to test the nRF Machine Learning application on the Thingy:
+
+1. Turn on the Thingy.
    The application starts in a mode that runs the machine learning model.
    The RGB LED is blinking, because no gesture has been recognized by the machine learning model yet.
 #. Tap the device.
@@ -347,15 +384,15 @@ After programming the application, perform the following steps to test the nRF M
 #. Press and hold the button for more than 5 seconds to switch to the data forwarding mode.
    After the mode is switched, the LED color changes to red and the LED starts blinking very slowly.
 #. Program the :ref:`central_uart` sample to a compatible development kit, for example the nRF52840 Development Kit.
-   Turn on the programmed device.
-   After a brief delay the Bluetooth® connection between the sample and the Thingy:52 is established.
-   The Thingy:52 forwards the sensor readouts over NUS.
-   The LED on the Thingy:52 starts to blink rapidly.
+#. Turn on the programmed device.
+   After a brief delay the Bluetooth® connection between the sample and the Thingy is established.
+   The Thingy forwards the sensor readouts over NUS.
+   The LED on the Thingy starts to blink rapidly.
 #. Connect to the Bluetooth® Central UART sample with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.
-   The Thingy:52 forwards sensor readouts over NUS to the Central UART sample.
+   The Thingy forwards sensor readouts over NUS to the Central UART sample.
    The sample forwards the data to the host over UART.
 #. Turn off PuTTY to ensure that only one program has access to data on UART.
 
