@@ -28,6 +28,7 @@ The TF-M implementation in |NCS| is currently demonstrated in the following samp
 - The :ref:`tfm_hello_world` sample
 - All :ref:`cryptography samples <crypto_samples>` in this SDK
 - A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
+- The :ref:`https_client` sample for nRF9160 in this SDK
 
 Building
 ********

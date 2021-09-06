@@ -48,6 +48,10 @@ nRF9160
 
     * Removed GNSS socket API support from A-GPS and P-GPS.
 
+  * :ref:`https_client` sample:
+
+    * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
+
 nRF5
 ====
 
