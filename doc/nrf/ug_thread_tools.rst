@@ -87,13 +87,13 @@ To program the nRF device with the RCP application, complete the following steps
 
          .. code-block:: console
 
-            west build -b nrf52840dongle_nrf52840 -- -DOVERLAY_CONFIG="overlay-rcp.conf ../common/overlay-thread_1_2_ftd.conf overlay-usb.conf"
+            west build -p always -b nrf52840dongle_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf ../cli/overlay-thread_1_2.conf overlay-usb.conf"
 
       .. tab:: nRF52840 Development Kit (UART transport)
 
          .. code-block:: console
 
-            west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-rcp.conf ../common/overlay-thread_1_2_ftd.conf"
+            west build -p always -b nrf52840dk_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf ../cli/overlay-thread_1_2.conf"
 
 #. Depending on the hardware platform, complete the following steps:
 
@@ -165,7 +165,7 @@ This option provides most of the functionalities available in the OpenThread Bor
 However, this approach requires you to download the OpenThread Border Router repository and install the Border Router manually on the Raspberry Pi.
 
 To set up and configure the OpenThread Border Router, follow the official `OpenThread Border Router Codelab tutorial`_ on the OpenThread documentation portal.
-After cloning the repository please ensure to checkout to the compatible commit id:
+After cloning the repository, make sure to check out the compatible commit id:
 
    .. code-block:: console
 
@@ -200,7 +200,7 @@ To install and configure the OpenThread Border Router using the Docker container
 
       sudo docker network create --ipv6 --subnet fd11:db8:1::/64 -o com.docker.network.bridge.name=otbr0 otbr
 
-#. Download the compatible version of the OpenThread Bourder Router docker image by running the following command:
+#. Download the compatible version of the OpenThread Border Router docker image by running the following command:
 
    .. code-block:: console
 
