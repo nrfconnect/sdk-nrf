@@ -62,6 +62,10 @@ nRF9160
 
     * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
 
+  * :ref:`https_client` sample:
+
+    * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
+
 nRF5
 ====
 

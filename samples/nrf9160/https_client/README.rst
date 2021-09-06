@@ -40,6 +40,15 @@ This certificate is provided in the :file:`samples/nrf9160/https_client/cert` fo
 To connect to other servers, you might need to provision a different certificate.
 See :ref:`cert_dwload` for more information.
 
+Using Mbed TLS and TF-M
+***********************
+
+This sample supports using Mbed TLS and Trusted Firmware-M (TF-M).
+Instead of offloading the TLS sockets into the modem, you can use the Mbed TLS library from Zephyr.
+Using the Zephyr Mbed TLS, you can still use the offloaded sockets.
+Mbed TLS offers more configuration options than using the offloaded TLS handling.
+
+When using TF-M and Mbed TLS with PSA crypto, all the crypto operations are run on the secure side on the device.
 
 Building and running
 ********************
@@ -48,6 +57,11 @@ Building and running
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
+To build the sample with Mbed TLS and TF-M, add the following to your west build command:
+
+.. code-block:: none
+
+   -DOVERLAY_CONFIG=overlay-tfm_mbedtls.conf
 
 Testing
 =======
@@ -93,3 +107,5 @@ It uses the following `sdk-nrfxlib`_ library:
 In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`
+
+This sample offers also a possibility to use the TF-M module that is at :file:`modules/tee/tfm/` in the the |NCS| folder structure.

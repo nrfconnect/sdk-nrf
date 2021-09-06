@@ -121,6 +121,13 @@ int tls_setup(int fd)
 		TLS_SEC_TAG,
 	};
 
+#if defined(CONFIG_SAMPLE_TFM_MBEDTLS)
+	err = tls_credential_add(tls_sec_tag[0], TLS_CREDENTIAL_CA_CERTIFICATE, cert, sizeof(cert));
+	if (err) {
+		return err;
+	}
+#endif
+
 	/* Set up TLS peer verification */
 	enum {
 		NONE = 0,
@@ -181,11 +188,13 @@ void main(void)
 		return;
 	}
 
+#if !defined(CONFIG_SAMPLE_TFM_MBEDTLS)
 	/* Provision certificates before connecting to the LTE network */
 	err = cert_provision();
 	if (err) {
 		return;
 	}
+#endif
 
 	printk("Waiting for network.. ");
 	err = lte_lc_init_and_connect();
