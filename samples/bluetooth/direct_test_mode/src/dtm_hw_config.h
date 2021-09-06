@@ -11,13 +11,13 @@
 extern "C" {
 #endif
 
-#if defined(NRF5340_XXAA_NETWORK) || defined(NRF52833_XXAA) || \
-	defined(NRF52811_XXAA) || defined(NRF52820_XXAA)
+#if DT_NODE_HAS_PROP(DT_NODELABEL(radio), dfe_supported) && \
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count) > 0
 #define DIRECTION_FINDING_SUPPORTED 1
 #else
 #define DIRECTION_FINDING_SUPPORTED 0
-#endif /* defined(NRF52840_XXAA) || defined(NRF52833_XXAA) ||
-	* defined(NRF52811_XXAA) || defined(NRF52820_XXAA)
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(radio), dfe_supported) && \
+	* DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count) > 0
 	*/
 
 /* Maximum transmit or receive time, in microseconds, that the local
