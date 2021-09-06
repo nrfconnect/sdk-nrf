@@ -277,26 +277,34 @@ static void send_hid_report(const struct hid_report_event *event)
 
 	__ASSERT_NO_MSG(usb_hid->sent_report_id == REPORT_ID_COUNT);
 
+	usb_hid->sent_report_id = event->dyndata.data[0];
 	if (usb_hid->hid_protocol != HID_PROTOCOL_REPORT) {
+		if ((report_buffer[0] != REPORT_ID_BOOT_MOUSE) &&
+		    (report_buffer[0] != REPORT_ID_BOOT_KEYBOARD)) {
+			LOG_WRN("Cannot send report: incompatible mode");
+			report_sent(usb_hid->dev, true);
+			return;
+		}
 		if ((IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
 		     (report_buffer[0] == REPORT_ID_BOOT_MOUSE)) ||
 		    (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
 		     (report_buffer[0] == REPORT_ID_BOOT_KEYBOARD))) {
-			usb_hid->sent_report_id = event->dyndata.data[0];
 			/* For boot protocol omit the first byte. */
 			report_buffer++;
 			report_size--;
 			__ASSERT_NO_MSG(report_size > 0);
 		} else {
-			/* Boot protocol is not supported or this is not a
-			 * boot report.
-			 */
-			usb_hid->sent_report_id = event->dyndata.data[0];
+			/* Boot protocol is not supported. */
 			report_sent(usb_hid->dev, true);
 			return;
 		}
 	} else {
-		usb_hid->sent_report_id = event->dyndata.data[0];
+		if ((report_buffer[0] == REPORT_ID_BOOT_MOUSE) ||
+		    (report_buffer[0] == REPORT_ID_BOOT_KEYBOARD)) {
+			LOG_WRN("Cannot send report: incompatible mode");
+			report_sent(usb_hid->dev, true);
+			return;
+		}
 	}
 
 	int err = hid_int_ep_write(usb_hid->dev, report_buffer,
