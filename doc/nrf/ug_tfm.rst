@@ -21,7 +21,7 @@ Additionally, secure boot via MCUboot in TF-M ensures integrity of run time soft
 Support for TF-M in |NCS| is currently experimental.
 TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
 
-For official documentation, see `TF-M documentation`_.
+For official documentation, see the `TF-M documentation`_.
 
 The TF-M implementation in |NCS| is currently demonstrated in the following samples:
 
