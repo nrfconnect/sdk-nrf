@@ -552,6 +552,10 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
   **Workaround:** Connect the nRF Desktop peripheral through USB or using the nRF Desktop dongle.
 
+.. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-10907: :ref:`nrf_desktop_usb_state` and :ref:`nrf_desktop_hids` modules may (there is a race) forward HID input reports related to an old protocol after protocol mode change.
+
 Pelion
 ======
 
