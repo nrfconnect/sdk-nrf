@@ -172,6 +172,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	};
 
 	int interval = 0;
+	bool gnss_interval_set = false;
 
 	int gnss_timeout = 0;
 	bool gnss_timeout_set = false;
@@ -242,6 +243,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
+			gnss_interval_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_GNSS_ACCURACY:
@@ -380,6 +382,11 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			if (cellular_timeout_set) {
 				methods[1].cellular.timeout = cellular_timeout;
 			}
+		}
+
+		if (gnss_interval_set && !method1_set && !method2_set) {
+			shell_error(shell, "Method is mandatory to be given.");
+			goto show_usage;
 		}
 
 
