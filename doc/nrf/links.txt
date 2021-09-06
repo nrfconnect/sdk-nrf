@@ -90,8 +90,8 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/2d5daa9/src/android/CHIPTool
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/2d5daa9/src/controller
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/a68983a3/src/android/CHIPTool
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/a68983a3/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 
