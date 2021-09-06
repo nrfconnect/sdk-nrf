@@ -430,28 +430,41 @@ static void send_hid_report(const struct hid_report_event *event)
 
 	switch (report_id) {
 	case REPORT_ID_BOOT_MOUSE:
-		err = bt_hids_boot_mouse_inp_rep_send(&hids_obj, cur_conn,
-						      &buffer[0], buffer[1],
-						      buffer[2],
-						      report_sent_cb[report_id]
-						      );
+		if (!protocol_boot) {
+			err = -EBADF;
+		} else {
+			err = bt_hids_boot_mouse_inp_rep_send(&hids_obj, cur_conn,
+							      &buffer[0], buffer[1],
+							      buffer[2],
+							      report_sent_cb[report_id]);
+		}
 		break;
 	case REPORT_ID_BOOT_KEYBOARD:
-		err = bt_hids_boot_kb_inp_rep_send(&hids_obj, cur_conn,
-						   buffer, size,
-						   report_sent_cb[report_id]);
+		if (!protocol_boot) {
+			err = -EBADF;
+		} else {
+			err = bt_hids_boot_kb_inp_rep_send(&hids_obj, cur_conn,
+							   buffer, size,
+							   report_sent_cb[report_id]);
+		}
 		break;
 	default:
-		err = bt_hids_inp_rep_send(&hids_obj, cur_conn,
-					   report_index[report_id],
-					   buffer, size,
-					   report_sent_cb[report_id]);
+		if (protocol_boot) {
+			err = -EBADF;
+		} else {
+			err = bt_hids_inp_rep_send(&hids_obj, cur_conn,
+						   report_index[report_id],
+						   buffer, size,
+						   report_sent_cb[report_id]);
+		}
 		break;
 	}
 
 	if (err) {
 		if (err == -ENOTCONN) {
-			LOG_WRN("Device disconnected");
+			LOG_WRN("Cannot send report: device disconnected");
+		} else if (err == -EBADF) {
+			LOG_WRN("Cannot send report: incompatible mode");
 		} else {
 			LOG_ERR("Cannot send report (%d)", err);
 		}
