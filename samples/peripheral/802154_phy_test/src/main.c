@@ -27,6 +27,17 @@ void ptt_do_reset_ext(void)
 	NVIC_SystemReset();
 }
 
+static int rf_setup(const struct device *dev)
+{
+	LOG_INF("RF setup started");
+
+	ARG_UNUSED(dev);
+
+	rf_init();
+
+	return 0;
+}
+
 static int setup(const struct device *dev)
 {
 	LOG_INF("Setup started");
@@ -35,8 +46,6 @@ static int setup(const struct device *dev)
 
 	periph_init();
 
-	rf_init();
-
 	comm_init();
 
 	/* initialize ptt library */
@@ -44,6 +53,8 @@ static int setup(const struct device *dev)
 
 	return 0;
 }
+
+SYS_INIT(rf_setup, POST_KERNEL, PTT_RF_INIT_PRIORITY);
 
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 

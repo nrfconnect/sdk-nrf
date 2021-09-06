@@ -24,6 +24,8 @@
 /**< Start of PSDU payload */
 #define RF_PSDU_START (1u)
 
+#define PTT_RF_INIT_PRIORITY CONFIG_SENSOR_INIT_PRIORITY
+
 /** @brief NRF radio driver initialization
  *
  *  @param none

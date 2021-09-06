@@ -1172,6 +1172,3 @@ Performing radio tests without the serial interface
     * ``DUT NOT FOUND`` - if it could not exchange packets with the DUT device.
 
 Refer to the :ref:`802154_phy_test_ui` for the complete list of the available commands.
-
-.. note::
-   Currently, the RSSI measurements are performed without additional temperature correction.
