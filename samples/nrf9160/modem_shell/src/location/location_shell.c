@@ -289,6 +289,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case '?':
 			goto show_usage;
+			break;
 		default:
 			shell_error(shell, "Unknown option. See usage:");
 			goto show_usage;
