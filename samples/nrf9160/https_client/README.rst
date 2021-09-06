@@ -27,6 +27,9 @@ Overview
 The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
 Next, it provisions a root CA certificate to the modem using the :ref:`modem_key_mgmt` library.
 Provisioning must be done before connecting to the LTE network, because the certificates can only be provisioned when the device is not connected.
+Sample can also be built with using the MbedTLS from Zephyr instead of using the offloaded TLS stack.
+
+To build the sample with MbedTLS Zephyr, add following to your west build-command: `-DOVERLAY_CONFIG=overlay-native_tls.conf`
 
 The sample then establishes a connection to the LTE network, sets up the necessary TLS socket options, and connects to an HTTPS server.
 It sends an HTTP HEAD request and prints the response code in the terminal.

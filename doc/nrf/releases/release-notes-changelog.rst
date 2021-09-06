@@ -104,6 +104,10 @@ nRF9160
 
     * Added API to enable modem domain events.
 
+  * :ref:`https_client` sample:
+
+    * Added a possibility to use MbedTLS from Zephyr instead of using the offloaded TLS stack.
+
   * Board names:
 
     * The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``, in a change inherited from upstream Zephyr.
