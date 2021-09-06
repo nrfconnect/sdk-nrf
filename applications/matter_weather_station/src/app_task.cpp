@@ -33,7 +33,7 @@ enum class LedState { kAlive, kAdvertisingBle, kConnectedBle, kProvisioned };
 constexpr size_t kAppEventQueueSize = 10;
 constexpr size_t kFactoryResetTriggerTimeoutMs = 3000;
 constexpr size_t kFactoryResetCompleteTimeoutMs = 3000;
-constexpr size_t kMeasurementsIntervalMs = 250;
+constexpr size_t kMeasurementsIntervalMs = 3000;
 constexpr uint8_t kTemperatureMeasurementEndpointId = 1;
 constexpr int16_t kTemperatureMeasurementAttributeMaxValue = 0x7fff;
 constexpr int16_t kTemperatureMeasurementAttributeMinValue = 0x954d;
@@ -50,7 +50,6 @@ constexpr int16_t kPressureMeasurementAttributeInvalidValue = 0x8000;
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
 k_timer sMeasurementsTimer;
-bool sMeasurementTrigger;
 FunctionTimerMode sFunctionTimerMode = FunctionTimerMode::kDisabled;
 
 LEDWidget sRedLED;
@@ -102,7 +101,8 @@ int AppTask::Init()
 	k_timer_init(
 		&sMeasurementsTimer,
 		[](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, MeasurementsTimerHandler); }, nullptr);
-	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_NO_WAIT);
+	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs),
+		      K_MSEC(kMeasurementsIntervalMs));
 
 	/* Init ZCL Data Model and start server */
 	InitServer();
@@ -161,11 +161,6 @@ int AppTask::StartApp()
 			sIsBleAdvertisingEnabled = ConnectivityMgr().IsBLEAdvertisingEnabled();
 			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
 			PlatformMgr().UnlockChipStack();
-		}
-
-		if (sMeasurementTrigger) {
-			sMeasurementTrigger = false;
-			UpdateClusterState();
 		}
 
 		UpdateLedState();
@@ -248,8 +243,7 @@ void AppTask::FunctionTimerHandler(AppEvent *)
 
 void AppTask::MeasurementsTimerHandler(AppEvent *)
 {
-	sMeasurementTrigger = true;
-	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_NO_WAIT);
+	sAppTask.UpdateClusterState();
 }
 
 void AppTask::UpdateClusterState()
