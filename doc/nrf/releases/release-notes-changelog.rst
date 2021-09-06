@@ -181,6 +181,16 @@ Bluetooth mesh
   * Fixed an issue where the IV update procedure could be started immediately after the device has been provisioned.
   * Fixed multiple issues in :ref:`bt_mesh_sensor_types_readme` module.
 
+* Migration:
+
+  * The model opcode callback :c:member:`bt_mesh_model_op.func` is changed to return an error code if the message processing has failed.
+    If you have implemented your own models, make sure to update opcode handlers of those models.
+  * :ref:`bt_mesh_scene_srv_readme` now extends :ref:`bt_mesh_dtt_srv_readme`.
+    If you are using the Scene Server, make sure that the Generic Default Transition Time Server instance is present on the element that is equal to or lower than the Scene Server's element.
+  * :ref:`bt_mesh_light_hsl_srv_readme` and :ref:`bt_mesh_light_xyl_srv_readme` no longer instantiate the :ref:`bt_mesh_lightness_srv_readme` through :c:macro:`BT_MESH_MODEL_LIGHT_HSL_SRV` and :c:macro:`BT_MESH_MODEL_LIGHT_XYL_SRV` macros respectively.
+    Macros :c:macro:`BT_MESH_LIGHT_XYL_SRV_INIT` and :c:macro:`BT_MESH_LIGHT_HSL_SRV_INIT` now take a pointer to the :c:struct:`bt_mesh_lightness_srv` instance instead.
+    Make sure to instantiate the Light Lightness Server if you are using any of these models.
+
 Matter
 ------
 
