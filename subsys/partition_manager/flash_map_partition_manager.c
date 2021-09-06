@@ -9,7 +9,7 @@
 #include <pm_config.h>
 #include <sys/util.h>
 
-#define FLASH_MAP_OFFSET(i) UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _ADDRESS))
+#define FLASH_MAP_OFFSET(i) UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _OFFSET))
 #define FLASH_MAP_DEV(i)    UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _DEV_NAME))
 #define FLASH_MAP_SIZE(i)   UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _SIZE))
 #define FLASH_MAP_NUM       PM_NUM
