@@ -134,6 +134,7 @@ Updated:
 * Changed settings backend from FCB to NVS.
 * Switched to using :ref:`caf_power_manager`.
 * Fixed an issue with generating motion in :ref:`nrf_desktop_motion` (``motion_buttons`` and ``motion_simulated``) while the HID boot protocol was in use.
+* Fixed an issue with :ref:`nrf_desktop_usb_state` and :ref:`nrf_desktop_hids` modules forwarding the HID input reports related to an old protocol after protocol mode change.
 
 Added:
 
