@@ -6,6 +6,13 @@
 #ifndef _KEEP_ALIVE_EVENT_H_
 #define _KEEP_ALIVE_EVENT_H_
 
+/**
+ * @file
+ * @defgroup caf_keep_alive_event CAF Keep Alive Event
+ * @{
+ * @brief CAF Keep Alive Event.
+ */
+
 #include <event_manager.h>
 
 #ifdef __cplusplus
@@ -42,5 +49,9 @@ static inline void keep_alive(void)
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* _KEEP_ALIVE_EVENT_H_ */

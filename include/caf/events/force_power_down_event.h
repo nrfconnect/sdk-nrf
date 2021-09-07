@@ -6,6 +6,13 @@
 #ifndef _FORCE_POWER_DOWN_EVENT_H_
 #define _FORCE_POWER_DOWN_EVENT_H_
 
+/**
+ * @file
+ * @defgroup caf_force_power_down_event CAF Force Power Down Event
+ * @{
+ * @brief CAF Force Power Down Event.
+ */
+
 #include <event_manager.h>
 
 #ifdef __cplusplus
@@ -42,5 +49,9 @@ static inline void force_power_down(void)
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* _FORCE_POWER_DOWN_EVENT_H_ */

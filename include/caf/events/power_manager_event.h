@@ -6,6 +6,13 @@
 #ifndef _POWER_MANAGER_EVENT_H_
 #define _POWER_MANAGER_EVENT_H_
 
+/**
+ * @file
+ * @defgroup caf_power_manager_event CAF Power Manager Event
+ * @{
+ * @brief CAF Power Manager Event.
+ */
+
 #include <event_manager.h>
 
 #ifdef __cplusplus
@@ -80,5 +87,9 @@ static inline void power_manager_restrict(size_t module_idx, enum power_manager_
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* _POWER_MANAGER_EVENT_H_ */
