@@ -160,6 +160,7 @@ foreach (slot ${slots})
   add_custom_command(
     OUTPUT
     ${signed_hex}
+    ${signed_bin}
     COMMAND
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/validation_data.py
