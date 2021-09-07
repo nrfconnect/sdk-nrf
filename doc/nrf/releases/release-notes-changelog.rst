@@ -61,6 +61,7 @@ nRF9160
     * Added the option to use the P-GPS API independent of nRF Cloud MQTT transport.
     * Implemented functionality for the :c:enumerator:`NRF_CLOUD_EVT_SENSOR_DATA_ACK` event. The event is now generated when a valid tag value (NCT_MSG_ID_USER_TAG_BEGIN through NCT_MSG_ID_USER_TAG_END) is provided with the sensor data when calling either :c:func:`nrf_cloud_sensor_data_send` or :c:func:`nrf_cloud_shadow_update`.
     * Updated :c:func:`nrf_cloud_shadow_update` to expect that ``param->data.ptr`` points to a JSON string. Previously, a cJSON object was expected.
+    * Updated :c:func:`nct_init` to perform FOTA initialization before setting the client ID. This fixes an issue that prevented an expected reboot during a modem FOTA update.
 
   * :ref:`serial_lte_modem` application:
 
