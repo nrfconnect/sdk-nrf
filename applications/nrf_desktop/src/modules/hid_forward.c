@@ -907,27 +907,49 @@ static bool handle_config_event(struct config_event *event)
 	return true;
 }
 
+static void forward_empty_hid_report(struct hids_peripheral *per,
+				     const struct bt_hogp_rep_info *rep,
+				     uint8_t report_id)
+{
+	if (bt_hogp_rep_type(rep) != BT_HIDS_REPORT_TYPE_INPUT) {
+		return;
+	}
+	size_t size = bt_hogp_rep_size(rep);
+
+	/* Release all pressed keys. */
+	uint8_t empty_data[size];
+
+	memset(empty_data, 0, sizeof(empty_data));
+
+	forward_hid_report(per, report_id, empty_data, size);
+}
+
 static void disconnect_peripheral(struct hids_peripheral *per)
 {
 	LOG_INF("Peripheral %p disconnected", (void *)per);
 
-	struct bt_hogp_rep_info *rep = NULL;
+	struct bt_hogp_rep_info *rep;
+	uint8_t report_id;
 
-	while (NULL != (rep = bt_hogp_rep_next(&per->hogp, rep))) {
-		if (bt_hogp_rep_type(rep) == BT_HIDS_REPORT_TYPE_INPUT) {
-			uint8_t report_id = bt_hogp_rep_id(rep);
-			size_t size = bt_hogp_rep_size(rep);
-
+	if (bt_hogp_pm_get(&per->hogp) == BT_HIDS_PM_BOOT) {
+		rep = bt_hogp_rep_boot_kbd_in(&per->hogp);
+		if (rep != NULL) {
+			report_id = REPORT_ID_BOOT_KEYBOARD;
+			forward_empty_hid_report(per, rep, report_id);
+		}
+		rep = bt_hogp_rep_boot_mouse_in(&per->hogp);
+		if (rep != NULL) {
+			report_id = REPORT_ID_BOOT_MOUSE;
+			forward_empty_hid_report(per, rep, report_id);
+		}
+	} else {
+		rep = NULL;
+		while (NULL != (rep = bt_hogp_rep_next(&per->hogp, rep))) {
+			report_id = bt_hogp_rep_id(rep);
 			if ((report_id == REPORT_ID_RESERVED) || (report_id >= REPORT_ID_COUNT)) {
 				continue;
 			}
-
-			/* Release all pressed keys. */
-			uint8_t empty_data[size];
-
-			memset(empty_data, 0, sizeof(empty_data));
-
-			forward_hid_report(per, report_id, empty_data, size);
+			forward_empty_hid_report(per, rep, report_id);
 		}
 	}
 
