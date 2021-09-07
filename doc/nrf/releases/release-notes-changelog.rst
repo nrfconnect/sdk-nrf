@@ -88,6 +88,7 @@ nRF Desktop
 * Added:
 
   * Added documentation for :ref:`nrf_desktop_usb_state_pm`.
+  * Added :ref:`nrf_desktop_ble_state_pm`.
 
 * Updated:
 
@@ -125,6 +126,7 @@ Common Application Framework (CAF)
 Added:
 
 * :ref:`caf_preview_sample` sample.
+* :ref:`caf_ble_state_pm` CAF module.
 
 Updated:
 
