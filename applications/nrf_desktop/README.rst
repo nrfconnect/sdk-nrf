@@ -1675,6 +1675,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/ble_passkey.rst
    doc/ble_qos.rst
    doc/ble_scan.rst
+   doc/ble_state_pm.rst
    doc/ble_state.rst
    doc/board.rst
    doc/buttons.rst
