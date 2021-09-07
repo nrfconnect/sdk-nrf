@@ -994,11 +994,9 @@ int nct_init(const char * const client_id)
 {
 	int err;
 
-	err = nct_client_id_set(client_id);
-	if (err) {
-		return err;
-	}
-
+	/* Perform settings and FOTA init first so that pending updates
+	 * can be completed
+	 */
 	err = nct_settings_init();
 	if (err) {
 		return err;
@@ -1013,6 +1011,10 @@ int nct_init(const char * const client_id)
 		nct_save_session_state(0);
 	}
 #endif
+	err = nct_client_id_set(client_id);
+	if (err) {
+		return err;
+	}
 
 	dc_endpoint_reset();
 
