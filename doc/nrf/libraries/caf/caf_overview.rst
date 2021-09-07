@@ -140,6 +140,26 @@ CAF click events
    :project: nrf
    :members:
 
+CAF force power down events
+===========================
+
+| Header file: :file:`include/caf/events/force_power_down_event.h`
+| Source file: :file:`subsys/caf/events/force_power_down_event.c`
+
+.. doxygengroup:: caf_force_power_down_event
+   :project: nrf
+   :members:
+
+CAF keep alive events
+=====================
+
+| Header file: :file:`include/caf/events/keep_alive_event.h`
+| Source file: :file:`subsys/caf/events/keep_alive_event.c`
+
+.. doxygengroup:: caf_keep_alive_event
+   :project: nrf
+   :members:
+
 CAF LED events
 ==============
 
@@ -167,6 +187,16 @@ CAF power events
 | Source file: :file:`subsys/caf/events/power_event.c`
 
 .. doxygengroup:: caf_power_event
+   :project: nrf
+   :members:
+
+CAF power manager events
+========================
+
+| Header file: :file:`include/caf/events/power_manager_event.h`
+| Source file: :file:`subsys/caf/events/power_manager_event.c`
+
+.. doxygengroup:: caf_power_manager_event
    :project: nrf
    :members:
 
