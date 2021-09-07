@@ -84,19 +84,19 @@ The |usb_state| registers the :kconfig:`CONFIG_USB_HID_DEVICE_COUNT` instances o
 The necessary callbacks are connected to the module to ensure that the state of the USB connection is tracked.
 From the application's viewpoint, USB can be in the following states:
 
-* USB_STATE_DISCONNECTED - USB cable is not connected.
-* USB_STATE_POWERED - The device is powered from USB but is not configured for the communication.
-* USB_STATE_ACTIVE - The device is ready to exchange data with the host.
-* USB_STATE_SUSPENDED - The host has requested the device to enter the suspended state.
+* :c:enum:`USB_STATE_DISCONNECTED` - USB cable is not connected.
+* :c:enum:`USB_STATE_POWERED` - The device is powered from USB but is not configured for the communication.
+* :c:enum:`USB_STATE_ACTIVE` - The device is ready to exchange data with the host.
+* :c:enum:`USB_STATE_SUSPENDED` - The host has requested the device to enter the suspended state.
 
-These states are broadcast by the |usb_state| with a ``usb_state_event``.
-When the device is connected to the host and configured for the communication, the module will broadcast the ``USB_STATE_ACTIVE`` state.
+These states are broadcast by the |usb_state| with a :c:struct:`usb_state_event`.
+When the device is connected to the host and configured for the communication, the module will broadcast the :c:enum:`USB_STATE_ACTIVE` state.
 The module will also subscribe to all HID reports available in the application for the selected protocol.
 
 When the device is disconnected from the host, the module will unsubscribe from receiving the HID reports.
 
-When the HID report data is transmitted through ``hid_report_event``, the module will pass it to the associated endpoint.
-Upon data delivery, ``hid_report_sent_event`` is submitted by the module.
+When the HID report data is transmitted through :c:struct:`hid_report_event`, the module will pass it to the associated endpoint.
+Upon data delivery, :c:struct:`hid_report_sent_event` is submitted by the module.
 
 .. note::
     Only one report can be transmitted by the module to a single instance of HID-class USB device at any given time.
