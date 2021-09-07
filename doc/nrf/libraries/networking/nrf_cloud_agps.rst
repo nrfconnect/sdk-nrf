@@ -59,12 +59,16 @@ The time to go from RRC connected mode to RRC idle mode is network-dependent.
 This time is usually not controlled by the device and is typically in the range of 5 to 70 seconds.
 If the GPS service has already started before the device enters the RRC idle mode, this RRC inactivity may make TTFF appear longer than the actual time spent searching for the GPS satellite signals.
 
-Limitations
-***********
+Limitation
+**********
 
-.. include:: ../../../../samples/nrf9160/agps/README.rst
-   :start-after: agpslimitation_start
-   :end-before: agpslimitation_end
+.. agpslimitation_start
+
+Approximate location assistance data is based on LTE cell location.
+Not all cell locations are always available.
+If they are not available, the location data will be absent in the A-GPS response.
+
+.. agpslimitation_end
 
 API documentation
 *****************

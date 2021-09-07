@@ -42,6 +42,12 @@ The Assistance GPS data includes the following information:
 * GPS system clock
 * Ionospheric correction parameters for `Klobuchar Ionospheric Model`_
 
+.. note::
+
+   .. include:: ../../../doc/nrf/libraries/networking/nrf_cloud_agps.rst
+      :start-after: agpslimitation_start
+      :end-before: agpslimitation_end
+
 TTFF is expected to be less when compared to that in the scenario of GPS without assistance data, performing a cold or a warm start.
 The TTFF is expected to be comparable to that of a GPS hot start and is usually in the range of 5 to 20 seconds in good satellite signaling conditions.
 Good satellite signaling conditions in this context means that the device is positioned in a way to have a direct line of sight to a large portion of the sky.
@@ -371,14 +377,3 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agps`
-
-
-Known issues and limitations
-****************************
-
-.. agpslimitation_start
-
-Approximate location assistance data is based on LTE cell location.
-Since all cell locations are not always available, the location data is sometimes absent in the A-GPS response.
-
-.. agpslimitation_end
