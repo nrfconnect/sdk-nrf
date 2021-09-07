@@ -38,5 +38,6 @@ static const struct sensor_config sensor_configs[] = {
 		.chans = accel_chan,
 		.chan_cnt = ARRAY_SIZE(accel_chan),
 		.sampling_period_ms = 20,
+		.active_events_limit = 3,
 	},
 };

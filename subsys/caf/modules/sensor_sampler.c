@@ -30,6 +30,7 @@ struct sensor_data {
 	float *prev;
 	atomic_t state;
 	unsigned int sleep_cnt;
+	atomic_t event_cnt;
 };
 
 static struct sensor_data sensor_data[ARRAY_SIZE(sensor_configs)];
@@ -51,7 +52,8 @@ static void update_sensor_state(const struct sensor_config *sc, struct sensor_da
 	EVENT_SUBMIT(event);
 }
 
-static void send_sensor_event(const char *descr, const float *data, const size_t data_cnt)
+static void send_sensor_event(const char *descr, const float *data, const size_t data_cnt,
+			      atomic_t *event_cnt)
 {
 	struct sensor_event *event = new_sensor_event(sizeof(float) * data_cnt);
 	float *data_ptr = sensor_event_get_data_ptr(event);
@@ -61,6 +63,7 @@ static void send_sensor_event(const char *descr, const float *data, const size_t
 	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) == data_cnt);
 	memcpy(data_ptr, data, sizeof(float) * data_cnt);
 
+	atomic_inc(event_cnt);
 	EVENT_SUBMIT(event);
 }
 
@@ -223,7 +226,13 @@ static void sample_sensor(struct sensor_data *sd, const struct sensor_config *sc
 		LOG_ERR("Sensor sampling error (err %d)", err);
 		update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
 	} else {
-		send_sensor_event(sc->event_descr, curr, ARRAY_SIZE(curr));
+		if (atomic_get(&sd->event_cnt) < sc->active_events_limit) {
+			send_sensor_event(sc->event_descr, curr, ARRAY_SIZE(curr),
+					  &sd->event_cnt);
+		} else {
+			LOG_WRN("Did not send event due to too many active events on sensor: %s",
+				sc->dev_name);
+		}
 		if (sc->trigger) {
 			try_enter_sleep(sc, sd, curr);
 		}
@@ -375,6 +384,22 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_sensor_event(eh)) {
+		const struct sensor_event *event = cast_sensor_event(eh);
+
+		for (size_t i = 0; i < ARRAY_SIZE(sensor_configs); i++) {
+			if (event->descr == sensor_configs[i].event_descr) {
+				struct sensor_data *sd = &sensor_data[i];
+
+				atomic_dec(&sd->event_cnt);
+				__ASSERT_NO_MSG(!(atomic_get(&sd->event_cnt) < 0));
+				return false;
+			}
+		}
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -383,3 +408,4 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
