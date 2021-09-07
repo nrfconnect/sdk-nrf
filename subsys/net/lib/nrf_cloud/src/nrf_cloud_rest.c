@@ -1015,7 +1015,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 			url_sz += sizeof(PGPS_REQ_START_GPS_DAY) +
 				  UINT32_MAX_STR_SZ;
 		}
-		if (request->pgps_req->prediction_count !=
+		if (request->pgps_req->gps_time_of_day !=
 		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD) {
 			url_sz += sizeof(PGPS_REQ_START_GPS_TOD_S) +
 				  UINT32_MAX_STR_SZ;
