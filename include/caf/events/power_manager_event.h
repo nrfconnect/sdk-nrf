@@ -45,6 +45,7 @@ enum power_manager_level {
  * by power manager.
  */
 struct power_manager_restrict_event {
+	/** Event header. */
 	struct event_header header;
 	/**
 	 * @brief The module index
