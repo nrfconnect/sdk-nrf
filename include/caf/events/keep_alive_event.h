@@ -20,6 +20,7 @@ extern "C" {
  * The event does not take any argument.
  */
 struct keep_alive_event {
+	/** Event header. */
 	struct event_header header;
 };
 

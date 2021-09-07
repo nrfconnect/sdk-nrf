@@ -22,6 +22,7 @@ extern "C" {
  * The keep_alive event would be ignored.
  */
 struct force_power_down_event {
+	/** Event header. */
 	struct event_header header;
 };
 
