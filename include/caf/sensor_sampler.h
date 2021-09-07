@@ -39,6 +39,7 @@ struct sensor_config {
 	const char *event_descr;
 	const struct sampled_channel *chans;
 	uint8_t chan_cnt;
+	uint8_t active_events_limit;
 	unsigned int sampling_period_ms;
 	struct trigger *trigger;
 };

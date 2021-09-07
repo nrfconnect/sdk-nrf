@@ -54,6 +54,7 @@ To do so, complete the following steps:
 
    * :c:member:`sensor_config.chan_cnt` - Size of the :c:member:`sensor_config.chans` array.
    * :c:member:`sensor_config.sampling_period_ms` - Sensor sampling period, in milliseconds.
+   * :c:member:`sensor_config.active_events_limit` - Maximum number of unprocessed :c:struct:`sensor_event`.
 
    For example, the file content could look like follows:
 
@@ -75,6 +76,7 @@ To do so, complete the following steps:
                         .chans = accel_chan,
                         .chan_cnt = ARRAY_SIZE(accel_chan),
                         .sampling_period_ms = 20,
+                        .active_events_limit = 3,
                 },
         };
 
@@ -148,6 +150,7 @@ To use the sensor trigger, complete the following steps:
                         .chans = accel_chan,
                         .chan_cnt = ARRAY_SIZE(accel_chan),
                         .sampling_period_ms = 20,
+                        .active_events_limit = 3,
                         .trigger = &trig,
                 },
         };
@@ -169,6 +172,13 @@ The |sensor_sampler| samples sensors periodically, according to the configuratio
 Sampling of the sensors is done from a dedicated preemptive thread.
 You can change the thread priority by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY` Kconfig option.
 Use the preemptive thread priority to make sure that the thread does not block other operations in the system.
+
+For each sensor, the |sensor_sampler| limits the number of ``sensor_event`` events that it submits, but whose processing has not been completed.
+This is done to prevent out-of-memory error if the system workqueue is blocked.
+The limit value for the maximum number of unprocessed events for each sensor is placed in the ``sensor_config.active_events_limit`` structure field in the configuration file.
+The ``active_sensor_events_cnt`` counter is incremented when ``sensor_event`` is sent and decremented when the event is processed by the sensor sampler that is the final subscriber of the event.
+A situation can occur that the ``active_sensor_events_cnt`` counter will already be decremented but the memory allocated by the event would not yet be freed.
+Because of this behavior, the maximum number of allocated sensor events for the given sensor is equal to ``active_events_limit`` plus one.
 
 The dedicated thread uses its own thread stack.
 You can change the size of the stack by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE` Kconfig option.
