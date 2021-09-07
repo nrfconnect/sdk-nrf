@@ -1690,6 +1690,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/selector.rst
    doc/smp.rst
    doc/settings_loader.rst
+   doc/usb_state_pm.rst
    doc/usb_state.rst
    doc/watchdog.rst
    doc/wheel.rst

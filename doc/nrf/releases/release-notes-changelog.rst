@@ -68,9 +68,14 @@ nRF5
 nRF Desktop
 -----------
 
+* Added:
+
+  * Added documentation for :ref:`nrf_desktop_usb_state_pm`.
+
 * Updated:
 
   * Updated information about custom build types.
+  * Updated documentation for :ref:`nrf_desktop_usb_state`.
 
 Zigbee
 ------
