@@ -20,23 +20,23 @@ See :ref:`gs_recommended_versions` for information on the supported operating sy
 
 .. _gs_app_tcm:
 
-Toolchain manager
+Toolchain Manager
 *****************
 
-The Toolchain manager app is available for Windows and macOS.
+The Toolchain Manager app is available for Windows and macOS.
 It installs the full toolchain that you need to work with the |NCS|, including SEGGER Embedded Studio and the |NCS| source code.
 
 
-Installing the Toolchain manager
+Installing the Toolchain Manager
 ================================
 
-To install the Toolchain manager app, complete the following steps:
+To install the Toolchain Manager app, complete the following steps:
 
 .. _tcm_setup:
 
 1. `Download nRF Connect for Desktop`_ for your operating system.
 #. Install and run the tool on your machine.
-#. In the APPS section, click :guilabel:`Install` next to Toolchain manager.
+#. In the APPS section, click :guilabel:`Install` next to Toolchain Manager.
 
 The app is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 
@@ -45,12 +45,12 @@ The app is installed on your machine, and the :guilabel:`Install` button changes
 Installing the |NCS|
 ====================
 
-Once you have installed the Toolchain manager, open it in nRF Connect for Desktop.
+Once you have installed the Toolchain Manager, open it in nRF Connect for Desktop.
 
 .. figure:: images/gs-assistant_tm.png
-   :alt: The Toolchain manager window
+   :alt: The Toolchain Manager window
 
-   The Toolchain manager window
+   The Toolchain Manager window
 
 Click :guilabel:`Settings` in the navigation bar to specify where you want to install the |NCS|.
 Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
@@ -62,13 +62,13 @@ There are two ways you can build an application:
 #. To build on the command line, use the following steps:
 
    1. With admin permissions enabled, download and install the `nRF Command Line Tools`_.
-   #. Restart the Toolchain manager application.
+   #. Restart the Toolchain Manager application.
    #. Follow the instructions in :ref:`gs_programming_cmd`.
 
 .. figure:: images/gs-assistant_tm_dropdown.png
-   :alt: The Toolchain manager dropdown menu for the installed nRF Connect SDK version, cropped
+   :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
 
-   The Toolchain manager dropdown menu options
+   The Toolchain Manager dropdown menu options
 
 .. _gs_app_gsa:
 

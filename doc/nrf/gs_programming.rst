@@ -49,7 +49,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
      The drop-down list contains the current version of all |NCS| installation directories that SES knows about.
      To add a missing |NCS| installation directory to that list, run ``west zephyr-export`` in the installation repository or define the Zephyr base to point to the directory (see :ref:`setting_up_SES`).
-   * :guilabel:`nRF Connect Toolchain Version` - If you used the Toolchain manager to install the |NCS|, select the version of the toolchain that works with the selected |NCS| version.
+   * :guilabel:`nRF Connect Toolchain Version` - If you used the Toolchain Manager to install the |NCS|, select the version of the toolchain that works with the selected |NCS| version.
      Otherwise, select NONE and make sure that your SES environment is configured correctly (see :ref:`setting_up_SES`).
 
      .. note::
