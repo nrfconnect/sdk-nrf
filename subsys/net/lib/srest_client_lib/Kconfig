@@ -1,0 +1,32 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SREST_CLIENT_LIB
+	bool "Simple/Stupid REST client lib"
+
+if SREST_CLIENT_LIB
+
+config SREST_CLIENT_LIB_SEND_TIMEOUT
+	int "Socket send timeout, in seconds"
+	default 60
+	help
+	  Sets the timeout duration in seconds to use when sending data.
+	  To disable, set the timeout duration to -1.
+
+config SREST_CLIENT_LIB_RECV_TIMEOUT
+	int "Socket receive timeout, in seconds"
+	default 60
+	help
+	  Sets the timeout duration in seconds to use when receiving data.
+	  To disable, set the timeout duration to -1.
+
+module=SREST_CLIENT_LIB
+module-dep=LOG
+module-str=Log level for sREST client lib
+module-help=Enables sREST client lib log messages.
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SREST_CLIENT_LIB
+
