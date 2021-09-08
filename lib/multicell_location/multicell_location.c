@@ -69,7 +69,8 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 
 		LOG_DBG("Generated request:\n%s", log_strdup(http_request));
 
-		err = execute_http_request(http_request, strlen(http_request), recv_buf, sizeof(recv_buf));
+		err = execute_http_request(http_request, strlen(http_request),
+					   recv_buf, sizeof(recv_buf));
 		if (err == -ETIMEDOUT) {
 			LOG_WRN("Data reception timed out, parsing potentially incomplete data");
 		} else if (err) {
