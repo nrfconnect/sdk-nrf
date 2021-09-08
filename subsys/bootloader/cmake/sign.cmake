@@ -175,6 +175,7 @@ foreach (slot ${slots})
     ${SIGN_KEY_FILE_DEPENDS}
     ${signature_file}
     ${slot}_signature_file_target
+    ${SIGNATURE_PUBLIC_KEY_FILE}
     WORKING_DIRECTORY
     ${PROJECT_BINARY_DIR}
     COMMENT
