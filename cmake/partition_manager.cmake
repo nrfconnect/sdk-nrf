@@ -641,13 +641,17 @@ endif()
 # the primary slot is not known during the configure stage of the mcuboot
 # child image.
 if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
-  get_shared(mcuboot_secondary_size IMAGE mcuboot PROPERTY SECONDARY_SIZE)
-  if (NOT "${mcuboot_secondary_size}" EQUAL "${PM_MCUBOOT_PRIMARY_SIZE}")
+  if (NOT ${PM_MCUBOOT_SECONDARY_SIZE} EQUAL ${PM_MCUBOOT_PRIMARY_SIZE})
+    if (DEFINED static_configuration)
+      set(last_part "If the size of 'mcuboot_secondary' is set in your static \
+configuration you need to update the value there. Otherwise, this is done by \
+setting CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY")
+    else()
+      set(last_part "This is done by setting CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY")
+    endif()
     message(WARNING "\
-The property 'PM_PARTITION_SIZE_MCUBOOT_SECONDARY' for \
-the mcuboot child image has an incorrect value ${mcuboot_secondary_size}. \
-Its value must be set to ${PM_MCUBOOT_PRIMARY_SIZE} so that it matches the \
-primary partition.")
+The size of the 'mcuboot_secondary' partition is incorrect (${PM_MCUBOOT_SECONDARY_SIZE}).
+Its size must be ${PM_MCUBOOT_PRIMARY_SIZE} to match the  primary partition. ${last_part}")
   endif()
 endif()
 
