@@ -107,7 +107,7 @@ Whenever you update to a newer release of the |NCS|, check the :ref:`gs_recommen
 
       To update to the latest version of the SES Nordic Edition, use one of the following options:
 
-      * Install the latest version of Toolchain manager as described in :ref:`gs_assistant`.
+      * Install the latest version of Toolchain Manager as described in :ref:`gs_assistant`.
       * Install the SES Nordic Edition manually as described in :ref:`installing_ses`.
 
       Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
