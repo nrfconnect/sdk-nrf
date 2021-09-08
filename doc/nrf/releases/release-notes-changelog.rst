@@ -168,7 +168,7 @@ Bluetooth LE
   * :ref:`lbs_readme` library - added write request data validation in the LED characteristic.
 
 Bluetooth mesh
----------------
+--------------
 
 * Added:
 
@@ -343,6 +343,13 @@ The mcumgr library contains all commits from the upstream mcumgr repository up t
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
 * No changes yet
+
+Build system
+============
+
+* Bugfixes:
+
+  * Fixed a bug where :file:`dfu_application.zip` would not be updated after rebuilding the code with changes.
 
 Zephyr
 ======
