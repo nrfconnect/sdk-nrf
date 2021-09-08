@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-#define LOC_MAX_METHODS 2
+#define LOC_MAX_METHODS 3
 
 /** Positioning methods. */
 enum loc_method {
@@ -30,6 +30,8 @@ enum loc_method {
 	LOC_METHOD_CELLULAR = 1,
 	/** Global Navigation Satellite System (GNSS). */
 	LOC_METHOD_GNSS,
+	/** WLAN positioning. */
+	LOC_METHOD_WLAN,
 };
 
 /** Event IDs. */
@@ -140,6 +142,12 @@ struct loc_gnss_config {
 	uint8_t num_consecutive_fixes;
 };
 
+/** WLAN positioning configuration. */
+struct loc_wlan_config {
+	/** Timeout (in seconds) on how long WLAN positioning procedure can take. */
+	uint16_t timeout;
+};
+
 /** Positioning method configuration. */
 struct loc_method_config {
 	/** Positioning method. */
@@ -149,6 +157,8 @@ struct loc_method_config {
 		struct loc_cellular_config cellular;
 		/** Configuration for LOC_METHOD_GNSS. */
 		struct loc_gnss_config gnss;
+		/** Configuration for LOC_METHOD_WIFI. */
+		struct loc_wlan_config wlan;
 	};
 };
 
