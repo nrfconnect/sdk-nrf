@@ -39,8 +39,8 @@ static const char location_get_usage_str[] =
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>] "
 	"[--gnss_timeout <timeout in secs>]\n"
 	"Options:\n"
-	"  --method1,        1st priority location method: 'cellular' or 'gnss'\n"
-	"  --method2,        2nd priority location method: 'cellular' or 'gnss'\n"
+	"  --method1,        1st priority location method: 'cellular' or 'gnss' or 'wlan'\n"
+	"  --method2,        2nd priority location method: 'cellular' or 'gnss' or 'wlan'\n"
 	"  --interval,       Position update interval in seconds (default: 0, = single position)\n"
 	"  --gnss_accuracy,  Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
 	"  --gnss_num_fixes, Number of consecutive fix attempts (if gnss_accuracy set to 'high', "
@@ -95,6 +95,9 @@ static const char *location_shell_method_to_string(int method, char *out_str_buf
 		break;
 	case LOC_METHOD_GNSS:
 		strcpy(out_str_buff, "GNSS");
+		break;
+	case LOC_METHOD_WLAN:
+		strcpy(out_str_buff, "WLAN");
 		break;
 
 	default:
@@ -268,6 +271,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				method1 = LOC_METHOD_CELLULAR;
 			} else if (strcmp(optarg, "gnss") == 0) {
 				method1 = LOC_METHOD_GNSS;
+			} else if (strcmp(optarg, "wlan") == 0) {
+				method1 = LOC_METHOD_WLAN;
 			} else {
 				shell_error(shell, "Unknown method given. See usage:");
 				goto show_usage;
@@ -280,6 +285,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				method2 = LOC_METHOD_CELLULAR;
 			} else if (strcmp(optarg, "gnss") == 0) {
 				method2 = LOC_METHOD_GNSS;
+			} else if (strcmp(optarg, "wlan") == 0) {
+				method1 = LOC_METHOD_WLAN;
 			} else {
 				shell_error(shell, "Unknown method given. See usage:");
 				goto show_usage;
