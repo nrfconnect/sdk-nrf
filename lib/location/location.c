@@ -103,6 +103,8 @@ void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_m
 		method->gnss.accuracy = LOC_ACCURACY_NORMAL;
 		method->gnss.num_consecutive_fixes = 3;
 	} else if (method_type == LOC_METHOD_CELLULAR) {
-		method->gnss.timeout = 30;
+		method->cellular.timeout = 30;
+	} else if (method_type == LOC_METHOD_WLAN) {
+		method->wlan.timeout = 30;
 	}
 }

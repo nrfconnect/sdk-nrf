@@ -17,6 +17,9 @@
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include "method_cellular.h"
 #endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN)
+#include "method_wlan.h"
+#endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -41,7 +44,7 @@ static int current_loc_method_index;
 
 /***** Work queue and work item definitions *****/
 
-#define LOC_CORE_STACK_SIZE 3072
+#define LOC_CORE_STACK_SIZE 4096
 #define LOC_CORE_PRIORITY  5
 K_THREAD_STACK_DEFINE(loc_core_stack, LOC_CORE_STACK_SIZE);
 
@@ -87,6 +90,17 @@ static const struct loc_method_api method_cellular_api = {
 	.cancel           = method_cellular_cancel,
 };
 #endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN)
+/** @brief WLAN location method configuration. */
+static const struct loc_method_api method_wlan_api = {
+	.method           = LOC_METHOD_WLAN,
+	.method_string    = "WLAN",
+	.init             = method_wlan_init,
+	.validate_params  = NULL,
+	.location_get     = method_wlan_location_get,
+	.cancel           = method_wlan_cancel,
+};
+#endif
 
 /** @brief Supported location methods. */
 static const struct loc_method_api *methods_supported[] = {
@@ -100,6 +114,12 @@ static const struct loc_method_api *methods_supported[] = {
 #else
 	NULL,
 #endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN)
+	&method_wlan_api,
+#else
+	NULL,
+#endif
+
 };
 
 static void loc_core_current_event_data_init(enum loc_method method)
@@ -174,6 +194,9 @@ static const char *loc_core_gnss_accuracy_str(enum loc_accuracy accuracy)
 
 int loc_core_init(location_event_handler_t handler)
 {
+	struct k_work_queue_config cfg = {
+		.name = "location_api_workq",
+	};
 	int err;
 
 	if (handler == NULL) {
@@ -188,7 +211,7 @@ int loc_core_init(location_event_handler_t handler)
 		loc_core_stack,
 		K_THREAD_STACK_SIZEOF(loc_core_stack),
 		LOC_CORE_PRIORITY,
-		NULL);
+		&cfg);
 
 	for (int i = 0; i < LOC_MAX_METHODS; i++) {
 		if (methods_supported[i] != NULL) {
@@ -271,7 +294,10 @@ void loc_core_config_log(const struct loc_config *config)
 				config->methods[i].gnss.num_consecutive_fixes);
 		} else if (type == LOC_METHOD_CELLULAR) {
 			LOG_DBG("      Timeout: %d", config->methods[i].cellular.timeout);
+		} else if (type == LOC_METHOD_WLAN) {
+			LOG_DBG("      Timeout: %d", config->methods[i].wlan.timeout);
 		}
+
 	}
 }
 

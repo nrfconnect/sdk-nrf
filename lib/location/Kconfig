@@ -28,6 +28,70 @@ config AGPS_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING
 
 endif # NRF_CLOUD_AGPS
 
+config LOCATION_METHOD_WLAN
+	bool "Allow WLAN positioning to be used for obtaining the location"
+	depends on WIFI
+	select SREST_CLIENT_LIB
+	select CJSON_LIB
+	select NET_MGMT
+	select NET_MGMT_EVENT
+	select NET_MGMT_EVENT_INFO
+	default y if WIFI
+
+if LOCATION_METHOD_WLAN
+
+config LOCATION_METHOD_WLAN_SERVICE_HERE
+	bool "Wifi positioning using Here service"
+	default y
+	help
+	  Use HERE location service
+
+config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
+	bool "Wifi positioning using Skyhook service"
+	default n
+	help
+	  Use Skyhook location service (not supported...yet)
+
+config LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES
+	int "Max number of MAC addresses used in a request"
+	default 10
+	help
+	  Maximum number of MAC addresses to use when creating HTTP request.
+	  Increasing the max number will increase the library's RAM usage
+	  proportionally.
+
+if LOCATION_METHOD_WLAN_SERVICE_HERE
+
+config LOCATION_METHOD_WLAN_SERVICE_HERE_HOSTNAME
+	string "HERE server hostname"
+	default "positioning.hereapi.com"
+	help
+	  Server hostname to use when connecting to the selected locations service
+endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+
+config LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
+	string "HERE API key"
+	help
+	  HERE API key used for authentication
+
+config LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES
+	int "Max number of MAC addresses used in a request"
+	default 10
+	help
+	  Maximum number of MAC addresses to use when creating HTTP request.
+	  Increasing the max number will increase the library's RAM usage
+	  proportionally.
+
+config LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG
+	int "Security tag for TLS certificates"
+	default 175
+	help
+	  Security tag where the required TLS certificates for the selected
+	  service will be stored. TODO: ??? This sec tag will also be used to provision
+	  certificates when multicell_location_provision_certificate() is called.
+
+endif # LOCATION_METHOD_WLAN
+
 module = LOCATION
 module-str = Location
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
