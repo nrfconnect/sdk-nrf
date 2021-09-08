@@ -5,4 +5,6 @@ tests:
   samples.nrf5340.empty_app_core.build:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
     tags: ci_build
