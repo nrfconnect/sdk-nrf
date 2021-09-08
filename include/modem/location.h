@@ -94,8 +94,10 @@ struct loc_cause {
 struct loc_event_data {
 	/** Event ID. */
 	enum loc_event_id id;
+
 	/** Used positioning method. */
 	enum loc_method method;
+
 	union {
 		/** Current location, used with event LOC_EVT_LOCATION. */
 		struct loc_location location;
@@ -106,9 +108,7 @@ struct loc_event_data {
 
 /** LTE cellular positioning configuration. */
 struct loc_cellular_config {
-	/**
-	 * @brief Timeout (in seconds) on how long cellular positioning procedure can take.
-	 */
+	/** Timeout (in seconds) on how long cellular positioning procedure can take. */
 	uint16_t timeout;
 };
 
@@ -125,16 +125,18 @@ struct loc_gnss_config {
 	 * uninterrupted operating window and minimizing power consumption.
 	 */
 	uint16_t timeout;
+
 	/** Desired accuracy level. */
 	enum loc_accuracy accuracy;
+
 	/**
 	 * @brief If accuracy is set to LOC_ACCURACY_HIGH, allow GNSS to attempt
-	 * num_consecutive_fixes fixes after the first succesful fix before outputting the
+	 * num_consecutive_fixes fixes after the first successful fix before outputting the
 	 * current location.
 	 *
 	 * @details This typically improves the location accuracy. If accuracy is set to
 	 * LOC_ACCURACY_NORMAL or LOC_ACCURACY_LOW this parameter has no effect.
-	*/
+	 */
 	uint8_t num_consecutive_fixes;
 };
 
@@ -154,17 +156,24 @@ struct loc_method_config {
 struct loc_config {
 	/** Number of location methods in 'methods'. */
 	uint8_t methods_count;
-	/** Selected positioning methods and associated configurations in priority order. Index 0
-	 *  has the highest priority. Number of methods is indicated in 'methods_count'.
+	/**
+	 * @brief Selected positioning methods and associated configurations in priority order.
+	 *
+	 * @details Index 0 has the highest priority. Number of methods is indicated in
+	 * 'methods_count'.
 	 */
 	struct loc_method_config *methods;
-	/** Position update interval in seconds. Set to 0 for a single position update. For periodic
-	 *  position updates the valid range is 10...65535 seconds.
+	/**
+	 * @brief Position update interval in seconds.
+	 *
+	 * @details Set to 0 for a single position update. For periodic position updates
+	 * the valid range is 10...65535 seconds.
 	 */
 	uint16_t interval;
 };
 
-/** @brief Event handler prototype.
+/**
+ * @brief Event handler prototype.
  *
  * @param[in] event_data Event data.
  */
@@ -180,7 +189,8 @@ typedef void (*location_event_handler_t)(const struct loc_event_data *event_data
  */
 int location_init(location_event_handler_t event_handler);
 
-/** @brief Requests the current position or starts periodic position updates.
+/**
+ * @brief Requests the current position or starts periodic position updates.
  *
  * @details Requests the current position using the given configuration. Depending on the
  *          configuration, a single position or periodic position updates are given. The results are
@@ -195,13 +205,15 @@ int location_init(location_event_handler_t event_handler);
  */
 int location_request(const struct loc_config *config);
 
-/** @brief Cancels periodic position updates.
+/**
+ * @brief Cancels periodic position updates.
  *
  * @return 0 on success, or negative error code on failure.
  */
 int location_request_cancel(void);
 
-/** @brief Sets default values to given configuration.
+/**
+ * @brief Sets default values to given configuration.
  *
  * @details Given methods are set as list of methods for the given configuration.
  * Caller is response for allocating and deallocating memory for both configuration and method list.
@@ -214,7 +226,8 @@ int location_request_cancel(void);
 void loc_config_defaults_set(struct loc_config *config, uint8_t methods_count,
 			     struct loc_method_config *methods);
 
-/** @brief Sets default values for given method configuration based on given type.
+/**
+ * @brief Sets default values for given method configuration based on given type.
  *
  * @details Intended use is that this is part of loc_config that has been initialized earlier.
  *

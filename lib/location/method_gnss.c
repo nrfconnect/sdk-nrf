@@ -42,13 +42,14 @@ struct k_work method_gnss_fix_work;
 struct k_work method_gnss_timeout_work;
 struct k_work method_gnss_agps_request_work;
 
-static int fix_attemps_remaining;
+static int fix_attempts_remaining;
 static bool first_fix_obtained;
 static bool running;
 
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE + AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
+static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
+			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
 static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 
@@ -86,8 +87,8 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 		.fragment_size = 0
 	};
 
-	struct nrf_cloud_rest_agps_request request =
-		{ NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE, NULL, NULL};
+	struct nrf_cloud_rest_agps_request request = {
+		NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE, NULL, NULL};
 
 	struct nrf_cloud_rest_agps_result result = {agps_data_buf, sizeof(agps_data_buf), 0};
 
@@ -126,6 +127,7 @@ void method_gnss_event_handler(int event)
 int method_gnss_cancel(void)
 {
 	int err = nrf_modem_gnss_stop();
+	int sleeping;
 
 	if (!err) {
 		LOG_DBG("GNSS stopped");
@@ -145,13 +147,14 @@ int method_gnss_cancel(void)
 	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
 	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
 	 * Otherwise, don't reset the semaphore in order not to lose information about the current
-	 * sleep state. */
-	int sleeping = k_sem_count_get(&entered_psm_mode);
+	 * sleep state.
+	 */
+	sleeping = k_sem_count_get(&entered_psm_mode);
 	if (!sleeping) {
 		k_sem_reset(&entered_psm_mode);
 	}
 
-	fix_attemps_remaining = 0;
+	fix_attempts_remaining = 0;
 	first_fix_obtained = false;
 
 	return -err;
@@ -168,7 +171,8 @@ static void method_gnss_fix_work_fn(struct k_work *item)
 	}
 
 	/* Store fix data only if we get a valid fix. Thus, the last valid data is always kept
-	 * in memory and it is not overwritten in case we get an invalid fix. */
+	 * in memory and it is not overwritten in case we get an invalid fix.
+	 */
 	if (pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
 		first_fix_obtained = true;
 
@@ -185,14 +189,14 @@ static void method_gnss_fix_work_fn(struct k_work *item)
 		location_result.datetime.ms = pvt_data.datetime.ms;
 	}
 
-	/* Start countdown of remaining fix attemps only once we get the first valid fix. */
+	/* Start countdown of remaining fix attempts only once we get the first valid fix. */
 	if (first_fix_obtained) {
-		if (!fix_attemps_remaining) {
+		if (!fix_attempts_remaining) {
 			/* We are done, stop GNSS and publish the fix */
 			method_gnss_cancel();
 			loc_core_event_cb(&location_result);
 		} else {
-			fix_attemps_remaining--;
+			fix_attempts_remaining--;
 		}
 	}
 }
@@ -207,6 +211,7 @@ static void method_gnss_timeout_work_fn(struct k_work *item)
 static void method_gnss_positioning_work_fn(struct k_work *work)
 {
 	int err = 0;
+	int ret = 0;
 	int tau;
 	int active_time;
 	enum lte_lc_system_mode mode;
@@ -216,8 +221,8 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	lte_lc_system_mode_get(&mode, NULL);
 
 	/* Don't care about PSM if we are in GNSS only mode */
-	if(mode != LTE_LC_SYSTEM_MODE_GPS) {
-		int ret = lte_lc_psm_get(&tau, &active_time);
+	if (mode != LTE_LC_SYSTEM_MODE_GPS) {
+		ret = lte_lc_psm_get(&tau, &active_time);
 		if (ret < 0) {
 			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
 		} else if ((tau >= 0) & (active_time >= 0)) {
@@ -226,7 +231,8 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 
 			/* Wait for the PSM to start. If semaphore is reset during the waiting
 			 * period, the position request was canceled. Thus, return without
-			 * doing anything */
+			 * doing anything
+			 */
 			if (k_sem_take(&entered_psm_mode, K_FOREVER) == -EAGAIN) {
 				return;
 			}
@@ -255,7 +261,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 		err |= nrf_modem_gnss_use_case_set(use_case);
 		if (!err) {
-			fix_attemps_remaining = gnss_config.num_consecutive_fixes;
+			fix_attempts_remaining = gnss_config.num_consecutive_fixes;
 		}
 		break;
 	}
@@ -296,6 +302,7 @@ void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 int method_gnss_location_get(const struct loc_method_config *config)
 {
 	const struct loc_gnss_config gnss_config = config->gnss;
+	int err;
 
 	if (running) {
 		LOG_ERR("Previous operation ongoing.");
@@ -303,8 +310,9 @@ int method_gnss_location_get(const struct loc_method_config *config)
 	}
 
 	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
-	 * using GNSS, setting it again is not needed. */
-	int err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
+	 * using GNSS, setting it again is not needed.
+	 */
+	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
 	if (err) {
 		LOG_ERR("Failed to set GNSS event handler, error %d", err);
 		return -err;
@@ -312,7 +320,8 @@ int method_gnss_location_get(const struct loc_method_config *config)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	/* Start and stop GNSS just to see if A-GPS data is needed
-	 * (triggers event NRF_MODEM_GNSS_EVT_AGPS_REQ) */
+	 * (triggers event NRF_MODEM_GNSS_EVT_AGPS_REQ)
+	 */
 	nrf_modem_gnss_start();
 	nrf_modem_gnss_stop();
 #endif

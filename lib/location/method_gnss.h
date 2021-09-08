@@ -16,8 +16,7 @@ void method_gnss_timeout_work_fn(struct k_work *item);
  *
  * @details Currently supported configurations are fix interval, fix timeout and fix accuracy.
  *
- * @param[in] config   Requested gnss configuration.
- * @param[in] interval Requested fix interval.
+ * @param[in] config Requested gnss configuration.
  *
  * @retval 0 on success.
  * @retval NRF_EPERM if GNSS is running or not initialized.
