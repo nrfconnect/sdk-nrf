@@ -43,7 +43,7 @@ static const char location_get_usage_str[] =
 	"  --method2,        2nd priority location method: 'cellular' or 'gnss'\n"
 	"  --interval,       Position update interval in seconds (default: 0, = single position)\n"
 	"  --gnss_accuracy,  Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
-	"  --gnss_num_fixes, Number of consecutive fix attemps (if gnss_accuracy set to 'high', "
+	"  --gnss_num_fixes, Number of consecutive fix attempts (if gnss_accuracy set to 'high', "
 			     "default: 2)\n"
 	"  --gnss_timeout,   GNSS timeout in seconds\n";
 
@@ -289,7 +289,6 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case '?':
 			goto show_usage;
-			break;
 		default:
 			shell_error(shell, "Unknown option. See usage:");
 			goto show_usage;
