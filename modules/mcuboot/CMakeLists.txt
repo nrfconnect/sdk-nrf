@@ -51,8 +51,34 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(${SIGN_ARG_SIGNED_HEX_FILE_OUT} ${signed_hex} PARENT_SCOPE)
     set(to_sign_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_to_sign.bin)
     set(update_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_update.bin)
-    set(moved_test_update_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex)
     set(test_update_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_test_update.hex)
+
+    # Ensure that it is possible to move the secondary slot to the memory
+    # mapped area for external flash if the secondary slot is located in
+    # external flash. Only devices with 'qspi' should have hex files generated
+    # for the secondary slot, since these are the only ones with a memory mapped
+    # area.
+    dt_nodelabel(qspi_node NODELABEL "qspi")
+    if (NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY OR DEFINED qspi_node)
+      set(moved_test_update_hex
+        ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex
+        )
+
+      set (moved_test_update_command
+        COMMAND
+        # Create version of test update which is located at the secondary slot.
+        # Hence, if a programmer is given this hex file, it will flash it
+        # to the secondary slot, and upon reboot mcuboot will swap in the
+        # contents of the hex file.
+        ${CMAKE_OBJCOPY}
+        --input-target=ihex
+        --output-target=ihex
+        --change-address=${SIGN_ARG_START_ADDRESS_OFFSET}
+        --gap-fill=0xff
+        ${test_update_hex}
+        ${moved_test_update_hex}
+        )
+    endif()
 
     add_custom_command(
       OUTPUT
@@ -102,18 +128,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${test_update_hex}
 
-      COMMAND
-      # Create version of test update which is located at the secondary slot.
-      # Hence, if a programmer is given this hex file, it will flash it
-      # to the secondary slot, and upon reboot mcuboot will swap in the
-      # contents of the hex file.
-      ${CMAKE_OBJCOPY}
-      --input-target=ihex
-      --output-target=ihex
-      --change-address ${SIGN_ARG_START_ADDRESS_OFFSET}
-      --gap-fill=0xff
-      ${test_update_hex}
-      ${moved_test_update_hex}
+      ${moved_test_update_command}
 
       # Add Zigbee OTA header to signed application
       COMMAND
