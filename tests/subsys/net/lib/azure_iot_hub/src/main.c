@@ -164,6 +164,7 @@ static void test_topic_parse_unknown_topic(void)
 
 static void test_topic_add_prop_bags(void)
 {
+	int strcmp_result;
 	char *key1 = "key1";
 	char *val1 = "value1";
 	char *key2 = "key2";
@@ -187,13 +188,14 @@ static void test_topic_add_prop_bags(void)
 							    ARRAY_SIZE(bags));
 
 	zassert_not_null(prop_bag_str, NULL);
-	zassert_equal(strcmp(prop_bag_str, "?key1=value1&key2=&key3"), 0,
-		      "Incorrect property bag string");
+	strcmp_result = strcmp(prop_bag_str, "?key1=value1&key2=&key3");
 	azure_iot_hub_prop_bag_free(prop_bag_str);
+	zassert_equal(strcmp_result, 0, "Incorrect property bag string");
 }
 
 static void test_topic_add_prop_bags_reverse(void)
 {
+	int strcmp_result;
 	char *key1 = "key1";
 	char *value1 = "value1";
 	char *key2 = "key2";
@@ -217,9 +219,9 @@ static void test_topic_add_prop_bags_reverse(void)
 							    ARRAY_SIZE(bags));
 
 	zassert_not_null(prop_bag_str, NULL);
-	zassert_equal(strcmp(prop_bag_str, "?key3&key2=&key1=value1"), 0,
-		      "Incorrect property bag string");
+	strcmp_result = strcmp(prop_bag_str, "?key3&key2=&key1=value1");
 	azure_iot_hub_prop_bag_free(prop_bag_str);
+	zassert_equal(strcmp_result, 0, "Incorrect property bag string");
 }
 
 static void test_topic_parse_long(void)
