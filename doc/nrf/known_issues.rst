@@ -797,6 +797,13 @@ Build system
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
+NCSDK-10672: :file:`dfu_application.zip` is not updated during build
+  In the configuration with MCUboot, the :file:`dfu_application.zip` might not be properly updated after code or configuration changes, because of missing dependencies.
+
+  **Workaround:** Clear the build if :file:`dfu_application.zip` is going to be released to make sure that it is up to date.
+
+.. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0
+
 Missing files or permissions when building on Windows
   Because of the Windows path length limitations, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
 
