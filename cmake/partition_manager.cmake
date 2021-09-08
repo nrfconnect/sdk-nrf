@@ -481,13 +481,25 @@ else()
 
   if (CONFIG_BOOTLOADER_MCUBOOT)
     if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
-      get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
-      dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
-      if (NOT DEFINED xip_addr)
-        message(WARNING "\
+      # First we see if an ext flash dev has been chosen, if not, then we look
+      # up the 'qspi' node and assume that this has the required address.
+      if (DEFINED ext_flash_dev)
+        get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
+      else()
+        dt_nodelabel(qspi_node NODELABEL "qspi")
+      endif()
+
+      # If the qspi node is still not defined we are building on a platform
+      # which does not have the qspi peripheral, in which case no hex files
+      # will be generated for the secondary slot.
+      if(DEFINED qspi_node)
+        dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
+        if(NOT DEFINED xip_addr)
+          message(WARNING "\
 Could not find memory mapped address for XIP. Generated update hex files will \
 not have the correct base address. Hence they can not be programmed directly \
 to the external flash")
+        endif()
       endif()
     endif()
 
