@@ -27,18 +27,16 @@ Overview
 The sample acts directly on socket level abstraction.
 It configures a UDP socket and continuously transmits data over the socket to the modem's TCP/IP stack, where the data eventually gets transmitted to a server specified by an IP address and a port number.
 To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), extended Discontinuous Reception (eDRX) mode and `Release Assistance Indication (RAI)`_ parameters.
-These parameters can be set through the sample configuration file ``prj.conf``.
+These parameters can be set through the sample configuration file :file:`prj.conf`.
 
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.
 In addition to setting of the above options, you can also set the various LTE parameters that are related to current consumption for adding low power behavior to the device.
 
 The UDP sample can be used to characterize the current consumption of the nRF9160 SiP.
-This is due to the *simple UDP/IP behavior* demonstrated by the sample, which makes it suitable for current measurement.
+This is due to the simple UDP/IP behavior demonstrated by the sample, which makes it suitable for current measurement.
 
-Functionality and Supported Technologies
-========================================
-
- * UDP/IP
+.. note::
+   Logging output is disabled by default in this sample to produce the lowest possible amount of current consumption.
 
 Measuring Current
 =================
@@ -50,17 +48,6 @@ Configuration
 *************
 
 |config|
-
-You can configure the following options:
-
-* :kconfig:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES`
-* :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`
-* :kconfig:`CONFIG_UDP_SERVER_ADDRESS_STATIC`
-* :kconfig:`CONFIG_UDP_SERVER_PORT`
-* :kconfig:`CONFIG_UDP_PSM_ENABLE`
-* :kconfig:`CONFIG_UDP_EDRX_ENABLE`
-* :kconfig:`CONFIG_UDP_RAI_ENABLE`
-
 
 Configuration options
 =====================
@@ -100,13 +87,23 @@ This configuration option, if set, allows the sample to request RAI for transmit
 Additional configuration
 ========================
 
-Below configurations are recommended for low power behavior:
+You can configure the following options:
 
- * :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`.
- * :kconfig:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
- * :kconfig:`CONFIG_SERIAL` disabled in ``prj.conf`` and ``spm.conf``.
- * :kconfig:`CONFIG_UDP_EDRX_ENABLE` set to false.
- * :kconfig:`CONFIG_UDP_RAI_ENABLE` set to true for NB-IoT. It is not supported for LTE-M.
+* :kconfig:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES`
+* :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`
+* :kconfig:`CONFIG_UDP_SERVER_ADDRESS_STATIC`
+* :kconfig:`CONFIG_UDP_SERVER_PORT`
+* :kconfig:`CONFIG_UDP_PSM_ENABLE`
+* :kconfig:`CONFIG_UDP_EDRX_ENABLE`
+* :kconfig:`CONFIG_UDP_RAI_ENABLE`
+
+The following configurations are recommended for low power behavior:
+
+* :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`.
+* :kconfig:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
+* :kconfig:`CONFIG_SERIAL` disabled in :file:`prj.conf` and :file:`spm.conf`.
+* :kconfig:`CONFIG_UDP_EDRX_ENABLE` set to false.
+* :kconfig:`CONFIG_UDP_RAI_ENABLE` set to true for NB-IoT. It is not supported for LTE-M.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
 See `Power saving mode setting section in AT commands reference document`_ for a conversion chart of these timer values.
@@ -120,10 +117,10 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* ``prj.conf`` : For nRF9160 DK and Thingy:91
-* ``prj_qemu_x86``: For x86 Emulation (QEMU)
+* :file:`prj.conf` - For nRF9160 DK and Thingy:91
+* :file:`prj_qemu_x86.conf` - For x86 Emulation (QEMU)
 
-They are located in ``samples/nrf9160/udp`` folder.
+They are located in :file:`samples/nrf9160/udp` folder.
 
 Building and running
 ********************
@@ -141,21 +138,11 @@ After programming the sample to your device, test it by performing the following
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Observe that the sample shows the :ref:`UART output <uart_output>` from the device.
-   Note that this is an example and the output need not be identical to your observed output.
+#. Enable logging by setting the :kconfig:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` and :file:`spm.conf` configuration files.
+#. Observe that the sample shows the following output in the terminal emulator.
+   Note that this is an example, and the output need not be identical to your observed output.
 
-.. note::
-   Logging output is disabled by default in this sample in order to produce the lowest possible amount of current consumption.
-   To enable logging, set the :kconfig:`CONFIG_SERIAL` option in the ``prj.conf`` and ``spm.conf`` configuration files.
-
-.. _uart_output:
-
-Sample output
-=============
-
-The following serial UART output is displayed in the terminal emulator:
-
-.. code-block:: console
+   .. code-block:: console
 
       *** Booting Zephyr OS build v2.3.0-rc1-ncs1-1451-gb160c8c5caa5  ***
       UDP sample has started
