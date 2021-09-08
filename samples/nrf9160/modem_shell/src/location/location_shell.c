@@ -175,12 +175,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	};
 
 	int interval = 0;
-	bool gnss_interval_set = false;
+	bool interval_set = false;
 
 	int gnss_timeout = 0;
 	bool gnss_timeout_set = false;
 
-	int gnss_num_fixes = 2;
+	int gnss_num_fixes = 0;
 	bool gnss_num_fixes_set = false;
 
 	enum loc_accuracy gnss_accuracy = LOC_ACCURACY_LOW;
@@ -193,11 +193,11 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum loc_method method1 = LOC_METHOD_CELLULAR;
 	bool method2_set = false;
 	enum loc_method method2 = LOC_METHOD_GNSS;
+	int method_count = 0;
 
 	int opt;
 	int ret = 0;
 	int long_index = 0;
-	int method_count = 0;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -246,7 +246,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
-			gnss_interval_set = true;
+			interval_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_GNSS_ACCURACY:
@@ -318,9 +318,11 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		struct loc_method_config methods[LOC_MAX_METHODS] = { 0 };
 		struct loc_config *real_config = &config;
 
-		config.interval = interval;
-		config.methods_count = method_count;
-		config.methods = methods;
+		loc_config_defaults_set(&config, method_count, methods);
+
+		if (interval_set) {
+			config.interval = interval;
+		}
 
 		if (method_count == 1) {
 			if (method1_set) {
@@ -347,51 +349,42 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 
 		if (methods[0].method == LOC_METHOD_GNSS) {
+			loc_config_method_defaults_set(&methods[0], LOC_METHOD_GNSS);
 			if (gnss_timeout_set) {
 				methods[0].gnss.timeout = gnss_timeout;
-			} else {
-				shell_error(shell, "gnss_timeout is mandatory to be given.");
-				goto show_usage;
 			}
-
-			if (!gnss_accuracy_set) {
-				shell_error(shell, "gnss_accuracy is mandatory to be given.");
-				goto show_usage;
-			} else {
+			if (gnss_accuracy_set) {
 				methods[0].gnss.accuracy = gnss_accuracy;
 			}
-
-			methods[0].gnss.num_consecutive_fixes = gnss_num_fixes;
-
+			if (gnss_num_fixes_set) {
+				methods[0].gnss.num_consecutive_fixes = gnss_num_fixes;
+			}
 		} else if (methods[1].method == LOC_METHOD_GNSS) {
+			loc_config_method_defaults_set(&methods[1], LOC_METHOD_GNSS);
 			if (gnss_timeout_set) {
 				methods[1].gnss.timeout = gnss_timeout;
-			} else {
-				shell_error(shell, "gnss_timeout is mandatory to be given.");
-				goto show_usage;
 			}
-
-			if (!gnss_accuracy_set) {
-				shell_error(shell, "gnss_accuracy is mandatory to be given.");
-				goto show_usage;
-			} else {
+			if (gnss_accuracy_set) {
 				methods[1].gnss.accuracy = gnss_accuracy;
 			}
-
-			methods[1].gnss.num_consecutive_fixes = gnss_num_fixes;
+			if (gnss_num_fixes_set) {
+				methods[1].gnss.num_consecutive_fixes = gnss_num_fixes;
+			}
 		}
 
 		if (methods[0].method == LOC_METHOD_CELLULAR) {
+			loc_config_method_defaults_set(&methods[0], LOC_METHOD_CELLULAR);
 			if (cellular_timeout_set) {
 				methods[0].cellular.timeout = cellular_timeout;
 			}
 		} else if (methods[1].method == LOC_METHOD_CELLULAR) {
+			loc_config_method_defaults_set(&methods[1], LOC_METHOD_CELLULAR);
 			if (cellular_timeout_set) {
 				methods[1].cellular.timeout = cellular_timeout;
 			}
 		}
 
-		if (gnss_interval_set && !method1_set && !method2_set) {
+		if (interval_set && !method1_set && !method2_set) {
 			shell_error(shell, "Method is mandatory to be given.");
 			goto show_usage;
 		}
