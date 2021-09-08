@@ -154,7 +154,12 @@ Different versions
 ******************
 
 Documentation sets for different versions of the |NCS| are defined in the :file:`doc/versions.json` file.
-This file is used to display the version drop-down in the top-left corner of the documentation.
+This file is used to display the version drop-down in the *top-left corner of each documentation page*.
+
+.. figure:: images/switcher_version_snipped.gif
+   :alt: nRF Connect SDK documentation version drop-down
+
+   |NCS| documentation version drop-down
 
 The version drop-down is displayed only if the documentation files are organized in the required folder structure and the documentation is hosted on a web server.
 To test the version drop-down locally, complete the following steps:

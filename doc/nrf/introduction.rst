@@ -26,7 +26,12 @@ Documentation structure
 ***********************
 
 The documentation consists of several inter-linked documentation sets, one for each repository.
-You can switch between these documentation sets by using the selector in the bottom-left corner of each page.
+You can switch between these documentation sets by using the selector in the *bottom-left corner of each documentation page*.
+
+.. figure:: images/switcher_docset_snipped.gif
+   :alt: nRF Connect SDK documentation set selector
+
+   |NCS| documentation set selector
 
 The entry point is the |NCS| documentation that you are currently reading.
 The local :doc:`Zephyr documentation <zephyr:index>` is a slightly extended version of the official `Zephyr Project documentation`_, containing some Nordic Semiconductor specific additions.
