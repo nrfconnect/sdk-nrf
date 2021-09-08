@@ -182,7 +182,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	depends on BOOTLOADER_MCUBOOT || MCUBOOT
 	# Only depend on the chosen for the parent image. The value of this
 	# option is propagated to the MCUboot child image automatically.
-	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || MCUBOOT
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || PM_EXTERNAL_FLASH || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
 	help
 	  Place the secondary partition of MCUboot in the external flash instead
