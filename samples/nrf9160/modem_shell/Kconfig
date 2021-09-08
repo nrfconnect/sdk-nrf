@@ -94,6 +94,13 @@ config MOSH_LOCATION_API
 	help
 	  Location queries via Location API.
 
+config MOSH_SIMPLE_REST_CLIENT
+	bool "Simple REST client"
+	default y
+	select SREST_CLIENT_LIB
+	help
+	  Simple REST client.
+
 if MOSH_LINK
 menu "MoSH link control selections"
 

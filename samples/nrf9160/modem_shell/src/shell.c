@@ -40,9 +40,11 @@
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp/ppp_shell.h"
 #endif
-
 #if defined(CONFIG_MOSH_LOCATION_API)
 #include "location_shell.h"
+#endif
+#if defined(CONFIG_MOSH_SIMPLE_REST_CLIENT)
+#include "srest_shell.h"
 #endif
 
 #include "uart/uart_shell.h"
@@ -215,4 +217,10 @@ SHELL_CMD_REGISTER(ppp, NULL,
 SHELL_CMD_REGISTER(location, NULL,
 	"Commands for accessing Location API.",
 	location_shell);
+#endif
+
+#if defined(CONFIG_MOSH_SIMPLE_REST_CLIENT)
+SHELL_CMD_REGISTER(srest, NULL,
+	"Simple REST Client.",
+	srest_shell);
 #endif
