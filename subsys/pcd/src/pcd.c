@@ -131,7 +131,7 @@ static int pcd_cmd_write(const void *data, size_t len, off_t offset)
 	return 0;
 }
 
-int pcd_network_core_update(const void *src_addr, size_t len)
+int pcd_network_core_update(const void *src_addr, size_t len, bool wait)
 {
 	int err;
 
@@ -161,6 +161,13 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 		k_busy_wait(1 * USEC_PER_SEC);
 
 		err = pcd_fw_copy_status_get();
+		if (!wait) {
+			if (err == PCD_STATUS_COPY_FAILED) {
+				return err;
+			}
+
+			return 0;
+		}
 	} while (err == PCD_STATUS_COPY);
 
 	if (err == PCD_STATUS_COPY_FAILED) {

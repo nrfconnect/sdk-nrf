@@ -67,7 +67,7 @@ enum pcd_status {
  *
  * @retval 0 on success, -1 on failure.
  */
-int pcd_network_core_update(const void *src_addr, size_t len);
+int pcd_network_core_update(const void *src_addr, size_t len, bool wait);
 
 /** @brief Lock the RAM section used for IPC with the network core bootloader.
  */

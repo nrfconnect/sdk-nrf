@@ -22,7 +22,7 @@ static void test_pcd_network_core_update(void)
 	enum pcd_status status;
 	int err;
 
-	err = pcd_network_core_update(&data, sizeof(data));
+	err = pcd_network_core_update(&data, sizeof(data), true);
 	zassert_equal(err, 0, "Unexpected failure");
 
 	status = pcd_fw_copy_status_get();
