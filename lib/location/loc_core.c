@@ -270,6 +270,7 @@ int loc_core_validate_params(const struct loc_config *config)
 void loc_core_config_log(const struct loc_config *config)
 {
 	enum loc_method type;
+	const struct loc_method_api *method_api;
 
 	LOG_DBG("Location configuration:");
 
@@ -279,10 +280,15 @@ void loc_core_config_log(const struct loc_config *config)
 
 	for (uint8_t i = 0; i < config->methods_count; i++) {
 		type = config->methods[i].method;
+		method_api = loc_method_api_validity_get(type);
 
 		LOG_DBG("    Method #%d", i);
-		LOG_DBG("      Method type: %s (%d)",
-			log_strdup(loc_method_api_validity_get(type)->method_string), type);
+		if (method_api != NULL) {
+			LOG_DBG("      Method type: %s (%d)",
+				log_strdup(method_api->method_string), type);
+		} else {
+			LOG_DBG("      Method type: unknown (%d)", type);
+		}
 
 		if (type == LOC_METHOD_GNSS) {
 			LOG_DBG("      Timeout: %d", config->methods[i].gnss.timeout);
