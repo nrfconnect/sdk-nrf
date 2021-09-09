@@ -36,19 +36,10 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, nrf9160dk_nrf9160, nrf21540dk_nrf52840
+   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, nrf9160dk_nrf9160
 
 The sample also requires a logic analyzer.
 
-Configuration
-*************
-
-|config|
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
