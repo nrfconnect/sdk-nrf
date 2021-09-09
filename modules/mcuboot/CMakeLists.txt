@@ -331,13 +331,17 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
       set(generate_script_params
         "${app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-        "${net_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>"
+        "${app_core_binary_name}image_index=0"
+        "${app_core_binary_name}slot_index_primary=1"
+        "${app_core_binary_name}slot_index_secondary=2"
         "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        "${net_core_binary_name}image_index=1"
+        "${net_core_binary_name}slot_index_primary=3"
+        "${net_core_binary_name}slot_index_secondary=4"
+        "${net_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>"
         "${net_core_binary_name}board=${CONFIG_DOMAIN_CPUNET_BOARD}"
         "${net_core_binary_name}version=${net_core_version}"
         "${net_core_binary_name}soc=${net_core_soc}"
-        "${app_core_binary_name}serial_recovery_index=1"
-        "${net_core_binary_name}serial_recovery_index=3"
         )
     else()
       # No network core update
