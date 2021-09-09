@@ -23,9 +23,19 @@ set(board_includes
 
 target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 
+target_compile_definitions(platform_s
+  PRIVATE
+  $<$<BOOL:${PLATFORM_DUMMY_CRYPTO_KEYS}>:PLATFORM_DUMMY_CRYPTO_KEYS>
+  )
+
 target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
   ${NRF_DIR}/include
+  )
+
+target_sources(platform_s
+  PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/common/plat_init.c
   )
 
 if (${TFM_PARTITION_CRYPTO}
@@ -36,7 +46,6 @@ if (${TFM_PARTITION_CRYPTO}
       ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
       ${NRF_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
       ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
-      ${CMAKE_CURRENT_LIST_DIR}/common/plat_init.c
   )
 endif()
 

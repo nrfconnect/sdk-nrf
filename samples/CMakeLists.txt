@@ -71,15 +71,6 @@ if (CONFIG_SPM)
   endif()
 endif()
 
-if (CONFIG_BUILD_WITH_TFM AND CONFIG_UART_1_NRF_UARTE)
-  message(FATAL_ERROR "
-    Non-secure applications built with TF-M cannot use UART1, because this
-    instance is used by the TF-M secure application. Disable the uart1 node
-    in devicetree. See the following file:
-    nrf/samples/tfm/tfm_hello_world/boards/nrf9160dk_nrf9160_ns.overlay
-    for an example how to do it.")
-endif()
-
 if (CONFIG_SECURE_BOOT)
   if (CONFIG_SOC_NRF5340_CPUNET)
     # Share some information which is used when generating the zip file

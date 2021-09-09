@@ -16,8 +16,15 @@
 enum tfm_hal_status_t tfm_hal_platform_init(void)
 {
 	__enable_irq();
-	stdio_init();
 
+	/* Only if UART1 is used by TF-M do we initialize it. */
+#ifdef SECURE_UART1
+	stdio_init();
+#endif
+
+#if defined(TFM_PARTITION_CRYPTO) && \
+    !defined(TFM_CRYPTO_KEY_DERIVATION_MODULE_DISABLED) && \
+    !defined(PLATFORM_DUMMY_CRYPTO_KEYS)
 	/* Initialize the nrf_cc3xx runtime */
 	int result = nrf_cc3xx_platform_init();
 	if (result != NRF_CC3XX_PLATFORM_SUCCESS) {
@@ -29,6 +36,7 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 		hw_unique_key_write_random();
 		SPMLOG_INFMSG("Success\r\n");
 	}
+#endif
 
 	return TFM_HAL_SUCCESS;
 }

@@ -20,6 +20,18 @@ config TFM_BL2
 	bool
 	default n
 
+config TFM_SECURE_UART1
+	bool "TF-M logging on UART1"
+	default y
+	depends on !UART_1_NRF_UARTE
+	depends on !"$(dt_nodelabel_enabled,uart1)"
+	depends on SOC_NRF5340_CPUAPP || SOC_NRF9160
+	help
+	  Reserve the UART1 port for TF-M logging. This makes the UART1
+	  peripheral unavailable to the non-secure application. When this
+	  option is selected the device tree node for UART1 needs to be
+	  disabled for the non-secure application.
+
 config TFM_MINIMAL
 	bool "Use minimal TF-M build"
 	help
