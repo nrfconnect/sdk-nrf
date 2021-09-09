@@ -35,39 +35,42 @@ static const char location_usage_str[] =
 	"  cancel:   Cancel/Stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
-	"Usage: location get [--interval <secs>] [--method1 <method>] [--method2 <method>] "
-	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>] "
+	"Usage: location get [--method <method>] [--interval <secs>]\n"
+	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
 	"[--gnss_timeout <timeout in secs>]\n"
 	"Options:\n"
-	"  --method1,        1st priority location method: 'cellular' or 'gnss' or 'wlan'\n"
-	"  --method2,        2nd priority location method: 'cellular' or 'gnss' or 'wlan'\n"
-	"  --interval,       Position update interval in seconds (default: 0, = single position)\n"
-	"  --gnss_accuracy,  Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
-	"  --gnss_num_fixes, Number of consecutive fix attempts (if gnss_accuracy set to 'high', "
-			     "default: 2)\n"
-	"  --gnss_timeout,   GNSS timeout in seconds\n";
+	"  --method,           Location method: 'gnss', 'cellular' or 'wlan'. Multiple\n"
+	"                      '--method' parameters may be given to indicate list of\n"
+	"                      methods in priority order.\n"
+	"  --interval,         Position update interval in seconds (default: 0, = single position)\n"
+	"  --gnss_accuracy,    Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
+	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy set to 'high',\n"
+	"                      default: 2)\n"
+	"  --gnss_timeout,     GNSS timeout in seconds\n"
+	"  --cellular_timeout, Cellular timeout in seconds\n"
+	"  --wlan_timeout,     WLAN timeout in seconds\n";
 
 /******************************************************************************/
 
 /* Following are not having short options: */
-enum {  LOCATION_SHELL_OPT_METHOD_1         = 1001,
-	LOCATION_SHELL_OPT_METHOD_2         = 1002,
-	LOCATION_SHELL_OPT_INTERVAL         = 1003,
-	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1004,
-	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1005,
-	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1006,
-	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1007,
+enum {  LOCATION_SHELL_OPT_METHOD           = 1001,
+	LOCATION_SHELL_OPT_INTERVAL         = 1002,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1003,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1004,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1005,
+	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1006,
+	LOCATION_SHELL_OPT_WLAN_TIMEOUT     = 1007,
 };
 
 /* Specifying the expected options: */
 static struct option long_options[] = {
-	{ "method1", required_argument, 0, LOCATION_SHELL_OPT_METHOD_1 },
-	{ "method2", required_argument, 0, LOCATION_SHELL_OPT_METHOD_2 },
+	{ "method", required_argument, 0, LOCATION_SHELL_OPT_METHOD },
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
+	{ "wlan_timeout", required_argument, 0, LOCATION_SHELL_OPT_WLAN_TIMEOUT },
 	{ 0, 0, 0, 0 }
 };
 
@@ -183,16 +186,16 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	int gnss_num_fixes = 0;
 	bool gnss_num_fixes_set = false;
 
-	enum loc_accuracy gnss_accuracy = LOC_ACCURACY_LOW;
+	enum loc_accuracy gnss_accuracy = 0;
 	bool gnss_accuracy_set = false;
 
 	int cellular_timeout = 0;
 	bool cellular_timeout_set = false;
 
-	bool method1_set = false;
-	enum loc_method method1 = LOC_METHOD_CELLULAR;
-	bool method2_set = false;
-	enum loc_method method2 = LOC_METHOD_GNSS;
+	int wlan_timeout = 0;
+	bool wlan_timeout_set = false;
+
+	enum loc_method method_list[LOC_MAX_METHODS] = { 0 };
 	int method_count = 0;
 
 	int opt;
@@ -244,6 +247,17 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			cellular_timeout_set = true;
 			break;
 
+		case LOCATION_SHELL_OPT_WLAN_TIMEOUT:
+			wlan_timeout = atoi(optarg);
+			if (wlan_timeout == 0) {
+				shell_error(shell,
+					    "WLAN timeout (%d) must be positive integer. ",
+					    wlan_timeout);
+				return -EINVAL;
+			}
+			wlan_timeout_set = true;
+			break;
+
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
 			interval_set = true;
@@ -266,33 +280,26 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_num_fixes = atoi(optarg);
 			gnss_num_fixes_set = true;
 			break;
-		case LOCATION_SHELL_OPT_METHOD_1:
+		case LOCATION_SHELL_OPT_METHOD:
+			if (method_count >= LOC_MAX_METHODS) {
+				shell_error(shell,
+					    "Maximum location methods (%d) exceeded. "
+					    "Location method (%s) still given.",
+					    LOC_MAX_METHODS, optarg);
+				return -EINVAL;
+			}
+
 			if (strcmp(optarg, "cellular") == 0) {
-				method1 = LOC_METHOD_CELLULAR;
+				method_list[method_count] = LOC_METHOD_CELLULAR;
 			} else if (strcmp(optarg, "gnss") == 0) {
-				method1 = LOC_METHOD_GNSS;
+				method_list[method_count] = LOC_METHOD_GNSS;
 			} else if (strcmp(optarg, "wlan") == 0) {
-				method1 = LOC_METHOD_WLAN;
+				method_list[method_count] = LOC_METHOD_WLAN;
 			} else {
-				shell_error(shell, "Unknown method given. See usage:");
+				shell_error(shell, "Unknown method (%s) given. See usage:", optarg);
 				goto show_usage;
 			}
 			method_count++;
-			method1_set = true;
-			break;
-		case LOCATION_SHELL_OPT_METHOD_2:
-			if (strcmp(optarg, "cellular") == 0) {
-				method2 = LOC_METHOD_CELLULAR;
-			} else if (strcmp(optarg, "gnss") == 0) {
-				method2 = LOC_METHOD_GNSS;
-			} else if (strcmp(optarg, "wlan") == 0) {
-				method1 = LOC_METHOD_WLAN;
-			} else {
-				shell_error(shell, "Unknown method given. See usage:");
-				goto show_usage;
-			}
-			method_count++;
-			method2_set = true;
 			break;
 		case '?':
 			goto show_usage;
@@ -318,84 +325,47 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		struct loc_method_config methods[LOC_MAX_METHODS] = { 0 };
 		struct loc_config *real_config = &config;
 
-		loc_config_defaults_set(&config, method_count, methods);
-
-		if (interval_set) {
-			config.interval = interval;
-		}
-
-		if (method_count == 1) {
-			if (method1_set) {
-				methods[0].method = method1;
-			} else if (method2_set) {
-				methods[0].method = method2;
-			}
-		} else if (method_count == 2) {
-			if (method1_set) {
-				methods[0].method = method1;
-			}
-			if (method1_set && method2_set) {
-				methods[1].method = method2;
-			}
-			if (!method1_set && method2_set) {
-				methods[0].method = method2;
-			}
-		} else if (method_count != 0) {
-			shell_error(shell, "Max number of methods is %d.", LOC_MAX_METHODS);
-			goto show_usage;
-		} else {
+		if (method_count == 0) {
 			/* No methods given. Use NULL to indicate default configuration. */
 			real_config = NULL;
 		}
 
-		if (methods[0].method == LOC_METHOD_GNSS) {
-			loc_config_method_defaults_set(&methods[0], LOC_METHOD_GNSS);
-			if (gnss_timeout_set) {
-				methods[0].gnss.timeout = gnss_timeout;
-			}
-			if (gnss_accuracy_set) {
-				methods[0].gnss.accuracy = gnss_accuracy;
-			}
-			if (gnss_num_fixes_set) {
-				methods[0].gnss.num_consecutive_fixes = gnss_num_fixes;
-			}
-		} else if (methods[1].method == LOC_METHOD_GNSS) {
-			loc_config_method_defaults_set(&methods[1], LOC_METHOD_GNSS);
-			if (gnss_timeout_set) {
-				methods[1].gnss.timeout = gnss_timeout;
-			}
-			if (gnss_accuracy_set) {
-				methods[1].gnss.accuracy = gnss_accuracy;
-			}
-			if (gnss_num_fixes_set) {
-				methods[1].gnss.num_consecutive_fixes = gnss_num_fixes;
+		loc_config_defaults_set(&config, method_count, methods);
+
+		for (uint8_t i = 0; i < method_count; i++) {
+			loc_config_method_defaults_set(&methods[i], method_list[i]);
+
+			if (method_list[i] == LOC_METHOD_GNSS) {
+				if (gnss_timeout_set) {
+					methods[i].gnss.timeout = gnss_timeout;
+				}
+				if (gnss_accuracy_set) {
+					methods[i].gnss.accuracy = gnss_accuracy;
+				}
+				if (gnss_num_fixes_set) {
+					methods[i].gnss.num_consecutive_fixes = gnss_num_fixes;
+				}
+			} else if (methods[i].method == LOC_METHOD_CELLULAR) {
+				if (cellular_timeout_set) {
+					methods[i].cellular.timeout = cellular_timeout;
+				}
+			} else if (methods[i].method == LOC_METHOD_WLAN) {
+				if (wlan_timeout_set) {
+					methods[i].wlan.timeout = wlan_timeout;
+				}
 			}
 		}
 
-		if (methods[0].method == LOC_METHOD_CELLULAR) {
-			loc_config_method_defaults_set(&methods[0], LOC_METHOD_CELLULAR);
-			if (cellular_timeout_set) {
-				methods[0].cellular.timeout = cellular_timeout;
-			}
-		} else if (methods[1].method == LOC_METHOD_CELLULAR) {
-			loc_config_method_defaults_set(&methods[1], LOC_METHOD_CELLULAR);
-			if (cellular_timeout_set) {
-				methods[1].cellular.timeout = cellular_timeout;
-			}
+		if (interval_set) {
+			config.interval = interval;
 		}
-
-		if (interval_set && !method1_set && !method2_set) {
-			shell_error(shell, "Method is mandatory to be given.");
-			goto show_usage;
-		}
-
 
 		ret = location_request(real_config);
 		if (ret) {
 			shell_error(shell, "Requesting location failed, err: %d", ret);
 			return -1;
 		}
-		shell_print(shell, "Started of getting a current location...");
+		shell_print(shell, "Started to get current location...");
 		break;
 	}
 	default:
