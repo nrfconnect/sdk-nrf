@@ -46,9 +46,6 @@ LOG_MODULE_REGISTER(nrf_cloud_fota, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
 
 #define JOB_REQUEST_LATEST_PAYLOAD "[\"\"]"
 
-/* Version 4 UUID: 32 bytes, 4 hyphens, NULL */
-#define JOB_ID_STRING_SIZE (32 + 4 + 1)
-
 /* Job format:
  * [“jobExecutionId”,firmwareType,fileSize,”host”,”path”]
  * ["BLE ID",“jobExecutionId”,firmwareType,fileSize,”host”,”path”]
@@ -68,15 +65,6 @@ enum rcv_item_idx {
 	RCV_ITEM_IDX__SIZE,
 };
 
-enum fota_validate_status {
-	NRF_CLOUD_FOTA_VALIDATE_NONE = 0,
-	NRF_CLOUD_FOTA_VALIDATE_PENDING,
-	NRF_CLOUD_FOTA_VALIDATE_PASS,
-	NRF_CLOUD_FOTA_VALIDATE_FAIL,
-	NRF_CLOUD_FOTA_VALIDATE_UNKNOWN,
-	NRF_CLOUD_FOTA_VALIDATE_DONE
-};
-
 struct nrf_cloud_fota_job {
 	cJSON *parsed_payload;
 	enum nrf_cloud_fota_status status;
@@ -85,12 +73,6 @@ struct nrf_cloud_fota_job {
 	int dl_progress;
 	/* tracking for CONFIG_NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT */
 	int sent_dl_progress;
-};
-
-struct settings_fota_job {
-	enum fota_validate_status validate;
-	enum nrf_cloud_fota_type type;
-	char id[JOB_ID_STRING_SIZE];
 };
 
 enum subscription_topic_index {
@@ -114,7 +96,7 @@ static int send_job_update(struct nrf_cloud_fota_job *const job);
 static int publish(const struct mqtt_publish_param *const pub);
 static int save_validate_status(const char *const job_id,
 			   const enum nrf_cloud_fota_type job_type,
-			   const enum fota_validate_status status);
+			   const enum nrf_cloud_fota_validate_status status);
 static int fota_settings_set(const char *key, size_t len_rd,
 			     settings_read_cb read_cb, void *cb_arg);
 static int report_validated_job_status(void);
@@ -140,23 +122,14 @@ static struct mqtt_topic sub_topics[SUB_TOPIC_IDX__COUNT] = {
 
 static enum fota_download_evt_id last_fota_dl_evt = FOTA_DOWNLOAD_EVT_ERROR;
 static struct nrf_cloud_fota_job current_fota;
-static uint8_t last_job[JOB_ID_STRING_SIZE];
-static struct settings_fota_job saved_job = {
+static uint8_t last_job[NRF_CLOUD_FOTA_JOB_ID_SIZE];
+static struct nrf_cloud_settings_fota_job saved_job = {
 	.type = NRF_CLOUD_FOTA_TYPE__INVALID
 };
 static bool initialized;
 static bool fota_dl_initialized;
 
-#define SETTINGS_KEY_FOTA "fota"
-#define SETTINGS_FULL_FOTA NRF_CLOUD_SETTINGS_NAME \
-			   "/" \
-			   SETTINGS_KEY_FOTA
-#define SETTINGS_FOTA_JOB "job"
-#define SETTINGS_FULL_FOTA_JOB SETTINGS_FULL_FOTA \
-			       "/" \
-			       SETTINGS_FOTA_JOB
-
-SETTINGS_STATIC_HANDLER_DEFINE(fota, SETTINGS_FULL_FOTA, NULL,
+SETTINGS_STATIC_HANDLER_DEFINE(fota, NRF_CLOUD_SETTINGS_FULL_FOTA, NULL,
 			       fota_settings_set, NULL, NULL);
 
 static int fota_settings_set(const char *key, size_t len_rd,
@@ -169,7 +142,7 @@ static int fota_settings_set(const char *key, size_t len_rd,
 
 	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
 
-	if (!strncmp(key, SETTINGS_FOTA_JOB, strlen(SETTINGS_FOTA_JOB)) &&
+	if (!strncmp(key, NRF_CLOUD_SETTINGS_FOTA_JOB, strlen(NRF_CLOUD_SETTINGS_FOTA_JOB)) &&
 	    (len_rd == sizeof(saved_job))) {
 		if (read_cb(cb_arg, (void *)&saved_job, len_rd) == len_rd) {
 			LOG_DBG("Saved job: %s, type: %d, validate: %d",
@@ -181,9 +154,9 @@ static int fota_settings_set(const char *key, size_t len_rd,
 	return -ENOTSUP;
 }
 
-static enum fota_validate_status get_modem_update_status(void)
+static enum nrf_cloud_fota_validate_status get_modem_update_status(void)
 {
-	enum fota_validate_status ret = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+	enum nrf_cloud_fota_validate_status ret = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 
 #if defined(CONFIG_NRF_MODEM_LIB)
 	int modem_dfu_res = nrf_modem_lib_get_init_ret();
@@ -214,7 +187,7 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 {
 	int ret;
 	bool update_was_pending = false;
-	enum fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 
 	if (cb == NULL) {
 		LOG_ERR("Invalid parameter");
@@ -557,7 +530,7 @@ bool nrf_cloud_fota_is_active(void)
 
 static int save_validate_status(const char *const job_id,
 			   const enum nrf_cloud_fota_type job_type,
-			   const enum fota_validate_status validate)
+			   const enum nrf_cloud_fota_validate_status validate)
 {
 #if defined(CONFIG_SHELL)
 	if (job_id == NULL) {
@@ -585,7 +558,7 @@ static int save_validate_status(const char *const job_id,
 		}
 	}
 
-	ret = settings_save_one(SETTINGS_FULL_FOTA_JOB, &saved_job,
+	ret = settings_save_one(NRF_CLOUD_SETTINGS_FULL_FOTA_JOB, &saved_job,
 				sizeof(saved_job));
 	if (ret) {
 		LOG_ERR("settings_save_one failed: %d", ret);
@@ -799,9 +772,9 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 	}
 
 	job_id_len = strlen(job_info->id);
-	if (job_id_len > (JOB_ID_STRING_SIZE - 1)) {
+	if (job_id_len > (NRF_CLOUD_FOTA_JOB_ID_SIZE - 1)) {
 		LOG_ERR("Job ID length: %d, exceeds allowed length: %d",
-			job_id_len, JOB_ID_STRING_SIZE - 1);
+			job_id_len, NRF_CLOUD_FOTA_JOB_ID_SIZE - 1);
 		goto cleanup;
 	}
 

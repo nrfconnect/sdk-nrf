@@ -52,7 +52,18 @@ extern "C" {
 #define IS_VALID_USER_TAG(tag) ((tag >= NCT_MSG_ID_USER_TAG_BEGIN) && \
 				(tag <= NCT_MSG_ID_USER_TAG_END))
 /** nRF Cloud's string identifier for persistent settings */
-#define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
+#define NRF_CLOUD_SETTINGS_NAME		"nrf_cloud"
+#define NRF_CLOUD_SETTINGS_FOTA_KEY	"fota"
+#define NRF_CLOUD_SETTINGS_FOTA_JOB	"job"
+/** String used when defining a settings handler for FOTA */
+#define NRF_CLOUD_SETTINGS_FULL_FOTA		NRF_CLOUD_SETTINGS_NAME \
+						"/" \
+						NRF_CLOUD_SETTINGS_FOTA_KEY
+/** String used when saving FOTA job info to settings */
+#define NRF_CLOUD_SETTINGS_FULL_FOTA_JOB	NRF_CLOUD_SETTINGS_FULL_FOTA \
+						"/" \
+						NRF_CLOUD_SETTINGS_FOTA_JOB
+
 /** Current FOTA version number */
 #define NRF_CLOUD_FOTA_VER              2
 /** Current FOTA version string used in device shadow */
@@ -186,6 +197,9 @@ enum nrf_cloud_fota_type {
 	NRF_CLOUD_FOTA_TYPE__INVALID
 };
 
+/** Size of nRF Cloud FOTA job ID; version 4 UUID: 32 bytes, 4 hyphens, NULL */
+#define NRF_CLOUD_FOTA_JOB_ID_SIZE (32 + 4 + 1)
+
 /**@brief Common FOTA job info */
 struct nrf_cloud_fota_job_info {
 	enum nrf_cloud_fota_type type;
@@ -194,6 +208,23 @@ struct nrf_cloud_fota_job_info {
 	char *host;
 	char *path;
 	int file_size;
+};
+
+/** Validity of an in-progress/installed FOTA update */
+enum nrf_cloud_fota_validate_status {
+	NRF_CLOUD_FOTA_VALIDATE_NONE = 0,
+	NRF_CLOUD_FOTA_VALIDATE_PENDING,
+	NRF_CLOUD_FOTA_VALIDATE_PASS,
+	NRF_CLOUD_FOTA_VALIDATE_FAIL,
+	NRF_CLOUD_FOTA_VALIDATE_UNKNOWN,
+	NRF_CLOUD_FOTA_VALIDATE_DONE
+};
+
+/** @brief FOTA job info provided to the settings module to track FOTA job status. */
+struct nrf_cloud_settings_fota_job {
+	enum nrf_cloud_fota_validate_status validate;
+	enum nrf_cloud_fota_type type;
+	char id[NRF_CLOUD_FOTA_JOB_ID_SIZE];
 };
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
