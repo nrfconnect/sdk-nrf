@@ -455,6 +455,7 @@ static void loc_core_timeout_work_fn(struct k_work *work)
 void loc_core_timer_start(uint16_t timeout)
 {
 	if (timeout > 0) {
+		LOG_DBG("Starting timer with timeout=%d", timeout);
 		k_work_schedule_for_queue(
 			loc_core_work_queue_get(),
 			&loc_timeout_work,
