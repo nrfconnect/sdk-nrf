@@ -95,6 +95,7 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
+/samples/                                 @nrfconnect/ncs-test-leads
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
@@ -126,7 +127,7 @@ Kconfig*                                  @tejlmand
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
-/scripts/                                 @mbolivar-nordic @tejlmand
+/scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
 /share/zephyrbuild-package/               @tejlmand
