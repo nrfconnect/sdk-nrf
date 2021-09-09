@@ -195,9 +195,23 @@ static void watchdog_handler(const struct watchdog_evt *evt)
 }
 #endif /* defined(CONFIG_WATCHDOG_APPLICATION) */
 
-static void send_memfault_data(void)
+/**
+ * @brief Send Memfault data. Memfault data should always be sent over the internal HTTP transport
+ *	  upon a connection to LTE. This is to not be dependent on a cloud connection for critical
+ *	  data such as coredumps. For regular metric updates the transport can be selected by
+ *	  setting CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT.
+ *
+ * @param[in] lte_connected Flag set when the debug module is notified that an LTE connection
+ *			    has been established.
+ */
+static void send_memfault_data(bool lte_connected)
 {
 	bool data_available = memfault_packetizer_data_available();
+
+	if (lte_connected && data_available) {
+		k_sem_give(&mflt_internal_send_sem);
+		return;
+	}
 
 #if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
 	if (data_available) {
@@ -278,9 +292,20 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	 * compared to having Memfault SDK trigger regular updates independently. All data
 	 * should preferably be sent within the same LTE RRC connected window.
 	 */
-	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
-	    (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED))) {
-		send_memfault_data();
+	if (IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) {
+		send_memfault_data(false);
+		return;
+	}
+
+	/* When the device connects to LTE, the debug module will check if there is available
+	 * Memfault data and send it before the application connects to cloud. If Memfault data
+	 * has been stored prior to receiving an LTE connected event, there is the likelihood
+	 * that the data is a coredump from a previous crash. This data must be prioritized and
+	 * should not depend on a connection to cloud. Due to a limitation of maximum 1 TLS
+	 * handshake occur at the time, this will cause the first cloud connection attempt to fail.
+	 */
+	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) {
+		send_memfault_data(true);
 		return;
 	}
 
