@@ -280,13 +280,13 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 To build with SES, in the :guilabel:`Extended Settings` specify ``-DSHIELD=nrf21540_ek``.
 See :ref:`cmake_options`.
 
-When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter to build for the network core as well.
+When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core as well.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -D\*multiprotocol_rpmsg_\*SHIELD=nrf21540_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -Dmultiprotocol_rpmsg_SHIELD=nrf21540_ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:
