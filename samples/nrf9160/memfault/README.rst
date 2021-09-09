@@ -20,7 +20,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
 
-Before using the Memfault platform, you must register an account in `Memfault`_ and a set up a project according to the instructions in `Memfault documentation <Memfault Docs_>`_.
+Before using the Memfault platform, you must register an account in the `Memfault registration page`_ and `create a new project in Memfault`_.
 
 .. include:: /includes/spm.txt
 
@@ -176,7 +176,7 @@ Before testing, ensure that your device is configured with your Memfault project
 
         <inf> memfault_sample: Connecting to LTE network, this may take several minutes...
 
-#. When the connection is established, the sample displays the captured LTE time-to-connect metric (`Ncs_LteTimeToConnect``) on the terminal:
+#. When the connection is established, the sample displays the captured LTE time-to-connect metric (``Ncs_LteTimeToConnect``) on the terminal:
 
    .. code-block:: console
 
@@ -193,7 +193,17 @@ Before testing, ensure that your device is configured with your Memfault project
         <dbg> <mflt>: Body: Accepted
         <dbg> <mflt>: No more data to send
 
-#. Press <TAB> on your keyboard to confirm that the Memfault shell is working.
+#. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed. The symbol file is located in the build folder: :file:`memfault/build/zephyr/zephyr.elf`:
+
+   a. In a web browser, navigate to `Memfault`_.
+   b. Login to your account and select the project you created earlier.
+   c. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left menu.
+
+      You can see your newly connected device and the software version in the list.
+
+   d. Click on the software version number for your device and then the :guilabel:`Upload` button to upload the symbol file.
+
+#. Back in the terminal, press <TAB> on your keyboard to confirm that the Memfault shell is working.
    The available shell commands are displayed:
 
    .. code-block:: console
@@ -204,13 +214,9 @@ Before testing, ensure that your device is configured with your Memfault project
           mflt               mflt_nrf           nrf_clock_control  resize
           shell
 
-#. Explore the available Memfault shell commands by issuing the command ``mflt help``.
-
+#. Learn about the available Memfault shell commands by issuing the command ``mflt help``.
 #. Press **Button 1** or **Button 2** to trigger a stack overflow or a NULL pointer dereference, respectively.
-
-#. In a web browser, navigate to `Memfault`_, sign in and follow the instructions in `Memfault documentation <Memfault Docs_>`_ to view the uploaded data.
-   Note that the symbol file for the sample must be uploaded for Memfault to parse the information.
-   The symbol file is located at the following path: :file:`<sample folder>/build/zephyr/zephyr.elf`.
+#. Explore the Memfault user interface to look at the errors and metrics that has been sent from your device.
 
 
 Dependencies

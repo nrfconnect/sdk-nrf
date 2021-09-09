@@ -561,6 +561,8 @@
 .. _`Memfault`: https://memfault.com/
 .. _`Memfault Docs`: https://docs.memfault.com/
 .. _`Memfault SDK`: https://docs.memfault.com/docs/embedded/introduction/
+.. _`Memfault nRF Connect SDK integration guide`: https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide
+.. _`create a new project in Memfault`: https://docs.memfault.com/docs/platform/create-new-project
 .. _`Memfault Terminology`: https://docs.memfault.com/docs/platform/memfault-terminology/
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/

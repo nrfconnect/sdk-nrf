@@ -69,6 +69,7 @@ Add a new folder into your project called :file:`config` and add the following t
 * ``memfault_metrics_heartbeat_config.def`` - Defines application-specific metrics
 * ``memfault_trace_reason_user_config.def`` - Defines application-specific trace reasons
 
+For more information, you can see `Memfault nRF Connect SDK integration guide`_.
 You can use the files in the :ref:`memfault_sample` sample as a reference.
 To have these configuration files in the include path, add the following in the :file:`CMakeLists.txt` file:
 
