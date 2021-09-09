@@ -40,7 +40,7 @@
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp/ppp_shell.h"
 #endif
-#if defined(CONFIG_MOSH_LOCATION_API)
+#if defined(CONFIG_MOSH_LOCATION)
 #include "location_shell.h"
 #endif
 #if defined(CONFIG_MOSH_SIMPLE_REST_CLIENT)
@@ -213,7 +213,7 @@ SHELL_CMD_REGISTER(ppp, NULL,
 	ppp_shell_cmd);
 #endif
 
-#if defined(CONFIG_MOSH_LOCATION_API)
+#if defined(CONFIG_MOSH_LOCATION)
 SHELL_CMD_REGISTER(location, NULL,
 	"Commands for accessing Location API.",
 	location_shell);

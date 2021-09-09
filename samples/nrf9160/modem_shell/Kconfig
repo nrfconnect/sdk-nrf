@@ -70,6 +70,20 @@ config MOSH_FOTA
 	help
 	  FOTA for performing software updates over-the-air for both modem and application side.
 
+config MOSH_LOCATION
+	bool "Location"
+	default y
+	select LOCATION
+	help
+	  Location tool for location queries via location library.
+
+config MOSH_SIMPLE_REST_CLIENT
+	bool "Simple REST"
+	default y
+	select SREST_CLIENT_LIB
+	help
+	  Simple REST tool for using Simple REST library.
+
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
 	default 1024
@@ -86,20 +100,6 @@ config MOSH_WORKER_THREADS
 
 endmenu
 endif #MOSH_IPERF3
-
-config MOSH_LOCATION_API
-	bool "Location API support"
-	default y
-	select LOCATION
-	help
-	  Location queries via Location API.
-
-config MOSH_SIMPLE_REST_CLIENT
-	bool "Simple REST client"
-	default y
-	select SREST_CLIENT_LIB
-	help
-	  Simple REST client.
 
 if MOSH_LINK
 menu "MoSH link control selections"

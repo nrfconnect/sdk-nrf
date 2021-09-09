@@ -49,7 +49,7 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 
-#if defined(CONFIG_MOSH_LOCATION_API)
+#if defined(CONFIG_MOSH_LOCATION)
 #include "location_shell.h"
 #endif
 
@@ -166,7 +166,7 @@ void main(void)
 	}
 #endif
 
-#if defined(CONFIG_MOSH_LOCATION_API)
+#if defined(CONFIG_MOSH_LOCATION)
 	/* Location API should be initialized between lte_lc_init and before normal mode: */
 	location_ctrl_init();
 #endif
