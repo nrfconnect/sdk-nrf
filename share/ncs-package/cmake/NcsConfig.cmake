@@ -2,8 +2,6 @@
 set(NRF_RELATIVE_DIR "../../..")
 set(NCS_RELATIVE_DIR "../../../..")
 
-set(NCS_TOOLCHAIN_MINIMUM_REQUIRED 1.7.0)
-
 # Set the current NRF_DIR
 # The use of get_filename_component ensures that the final path variable will not contain `../..`.
 get_filename_component(NRF_DIR ${CMAKE_CURRENT_LIST_DIR}/${NRF_RELATIVE_DIR} ABSOLUTE)
@@ -16,6 +14,13 @@ set(NCS_VERSION_MAJOR ${CMAKE_MATCH_1})
 set(NCS_VERSION_MINOR ${CMAKE_MATCH_2})
 set(NCS_VERSION_PATCH ${CMAKE_MATCH_3})
 set(NCS_VERSION_EXTRA ${CMAKE_MATCH_4})
+
+file(STRINGS ${NRF_DIR}/scripts/ncs-toolchain-version-minimum.txt
+     toolchain_string LIMIT_COUNT 1 REGEX "^nrf-connect-sdk-toolchain="
+)
+
+string(REGEX MATCH "=([^ \t]*)" OUT_VAR "${toolchain_string}")
+set(NCS_TOOLCHAIN_MINIMUM_REQUIRED ${CMAKE_MATCH_1})
 
 if(NOT NO_BOILERPLATE)
   if(NCS_TOOLCHAIN_VERSION)
