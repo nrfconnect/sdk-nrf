@@ -16,9 +16,6 @@ To access different versions of the |NCS| documentation, use the version drop-do
 To view the documentation from the different repositories that are part of |NCS|, click the arrow in the bottom left corner and select the desired document set.
 A "99" at the end of the version number of this documentation indicates continuous updates on the master branch since the previous major.minor release.
 
-The search functionality only works for the documentation set you are in.
-For example, if you search in the |NCS| documentation set, you will only find documents related to it, not Zephyr documentation.
-
 In addition to the |NCS| documentation, information is available in the following locations:
 
 .. rst-class:: doc-link blue-box
