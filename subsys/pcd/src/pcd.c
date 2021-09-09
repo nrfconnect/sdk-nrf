@@ -131,7 +131,7 @@ static int pcd_cmd_write(const void *data, size_t len, off_t offset)
 	return 0;
 }
 
-int pcd_network_core_update(const void *src_addr, size_t len)
+static int network_core_update(const void *src_addr, size_t len, bool wait)
 {
 	int err;
 
@@ -154,6 +154,10 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 	nrf_reset_network_force_off(NRF_RESET, false);
 	LOG_INF("Turned on network core");
 
+	if (!wait) {
+		return 0;
+	}
+
 	do {
 		/* Wait for 1 second to avoid issue where network core
 		 * is unable to write to shared RAM.
@@ -172,6 +176,16 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 	LOG_INF("Turned off network core");
 
 	return 0;
+}
+
+int pcd_network_core_update_initiate(const void *src_addr, size_t len)
+{
+	return network_core_update(src_addr, len, false);
+}
+
+int pcd_network_core_update(const void *src_addr, size_t len)
+{
+	return network_core_update(src_addr, len, true);
 }
 
 void pcd_lock_ram(void)
