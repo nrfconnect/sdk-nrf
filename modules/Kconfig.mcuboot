@@ -41,11 +41,12 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 config BOOT_IMAGE_ACCESS_HOOKS_FILE
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/hooks/nrf53_hooks.c"
-	depends on MCUBOOT
+	depends on BOOT_IMAGE_ACCESS_HOOKS
 
 config BOOT_IMAGE_ACCESS_HOOKS
 	bool
 	default y if UPDATEABLE_IMAGE_NUMBER > 1 && SOC_NRF5340_CPUAPP && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	depends on MCUBOOT
 
 config BOOT_UPGRADE_ONLY
 	bool
