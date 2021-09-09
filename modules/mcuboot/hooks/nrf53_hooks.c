@@ -65,7 +65,7 @@ int boot_read_swap_state_primary_slot_hook(int image_index,
 	return BOOT_HOOK_REGULAR;
 }
 
-int network_core_update(void)
+int network_core_update(bool wait)
 {
 	struct image_header *hdr;
 	static const struct device *mock_flash_dev;
@@ -86,8 +86,11 @@ int network_core_update(void)
 		uint32_t reset_addr = vtable[1];
 
 		if (reset_addr > PM_CPUNET_B0N_ADDRESS) {
-			int rc = pcd_network_core_update(vtable, fw_size);
-			return rc;
+			if (wait) {
+				return pcd_network_core_update(vtable, fw_size);
+			} else {
+				return pcd_network_core_update_initiate(vtable, fw_size);
+			}
 		}
 	}
 
@@ -99,7 +102,7 @@ int boot_copy_region_post_hook(int img_index, const struct flash_area *area,
 		size_t size)
 {
 	if (img_index == NET_CORE_SECONDARY_SLOT) {
-		return network_core_update();
+		return network_core_update(true);
 	}
 
 	return 0;
@@ -109,7 +112,7 @@ int boot_serial_uploaded_hook(int img_index, const struct flash_area *area,
 		size_t size)
 {
 	if (img_index == NET_CORE_VIRTUAL_PRIMARY_SLOT) {
-		return network_core_update();
+		return network_core_update(false);
 	}
 
 	return 0;

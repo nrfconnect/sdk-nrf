@@ -69,6 +69,22 @@ enum pcd_status {
  */
 int pcd_network_core_update(const void *src_addr, size_t len);
 
+/** @brief Sets up the PCD command structure with the location and size of the
+ *	   firmware update. Then boots the network core and initiates the
+ *	   update procedure. The function will return before the update
+ *	   procedure on the network core has completed or failed, and will
+ *	   indicate succes as long as the initialization of the update
+ *	   procedure was successful. The network core will still be in a
+ *	   powered on state when this function returns.
+ *
+ * @param src_addr Start address of the data which is to be copied into the
+ *                 network core.
+ * @param len Length of the data which is to be copied into the network core.
+ *
+ * @retval 0 on success, an error code on failure.
+ */
+int pcd_network_core_update_initiate(const void *src_addr, size_t len);
+
 /** @brief Lock the RAM section used for IPC with the network core bootloader.
  */
 void pcd_lock_ram(void);
