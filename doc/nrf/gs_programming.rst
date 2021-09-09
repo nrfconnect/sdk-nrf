@@ -185,7 +185,7 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
       See :ref:`configure_application` for additional information about configuring an application.
 
-      After running the ``west build`` command, the build files can be found in ``build/zephyr``.
+      After running the ``west build`` command, the build files can be found in :file:`build/zephyr`.
       For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents`.
 
       .. include:: gs_programming.rst

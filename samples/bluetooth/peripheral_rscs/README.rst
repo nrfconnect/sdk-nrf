@@ -28,6 +28,7 @@ The sample supports the following development kits:
 
 The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
+
 User interface
 **************
 

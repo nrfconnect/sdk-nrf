@@ -17,7 +17,7 @@ When to use multiple images
 ***************************
 
 An *image*, also referred to as *executable*, *program*, or *elf file*, consists of pieces of code and data that are identified by image-unique names recorded in a single symbol table.
-The symbol table exists as metadata in a ``.elf`` or ``.exe`` file and is not included when the image is converted to a HEX file for programming.
+The symbol table exists as metadata in a :file:`.elf` or :file:`.exe` file and is not included when the image is converted to a HEX file for programming.
 Instead, a linker places the code and data at their addresses.
 
 Only images require this linking process.

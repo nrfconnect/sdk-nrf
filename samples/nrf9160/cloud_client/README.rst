@@ -59,7 +59,8 @@ Each cloud backend has specific setup steps that must be executed before it can 
 Configurations
 **************
 
-The configurations used in the sample are listed below. They can be added to ``cloud_client/prj.conf``.
+The configurations used in the sample are listed below.
+They can be added to :file:`cloud_client/prj.conf`.
 
 .. options-from-kconfig::
    :prefix: "This option "
@@ -76,7 +77,7 @@ The configurations used in the sample are listed below. They can be added to ``c
    However, note that in certain LTE networks, the NAT timeout can be considerably lower than the maximum allowed MQTT keepalive.
    So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :kconfig:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
 
-Functionality and Supported Technologies
+Functionality and supported technologies
 ****************************************
 
 The communication protocol supported by the sample is dependent on the cloud backend that is used.

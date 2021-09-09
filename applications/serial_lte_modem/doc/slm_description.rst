@@ -148,7 +148,7 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
 
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
-   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :kconfig:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when when :kconfig:`CONFIG_SLM_CONNECT_UART_2` is selected.
+   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :kconfig:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when :kconfig:`CONFIG_SLM_CONNECT_UART_2` is selected.
 
 .. option:: CONFIG_SLM_SOCKET_RX_MAX - Maximum RX buffer size for receiving socket data
 

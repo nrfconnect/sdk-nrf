@@ -48,7 +48,7 @@ Using TLS and DTLS
 When the :kconfig:`CONFIG_SAMPLE_SECURE_SOCKET` option is set, the sample provisions the certificate found in the :file:`samples/nrf9160/download/cert` folder.
 The certificate file name is indicated by the :kconfig:`CONFIG_SAMPLE_CERT_FILE` option.
 This certificate will work for the default test files.
-If you are using a custom download test file, you have to provision the correct certificate for the servers from which the certificates will be downloaded.
+If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
 
 See :ref:`cert_dwload` for more information.
 
@@ -105,7 +105,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Observe that the progress bar fills up as the download progresses.
 #. Observe that the sample displays the message "Download completed" on the terminal when the download completes.
 
-Sample Output
+Sample output
 =============
 
 The following output is logged on the terminal when the sample downloads a file from an HTTPS server:

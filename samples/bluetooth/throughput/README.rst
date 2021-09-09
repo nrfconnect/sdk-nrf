@@ -80,7 +80,6 @@ You can adjust the following parameters:
 .. note::
    When you have set the LE Connection Interval to high values and need to change the PHY or the Data Length in the next test, the PHY Update procedure or Data Length Update procedure can take several seconds.
 
-
 Requirements
 ************
 

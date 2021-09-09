@@ -70,7 +70,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nfc_uri`
 * :ref:`nfc_t4t_ndef_file_readme`
 
-In addition, it uses the Type 4 Tag library from nrfxlib:
+In addition, it uses the Type 4 Tag library from `sdk-nrfxlib`_:
 
 * :ref:`nrfxlib:nfc_api_type4`
 

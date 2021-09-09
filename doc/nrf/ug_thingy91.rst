@@ -47,7 +47,7 @@ Thingy:91 uses the following UART baud rate configuration:
 Firmware
 ********
 
-The firmware of Thingy:91 has been developed using the nRF Connect SDK.
+The firmware of Thingy:91 has been developed using the |NCS|.
 It is open source, and can be modified according to specific needs.
 The :ref:`asset_tracker` application firmware, which is preprogrammed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
 

@@ -90,7 +90,7 @@ Testing with nRF Connect for Desktop
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Click the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the ``ANCS_central.ncs`` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
+   Load the :file:`ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Click the :guilabel:`Connection Map` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.

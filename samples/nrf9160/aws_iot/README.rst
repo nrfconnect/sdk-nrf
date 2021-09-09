@@ -56,7 +56,8 @@ For FOTA DFU related documentation, see :ref:`aws_fota_sample`.
 Configuration
 *************
 
-The configurations used in the sample are listed below. They are located in ``aws_iot/src/prj.conf``.
+The configurations used in the sample are listed below.
+They are located in :file:`aws_iot/src/prj.conf`.
 
 .. option:: CONFIG_APP_VERSION
 
@@ -93,7 +94,7 @@ Testing
 
    The sample might require increasing the values of :kconfig:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
 
-Sample Output
+Sample output
 =============
 
 When the sample runs, the device boots, and the sample displays the following output in the terminal over UART:

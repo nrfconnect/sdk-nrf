@@ -10,14 +10,12 @@ Bluetooth: Central BAS
 The Central BAS sample demonstrates how do use the :ref:`bas_client_readme`.
 It uses the BAS Client to receive battery level information from a compatible device.
 
-
 Overview
 ********
 
 When connected, the sample subscribes to battery level notifications.
 Every notification that is received is printed to the terminal.
 If the device does not support notifications for the Battery Level Characteristic, you can request to read the battery level by pressing Button 1.
-
 
 Requirements
 ************
@@ -28,8 +26,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns , nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810
 
-The sample also requires a device running a BAS Server to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop)
-
+The sample also requires a device running a BAS Server to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 
 User interface
 **************
@@ -85,7 +82,7 @@ Testing with nRF Connect for Desktop
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the ``hids_keyboard.ncs`` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+   Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Go to the :guilabel:`Connection Map` tab.
    Click the dongle configuration and select :guilabel:`Advertising setup`.

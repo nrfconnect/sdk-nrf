@@ -22,7 +22,6 @@ If any boot reports are detected, the behavior depends on if they are boot mouse
 * If a boot mouse report is detected, the sample subscribes to it.
 * If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (Button 1 and 3).
 
-
 Requirements
 ************
 
@@ -122,7 +121,7 @@ Testing with nRF Connect for Desktop
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the ``hids_keyboard.ncs`` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
+   Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Go to the :guilabel:`Connection Map` tab.
    Click the dongle configuration and select :guilabel:`Advertising setup`.

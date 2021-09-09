@@ -3,6 +3,10 @@
 Bluetooth: Host for nRF RPC Bluetooth Low Energy
 ################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF RPC Host sample demonstrates the Bluetooth® Low Energy (LE) stack with the :ref:`nrfxlib:nrf_rpc` library, which exposes the stack's interface to another device or CPU using `Remote Procedure Calls (RPC)`_.
 On an nRF53 device, this sample is supposed to run on the network core and it provides the Bluetooth LE functionality for the application core.
 
@@ -82,12 +86,10 @@ After programming the example build to your development kit, test it by performi
 Dependencies
 ************
 
-This sample uses the following libraries:
-
-From |NCS|
+This sample uses the following |NCS| library:
 
 * :ref:`ble_rpc`
 
-From nrfxlib
+It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_rpc`

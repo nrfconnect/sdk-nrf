@@ -55,7 +55,7 @@ After programming the sample to your development kit, you can test it with `nRF 
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the ``cts_central.ncs`` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
+   Load the :file:`cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Go to the :guilabel:`Connection Map` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.

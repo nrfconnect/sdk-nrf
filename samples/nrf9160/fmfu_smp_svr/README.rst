@@ -122,15 +122,15 @@ You can use the mcumgr CLI tool to test if the sample is running correctly, as f
 Dependencies
 ************
 
-This sample uses the following nRF Connect SDK libraries:
+This sample uses the following |NCS| libraries:
 
 * :ref:`lib_fmfu_mgmt`
 * :ref:`modem_info_readme`
 
-This sample uses the following nrfxlib libraries:
+This sample uses the following `sdk-nrfxlib` library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following nRF Connect SDK sample:
+In addition, it uses the following |NCS| sample:
 
 * :ref:`secure_partition_manager`

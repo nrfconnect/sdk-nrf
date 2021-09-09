@@ -87,11 +87,10 @@ The following output is displayed in the terminal:
 Dependencies
 ************
 
+This sample uses the following `sdk-nrfxlib`_ library:
 
-This sample uses the following libraries:
+* :ref:`nrfxlib:nrf_rpc`
 
-From nrfxlib
-  * :ref:`nrfxlib:nrf_rpc`
+It also uses the following Zephyr library:
 
-From Zephyr
-  * :ref:`zephyr:entropy_api`
+ * :ref:`zephyr:entropy_api`

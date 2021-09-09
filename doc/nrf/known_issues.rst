@@ -166,7 +166,7 @@ Problems with RTT Viewer/Logger
   The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.
 
   **Workaround:** Set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
-  If this does not work, look in the ``builddir/zephyr/zephyr.map`` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
+  If this does not work, look in the :file:`builddir/zephyr/zephyr.map` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
@@ -540,7 +540,7 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
   For more detailed information, see the ``Known issues and limitations`` section of the SoftDevice Controller's :ref:`nrfxlib:softdevice_controller_changelog`.
 
   .. note::
-     The Kconfig option name changed from ``CONFIG_DESKTOP_BLE_DIRECT_ADV`` to :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` beginning with the nRF Connect SDK v1.5.99.
+     The Kconfig option name changed from ``CONFIG_DESKTOP_BLE_DIRECT_ADV`` to :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` beginning with the |NCS| v1.5.99.
 
   **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 
@@ -861,7 +861,7 @@ NCSDK-8232: Secure Partition Manager and application building together
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 NCSDK-7982: partition manager: Incorrect partition size linkage from name conflict
-  Partition manager will incorrectly link a partition's size to the size of its container if the container partition's name matches its child image's name in ``CMakeLists.txt``.
+  Partition manager will incorrectly link a partition's size to the size of its container if the container partition's name matches its child image's name in :file:`CMakeLists.txt`.
   This can cause the inappropriately-sized partition to overwrite another partition beyond its intended boundary.
 
   **Workaround:** Rename the container partitions in the ``pm.yml`` and ``pm_static.yml`` files to something that does not match the child images' names, and rename the child images' main image partition to its name in ``CMakeLists.txt``.

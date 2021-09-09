@@ -431,7 +431,7 @@ Enable it with the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 Along with the bootloader, you must also enable an image manager with the :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER` Kconfig options.
 
 When MCUboot is enabled the |NCS| build system generates the update image that can be uploaded to the secondary (update) slot.
-The resulting signed file named ``app_update.bin`` can be found in the build directory.
+The resulting signed file named :file:`app_update.bin` can be found in the build directory.
 For more information refer to :ref:`mcuboot_ncs`.
 This image is signed with MCUboot private key.
 By default, if private key is present at :file:`applications/pelion_client/configuration/${BOARD_NAME}/mcuboot_private.pem` it will be used for signing process.

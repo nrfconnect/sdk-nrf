@@ -22,7 +22,7 @@ Module events
 Implementation details
 **********************
 
-nRF Desktop uses the |ble_adv| module from :ref:`lib_caf` (CAF).
+nRF Desktop uses the |ble_adv| from :ref:`lib_caf` (CAF).
 See the :ref:`CAF Bluetooth LE advertising <caf_ble_adv>` page for implementation details.
 
 For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.

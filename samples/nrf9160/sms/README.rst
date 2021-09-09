@@ -47,7 +47,7 @@ Check and configure the following configuration option for the sample:
 
    The sample configuration is used to set the recipient phone number if you need to send SMS.
 
-Additional Configuration
+Additional configuration
 ========================
 
 Check and configure the following mandatory library options that are used by the sample:

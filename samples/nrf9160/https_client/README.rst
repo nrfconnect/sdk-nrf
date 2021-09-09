@@ -58,7 +58,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Open a terminal emulator and observe that the sample starts, provisions certificates, connects to the LTE network and to example.com, and then sends an HTTP HEAD request.
 #. Observe that the HTTP HEAD request returns ``HTTP/1.1 200 OK``.
 
-Sample Output
+Sample output
 =============
 
 The sample shows the following output:

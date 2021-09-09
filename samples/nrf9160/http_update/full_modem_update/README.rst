@@ -85,19 +85,20 @@ After programming the sample to the development kit, test it by performing the f
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * :ref:`lib_fota_download`
-  * :ref:`lib_dfu_target`
-  * :ref:`lib_dfu_target_full_modem_update`
-  * :ref:`lib_fmfu_fdev`
-  * :ref:`secure_partition_manager`
+* :ref:`lib_fota_download`
+* :ref:`lib_dfu_target`
+* :ref:`lib_dfu_target_full_modem_update`
+* :ref:`lib_fmfu_fdev`
+* :ref:`secure_partition_manager`
 
-From nrfxlib
-  * :ref:`nrfxlib:nrf_modem`
+It uses the following `sdk-nrfxlib`_ library:
 
-From Zephyr
+* :ref:`nrfxlib:nrf_modem`
+
+It also uses the following Zephyr libraries:
+
   * :ref:`zephyr:flash_api`
   * :ref:`zephyr:logging_api`
   * :ref:`zephyr:gpio_api`

@@ -38,7 +38,7 @@ This is due to the simple UDP/IP behavior demonstrated by the sample, which make
 .. note::
    Logging output is disabled by default in this sample to produce the lowest possible amount of current consumption.
 
-Measuring Current
+Measuring current
 =================
 
 For measuring current on an nRF9160 DK, it must first be prepared as described in `Measuring Current on nRF9160 DK`_.

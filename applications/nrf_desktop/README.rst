@@ -1043,7 +1043,7 @@ The following options are inherited from the ``spi-device`` binding and are comm
 
   .. note::
       To achieve the full speed, data must be propagated through the application and reach Bluetooth LE a few hundred microseconds before the subsequent connection event.
-      If you aim for the lowest latency through the LLPM (a 1-ms interval), the sensor data readout should take no more then 250 us.
+      If you aim for the lowest latency through the LLPM (a 1-ms interval), the sensor data readout should take no more than 250 us.
       The bus and the sensor configuration must ensure that communication speed is fast enough.
 
 The remaining option ``irq-gpios`` is specific to ``pixart,pmw3360`` binding.

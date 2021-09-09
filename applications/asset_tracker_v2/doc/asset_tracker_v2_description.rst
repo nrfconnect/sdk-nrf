@@ -3,6 +3,10 @@
 Application description
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Asset Tracker v2 application introduces a set of new features, which are not present in the :ref:`asset_tracker` application:
 
 * Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
@@ -412,9 +416,10 @@ The following configuration files are available in the application folder:
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support. See :ref:`atv2_lwm2m_carrier_support` for more information.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
-Generally, Kconfig overlays have an ``overlay-`` prefix and a ``.conf`` extension.
+Generally, Kconfig overlays have an ``overlay-`` prefix and a :file:`.conf` extension.
 Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
-DTS overlay files are named the same as the build target and use the file extension ``.overlay``. They are placed in the :file:`boards` folder.
+DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
+They are placed in the :file:`boards` folder.
 When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
 
 Building and running

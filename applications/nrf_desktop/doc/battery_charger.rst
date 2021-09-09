@@ -49,7 +49,7 @@ The module enables charging when USB is powered or active.
 
 .. note::
     Make sure that the hardware configuration enables charging by default (for example, when the pin to enable charging is not configured).
-    Otherwise it will be impossible to enable charging when the battery is empty.
+    Otherwise, it will be impossible to enable charging when the battery is empty.
 
 The module checks the battery state using :c:struct:`k_work_delayable`.
 The check is based on the edge interrupt count on the CSO pin in a period of time defined in ``ERROR_CHECK_TIMEOUT_MS``, and on the CSO pin state while the work is processed.

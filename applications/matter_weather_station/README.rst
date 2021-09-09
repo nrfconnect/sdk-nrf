@@ -108,7 +108,7 @@ Button 1:
 
 USB port:
     Used for getting logs from the device or communicating with it through the command-line interface.
-    It is enabled only for the debug configuration of a application.
+    It is enabled only for the debug configuration of an application.
     See the `Selecting a build type`_ section to learn how to select the debug configuration.
 
 NFC port with antenna attached:
