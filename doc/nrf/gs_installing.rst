@@ -61,8 +61,10 @@ The installation process is different depending on your operating system.
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_ubuntu:
-         :end-before: group-tab:: macOS
+         :end-before: Check those against the versions in the table in the beginning of this section.
 
+      Check those against the versions in the :ref:`Required tools table <req_tools_table>`.
+      Refer to the :ref:`zephyr:installation_linux` page for additional information on updating the dependencies manually.
       If you are using other Linux-based operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
 
       .. note::

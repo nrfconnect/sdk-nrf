@@ -26,6 +26,8 @@ Required tools
 The following table shows the tools that are required for working with |NCS| v\ |version|.
 It lists the minimum version that is required and the version that is installed when using the :ref:`gs_app_tcm` as described in :ref:`gs_assistant`.
 
+.. _req_tools_table:
+
 .. tabs::
 
    .. group-tab:: Windows
