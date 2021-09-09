@@ -344,6 +344,32 @@ Examples
 
 ----
 
+Location
+========
+
+MoSh command: "location"
+
+Location tool provides commands for getting searching the location of the device.
+
+Examples
+--------
+
+Get location with GNSS::
+
+   location get --method gnss
+
+Get location with cellular positioning::
+
+   location get --method cellular
+
+Get location with WLAN positioning::
+
+   location get --method wlan
+
+Get location with different methods in priority order depending on which method is able to provide location::
+
+   location get --method gnss --method wlan --method cellular
+
 GNSS
 ====
 
@@ -441,6 +467,20 @@ Examples
 
      ppp uartconf --baudrate 460800
 
+Simple REST
+===========
+
+MoSh command: "srest"
+
+Simple REST tool provides commands for sending REST request and receiving its response.
+
+Examples
+--------
+
+Send REST request::
+
+   srest TODOTODO
+
 Requirements
 ************
 
@@ -466,9 +506,11 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_MOSH_CURL - Enable curl feature in modem shell.
 .. option:: CONFIG_MOSH_SOCK - Enable socket tool feature in modem shell.
 .. option:: CONFIG_MOSH_SMS - Enable SMS feature in modem shell.
+.. option:: CONFIG_MOSH_LOCATION - Enable location tool feature in modem shell.
 .. option:: CONFIG_MOSH_GNSS - Enable GNSS feature in modem shell.
 .. option:: CONFIG_MOSH_FOTA - Enable FOTA feature in modem shell.
 .. option:: CONFIG_MOSH_PPP - Enable PPP feature in modem shell.
+.. option:: CONFIG_MOSH_SREST - Enable Simple REST tool feature in modem shell.
 
 .. note::
    You may not be able to use all features at the same time due to memory restrictions.
