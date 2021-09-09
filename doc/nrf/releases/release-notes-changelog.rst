@@ -230,6 +230,10 @@ NFC samples
 nRF9160 samples
 ---------------
 
+* Added:
+
+  * :ref:`nrf_cloud_rest_fota` sample, demonstrating how to perform FOTA updates with the nRF Cloud REST API.
+
 * :ref:`https_client` sample:
 
   * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
