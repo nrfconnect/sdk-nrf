@@ -14,6 +14,12 @@
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_CELLULAR) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN),
+	"At least one location method must be enabled");
+
 /** @brief Semaphore protecting the use of location requests. */
 K_SEM_DEFINE(loc_core_sem, 1, 1);
 
