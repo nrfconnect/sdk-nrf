@@ -42,9 +42,9 @@ Complete the following steps to enable the |ble_scan|:
 #. Configure the number of scan filters based on the Bluetooth address (:kconfig:`CONFIG_BT_SCAN_ADDRESS_CNT`).
    The value must be equal to the number of Bluetooth bonds.
    The number of Bluetooth bonds is defined by the :kconfig:`CONFIG_BT_MAX_PAIRED` Kconfig option.
-   The |ble_scan| module uses the Bluetooth address filters to look for bonded peripherals.
+   The |ble_scan| uses the Bluetooth address filters to look for bonded peripherals.
 #. Configure the number of scan filters based on the Bluetooth name (:kconfig:`CONFIG_BT_SCAN_NAME_CNT`).
-   The |ble_scan| module uses Bluetooth name filters to look for unbonded peripherals.
+   The |ble_scan| uses Bluetooth name filters to look for unbonded peripherals.
    The value must be equal to the number of peripheral types the nRF Desktop central connects to.
    The peripheral type may be either a mouse or a keyboard.
 #. If you want to limit the number of attempts to connect to a device, you can enable the connection attempt filter with the :kconfig:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` Kconfig option.
@@ -73,7 +73,7 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :kconfig:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the :kconfig:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE` option to enable the |ble_scan| module.
+#. Set the :kconfig:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE` option to enable the |ble_scan|.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
 You can set the :kconfig:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` option to make the device look for unbonded peripherals only on user request.
@@ -113,7 +113,7 @@ The scanning is never interrupted if there is no connected Bluetooth peer.
 Implementation details
 **********************
 
-The |ble_scan| module stores the following information for every bonded peer:
+The |ble_scan| stores the following information for every bonded peer:
 
 * Peripheral Bluetooth address.
 * Peripheral type (mouse or keyboard).
@@ -134,7 +134,7 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.
 
 .. important::
-   If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
+   If a Bluetooth peer is already connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
    The peer is connected with a 10-ms connection interval also in case :kconfig:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and :kconfig:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option is enabled.
    This is required to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 

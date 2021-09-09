@@ -28,7 +28,7 @@ Module events
 Configuration
 *************
 
-The |hid_state| module is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
+The |hid_state| is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
 This module is optional and turned off by default.
 
 Report expiration
@@ -125,7 +125,7 @@ Storing limitations
 The number of events that can be inserted into the queue is limited by :kconfig:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
 
 Discarding events
-    When there is no space for a new input event, the |hid_state| module will try to free space by discarding the oldest event in the queue.
+    When there is no space for a new input event, the |hid_state| will try to free space by discarding the oldest event in the queue.
     Events stored in the queue are automatically discarded after the period defined by :kconfig:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION`.
 
     When discarding an event from the queue, the module checks if the key associated with the event is pressed.
@@ -159,7 +159,7 @@ As a result, when the device connects to the host through USB, all HID reports w
 Tracking state of HID report notifications
 ==========================================
 
-For each subscriber, the |hid_state| module tracks the state of notifications for each of the available HID reports.
+For each subscriber, the |hid_state| tracks the state of notifications for each of the available HID reports.
 These are tracked in the subscriber's structure :c:struct:`subscriber`.
 This structure's member ``state`` is an array of :c:struct:`report_state` structures.
 Each element corresponds to one available HID report.

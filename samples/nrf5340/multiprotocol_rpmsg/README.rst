@@ -39,7 +39,7 @@ The sample supports the following development kits:
 
 The testing procedure of the sample also requires a second development kit that supports IEEE 802.15.4.
 
-Building and Running
+Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf5340/multiprotocol_rpmsg`
@@ -53,8 +53,8 @@ See :ref:`configure_application` for information about how to configure the samp
 
 For example, you can include the Multiprotocol RPMsg sample in a multi-image build by building the :ref:`sockets-echo-server-sample` sample for the nRF5340 application core and adding the following configuration files to your build as CMake options:
 
-* ``overlay-802154.conf``
-* ``overlay-bt.conf``
+* :file:`overlay-802154.conf`
+* :file:`overlay-bt.conf`
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 To see an example of this multi-image build on the command line, run the following command:

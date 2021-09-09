@@ -312,7 +312,7 @@ Configuration of the child image
 ================================
 
 When a network sample is built automatically as a child image in a multi-image build, you can define the relevant Kconfig options (if required) in a :file:`.conf` file.
-Name the file *network_sample*\ .conf, where *network_sample* is the name of the child image (for example, ``hci_rpmsg.conf``).
+Name the file *network_sample*\ .conf, where *network_sample* is the name of the child image (for example, :file:`hci_rpmsg.conf`).
 Place the file in a :file:`child_image` subfolder of the application sample directory.
 See :ref:`ug_multi_image_variables` for more information.
 
@@ -402,7 +402,7 @@ Follow these steps to build and program a multi-image build to the nRF5340 appli
    * :guilabel:`Target Processor`: Select ``nRF5340_xxAA_Network``.
 
    * :guilabel:`Load File`: Specify the file name of the merged HEX file for the network core that should be programmed.
-     For example, specify ``$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex`` for the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
+     For example, specify :file:`$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex` for the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
 
     .. figure:: images/ses_nrf5340_netcore_project_settings.png
        :alt: Project settings for programming the network core

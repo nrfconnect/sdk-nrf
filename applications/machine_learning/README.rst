@@ -378,7 +378,7 @@ After programming the application, perform the following steps to test the nRF M
 #. Press **Button 3** to again change generated acceleration signal.
    The ``square`` wave (3 blinks) is displayed only by the **LED2**.
    This signal is marked as anomaly by the machine learning model and **LED1** starts breathing.
-#. Press and hold **Button 1** the for more than 5 seconds to switch to the data forwarding mode.
+#. Press and hold **Button 1** for more than 5 seconds to switch to the data forwarding mode.
    After the mode is switched, **LED1** starts to blink rapidly.
 #. Connect to the development kit with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.

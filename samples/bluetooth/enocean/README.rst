@@ -18,7 +18,6 @@ The observer device forwards incoming advertisements to the EnOcean library for 
 The application receives events from the EnOcean library through callbacks, and prints the outcome to console.
 The LEDs of the kit also respond to button presses from an EnOcean switch.
 
-
 Requirements
 ************
 

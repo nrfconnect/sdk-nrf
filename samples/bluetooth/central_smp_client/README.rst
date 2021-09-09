@@ -10,18 +10,16 @@ Bluetooth: Central SMP Client
 The Central Simple Management Protocol (SMP) Client sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
 The response, which is received as CBOR-encoded data, is decoded and printed.
 
-
 Overview
 ********
 
 After connecting, the sample starts MTU size negotiation, discovers the GATT database of the server, and configures the DFU SMP Client.
 When configuration is complete, the sample is ready to send SMP commands.
 
-To send an echo command, press Button 1 on the development kit
+To send an echo command, press Button 1 on the development kit.
 The string that is sent contains a number that is automatically incremented.
 This way, you can easily verify if the correct response is received.
 The response is decoded and displayed using the `TinyCBOR`_ library (which is part of Zephyr).
-
 
 Requirements
 ************

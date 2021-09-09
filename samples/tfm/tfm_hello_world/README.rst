@@ -24,7 +24,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
 
-Building and Running
+Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/tfm/tfm_hello_world`

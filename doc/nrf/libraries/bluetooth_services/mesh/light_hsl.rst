@@ -13,7 +13,7 @@ While easy to visualize and explain to end users, the HSL does not map well to c
 
 The HSL models are best suited for applications where the color of the light is a primary function, such as decorative lighting.
 For applications where illumination is the primary function of the light, and its color and temperature is secondary, the CTL and xyL models might be better alternatives.
-However, neither the Bluetooth® mesh model specification nor the nRF Connect SDK put any restrictions on the application areas for the different models.
+However, neither the Bluetooth® mesh model specification nor the |NCS| put any restrictions on the application areas for the different models.
 Developers may freely use the model best suited for their application.
 
 On the light fixture side, the HSL Server models are separated into three independent models:

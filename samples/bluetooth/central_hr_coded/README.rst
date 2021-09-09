@@ -31,7 +31,7 @@ The sample supports the following development kits:
 The sample also requires a device running a Heart Rate Server with LE Coded PHY support to connect to.
 For example, another development kit running the :ref:`peripheral_hr_coded` sample.
 
-Building and Running
+Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/central_hr_coded`
 

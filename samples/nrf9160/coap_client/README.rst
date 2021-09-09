@@ -64,7 +64,7 @@ After programming the sample and all prerequisites to the development kit, test 
 
 
 
-Sample Output
+Sample output
 =============
 
 The sample displays the data in the following format:

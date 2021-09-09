@@ -27,7 +27,7 @@ Depending on your development approach, you have several certification options w
 Certification by inheritance without modifications to binaries
 ==============================================================
 
-If you are developing a Thread product with nRF Connect SDK, you can apply for certifying this product by inheritance as an official Thread certified product.
+If you are developing a Thread product with |NCS|, you can apply for certifying this product by inheritance as an official Thread certified product.
 As long as you do not modify the functionality of the certified binary libraries, your product is eligible for certification by inheritance.
 
 This scenario offers the most simplified and potentially the shortest certification process at the lowest cost.

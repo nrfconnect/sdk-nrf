@@ -25,7 +25,7 @@ The sample supports the following development kits:
 
 The sample also requires a device to connect to the peripheral, for example, a phone or a tablet with `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
-Building and Running
+Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_gatt_dm`
 

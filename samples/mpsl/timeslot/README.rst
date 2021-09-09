@@ -36,7 +36,7 @@ The sample supports any one of the following development kits:
 .. note::
    For nRF5340 DK, this sample is only supported on the network core (nrf5340dk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
 
-Building and Running
+Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/mpsl/timeslot`

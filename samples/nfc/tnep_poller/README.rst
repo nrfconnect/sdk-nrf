@@ -46,7 +46,7 @@ After programming the sample to your development kit, you can test it with an NF
 
 1. |connect_terminal|
 #. Reset the kit.
-#. Put the NFC Tag device anntena in the range of the NFC polling device.
+#. Put the NFC Tag device antenna in the range of the NFC polling device.
    The NFC polling device selects the first service and exchanges basic data with it.
    After that, the service is deselected.
 #. Observe the output in the terminal.

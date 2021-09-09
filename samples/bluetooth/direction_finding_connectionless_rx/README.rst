@@ -163,7 +163,7 @@ This will result in the following number of IQ samples:
 
 The total number of samples is 60.
 
-Building and Running
+Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/direction_finding_connectionless_rx`
 

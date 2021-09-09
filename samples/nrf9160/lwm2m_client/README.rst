@@ -169,7 +169,7 @@ Testing
 .. note::
    The IMEI of your device can be found on the bottom of the nRF9160 DK near a bar code with the FCC ID at the bottom.
 
-Sample Output
+Sample output
 =============
 
 The following output is logged in the terminal:

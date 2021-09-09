@@ -48,7 +48,7 @@ Testing
 #. Power on or reset your nRF9160 DK.
 #. Observe that the sample starts, creates and configures a PDP context, and then activates a PDN connection.
 
-Sample Output
+Sample output
 =============
 
 The sample shows the following output, which may vary based on the network provider:

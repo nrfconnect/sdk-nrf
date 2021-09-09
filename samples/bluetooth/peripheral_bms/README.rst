@@ -36,7 +36,7 @@ LED 1:
 LED 2:
    On when connected.
 
-Building and Running
+Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_bms`
 

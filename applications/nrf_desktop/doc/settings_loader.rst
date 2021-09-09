@@ -30,7 +30,7 @@ Zephyr assumes that the application will call :c:func:`settings_load` after comp
 This function is called on the settings loader module initialization.
 
 .. note::
-    Make sure that all settings handlers are registered and :c:func:`bt_enable` is called before the settings loader module module is initialized.
+    Make sure that all settings handlers are registered and :c:func:`bt_enable` is called before the settings loader module is initialized.
 
 Settings are by default loaded in the system workqueue context.
 This blocks the workqueue until the operation is finished.

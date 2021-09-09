@@ -210,7 +210,7 @@ Before testing, ensure that your device is configured with your Memfault project
 
 #. In a web browser, navigate to `Memfault`_, sign in and follow the instructions in `Memfault documentation <Memfault Docs_>`_ to view the uploaded data.
    Note that the symbol file for the sample must be uploaded for Memfault to parse the information.
-   The symbol file is located at the following path: ``<sample folder>/build/zephyr/zephyr.elf``.
+   The symbol file is located at the following path: :file:`<sample folder>/build/zephyr/zephyr.elf`.
 
 
 Dependencies

@@ -7,14 +7,14 @@ About the |NCS|
    :local:
    :depth: 2
 
-The nRF Connect SDK enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
+The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
 It is a set of open source projects maintained by Nordic Semiconductor, consisting of several repositories such as:
 
 * `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
 * `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
   See the :doc:`nrfxlib documentation <nrfxlib:README>`.
 * `sdk-mcuboot`_ repository - contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
-  You can find the fork in :file:`bootloader/mcuboot` after obtaining the nRF Connect SDK source code.
+  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
   See the :doc:`documentation <mcuboot:index>` in Nordic Semiconductor’s MCUboot fork.
 * `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
   See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.

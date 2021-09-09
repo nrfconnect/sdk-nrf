@@ -100,7 +100,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nfc_ndef_msg`
 * :ref:`nfc_text`
 
-In addition, it uses the Type 2 Tag library from nrfxlib:
+In addition, it uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 * :ref:`nrfxlib:nfc_api_type2`
 

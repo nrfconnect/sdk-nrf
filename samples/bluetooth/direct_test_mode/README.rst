@@ -44,7 +44,7 @@ The implementation is self-contained and requires no Bluetooth Low Energy protoc
 The MPU is initialized in the standard way.
 The DTM library function ``dtm_init`` configures all interrupts, timers, and the radio.
 
-``main.c`` may be replaced with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
+:file:`main.c` may be replaced with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
 
 The interface to the Lower Tester uses the antenna connector of the chosen development kit.
 While in principle an aerial connection might be used, conformance tests cover the reading of the transmission power delivered by the DUT.
@@ -164,9 +164,9 @@ Vendor specific commands can be divided into different categories as follows:
 The DTM-to-Serial adaptation layer
 ==================================
 
-``main.c`` is an implementation of the UART interface specified in the `Bluetooth Core Specification`_: Vol. 6, Part F, Chap. 3.
+:file:`main.c` is an implementation of the UART interface specified in the `Bluetooth Core Specification`_: Vol. 6, Part F, Chap. 3.
 
-The default selection of UART pins is defined in ``zephyr/boards/arm/board_name/board_name.dts``.
+The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
 You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file at the project level.
 
 Debugging
@@ -209,7 +209,7 @@ Building and running
    However, you must still program the application core to boot up the network core.
    You can use any sample for this, for example, the :ref:`nrf5340_empty_app_core`.
    The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
-   If you want to program another sample for the application core, unset the :kconfig:'CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE' option.
+   If you want to program another sample for the application core, unset the :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
 
 .. _dtm_testing:
 

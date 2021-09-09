@@ -97,7 +97,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 #. Optionally, bond to the device.
    To do so, click the settings button for the device in nRF Connect, select :guilabel:`Pair`, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
    Optionally check :guilabel:`Enable MITM protection` to pair with MITM protection and use a button on the device to confirm or reject passkey value.
-#. Clik Match in nRF Connect app.
+#. Click Match in nRF Connect app.
    Wait until the bond is established before you continue.
 #. Observe that the services of the connected device are shown.
 #. Click the :guilabel:`Play` button for all HID Report characteristics.

@@ -59,7 +59,7 @@ See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the c
 
 .. _configure_options_azure_iot:
 
-Additional Configuration
+Additional configuration
 ========================
 
 Check and configure the following library options that are used by the sample:

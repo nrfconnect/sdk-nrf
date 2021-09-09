@@ -16,7 +16,7 @@ The network core bootloader sample protects the flash memory areas allocated to 
 
 You must use this sample as a child image of a :ref:`multi-image <ug_multi_image>` build, where MCUboot is enabled and there is a network core application.
 MCUboot verifies and shares with the network core bootloader any new network core application image received through a device firmware update (DFU) transport layer, like a serial or a Bluetooth® LE connection.
-For this reason, without MCUboot, this sample does nothing other than launching directly the application.
+For this reason, without MCUboot, this sample does nothing else but directly launches the application.
 
 During the boot process, the network core bootloader sample and MCUboot interact as follows:
 
