@@ -182,14 +182,14 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		return;
 	}
 
+	/* make sure we're not scanning or advertising */
+	bt_le_adv_stop();
+	bt_scan_stop();
+
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_MASTER ? "master" : "slave");
 	printk("Conn. interval is %u units (1.25 ms/unit)\n",
 	       conn_info.le.interval);
-
-	/* make sure we're not scanning or advertising */
-	bt_le_adv_stop();
-	bt_scan_stop();
 
 	err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb,
 			       &latency_client);
