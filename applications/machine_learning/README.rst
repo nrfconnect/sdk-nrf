@@ -197,8 +197,7 @@ See :ref:`zephyr:thingy52_nrf52832` documentation for details.
 Programming Thingy:53
 =====================
 
-The Thingy:53 does not have the J-Link debug IC and the application uses MCUboot bootloader.
-See :ref:`ug_thingy53` for detailed description about working with Thingy:53 and information about how to program it.
+|thingy53_sample_note|
 
 Custom model requirements
 =========================

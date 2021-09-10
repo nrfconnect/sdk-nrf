@@ -18,6 +18,9 @@ On Nordic Semiconductor's development kits, the UART 0 peripheral is typically g
 
 Any data sent from the Bluetooth LE unit is sent out of the UART 0 peripheral's TX pin.
 
+.. note::
+   Thingy:53 uses second instance of USB CDC ACM class instead of UART 0, because it has no built-in SEGGER chip that could be used to gate UART 0.
+
 .. _peripheral_uart_debug:
 
 Debugging
@@ -77,6 +80,12 @@ The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also
 
 You can also test the application with the :ref:`central_uart` sample.
 See the documentation for that sample for detailed instructions.
+
+.. note::
+   |thingy53_sample_note|
+
+   The sample also enables an additional USB CDC ACM port that is used instead of UART 0.
+   Because of that, it uses a separate USB Vendor and Product ID.
 
 User interface
 **************

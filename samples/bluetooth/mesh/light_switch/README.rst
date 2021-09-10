@@ -21,10 +21,6 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, thingy53_nrf5340_cpuapp
 
-.. note::
-   When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
-   Debug logs are provided over the USB CDC ACM class serial port.
-
 You need at least two development kits:
 
 * One development kit where you program this sample application (the client)
@@ -34,6 +30,9 @@ For provisioning and configuring of the mesh model instances, the sample require
 
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
+
+.. note::
+   |thingy53_sample_note|
 
 Overview
 ********
