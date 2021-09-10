@@ -12,7 +12,7 @@ It is responsible for the following operations:
 
 * Aggregating data from user input sources.
 * Tracking state of the HID report subscriptions.
-* Forming the HID reports.
+* Forming the HID reports in either report or boot protocol.
 * Transmitting the HID reports to the right subscriber.
 * Sending :c:struct:`led_event` based on the HID keyboard LED output reports.
 
@@ -31,6 +31,11 @@ Configuration
 
 The |hid_state| is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
 This module is optional and turned off by default.
+
+To send boot reports, enable the respective Kconfig option:
+
+* :kconfig:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD` - This option enables sending keyboard boot reports.
+* :kconfig:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE` - This option enables sending mouse boot reports.
 
 HID keymap
 ==========

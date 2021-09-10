@@ -76,6 +76,8 @@ nRF Desktop
 
   * Updated information about custom build types.
   * Updated documentation for :ref:`nrf_desktop_usb_state`.
+  * Updated documentation with information about forwarding boot reports.
+    See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
 
 Zigbee
 ------

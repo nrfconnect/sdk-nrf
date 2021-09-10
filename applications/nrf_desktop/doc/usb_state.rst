@@ -46,7 +46,10 @@ Boot protocol configuration
 If the device is meant to support the boot protocol, set the following options:
 
 #. Enable :kconfig:`CONFIG_USB_HID_BOOT_PROTOCOL`.
-#. Make sure :kconfig:`CONFIG_USB_HID_PROTOCOL_CODE` is set to either the mouse or the keyboard code.
+#. Set the :kconfig:`CONFIG_USB_HID_PROTOCOL_CODE` Kconfig option to one of the following values to use the device for forwarding either the HID boot keyboard or the HID boot mouse reports, respectively:
+
+* If you want to forward HID boot keyboard reports, set the option to ``1``.
+* If you want to forward HID boot mouse reports, set the option to ``2``.
 
 USB device instance configuration
 =================================
