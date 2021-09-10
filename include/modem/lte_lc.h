@@ -151,25 +151,35 @@ enum lte_lc_func_mode {
 enum lte_lc_evt_type {
 	/** @brief Event received carrying information about the modems network registration
 	 *         status.
-	 *         Payload is of type @ref lte_lc_nw_reg_status.
+	 *         The associated payload is the nw_reg_status member of
+	 *	   type @ref lte_lc_nw_reg_status in the event.
 	 */
 	LTE_LC_EVT_NW_REG_STATUS,
+
 	/** @brief Event received carrying information about PSM updates. Contains PSM parameters
 	 *	   given by the network.
-	 *         Payload is of type @ref lte_lc_psm_cfg.
+	 *         The associated payload is the psm_cfg member of type @ref lte_lc_psm_cfg
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_PSM_UPDATE,
+
 	/** @brief Event received carrying information about eDRX updates. Contains eDRX parameters
 	 *	   given by the network.
-	 *         Payload is of type @ref lte_lc_edrx_cfg.
+	 *         The associated payload is the edrx_cfg member of type @ref lte_lc_edrx_cfg
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_EDRX_UPDATE,
+
 	/** @brief Event received carrying information about the modems RRC state.
-	 *         Payload is of type @ref lte_lc_rrc_mode.
+	 *         The associated payload is the rrc_mode member of type @ref lte_lc_rrc_mode
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_RRC_UPDATE,
+
 	/** @brief Event received carrying information about the currently connected cell.
-	 *         Payload is of type @ref lte_lc_cell.
+	 *         The associated payload is the cell member of type @ref lte_lc_cell
+	 *	   in the event. Note that only the cell.tac and cell.id members are populated
+	 *	   in the event payload. The rest are expected to be zero.
 	 */
 	LTE_LC_EVT_CELL_UPDATE,
 
@@ -178,7 +188,8 @@ enum lte_lc_evt_type {
 	 *	   the currently active LTE mode based on the system mode preference
 	 *	   and network availability. This event will then indicate which
 	 *	   LTE mode is currently used by the modem.
-	 *         Payload is of type @ref lte_lc_lte_mode.
+	 *         The associated payload is the lte_mode member of type @ref lte_lc_lte_mode
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
 
@@ -187,12 +198,13 @@ enum lte_lc_evt_type {
 	 *	   scheduled to occur. This gives the application the opportunity to send
 	 *	   data over the network before the TAU happens, thus saving power by
 	 *	   avoiding sending data and the TAU separately.
-	 *         Payload of this event is contained in the _time_ entry in @ref lte_lc_evt.
+	 *         The associated payload is the time member of type uint64_t in the event.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
 
 	/** @brief Event containing results from neighbor cell measurements.
-	 *         Payload is of type @ref lte_lc_cells_info.
+	 *         The associated payload is the cells_info member of type @ref lte_lc_cells_info
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
 
@@ -200,23 +212,28 @@ enum lte_lc_evt_type {
 	 *	   This event will be received a configurable amount of time before
 	 *	   the modem exits sleep. The time parameter associated with this
 	 *	   event signifies the time until modem exits sleep.
-	 *         Payload is of type @ref lte_lc_modem_sleep.
+	 *         The associated payload is the modem_sleep member of type @ref lte_lc_modem_sleep
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 
 	/** @brief This event will be received when the modem exits sleep.
-	 *         Payload is of type @ref lte_lc_modem_sleep.
+	 *         The associated payload is the modem_sleep member of type @ref lte_lc_modem_sleep
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT,
 
 	/** @brief This event will be received when the modem enters sleep.
 	 *         The time parameter associated with this event signifies
-	 *         the duration of the sleep. Payload is of type @ref lte_lc_modem_sleep.
+	 *         the duration of the sleep.
+	 *         The associated payload is the modem_sleep member of type @ref lte_lc_modem_sleep
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
 
 	/** @brief Modem domain event carrying information about modem operation.
-	 *	   Payload is of type @ref lte_lc_modem_evt.
+	 *         The associated payload is the modem_evt member of type @ref lte_lc_modem_evt
+	 *	   in the event.
 	 */
 	LTE_LC_EVT_MODEM_EVENT,
 };
