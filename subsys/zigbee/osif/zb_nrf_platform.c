@@ -502,13 +502,22 @@ void zb_osif_abort(void)
 
 void zb_reset(zb_uint8_t param)
 {
+	uint8_t reas = (uint8_t)SYS_REBOOT_COLD;
+
 	ZVUNUSED(param);
 
 #ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
-	sys_reboot(SYS_REBOOT_NCP);
-#else /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
-	sys_reboot(SYS_REBOOT_COLD);
+	reas = (uint8_t)SYS_REBOOT_NCP;
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
+
+/* For nRF5340DK sys_reboot() does not set reset reason.
+ * Do it manually in this case - NCP samples require this.
+ */
+#ifdef CONFIG_SOC_NRF5340_CPUAPP
+	nrf_power_gpregret_set(NRF_POWER, reas);
+#endif /* CONFIG_SOC_NRF5340_CPUAPP */
+
+	sys_reboot(reas);
 }
 
 zb_bool_t zb_osif_is_inside_isr(void)
