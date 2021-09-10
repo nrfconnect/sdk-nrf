@@ -16,6 +16,7 @@
 #define NET_CORE_SECONDARY_SLOT 1
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
 
+#ifdef CONFIG_MCUBOOT
 #include <dfu/pcd.h>
 
 int boot_read_image_header_hook(int img_index, int slot,
@@ -43,7 +44,7 @@ int boot_perform_update_hook(int img_index, struct image_header *img_head,
 {
 	return BOOT_HOOK_REGULAR;
 }
-
+#endif
 int boot_read_swap_state_primary_slot_hook(int image_index,
 		struct boot_swap_state *state)
 {
@@ -65,6 +66,7 @@ int boot_read_swap_state_primary_slot_hook(int image_index,
 	return BOOT_HOOK_REGULAR;
 }
 
+#ifdef CONFIG_MCUBOOT
 int network_core_update(bool wait)
 {
 	struct image_header *hdr;
@@ -117,3 +119,4 @@ int boot_serial_uploaded_hook(int img_index, const struct flash_area *area,
 
 	return 0;
 }
+#endif
