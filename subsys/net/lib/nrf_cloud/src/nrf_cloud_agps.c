@@ -556,14 +556,6 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 	size_t parsed_len = 0;
 	uint8_t version;
 
-
-	err = k_sem_take(&agps_injection_active, K_FOREVER);
-	if (err) {
-		LOG_ERR("A-GPS injection already active.");
-		return err;
-	}
-	LOG_DBG("A-GPS_injection_active LOCKED");
-
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];
 	parsed_len += NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE;
 
@@ -574,6 +566,14 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 
 	LOG_DBG("Received AGPS data. Schema version: %d, length: %d",
 		version, buf_len);
+
+	err = k_sem_take(&agps_injection_active, K_FOREVER);
+	if (err) {
+		LOG_ERR("A-GPS injection already active.");
+		return err;
+	}
+
+	LOG_DBG("A-GPS_injection_active LOCKED");
 
 	if (socket) {
 		LOG_DBG("Using user-provided socket, fd %d", fd);
