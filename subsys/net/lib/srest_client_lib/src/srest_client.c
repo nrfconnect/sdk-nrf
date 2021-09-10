@@ -58,13 +58,19 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 }
 
 static int srest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
-				       const sec_tag_t sec_tag)
+				       const sec_tag_t sec_tag, int tls_peer_verify)
 {
 	int err;
 	int verify = TLS_PEER_VERIFY_REQUIRED;
 	const sec_tag_t tls_sec_tag[] = {
 		sec_tag,
 	};
+
+	if (tls_peer_verify == TLS_PEER_VERIFY_REQUIRED ||
+	    tls_peer_verify == TLS_PEER_VERIFY_OPTIONAL ||
+	    tls_peer_verify == TLS_PEER_VERIFY_NONE) {
+		    verify = tls_peer_verify;
+	}
 
 	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
@@ -116,7 +122,8 @@ static int srest_client_sckt_timeouts_set(int fd)
 
 static int srest_client_sckt_connect(int *const fd, const char *const hostname,
 				     const uint16_t port_num, const char *const ip_address,
-				     const sec_tag_t sec_tag)
+				     const sec_tag_t sec_tag,
+				     int tls_peer_verify)
 {
 	int ret;
 	struct addrinfo *addr_info;
@@ -156,7 +163,7 @@ static int srest_client_sckt_connect(int *const fd, const char *const hostname,
 	}
 
 	if (sec_tag >= 0) {
-		ret = srest_client_sckt_tls_setup(*fd, hostname, sec_tag);
+		ret = srest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
 		if (ret) {
 			ret = -EACCES;
 			goto clean_up;
@@ -226,7 +233,8 @@ static int srest_client_do_api_call(struct http_request *http_req,
 
 	if (rest_ctx->connect_socket < 0) {
 		err = srest_client_sckt_connect(&rest_ctx->connect_socket, http_req->host,
-						rest_ctx->port, NULL, rest_ctx->sec_tag);
+						rest_ctx->port, NULL,
+						rest_ctx->sec_tag, rest_ctx->tls_peer_verify);
 		if (err) {
 			return err;
 		}

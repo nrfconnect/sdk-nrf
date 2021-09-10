@@ -15,6 +15,8 @@
 #include <net/http_parser.h>
 
 #define SREST_CLIENT_NO_SEC -1 /* No TLS */
+#define SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY -1
+
 #define SREST_CLIENT_SCKT_CONNECT -1 /* sREST client lib does a sckt connection */
 
 /** @brief Some common HTTP status codes */
@@ -38,6 +40,12 @@ struct srest_req_resp_context {
 
 	/** Security tag. Initialize to -1 and TLS will not be used. */
 	int sec_tag;
+
+	/** Indicates the preference for peer verification.
+	 * Initialize to SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY
+	 * and default (TLS_PEER_VERIFY_REQUIRED) is used.
+	 */
+	int tls_peer_verify;
 
 	/** Used HTTP method. */
 	enum http_method http_method;
