@@ -65,13 +65,13 @@ You need to provide the following information to the LwM2M server before you can
 The following instructions describe how to register your device and these instructions are specific to `Leshan Demo Server`_:
 
 1. Open the Leshan Demo Server web UI.
-#. Click on :guilabel:`Security` in the upper-right corner.
-#. Click on :guilabel:`Add new client security configuration`.
-#. Enter the following data and click :guilabel:`Create`:
+#. Click on :guilabel:`SECURITY` in the upper-right corner.
+#. Click on :guilabel:`ADD SECURITY INFORMATION`.
+#. Enter the following data and click :guilabel:`ADD`:
 
-    * Client endpoint - nrf-{your Device IMEI}
-    * Security mode - Pre-Shared Key
-    * Identity: - nrf-{your Device IMEI}
+    * Endpoint - nrf-*your Device IMEI*
+    * Security Mode - psk
+    * Identity: - nrf-*your Device IMEI*
     * Key - 000102030405060708090a0b0c0d0e0f
 
 #. :ref:`Build and run the LwM2M Client sample <build_lwm2m>`.
@@ -90,6 +90,7 @@ Check and configure the following configuration options for the sample:
 
    The sample configuration specifies the LWM2M Server to be used.
    In this sample, you can set this option to ``leshan.eclipseprojects.io`` (`public Leshan Demo Server`_).
+   You must not prefix it with the application protocol.
 
 
 Additional configurations
@@ -130,32 +131,50 @@ Queue Mode support
 To use the LwM2M Client sample with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option.
 See :ref:`cmake_options` for instructions on how to add this option.
 
+.. code-block:: console
+
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-queue.conf
+
 Bootstrap support
 =================
 
 To build the LwM2M Client sample with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option.
 See :ref:`cmake_options` for instructions on how to add this option.
+Keep in mind that the used bootstrap port is set in the aforementioned configuration file.
 
-In order to successfully run the bootstrap procedure, the device must be first registered in the LwM2M bootstrap server.
+To successfully run the bootstrap procedure, the device must be first registered in the LwM2M bootstrap server.
 
-The following instructions describe how to register your device and these instructions are specific to `Leshan Demo Server`_:
+The following instructions describe how to register your device and these instructions are specific to `public Leshan Bootstrap Server Demo`_:
 
-1. Open the Leshan Demo Server bootstrap web UI.
-#. Click on :guilabel:`Add new client bootstrap configuration`.
-#. Enter the client endpoint - nrf-{your device IMEI}
-#. In the :guilabel:`LWM2M Bootstrap Server` tab, enter the following data:
+1. Open the `Leshan Boostrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_.
+#. In the :guilabel:`BOOTSTRAP` tab, click on :guilabel:`ADD CLIENTS CONFIGURATION`.
+#. Enter your Client Endpoint name - nrf-*your device IMEI*
+#. Press :guilabel:`NEXT` and in the :guilabel:`LWM2M Server Configuration` section, enter the following data:
 
-    * Security mode - Pre-Shared Key
-    * Identity - nrf-{your device IMEI}
-    * Key - 000102030405060708090a0b0c0d0e0f
+   * Server URL - ``coaps://leshan.eclipseprojects.io:5684``
+   * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+   * Identity - nrf-*your device IMEI*
+   * Key - ``000102030405060708090a0b0c0d0e0f``
 
-#. In the :guilabel:`LWM2M Server` section, choose the desired configuration (``No security`` or ``Pre-Shared Key``).
-   If you choose ``Pre-Shared Key``, add the values for ``Identity`` and ``Key`` fields (the configured Identity/Key need not match the Bootstrap Server configuration).
-   The same credentials will be provided in the Leshan Demo Server Security configuration page (see :ref:`dtls_support` for instructions).
-   If ``No Security`` is chosen, no further configuration is needed.
-   Note that in this mode, no DTLS will be used for the communication with the LwM2M server.
-#. After adding values for the fields under both the :guilabel:`LWM2M Bootstrap Server` and :guilabel:`LWM2M Server` tabs, click :guilabel:`Create`.
-#. :ref:`Build and run the LwM2M Client sample <build_lwm2m>`.
+#. Press :guilabel:`NEXT` and in the :guilabel:`LWM2M Bootstrap Server Configuration` section enter the following data:
+
+   * Server URL - ``coaps://leshan.eclipseprojects.io:5784``
+   * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+   * Identity - nrf-*your device IMEI*
+   * Key - ``000102030405060708090a0b0c0d0e0f``
+
+   If you choose :guilabel:`Pre-shared Key`, add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Identity or Key need not match the Bootstrap Server configuration).
+   The same credentials will be provided in the :guilabel:`Leshan Demo Server Security configuration` page (see :ref:`dtls_support` for instructions).
+   If :guilabel:`No Security` is chosen, no further configuration is needed.
+   In this mode, no DTLS will be used for the communication with the LwM2M server.
+   Note that the :guilabel:`Client Configuration` page of the LWM2M Bootstrap server and the :guilabel:`Registered Clients` of the LWM2M server display only a limited number of devices by default.
+   You can increase the number of displayed devices from the drop-down menu associated with :guilabel:`Rows per page`.
+   In both cases, the menu is displayed at the bottom-right corner of the :guilabel:`Client Configuration` pages.
+#. Build and run the LwM2M Client sample:
+
+   .. code-block:: console
+
+      west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-bootstrap.conf
 
 Testing
 =======
@@ -164,7 +183,7 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Observe that the sample starts and automatically connects to the LwM2M Server with an endpoint named "nrf-{your Device IMEI}".
+#. Observe that the sample starts and automatically connects to the LwM2M Server with an endpoint named nrf-*your Device IMEI*.
 
 .. note::
    The IMEI of your device can be found on the bottom of the nRF9160 DK near a bar code with the FCC ID at the bottom.

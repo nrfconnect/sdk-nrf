@@ -705,6 +705,8 @@
 
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
+.. _`public Leshan Bootstrap Server Demo`: https://leshan.eclipseprojects.io/bs
+
 .. _`Silvair EnOcean Switch Mesh Proxy Server`: https://silvair.com/resources/product-documents/
 
 .. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
