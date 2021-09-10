@@ -131,6 +131,10 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
          * For a single-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/zephyr.elf`.
          * For a multi-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
 
+      .. warning::
+	   For nRF53 family SoC, programming :file:`merged.hex` file updates only the application core.
+	   If you need to update also the network core, you must follow additional steps described in :ref:`ug_nrf5340`.
+
       .. note::
 	   Alternatively, choose the :guilabel:`Build and Debug` option.
 	   :guilabel:`Build and Debug` will build the application and program it when
