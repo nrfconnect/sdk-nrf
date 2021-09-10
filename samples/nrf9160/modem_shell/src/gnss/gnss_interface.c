@@ -214,7 +214,7 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 
 	if ((pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) ==
 	    NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
-		shell_print(shell_global, "Time:           %02d.%02d.%04d %02d:%02d:%02d.%03d",
+		shell_print(shell_global, "Time:            %02d.%02d.%04d %02d:%02d:%02d.%03d",
 			    pvt->datetime.day,
 			    pvt->datetime.month,
 			    pvt->datetime.year,
@@ -223,17 +223,17 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 			    pvt->datetime.seconds,
 			    pvt->datetime.ms);
 		shell_print(shell_global,
-			    "Latitude:       %f\n"
-			    "Longitude:      %f\n"
-			    "Altitude:       %.1f m\n"
-			    "Accuracy:       %.1f m\n"
-			    "Speed:          %.1f m/s\n"
-			    "Speed accuracy: %.1f m/s\n"
-			    "Heading:        %.1f deg\n"
-			    "PDOP:           %.1f\n"
-			    "HDOP:           %.1f\n"
-			    "VDOP:           %.1f\n"
-			    "TDOP:           %.1f",
+			    "Latitude:        %f\n"
+			    "Longitude:       %f\n"
+			    "Altitude:        %.1f m\n"
+			    "Accuracy:        %.1f m\n"
+			    "Speed:           %.1f m/s\n"
+			    "Speed accuracy:  %.1f m/s\n"
+			    "Heading:         %.1f deg\n"
+			    "PDOP:            %.1f\n"
+			    "HDOP:            %.1f\n"
+			    "VDOP:            %.1f\n"
+			    "TDOP:            %.1f",
 			    pvt->latitude,
 			    pvt->longitude,
 			    pvt->altitude,
@@ -245,6 +245,9 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 			    pvt->hdop,
 			    pvt->vdop,
 			    pvt->tdop);
+		shell_print(shell_global,
+			    "Google maps URL: https://maps.google.com/?q=%f,%f",
+			    pvt->latitude, pvt->longitude);
 	}
 
 	if (pvt_output_level < 2) {
