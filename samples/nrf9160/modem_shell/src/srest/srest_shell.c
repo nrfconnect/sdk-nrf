@@ -17,23 +17,31 @@
 #include "srest_shell.h"
 
 static const char srest_shell_cmd_usage_str[] =
-	"Usage: srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10] [-t sec_tag]\n"
+	"Usage:\n"
+	"srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10] [-t sec_tag] [-v verify_level]\n"
 	"\n"
 	"  -d, --host,     Destination host/domain of the URL\n"
 	"Optionals:\n"
-	"  -m, --method,   HTTP method (\"get\" (default) or \"post\")\n"
-	"  -p, --port,     Destination port (default: 80)\n"
-	"  -u, --url,      URL beyond host/domain (default: \"/index.html\")\n"
-	"  -H, --header,   Header\n"
-	"  -b, --body,     Payload body\n"
-	"  -s, --sec_tag,  Used security tag for TLS connection\n";
+	"  -m, --method,       HTTP method (\"get\" (default) or \"post\")\n"
+	"  -p, --port,         Destination port (default: 80)\n"
+	"  -u, --url,          URL beyond host/domain (default: \"/index.html\")\n"
+	"  -H, --header,       Header\n"
+	"  -b, --body,         Payload body\n"
+	"  -s, --sec_tag,      Used security tag for TLS connection\n"
+	"  -v, --peer_verify,  TLS peer verification level. None (0),\n"
+	"                      optional (1) or required (2). Default value is 2.\n";
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options[] = {
-	{ "host", required_argument, 0, 'd' },	  { "port", required_argument, 0, 'p' },
-	{ "url", required_argument, 0, 'u' },	  { "body", required_argument, 0, 'b' },
-	{ "header", required_argument, 0, 'H' },  { "method", required_argument, 0, 'm' },
-	{ "sec_tag", required_argument, 0, 's' }, { 0, 0, 0, 0 }
+	{ "host", required_argument, 0, 'd' },
+	{ "port", required_argument, 0, 'p' },
+	{ "url", required_argument, 0, 'u' },
+	{ "body", required_argument, 0, 'b' },
+	{ "header", required_argument, 0, 'H' },
+	{ "method", required_argument, 0, 'm' },
+	{ "sec_tag", required_argument, 0, 's' },
+	{ "peer_verify", required_argument, 0, 'v' },
+	{ 0, 0, 0, 0 }
 };
 
 static void srest_shell_print_usage(const struct shell *shell)
@@ -73,6 +81,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	rest_ctx.http_method = HTTP_GET;
 	rest_ctx.url = "/index.html";
 	rest_ctx.sec_tag = SREST_CLIENT_NO_SEC;
+	rest_ctx.tls_peer_verify = SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
 	rest_ctx.connect_socket = SREST_CLIENT_SCKT_CONNECT;
 	rest_ctx.port = SREST_DEFAULT_DESTINATION_PORT;
 	rest_ctx.body = NULL;
@@ -85,7 +94,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:", long_options, &long_index)) != -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "get") == 0) {
@@ -172,6 +181,16 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		}
+		case 'v':
+			rest_ctx.tls_peer_verify = atoi(optarg);
+			if (rest_ctx.tls_peer_verify  < 0 || rest_ctx.tls_peer_verify  > 2) {
+				shell_error(
+					shell,
+					"Valid values for peer verify (%d) are 0, 1 and 2.",
+					rest_ctx.tls_peer_verify);
+				return -EINVAL;
+			}
+			break;
 		case '?':
 			goto show_usage;
 		default:
