@@ -226,9 +226,9 @@ static void at_handler(void *context, const char *response)
 		static struct lte_lc_psm_cfg prev_psm_cfg;
 		static enum lte_lc_lte_mode prev_lte_mode = LTE_LC_LTE_MODE_NONE;
 		enum lte_lc_nw_reg_status reg_status = 0;
-		struct lte_lc_cell cell;
+		struct lte_lc_cell cell = {0};
 		enum lte_lc_lte_mode lte_mode;
-		struct lte_lc_psm_cfg psm_cfg;
+		struct lte_lc_psm_cfg psm_cfg = {0};
 
 		LOG_DBG("+CEREG notification: %s", log_strdup(response));
 
