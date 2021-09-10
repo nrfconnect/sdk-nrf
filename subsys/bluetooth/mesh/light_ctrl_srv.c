@@ -236,7 +236,7 @@ static void light_onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
 
 	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 	    atomic_test_bit(&srv->flags, FLAG_OFF_PENDING)) {
-		remaining_fade = delay_remaining(srv) + srv->fade.duration;
+		remaining_fade = srv->fade.duration;
 		net_buf_simple_add_u8(buf, atomic_test_bit(&srv->flags,
 							   FLAG_ON_PENDING));
 		net_buf_simple_add_u8(buf,
@@ -264,7 +264,7 @@ static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
 
 	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 	    atomic_test_bit(&srv->flags, FLAG_OFF_PENDING)) {
-		remaining_fade = delay_remaining(srv) + srv->fade.duration;
+		remaining_fade = srv->fade.duration;
 		status->target_on_off = atomic_test_bit(&srv->flags,
 							FLAG_ON_PENDING);
 	} else {
