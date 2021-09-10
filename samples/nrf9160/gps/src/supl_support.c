@@ -7,108 +7,71 @@
 #include <zephyr.h>
 #include <supl_session.h>
 #include <stdio.h>
-#include <logging/log.h>
 #include <net/socket.h>
 
 #define SUPL_SERVER        "supl.google.com"
-#define SUPL_SERVER_PORT   7276
+#define SUPL_SERVER_PORT   "7276"
 
-/* Number of getaddrinfo attempts */
-#define GAI_ATTEMPT_COUNT  3
-
-static int supl_fd;
+static int supl_fd = -1;
 
 int open_supl_socket(void)
 {
-	int err = -1;
-	int proto;
-	int gai_cnt = 0;
-	uint16_t port;
-	struct addrinfo *addr;
+	int err;
 	struct addrinfo *info;
 
-	proto = IPPROTO_TCP;
-	port = htons(SUPL_SERVER_PORT);
-
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
-		.ai_socktype = SOCK_STREAM,
-		.ai_protocol = proto,
-		/* Either a valid,
-		 * NULL-terminated access point name or NULL.
-		 */
-		.ai_canonname = NULL,
+		.ai_flags = AI_NUMERICSERV,
+		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted. */
+		.ai_socktype = SOCK_STREAM
 	};
 
-	/* Try getaddrinfo many times, sleep a bit between retries */
-	do {
-		err = getaddrinfo(SUPL_SERVER, NULL, &hints, &info);
-		gai_cnt++;
-
-		if (err) {
-			if (gai_cnt < GAI_ATTEMPT_COUNT) {
-				/* Sleep between retries */
-				k_sleep(K_MSEC(1000 * gai_cnt));
-			} else {
-				/* Return if no success after many retries */
-				printk("Failed to resolve hostname %s on IPv4, errno: %d)\n",
-					SUPL_SERVER, errno);
-
-				return -1;
-			}
-		}
-	} while (err);
-
-	/* Create socket */
-	supl_fd = socket(AF_INET, SOCK_STREAM, proto);
-	if (supl_fd < 0) {
-		printk("Failed to create socket, errno %d\n", errno);
-		goto cleanup;
-	}
-
-	struct timeval timeout = {
-		.tv_sec = 1,
-		.tv_usec = 0,
-	};
-
-	err = setsockopt(supl_fd,
-			 SOL_SOCKET,
-			 SO_RCVTIMEO,
-			 &timeout,
-			 sizeof(timeout));
+	err = getaddrinfo(SUPL_SERVER, SUPL_SERVER_PORT, &hints, &info);
 	if (err) {
-		printk("Failed to setup socket timeout, errno %d\n", errno);
+		printk("Failed to resolve hostname %s, error: %d\n", SUPL_SERVER, err);
+
 		return -1;
 	}
 
-	/* Not connected */
+	/* Not connected. */
 	err = -1;
 
-	for (addr = info; addr != NULL; addr = addr->ai_next) {
-		char ip[INET_ADDRSTRLEN] = { 0 };
+	for (struct addrinfo *addr = info; addr != NULL; addr = addr->ai_next) {
+		char ip[INET6_ADDRSTRLEN] = { 0 };
 		struct sockaddr *const sa = addr->ai_addr;
 
-		if (sa->sa_family != AF_INET) {
-			/* Not an IPv4 address, try the next address */
-			continue;
+		supl_fd = socket(sa->sa_family, SOCK_STREAM, IPPROTO_TCP);
+		if (supl_fd < 0) {
+			printk("Failed to create socket, errno %d\n", errno);
+			goto cleanup;
 		}
 
-		((struct sockaddr_in *)sa)->sin_port = port;
+		/* The SUPL library expects a 1 second timeout for the read function. */
+		struct timeval timeout = {
+			.tv_sec = 1,
+			.tv_usec = 0,
+		};
 
-		inet_ntop(AF_INET,
+		err = setsockopt(supl_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+		if (err) {
+			printk("Failed to set socket timeout, errno %d\n", errno);
+			goto cleanup;
+		}
+
+		inet_ntop(sa->sa_family,
 			  (void *)&((struct sockaddr_in *)sa)->sin_addr,
 			  ip,
-			  INET_ADDRSTRLEN);
-		printk("Connecting to %s port %d\n",
-			ip,
-			ntohs(port));
+			  INET6_ADDRSTRLEN);
+		printk("Connecting to %s port %s\n", ip, SUPL_SERVER_PORT);
 
 		err = connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
-			/* Try the next address */
-			printk("Unable to connect, errno %d\n", errno);
+			close(supl_fd);
+			supl_fd = -1;
+
+			/* Try the next address. */
+			printk("Connecting to server failed, errno %d\n", errno);
 		} else {
-			/* Connected */
+			/* Connected. */
 			break;
 		}
 	}
@@ -117,9 +80,12 @@ cleanup:
 	freeaddrinfo(info);
 
 	if (err) {
-		/* Unable to connect, close socket */
-		close(supl_fd);
-		supl_fd = -1;
+		/* Unable to connect, close socket. */
+		printk("Could not connect to SUPL server\n");
+		if (supl_fd > -1) {
+			close(supl_fd);
+			supl_fd = -1;
+		}
 		return -1;
 	}
 
