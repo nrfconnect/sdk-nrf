@@ -138,6 +138,9 @@ static void get_agps_data(struct k_work *item)
 
 	activate_lte(true);
 
+	/* Wait for a while, because with IPv4v6 PDN the IPv6 activation takes a bit more time. */
+	k_sleep(K_SECONDS(1));
+
 	if (open_supl_socket() == 0) {
 		printk("Starting SUPL session\n");
 		supl_session(&last_agps);
@@ -202,6 +205,14 @@ static void gnss_event_handler(int event)
 					     sizeof(last_agps),
 					     NRF_MODEM_GNSS_DATA_AGPS_REQ);
 		if (retval == 0) {
+			if (last_agps.sv_mask_ephe == 0 &&
+			    last_agps.sv_mask_alm == 0 &&
+			    last_agps.data_flags == NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+				/* Skip request because only integrity data is requested and
+				 * Google SUPL server doesn't provide that.
+				 */
+				break;
+			}
 			k_work_submit_to_queue(&agps_work_q, &get_agps_data_work);
 		}
 #endif
