@@ -38,7 +38,7 @@ static struct k_work_delayable system_off_work;
  * @brief Function that receives events from NFC.
  */
 static void nfc_callback(void *context,
-			 enum nfc_t2t_event event,
+			 nfc_t2t_event_t event,
 			 const uint8_t *data,
 			 size_t data_length)
 {

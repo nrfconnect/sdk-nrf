@@ -119,7 +119,7 @@ NFC_TNEP_TAG_SERVICE_DEF(svc_two, svc_two_uri, (ARRAY_SIZE(svc_two_uri) - 1),
 		     tnep_svc_two_selected, tnep_svc_two_deselected,
 		     tnep_svc_two_msg_received, tnep_svc_error);
 
-static void nfc_callback(void *context, enum nfc_t4t_event event,
+static void nfc_callback(void *context, nfc_t4t_event_t event,
 			 const uint8_t *data, size_t data_length, uint32_t flags)
 {
 	switch (event) {
