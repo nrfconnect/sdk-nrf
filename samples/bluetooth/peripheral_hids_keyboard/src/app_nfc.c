@@ -16,7 +16,7 @@ void nfc_field_detected(void);
 void nfc_field_lost(void);
 
 static void nfc_callback(void *context,
-			 enum nfc_t2t_event event,
+			 nfc_t2t_event_t event,
 			 const uint8_t *data,
 			 size_t data_length)
 {

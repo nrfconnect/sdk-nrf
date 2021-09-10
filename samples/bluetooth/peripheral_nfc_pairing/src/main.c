@@ -147,7 +147,7 @@ static void advertising_start(void)
  * @brief Callback function for handling NFC events.
  */
 static void nfc_callback(void *context,
-			 enum nfc_t4t_event event,
+			 nfc_t4t_event_t event,
 			 const uint8_t *data,
 			 size_t data_length,
 			 uint32_t flags)
