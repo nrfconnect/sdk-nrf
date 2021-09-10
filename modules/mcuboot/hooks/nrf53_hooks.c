@@ -23,6 +23,15 @@ int boot_read_image_header_hook(int img_index, int slot,
 {
 	if (img_index == 1 && slot == 0) {
 		img_head->ih_magic = IMAGE_MAGIC;
+		img_head->ih_hdr_size = IMAGE_HEADER_SIZE;
+		img_head->ih_load_addr = PM_MCUBOOT_PRIMARY_1_ADDRESS;
+		img_head->ih_img_size = PM_MCUBOOT_PRIMARY_1_SIZE - IMAGE_HEADER_SIZE;
+		img_head->ih_flags = 0;
+		img_head->ih_ver.iv_major = 0;
+		img_head->ih_ver.iv_minor = 0;
+		img_head->ih_ver.iv_revision = 0;
+		img_head->ih_ver.iv_build_num = 0;
+		img_head->_pad1 = 0;
 		return 0;
 	}
 
