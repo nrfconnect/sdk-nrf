@@ -205,7 +205,7 @@ Every of these reports uses predefined report format and provides the given info
 For example, the mouse motion is forwarded as HID mouse report.
 
 An nRF Desktop device supports the selected subset of the HID input reports.
-For example, the nRF Desktop keyboard reference desing (nrf52kbd_nrf52832) supports HID keyboard report, HID consumer control report and HID system control report.
+For example, the nRF Desktop keyboard reference design (nrf52kbd_nrf52832) supports HID keyboard report, HID consumer control report and HID system control report.
 
 As an example, the following section describes handling HID mouse report data.
 
@@ -296,6 +296,18 @@ The report is used by the :ref:`nrf_desktop_config_channel`.
    The nRF Desktop also uses a dedicated HID output report to forward the :ref:`nrf_desktop_config_channel` data through the nRF Desktop dongle.
    This report is handled using the configuration channel's infrastructure and it can be enabled using :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT`.
    See the Kconfig option's help for details about the report.
+
+HID protocols
+-------------
+
+The following HID protocols are supported by nRF Desktop for HID input reports and HID output reports:
+
+* Report protocol - Most widely used in HID devices.
+  When establishing connection, host reads a HID descriptor from the HID device.
+  HID descriptor describes format of HID reports and is used by the host to interpret data exchanged between HID device and host.
+* Boot protocol - Only available for mice and keyboards data.
+  No HID descriptor is used for this HID protocol.
+  Instead, fixed data packet formats must be used to send data between the HID device and the host.
 
 Requirements
 ************
