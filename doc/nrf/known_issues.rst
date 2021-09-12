@@ -19,9 +19,10 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
-	 <option value="v1-6-1" selected>v1.6.1</option>
-	 <option value="v1-6-0">v1.6.0</option>
-	 <option value="v1-5-1">v1.5.1</option>
+     <option value="v1-7-0" selected>v1.7.0</option>
+     <option value="v1-6-1">v1.6.1</option>
+     <option value="v1-6-0">v1.6.0</option>
+     <option value="v1-5-1">v1.5.1</option>
      <option value="v1-5-0">v1.5.0</option>
      <option value="v1-4-2">v1.4.2</option>
      <option value="v1-4-1">v1.4.1</option>
@@ -875,6 +876,15 @@ NCSDK-7982: partition manager: Incorrect partition size linkage from name confli
 
 DFU and FOTA
 ============
+
+.. rst-class:: v1-7-0
+
+NCSDK-11308: Powering off device immediately after serial recovery of the nRF53 network core firmware results in broken firmware.
+  The network core will not be able to boot if the device is powered off too soon after completing a serial recovery update procedure of the network core firmware.
+  This because the firmware is being copied from shared RAM to network core flash **after** mcumgr indicates that the serial recovery procedure has completed.
+
+  **Workaround:** Wait for 30 seconds before powering off the device after performing serial recovery of the nRF53 network core firmware.
+  **Workaround:** Re-upload the network core firmware with a new serial recovery procedure if the device was powered off too soon in a previous procedure.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
