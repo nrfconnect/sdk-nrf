@@ -31,7 +31,8 @@ LOG_MODULE_REGISTER(srest_client, CONFIG_SREST_CLIENT_LIB_LOG_LEVEL);
 #define HTTP_PROTOCOL "HTTP/1.1"
 
 static void srest_client_http_response_cb(struct http_response *rsp,
-					  enum http_final_call final_data, void *user_data)
+					  enum http_final_call final_data, 
+					  void *user_data)
 {
 	struct srest_req_resp_context *rest_ctx = NULL;
 
@@ -39,21 +40,35 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 		rest_ctx = (struct srest_req_resp_context *)user_data;
 	}
 
-	if (rest_ctx && rsp->body_found && rsp->body_start) {
+	if (rsp->body_found && rsp->body_start) {
 		rest_ctx->response = rsp->body_start;
 	}
 
-	if (final_data == HTTP_DATA_FINAL) {
-		LOG_DBG("HTTP: All data received, status: %u %s", rsp->http_status_code,
+	/* HTTP client is splitting the received data according to resp_buf_len.
+	 * We are not currently supporting partial data to be received
+	 */
+	if (final_data == HTTP_DATA_MORE) {
+		LOG_WRN("Partial data received(%zd bytes) - not supported and data discarded",
+			rsp->data_len);
+	} else if (final_data == HTTP_DATA_FINAL) {
+		LOG_DBG("HTTP: All data received (len: %d), status: %u %s",
+			rsp->content_length, 
+			rsp->http_status_code,
 			log_strdup(rsp->http_status));
 
 		if (!rest_ctx) {
-			LOG_WRN("User data not provided");
+			LOG_WRN("REST context not provided");
 			return;
 		}
-
 		rest_ctx->http_status_code = rsp->http_status_code;
-		rest_ctx->response_len = rsp->content_length;
+		if (rsp->content_length > rest_ctx->resp_buff_len) {
+			LOG_ERR("All data (len: %d) did not fit into buffer len of %d",
+				rsp->content_length,
+				rest_ctx->resp_buff_len);
+			rest_ctx->response_len = rest_ctx->resp_buff_len;
+		} else {
+			rest_ctx->response_len = rsp->content_length;
+		}
 	}
 }
 
@@ -283,6 +298,7 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 	__ASSERT_NO_MSG(req_resp_ctx->host != NULL);
 	__ASSERT_NO_MSG(req_resp_ctx->url != NULL);
 	__ASSERT_NO_MSG(req_resp_ctx->resp_buff != NULL);
+	__ASSERT_NO_MSG(req_resp_ctx->resp_buff_len >= 0);
 
 	struct http_request http_req;
 	int ret;
