@@ -185,26 +185,14 @@ static void modem_configure(void)
 	}
 }
 
-/**@brief Configures AT Command interface. */
-static void at_configure(void)
-{
-	int err;
-
-	err = at_notif_init();
-	__ASSERT(err == 0, "AT Notify could not be initialized.");
-	err = at_cmd_init();
-	__ASSERT(err == 0, "AT CMD could not be established.");
-}
-
 void main(void)
 {
 	int err;
 
 	printk("Azure FOTA sample started\n");
-	printk("Initializing modem library\n");
 	printk("This may take a while if a modem firmware update is pending\n");
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_get_init_ret();
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
@@ -229,10 +217,7 @@ void main(void)
 		break;
 	}
 
-	printk("Modem library initialized\n");
-
 	k_work_init_delayable(&reboot_work, reboot_work_fn);
-	at_configure();
 
 	err = azure_iot_hub_init(NULL, azure_event_handler);
 	if (err) {

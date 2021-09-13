@@ -401,21 +401,11 @@ static void modem_configure(void)
 	}
 }
 
-static void at_configure(void)
-{
-	int err;
-
-	err = at_notif_init();
-	__ASSERT(err == 0, "AT Notify could not be initialized.");
-	err = at_cmd_init();
-	__ASSERT(err == 0, "AT CMD could not be established.");
-}
-
 static void nrf_modem_lib_dfu_handler(void)
 {
 	int err;
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	err = nrf_modem_lib_get_init_ret();
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
@@ -436,8 +426,6 @@ static void nrf_modem_lib_dfu_handler(void)
 	default:
 		break;
 	}
-
-	at_configure();
 }
 #endif
 
