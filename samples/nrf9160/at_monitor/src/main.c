@@ -121,11 +121,6 @@ void main(void)
 	int err;
 
 	printk("AT Monitor sample started\n");
-	err = nrf_modem_lib_init(NORMAL_MODE);
-	if (err) {
-		printk("Failed to initialize modem library, err %d", err);
-		return;
-	}
 
 	printk("Subscribing to notifications\n");
 	err = nrf_modem_at_printf("AT+CEREG=1");
