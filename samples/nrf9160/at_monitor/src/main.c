@@ -152,12 +152,15 @@ void main(void)
 	at_monitor_resume(link_quality);
 
 	printk("Waiting for network\n");
-	k_sem_take(&cereg_sem, K_SECONDS(20));
+	err = k_sem_take(&cereg_sem, K_SECONDS(20));
 
 	if (cereg_status == HOME) {
 		printk("Network connection ready\n");
 	} else {
-		printk("No network connection\n");
+		if (err == -EAGAIN) {
+			printk("Network connection timed out\n");
+		}
+		printk("Continuing without network\n");
 	}
 
 	/* Monitors can be paused when necessary */
