@@ -32,13 +32,15 @@ enum srest_http_status {
 struct srest_req_resp_context {
 	/** Request: */
 
-	/** Connection socket; initialize to -1 and library will make the connection. */
+	/** Connection socket; default SREST_CLIENT_SCKT_CONNECT and
+	 * library will make the connection.
+	 */
 	int connect_socket;
 
-	/** If the connection should remain after API call. */
+	/** If the connection should remain after API call. Default: false. */
 	bool keep_alive;
 
-	/** Security tag. Initialize to -1 and TLS will not be used. */
+	/** Security tag. Default SREST_CLIENT_NO_SEC and TLS will not be used. */
 	int sec_tag;
 
 	/** Indicates the preference for peer verification.
@@ -69,7 +71,9 @@ struct srest_req_resp_context {
 
 	/** Response: */
 
-	/** User given timeout value for receiving a response data. */
+	/** User given timeout value for receiving a response data.
+	 * Default: CONFIG_LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT
+	 */
 	int32_t timeout_ms;
 
 	/** User allocated buffer for receiving API response.*/
@@ -90,6 +94,23 @@ struct srest_req_resp_context {
 	uint16_t http_status_code;
 };
 
-int srest_client_request(struct srest_req_resp_context *req_ctx);
+/**
+ * @brief Simple REST request.
+ *
+ * @param[in,out] req_resp_ctx Request and response context for communicating with Simple REST API.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int srest_client_request(struct srest_req_resp_context *req_resp_ctx);
+
+/**
+ * @brief Sets the default values into given contexts.
+ *
+ * @details Intended to be used before calling srest_client_request() with more custom parameters.
+ * 
+ * @param[in,out] req_resp_ctx Request and response context for communicating with Simple REST API.
+ */
+void srest_client_request_defaults_set(struct srest_req_resp_context *req_resp_ctx);
 
 #endif /* SREST_REST_CLIENT_H__ */
