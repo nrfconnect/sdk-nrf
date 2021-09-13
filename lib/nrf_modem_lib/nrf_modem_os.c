@@ -630,6 +630,62 @@ static void diag_task(struct k_work *item)
 }
 #endif
 
+static uint8_t log_level_lu(uint8_t level)
+{
+	switch (level) {
+	case NRF_MODEM_LOG_LEVEL_NONE:
+		return LOG_LEVEL_NONE;
+	case NRF_MODEM_LOG_LEVEL_ERR:
+		return LOG_LEVEL_ERR;
+	case NRF_MODEM_LOG_LEVEL_WRN:
+		return LOG_LEVEL_WRN;
+	case NRF_MODEM_LOG_LEVEL_INF:
+		return LOG_LEVEL_INF;
+	case NRF_MODEM_LOG_LEVEL_DBG:
+		return LOG_LEVEL_DBG;
+	default:
+		return LOG_LEVEL_NONE;
+	}
+}
+
+const char *nrf_modem_os_log_strdup(const char *str)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		return log_strdup(str);
+	}
+
+	return str;
+}
+
+void nrf_modem_os_log(int level, const char *fmt, ...)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		struct log_msg_ids src_level = {
+			.level = log_level_lu(level),
+			.domain_id = CONFIG_LOG_DOMAIN_ID,
+			.source_id = LOG_CURRENT_MODULE_ID()
+		};
+
+		va_list ap;
+
+		va_start(ap, fmt);
+		log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
+		va_end(ap);
+	}
+}
+
+void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t len)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		struct log_msg_ids src_level = {
+			.level = log_level_lu(level),
+			.domain_id = CONFIG_LOG_DOMAIN_ID,
+			.source_id = LOG_CURRENT_MODULE_ID()
+		};
+		log_hexdump(str, data, len, src_level);
+	}
+}
+
 /* This function is called by nrf_modem_init() */
 void nrf_modem_os_init(void)
 {
