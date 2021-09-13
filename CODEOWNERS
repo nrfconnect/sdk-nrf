@@ -54,12 +54,12 @@ Kconfig*                                  @tejlmand
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
-/include/bluetooth/                       @joerchan
-/include/bluetooth/mesh/                  @trond-snekvik @joerchan
+/include/bluetooth/                       @alwa-nordic @KAGA164
+/include/bluetooth/mesh/                  @trond-snekvik
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
-/include/mpsl/                            @joerchan @rugeGerritsen
+/include/mpsl/                            @rugeGerritsen
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
 /include/shell/                           @nordic-krch
@@ -79,7 +79,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multicell_location/                  @jtguggedal
-/lib/multithreading_lock/                 @joerchan @rugeGerritsen
+/lib/multithreading_lock/                 @rugeGerritsen
 /lib/pdn/                                 @lemrey @rlubos
 /lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
@@ -97,10 +97,10 @@ Kconfig*                                  @tejlmand
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/sensor/bh1749/                   @wlgrd
-/samples/bluetooth/                       @joerchan @carlescufi @KAGA164
-/samples/bluetooth/mesh/                  @trond-snekvik @joerchan
-/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @joerchan
-/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
+/samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
+/samples/bluetooth/mesh/                  @trond-snekvik
+/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @alwa-nordic
+/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @alwa-nordic
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge
@@ -109,7 +109,7 @@ Kconfig*                                  @tejlmand
 /samples/esb/                             @lemrey
 /samples/event_manager/                   @pdunaj @MarekPieta
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
-/samples/mpsl/                            @joerchan @rugeGerritsen
+/samples/mpsl/                            @rugeGerritsen
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
@@ -132,9 +132,9 @@ Kconfig*                                  @tejlmand
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
-/subsys/bluetooth/                        @joerchan @carlescufi @KAGA164
-/subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
-/subsys/bluetooth/controller/             @joerchan @rugeGerritsen
+/subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
+/subsys/bluetooth/mesh/                   @trond-snekvik
+/subsys/bluetooth/controller/             @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
@@ -144,7 +144,7 @@ Kconfig*                                  @tejlmand
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
-/subsys/mpsl/                             @joerchan @rugeGerritsen
+/subsys/mpsl/                             @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
@@ -159,12 +159,12 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @tomchy @sebastiandraus
-/tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
+/tests/bluetooth/tester/                  @carlescufi @trond-snekvik
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/modules/tfm/                       @hakonfam
 /tests/modules/mcuboot/external_flash/     @hakonfam @sigvartmh
 /tests/subsys/profiler/                   @pdunaj @MarekPieta
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
-/tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
+/tests/subsys/bluetooth/mesh/             @trond-snekvik
 /zephyr/                                  @carlescufi
