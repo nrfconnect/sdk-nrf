@@ -186,6 +186,12 @@ void main(void)
 
 	printk("Modem response:\n%s", response);
 
+	printk("Shutting down modem\n");
+	err = nrf_modem_at_printf("AT+CFUN=0");
+	if (err) {
+		printk("AT+CFUN failed\n");
+		return;
+	}
 	nrf_modem_lib_shutdown();
 	printk("Bye\n");
 }
