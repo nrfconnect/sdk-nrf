@@ -121,7 +121,12 @@ static void http_response_cb(struct http_response *rsp,
 		rest_ctx = (struct nrf_cloud_rest_context *)user_data;
 	}
 
-	if (rest_ctx && rsp->body_found && rsp->body_start) {
+	/* If the entire HTTP response is not received in a single "recv" call
+	 * then this could be called multiple times, with a different value in
+	 * rsp->body_start. Only set rest_ctx->response once, the first time,
+	 * which will be the start of the body.
+	 */
+	if (rest_ctx && !rest_ctx->response && rsp->body_found && rsp->body_start) {
 		rest_ctx->response = rsp->body_start;
 	}
 
