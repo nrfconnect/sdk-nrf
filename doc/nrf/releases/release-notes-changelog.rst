@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v1.7.99
@@ -50,7 +48,7 @@ There are no entries for this section yet.
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``7a51968``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``680ed07``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
 
@@ -61,7 +59,7 @@ The following list summarizes the most important changes inherited from upstream
 Mcumgr
 ======
 
-The mcumgr library contains all commits from the upstream mcumgr repository up to and including snapshot ``e64f5060b``.
+The mcumgr library contains all commits from the upstream mcumgr repository up to and including snapshot ``657deb65``.
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
