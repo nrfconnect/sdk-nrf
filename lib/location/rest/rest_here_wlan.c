@@ -195,18 +195,15 @@ int here_rest_wlan_pos_get(
 	char *body = NULL;
 	int ret = 0;
 
-	/* Set the defaults: TODO some of these in srest lib? or setter?*/
-	rest_ctx.keep_alive = false;
-	rest_ctx.timeout_ms = 5000;
+	/* Set the defaults: */
+	srest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
 	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG;
-	rest_ctx.connect_socket = SREST_CLIENT_SCKT_CONNECT;
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
 	rest_ctx.resp_buff = response_buf;
-	rest_ctx.tls_peer_verify = SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
 	rest_ctx.resp_buff_len = 1024;
 
 	/* Get the body/payload to request: */

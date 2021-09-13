@@ -265,6 +265,18 @@ static int srest_client_do_api_call(struct http_request *http_req,
 	return err;
 }
 
+void srest_client_request_defaults_set(struct srest_req_resp_context *req_resp_ctx)
+{
+	__ASSERT_NO_MSG(req_resp_ctx != NULL);
+
+	req_resp_ctx->connect_socket = SREST_CLIENT_SCKT_CONNECT;
+	req_resp_ctx->keep_alive = false;
+	req_resp_ctx->sec_tag = SREST_CLIENT_NO_SEC;
+	req_resp_ctx->tls_peer_verify = SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
+	req_resp_ctx->http_method = HTTP_GET;
+	req_resp_ctx->timeout_ms = CONFIG_LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT * 1000;
+}
+
 int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 {
 	__ASSERT_NO_MSG(req_resp_ctx != NULL);
