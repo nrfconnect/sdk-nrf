@@ -94,6 +94,10 @@ int dfu_target_mcuboot_write(const void *const buf, size_t len);
  */
 int dfu_target_mcuboot_done(bool successful);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* DFU_TARGET_MCUBOOT_H__ */
 
 /**@} */
