@@ -331,17 +331,6 @@ static int fds_init(struct mqtt_client *c)
 	return 0;
 }
 
-/**@brief Configures AT Command interface to the modem link. */
-static void at_configure(void)
-{
-	int err;
-
-	err = at_notif_init();
-	__ASSERT(err == 0, "AT Notify could not be initialized.");
-	err = at_cmd_init();
-	__ASSERT(err == 0, "AT CMD could not be established.");
-}
-
 static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 {
 	int err;
@@ -411,8 +400,8 @@ void main(void)
 	struct mqtt_client client;
 
 	printk("MQTT AWS Jobs FOTA Sample, version: %s\n", CONFIG_APP_VERSION);
-	printk("Initializing modem library\n");
-	err = nrf_modem_lib_init(NORMAL_MODE);
+
+	err = nrf_modem_lib_get_init_ret();
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
@@ -436,12 +425,12 @@ void main(void)
 	default:
 		break;
 	}
-	printk("Initialized modem library\n");
 
-	at_configure();
 	printk("LTE Link Connecting ...\n");
+
 	err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
+
 	printk("LTE Link Connected!\n");
 
 	client_init(&client, CONFIG_MQTT_BROKER_HOSTNAME);
