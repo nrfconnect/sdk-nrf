@@ -228,9 +228,9 @@ static void test_topic_parse_long(void)
 {
 	int err;
 	const char *topic =
-		"devices/my-device/messages/devicebound/"
-		"%24.mid=456132-235-a2fd-8458-56432854d&"
-		"%24.to=%2Fdevices%2Fmy-device%2Fmessages%2Fdevicebound&"
+		"devices/my-device-name/messages/devicebound/"
+		"%24.mid=456132-235-a2fd-8458-56432854d-123456&"
+		"%24.to=%2Fdevices%2Fmy-device-name%2Fmessages%2Fdevicebound&"
 		"key1&key2=&key3=value3";
 	struct topic_parser_data topic_data = {
 		.topic = topic,
@@ -246,11 +246,11 @@ static void test_topic_parse_long(void)
 		      "Incorrect property bag count");
 	zassert_true(strcmp(topic_data.prop_bag[0].key, "%24.mid") == 0, NULL);
 	zassert_true(strcmp(topic_data.prop_bag[0].value,
-			    "456132-235-a2fd-8458-56432854d") == 0, NULL);
+			    "456132-235-a2fd-8458-56432854d-123456") == 0, NULL);
 	zassert_true(strcmp(topic_data.prop_bag[1].key, "%24.to") == 0,
 			    NULL);
 	zassert_true(strcmp(topic_data.prop_bag[1].value,
-		     "%2Fdevices%2Fmy-device%2Fmessages%2Fdevicebound") == 0,
+		     "%2Fdevices%2Fmy-device-name%2Fmessages%2Fdevicebound") == 0,
 		     NULL);
 	zassert_true(strcmp(topic_data.prop_bag[2].key, "key1") == 0, NULL);
 	zassert_equal(strlen(topic_data.prop_bag[2].value), 0, NULL);
@@ -265,7 +265,7 @@ static void test_topic_prop_bag_too_long(void)
 	int err;
 	const char *topic =
 		"devices/my-device/messages/devicebound/"
-		"?thispropbagisjustwaytoolongtobeparsedandputintothebuffer";
+		"?thispropbagisjustwaytoolongtobeparsedandputintothebufferwhichis64bytes";
 	struct topic_parser_data topic_data = {
 		.topic = topic,
 		.topic_len = strlen(topic),

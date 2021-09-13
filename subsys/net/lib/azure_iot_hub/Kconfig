@@ -80,7 +80,7 @@ config AZURE_IOT_HUB_DEVICE_ID_APP
 
 config AZURE_IOT_HUB_STACK_SIZE
 	int "Connection thread stack size"
-	default 2048
+	default 2560
 
 config AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST
 	bool "Request device twin automatically when connected"
@@ -96,7 +96,7 @@ config AZURE_IOT_HUB_TOPIC_MAX_LEN
 
 config AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN
 	int "Maximum length of topic element strings"
-	default 40
+	default 64
 	help
 	  Azure IoT Hub uses dynamically constructed topics to transfer
 	  information elements such as response codes, direct method names and
