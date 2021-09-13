@@ -76,6 +76,8 @@ The sample shows the following output:
 	Modem response:
 	+CEREG: 1,1
 	OK
+	Shutting down modem
+	Network registration status: no network
 	Bye
 
 Dependencies
