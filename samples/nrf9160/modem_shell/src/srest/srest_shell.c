@@ -52,7 +52,6 @@ static void srest_shell_print_usage(const struct shell *shell)
 /*****************************************************************************/
 #define SREST_REQUEST_MAX_HEADERS 10
 #define SREST_RESPONSE_BUFF_SIZE 1024
-#define SREST_HTTP_REQUEST_TIMEOUT_MS 10000
 #define SREST_DEFAULT_DESTINATION_PORT 80
 
 struct rip_header_list_item {
@@ -76,13 +75,9 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	char response_buf[SREST_RESPONSE_BUFF_SIZE];
 
 	/* Set the defaults: */
-	rest_ctx.keep_alive = false;
-	rest_ctx.timeout_ms = SREST_HTTP_REQUEST_TIMEOUT_MS;
+	srest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_GET;
 	rest_ctx.url = "/index.html";
-	rest_ctx.sec_tag = SREST_CLIENT_NO_SEC;
-	rest_ctx.tls_peer_verify = SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
-	rest_ctx.connect_socket = SREST_CLIENT_SCKT_CONNECT;
 	rest_ctx.port = SREST_DEFAULT_DESTINATION_PORT;
 	rest_ctx.body = NULL;
 	memset(req_headers, 0, (SREST_REQUEST_MAX_HEADERS + 1) * sizeof(char *));
