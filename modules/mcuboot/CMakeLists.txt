@@ -152,7 +152,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       )
   endif()
 
-  if (CONFIG_NRF53_UPGRADE_NETWORK_CORE)
+  if (CONFIG_NRF53_UPGRADE_NETWORK_CORE AND CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
     # To allow multi image update of the network core we add a devicetree
     # overlay which defines a flash controller used for emulating flash
     # in RAM.
