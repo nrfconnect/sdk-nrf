@@ -54,6 +54,16 @@ enum loc_accuracy {
 	LOC_ACCURACY_HIGH
 };
 
+/** WLAN positioning service. */
+enum loc_wlan_service {
+	/** nRF Cloud location service (note: NOT SUPPORTED!!!!). */
+	LOC_WLAN_SERVICE_NRF_CLOUD,
+	/**Here location service. */
+	LOC_WLAN_SERVICE_HERE,
+	/**Skyhook location service. */
+	LOC_WLAN_SERVICE_SKYHOOK
+};
+
 /** Date and time (UTC). */
 struct loc_datetime {
 	/** True if date and time are valid, false if not. */
@@ -146,6 +156,10 @@ struct loc_gnss_config {
 struct loc_wlan_config {
 	/** Timeout (in seconds) on how long WLAN positioning procedure can take. */
 	uint16_t timeout;
+
+	/** Used WLAN positioning service. */
+	enum loc_wlan_service service;
+
 };
 
 /** Positioning method configuration. */
