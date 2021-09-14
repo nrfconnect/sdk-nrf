@@ -951,7 +951,7 @@ CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_n
    **Workaround:** Use the master branch.
 
 
-.. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
   Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
@@ -959,6 +959,14 @@ NCSIDB-114: Default logging causes crash
 
   **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
 
+.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+NCSDK-5156: The size of the non-secure callable area is wrong when the number of secure services exceeds 63
+  If the number of services is between 64 and 255, the number is too large, resulting in up to 4096 of wasted space.
+  If the number of services exceeds 255, the HW configuration becomes invalid.
+  The default number of services is much smaller than 64.
+
+  **Workaround:** Keep number of services below 256.
 
 MCUboot
 *******
