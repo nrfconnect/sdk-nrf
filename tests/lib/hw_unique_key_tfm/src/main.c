@@ -5,19 +5,8 @@
  */
 
 #include <ztest.h>
-#include <pm_config.h>
 #include <psa/crypto.h>
 #include <tfm_crypto_defs.h>
-
-#define STATE_TEST_WRITE 0x54834352
-#define STATE_TEST_LOAD 0x17029357
-#define STATE_TEST_ERROR 0x72490698
-#define STATE_TEST_INVALID 0x98296028
-
-/* This test involves multiple resets, so this variable is __noinit to keep
- * state between resets.
- */
-static __noinit volatile uint32_t state;
 
 #if defined(CONFIG_HAS_HW_NRF_CC312)
 __ALIGNED(4)
