@@ -331,12 +331,19 @@ static int sock_getaddrinfo(
 		};
 		err = getaddrinfo(address, NULL, &hints, &socket_info->addrinfo);
 		if (err) {
-			shell_error(
-				shell_global,
-				"getaddrinfo() failed, err %d errno %d",
-				err,
-				errno);
-			err = errno;
+			if (err == DNS_EAI_SYSTEM) {
+				shell_error(
+					shell_global,
+					"getaddrinfo() failed, err %d errno %d",
+					err,
+					errno);
+			} else {
+				shell_error(
+					shell_global,
+					"getaddrinfo() failed, err %d",
+					err);
+			}
+			err = -EADDRNOTAVAIL;
 			return err;
 		}
 
