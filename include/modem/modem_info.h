@@ -91,6 +91,7 @@ struct network_param {
 	struct lte_param gps_mode; /**< GPS support mode. */
 	struct lte_param date_time; /**< Mobile network time and date */
 	struct lte_param apn; /**< Access point name (string). */
+	struct lte_param rsrp; /**< Received signal strength. */
 
 	double cellid_dec; /**< Cell ID of the device (in decimal format). */
 	char network_mode[MODEM_INFO_NETWORK_MODE_MAX_SIZE];
