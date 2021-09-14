@@ -1,7 +1,6 @@
 # TFM documentation build configuration file
 
 from pathlib import Path
-import re
 import sys
 
 
@@ -20,10 +19,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Trusted Firmware-M"
 copyright = "2017-2019, ARM CE-OSS"
 author = "ARM CE-OSS"
-
-with open(TFM_BASE / "CMakeLists.txt") as f:
-    m = re.findall(r"TFM_VERSION ([0-9\.]+)", f.read())
-    version = m[0] if m else "Unknown"
+version = "1.3.0"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
