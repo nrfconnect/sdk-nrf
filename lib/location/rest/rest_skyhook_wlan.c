@@ -36,6 +36,7 @@ BUILD_ASSERT(
 #define HTTPS_PORT 443
 
 #define SKYHOOK_WLAN_POS_JSON_KEY_WLAN "wifiAccessPoints"
+
 /******************************************************************************/
 /* Based on Skyhook JSON Location API v2.31:
  * https://resources.skyhook.com/wiki/type/documentation/precision-location/api-documentation---json-location-api-v2-31/218036682
@@ -188,13 +189,15 @@ cleanup:
 /******************************************************************************/
 
 int skyhook_rest_wlan_pos_get(
+	char *rcv_buf,
+	size_t rcv_buf_len,
 	const struct rest_wlan_pos_request *request,
 	struct rest_wlan_pos_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
-
-	char response_buf[1024]; //TODO: kconfig and not from stack
+	__ASSERT_NO_MSG(rcv_buf != NULL);
+	__ASSERT_NO_MSG(rcv_buf_len > 0);
 
 	struct srest_req_resp_context rest_ctx = { 0 };
 	char *const headers[] = {
@@ -215,8 +218,8 @@ int skyhook_rest_wlan_pos_get(
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
-	rest_ctx.resp_buff = response_buf;
-	rest_ctx.resp_buff_len = 1024;
+	rest_ctx.resp_buff = rcv_buf;
+	rest_ctx.resp_buff_len = rcv_buf_len;
 
 	/* Get the body/payload to request: */
 	ret = skyhook_rest_format_wlan_pos_req_body(

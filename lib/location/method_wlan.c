@@ -18,8 +18,7 @@
 
 #include "loc_core.h"
 
-#include "rest/rest_here_wlan.h"
-#include "rest/rest_skyhook_wlan.h"
+#include "rest/rest_services_wlan.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -166,16 +165,8 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 				strcpy(request.mac_addresses[i].mac_addr_str,
 				       latest_scan_results[i].mac_addr_str);
 			}
-#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
-			if (wlan_config.service == LOC_WLAN_SERVICE_HERE) {
-				ret = here_rest_wlan_pos_get(&request, &result);
-			}
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
-			if (wlan_config.service == LOC_WLAN_SERVICE_SKYHOOK) {
-				ret = skyhook_rest_wlan_pos_get(&request, &result);
-			}
-#endif
+
+			ret = rest_services_wlan_location_get(wlan_config.service, &request, &result);
 			if (ret) {
 				LOG_ERR("Failed to acquire location from WLAN positioning service REST api, error: %d",
 					ret);

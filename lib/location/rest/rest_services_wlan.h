@@ -3,16 +3,19 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 /**
- * @file rest_wlan_services.h
+ * @file rest_services_wlan.h
  *
  * @brief REST API for WLAN positioning.
  */
-#ifndef REST_WLAN_SERVICES_H
-#define REST_WLAN_SERVICES_H
+
+#ifndef REST_SERVICES_WLAN_H
+#define REST_SERVICES_WLAN_H
 
 #include <zephyr/types.h>
 #include <net/wifi.h>
+#include <modem/location.h>
 
 /** @brief Item for storing a WLAN MAC address */
 struct mac_address_info {
@@ -34,4 +37,18 @@ struct rest_wlan_pos_result {
 	float accuracy;
 };
 
-#endif /* REST_WLAN_SERVICES_H */
+/**
+ * @brief WLAN location request by using WLAN positioning service.
+ *
+ * @param[in]     service Used WLAN positioning service.
+ * @param[in]     request Data to be provided in API call.
+ * @param[in,out] result  Parsed results of API response.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int rest_services_wlan_location_get(enum loc_wlan_service service,
+			   const struct rest_wlan_pos_request *request,
+			   struct rest_wlan_pos_result *result);
+
+#endif /* REST_SERVICES_WLAN_H */

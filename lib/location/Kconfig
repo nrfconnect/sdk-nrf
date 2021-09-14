@@ -66,6 +66,13 @@ config LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT
 	  Sets the timeout duration in seconds to use when sending REST request
 	  to WLAN positioning service provider.
 
+config LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE
+	int "Receive buffer size"
+	default 1024
+	help
+	  Size of the buffer used to store the response from the WLAN positioning
+	  service.
+
 if LOCATION_METHOD_WLAN_SERVICE_HERE
 
 config LOCATION_METHOD_WLAN_SERVICE_HERE_HOSTNAME
