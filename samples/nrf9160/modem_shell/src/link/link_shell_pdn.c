@@ -17,8 +17,7 @@
 
 #include "link_shell_print.h"
 #include "link_shell_pdn.h"
-
-extern const struct shell *shell_global;
+#include "mosh_print.h"
 
 static sys_dlist_t pdn_info_list;
 
@@ -113,12 +112,10 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 {
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
-		shell_print(shell_global, "PDN event: PDP context %d, %s", cid,
-			    esm_strerr(reason));
+		mosh_print("PDN event: PDP context %d, %s", cid, esm_strerr(reason));
 		break;
 	default:
-		shell_print(shell_global, "PDN event: PDP context %d %s", cid,
-			    event_str[event]);
+		mosh_print("PDN event: PDP context %d %s", cid, event_str[event]);
 #if defined(CONFIG_MOSH_PPP)
 		if (cid == 0) {
 			/* Notify PPP side about the default PDN activation status */
@@ -146,8 +143,7 @@ int link_family_str_to_pdn_lib_family(enum pdn_fam *ret_fam,
 		} else if (strcmp(family, "packet") == 0 || strcmp(family, "non-ip") == 0) {
 			*ret_fam = PDN_FAM_NONIP;
 		} else {
-			shell_error(
-				shell_global,
+			mosh_error(
 				"%s: could not decode PDN address family (%s)",
 				__func__,
 				family);
@@ -238,7 +234,7 @@ bool link_shell_pdn_info_is_in_list(uint8_t cid)
 	return found;
 }
 
-int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
+int link_shell_pdn_connect(const char *apn_name,
 			   const char *family_str,
 			   const struct link_shell_pdn_auth *auth_params)
 {
@@ -250,23 +246,20 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 
 	ret = pdn_ctx_create(&cid, link_pdn_event_handler);
 	if (ret) {
-		shell_error(shell, "pdn_ctx_create() failed, err %d\n", ret);
+		mosh_error("pdn_ctx_create() failed, err %d\n", ret);
 		goto cleanup_and_fail;
 	}
 
 	ret = link_family_str_to_pdn_lib_family(&pdn_lib_family, family_str);
 	if (ret) {
-		shell_error(
-			shell,
-			"link_family_str_to_pdn_lib_family() failed, err %d\n",
-			ret);
+		mosh_error("link_family_str_to_pdn_lib_family() failed, err %d\n", ret);
 		goto cleanup_and_fail;
 	}
 
 	/* Configure a PDP context with APN and family */
 	ret = pdn_ctx_configure(cid, apn_name, pdn_lib_family, NULL);
 	if (ret) {
-		shell_error(shell, "pdn_ctx_configure() failed, err %d\n", ret);
+		mosh_error("pdn_ctx_configure() failed, err %d\n", ret);
 		goto cleanup_and_fail;
 	}
 
@@ -276,16 +269,13 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 				       auth_params->user,
 				       auth_params->password);
 		if (ret) {
-			shell_error(
-				shell,
-				"Failed to set auth params for CID %d, err %d",
-				cid, ret);
+			mosh_error("Failed to set auth params for CID %d, err %d", cid, ret);
 			goto cleanup_and_fail;
 		}
 	}
 
 	/* Activate a PDN connection */
-	ret = link_shell_pdn_activate(shell, cid);
+	ret = link_shell_pdn_activate(cid);
 	if (ret) {
 		goto cleanup_and_fail;
 	}
@@ -295,15 +285,10 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 	/* Add to PDN list */
 	new_pdn_info = link_shell_pdn_info_list_add(pdn_id, cid);
 	if (new_pdn_info == NULL) {
-		shell_error(
-			shell,
-			"ltelc_pdn_init_and_connect: could not add new PDN socket to list\n");
+		mosh_error("ltelc_pdn_init_and_connect: could not add new PDN socket to list\n");
 	}
 
-	shell_print(
-		shell,
-		"Created and activated a new PDP context: CID %d, PDN ID %d\n",
-		cid, pdn_id);
+	mosh_print("Created and activated a new PDP context: CID %d, PDN ID %d\n", cid, pdn_id);
 
 	return 0;
 
@@ -315,30 +300,29 @@ cleanup_and_fail:
 	return ret;
 }
 
-int link_shell_pdn_disconnect(const struct shell *shell, int pdn_cid)
+int link_shell_pdn_disconnect(int pdn_cid)
 {
 	int ret;
 
 	ret = pdn_deactivate(pdn_cid);
 	if (ret) {
-		shell_error(shell, "pdn_deactivate() failed, err %d", ret);
+		mosh_error("pdn_deactivate() failed, err %d", ret);
 	}
 
 	ret = pdn_ctx_destroy(pdn_cid);
 	if (ret) {
-		shell_error(shell, "pdn_ctx_destroy() failed, err %d", ret);
+		mosh_error("pdn_ctx_destroy() failed, err %d", ret);
 		return ret;
 	}
 
 	link_shell_pdn_info_list_remove(pdn_cid);
 
-	shell_print(shell, "CID %d deactivated and context destroyed\n",
-		    pdn_cid);
+	mosh_print("CID %d deactivated and context destroyed\n", pdn_cid);
 
 	return 0;
 }
 
-int link_shell_pdn_activate(const struct shell *shell, int pdn_cid)
+int link_shell_pdn_activate(int pdn_cid)
 {
 	int ret;
 	int esm;
@@ -346,26 +330,27 @@ int link_shell_pdn_activate(const struct shell *shell, int pdn_cid)
 	/* Activate a PDN connection */
 	ret = pdn_activate(pdn_cid, &esm);
 	if (ret) {
-		shell_error(shell, "pdn_activate() failed, err %d esm %d %s\n",
-			    ret, esm, esm_strerr(esm));
+		mosh_error(
+			"pdn_activate() failed, err %d esm %d %s\n",
+			ret, esm, esm_strerr(esm));
 	}
 	return ret;
 }
 
-void link_shell_pdn_init(const struct shell *shell)
+void link_shell_pdn_init(void)
 {
 	int err;
 
 	/* Register to the necessary packet domain AT notifications */
 	err = at_cmd_write("AT+CNEC=16", NULL, 0, NULL);
 	if (err) {
-		shell_error(shell, "AT+CNEC=16 failed, err %d\n", err);
+		mosh_error("AT+CNEC=16 failed, err %d\n", err);
 		return;
 	}
 
 	err = at_cmd_write("AT+CGEREP=1", NULL, 0, NULL);
 	if (err) {
-		shell_error(shell, "AT+CGEREP=1 failed, err %d\n", err);
+		mosh_error("AT+CGEREP=1 failed, err %d\n", err);
 		return;
 	}
 

@@ -30,13 +30,13 @@
 #include <settings/settings.h>
 
 #include "link_api.h"
+#include "mosh_print.h"
 
 #include "ppp_settings.h"
 #include "ppp_ctrl.h"
 
 /* ppp globals: */
 struct net_if *ppp_iface_global;
-extern const struct shell *shell_global;
 
 /* Socket to send and recv data to/from modem: */
 int ppp_modem_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
@@ -62,12 +62,10 @@ static void ppp_ctrl_link_default_pdn_status_handler(struct k_work *work_item)
 		CONTAINER_OF(work_item, struct ppp_ctrl_worker_data, work);
 
 	if (data_ptr->default_pdn_active == true) {
-		shell_info(shell_global,
-			   "Default PDN is active: starting PPP automatically.");
-		ppp_ctrl_start(shell_global);
+		mosh_print("Default PDN is active: starting PPP automatically.");
+		ppp_ctrl_start();
 	} else {
-		shell_info(shell_global,
-			   "Default PDN is not active: stopping PPP automatically.");
+		mosh_print("Default PDN is not active: stopping PPP automatically.");
 		ppp_ctrl_stop();
 	}
 }
@@ -86,12 +84,12 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 
 	if (mgmt_event == NET_EVENT_PPP_CARRIER_ON) {
-		shell_print(shell_global, "PPP carrier ON");
+		mosh_print("PPP carrier ON");
 		return;
 	}
 
 	if (mgmt_event == NET_EVENT_PPP_CARRIER_OFF) {
-		shell_print(shell_global, "PPP carrier OFF");
+		mosh_print("PPP carrier OFF");
 		return;
 	}
 }
@@ -108,12 +106,12 @@ ppp_ctrl_net_mgmt_event_ip_levelhandler(struct net_mgmt_event_callback *cb,
 	}
 	if (mgmt_event == NET_EVENT_IPV4_ADDR_ADD &&
 	    iface == ppp_iface_global) {
-		shell_print(shell_global, "Dial up connection up");
+		mosh_print("Dial up connection up");
 		return;
 	}
 	if (mgmt_event == NET_EVENT_IPV4_ADDR_DEL &&
 	    iface == ppp_iface_global) {
-		shell_print(shell_global, "Dial up connection down");
+		mosh_print("Dial up connection down");
 		return;
 	}
 }
@@ -144,7 +142,7 @@ void ppp_ctrl_init(void)
 
 	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
 	if (!ppp_uart_dev) {
-		shell_warn(shell_global, "Cannot get ppp dev binding");
+		mosh_warn("Cannot get ppp dev binding");
 		ppp_uart_dev = NULL;
 	}
 
@@ -159,7 +157,7 @@ void ppp_ctrl_default_pdn_active(bool default_pdn_active)
 
 /******************************************************************************/
 
-int ppp_ctrl_start(const struct shell *shell)
+int ppp_ctrl_start(void)
 {
 	struct ppp_context *ctx;
 	struct net_if *iface;
@@ -167,20 +165,20 @@ int ppp_ctrl_start(const struct shell *shell)
 	int idx = 0; /* Note: PPP iface index assumed to be 0 */
 
 	if (ppp_modem_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
-		shell_warn(shell, "PPP already up.\n");
+		mosh_warn("PPP already up.\n");
 		goto return_error;
 	}
 
 	ctx = net_ppp_context_get(idx);
 	if (!ctx) {
-		shell_error(shell, "PPP context not found.\n");
+		mosh_error("PPP context not found.\n");
 		goto return_error;
 	}
 
 	/* Note: no multicontext support, only at default PDN context */
 	pdp_context_info = link_api_get_pdp_context_info_by_pdn_cid(0);
 	if (pdp_context_info == NULL) {
-		shell_error(shell, "PPP context not found.\n");
+		mosh_error("PPP context not found.\n");
 		goto return_error;
 	}
 
@@ -202,13 +200,10 @@ int ppp_ctrl_start(const struct shell *shell)
 
 	ppp_modem_data_socket_fd = socket(AF_PACKET, SOCK_RAW, 0);
 	if (ppp_modem_data_socket_fd < 0) {
-		shell_error(shell,
-			    "modem data socket creation failed: (%d)!!!!\n",
-			    -errno);
+		mosh_error("modem data socket creation failed: (%d)!!!!\n", -errno);
 		goto return_error;
 	} else {
-		shell_info(shell, "modem data socket %d created for modem data",
-			   ppp_modem_data_socket_fd);
+		mosh_print("modem data socket %d created for modem data", ppp_modem_data_socket_fd);
 	}
 
 #ifdef SO_SNDTIMEO
@@ -219,7 +214,7 @@ int ppp_ctrl_start(const struct shell *shell)
 	tv.tv_usec = 0;
 	if (setsockopt(ppp_modem_data_socket_fd, SOL_SOCKET, SO_SNDTIMEO,
 		       (struct timeval *)&tv, sizeof(struct timeval)) < 0) {
-		shell_error(shell, "Unable to set socket SO_SNDTIMEO");
+		mosh_error("Unable to set socket SO_SNDTIMEO");
 	}
 #endif
 
@@ -228,13 +223,10 @@ int ppp_ctrl_start(const struct shell *shell)
 	/* Create raw Zephyr socket for passing data to/from ppp link: */
 	ppp_data_socket_fd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
 	if (ppp_data_socket_fd < 0) {
-		shell_error(shell,
-			    "PPP data socket creation failed: (%d)!!!!\n",
-			    -errno);
+		mosh_error("PPP data socket creation failed: (%d)!!!!\n", -errno);
 		goto return_error;
 	} else {
-		shell_info(shell, "PPP data socket %d created",
-			   ppp_data_socket_fd);
+		mosh_print("PPP data socket %d created", ppp_data_socket_fd);
 	}
 
 	/* Bind to PPP net if: */
@@ -246,8 +238,7 @@ int ppp_ctrl_start(const struct shell *shell)
 	int ret = bind(ppp_data_socket_fd, (const struct sockaddr *)&dst,
 		       sizeof(struct sockaddr_ll));
 	if (ret < 0) {
-		shell_error(shell, "Failed to bind PPP data socket : %d",
-			    errno);
+		mosh_error("Failed to bind PPP data socket : %d", errno);
 		goto return_error;
 	}
 

@@ -15,11 +15,8 @@ struct mapping_tbl_item {
 	char *value_str;
 };
 
-void link_shell_print_reg_status(const struct shell *shell,
-				  enum lte_lc_nw_reg_status reg_status);
-
-void link_shell_print_modem_sleep_notif(const struct shell *shell,
-					 const struct lte_lc_evt *const evt);
+void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status);
+void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt);
 const char *link_shell_funmode_to_string(int funmode, char *out_str_buff);
 const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff);
 const char *link_shell_sysmode_preferred_to_string(int sysmode_preference, char *out_str_buff);

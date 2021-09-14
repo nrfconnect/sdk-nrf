@@ -12,8 +12,7 @@
 #include <shell/shell.h>
 
 #include "net_utils.h"
-
-extern const struct shell *shell_global;
+#include "mosh_print.h"
 
 int net_utils_socket_apn_set(int fd, const char *apn)
 {
@@ -25,15 +24,14 @@ int net_utils_socket_apn_set(int fd, const char *apn)
 
 	len = strlen(apn);
 	if (len >= sizeof(ifr.ifr_name)) {
-		shell_error(shell_global, "Access point name is too long");
+		mosh_error("Access point name is too long");
 		return -EINVAL;
 	}
 
 	memcpy(ifr.ifr_name, apn, len);
 	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
 	if (ret < 0) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"Failed to bind socket to APN %s, error: %d, %s",
 			apn, ret, strerror(ret));
 		return -EINVAL;
@@ -53,8 +51,7 @@ int net_utils_socket_pdn_id_set(int fd, uint32_t pdn_id)
 
 	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
 	if (ret < 0) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"Failed to bind socket with PDN ID %d, error: %d, %s",
 			pdn_id, ret, strerror(ret));
 		return -EINVAL;

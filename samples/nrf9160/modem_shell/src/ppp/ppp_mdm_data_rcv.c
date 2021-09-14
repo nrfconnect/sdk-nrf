@@ -20,10 +20,11 @@
 #include <posix/sys/socket.h>
 #include <shell/shell.h>
 
+#include "mosh_print.h"
+
 /* ppp globals: */
 extern int ppp_modem_data_socket_fd;
 extern int ppp_data_socket_fd;
-extern const struct shell *shell_global;
 
 #define PPP_MODEM_DATA_RCV_THREAD_STACK_SIZE 1024
 
@@ -69,20 +70,18 @@ static void ppp_modem_dl_data_thread_handler(void)
 					     (const struct sockaddr *)&dst,
 					     sizeof(struct sockaddr_ll));
 				if (ret < 0) {
-					shell_error(
-						shell_global,
+					mosh_error(
 						"%s: cannot send data from mdm to PPP link "
 						"- dropped data of len %d\n",
 						(__func__), recv_data_len);
 				}
 			} else {
-				shell_error(shell_global,
-					    "%s: recv() from modem failed %d\n",
-					    (__func__), recv_data_len);
+				mosh_error(
+					"%s: recv() from modem failed %d\n",
+					(__func__), recv_data_len);
 			}
 		} else if (ret < 0) {
-			shell_error(shell_global, "%s: poll() failed %d\n",
-				    (__func__), ret);
+			mosh_error("%s: poll() failed %d\n", (__func__), ret);
 		}
 	}
 }

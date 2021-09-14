@@ -18,6 +18,7 @@ target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/shell.c)
 target_sources(app PRIVATE src/at/at_shell.c)
 
+add_subdirectory(src/print)
 add_subdirectory(src/utils)
 add_subdirectory(src/uart)
 add_subdirectory_ifdef(CONFIG_MOSH_WORKER_THREADS src/th)

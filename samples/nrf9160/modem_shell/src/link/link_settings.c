@@ -5,18 +5,15 @@
  */
 
 #include <stdio.h>
-#include <strings.h>
-
 #include <assert.h>
-
 #include <shell/shell.h>
-
 #include <settings/settings.h>
 
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 
 #include "mosh_defines.h"
+#include "mosh_print.h"
 
 #include "link_shell_print.h"
 #include "link_shell_pdn.h"
@@ -62,8 +59,6 @@
 #define LINK_SETT_NORMAL_MODE_AUTOCONN_ENABLED "normal_mode_autoconn_enabled"
 
 /* ****************************************************************************/
-extern const struct shell *shell_global;
-
 struct link_sett_t {
 	char defcont_apn_str[MOSH_APN_STR_MAX_LEN + 1];
 	bool defcont_enabled;
@@ -103,10 +98,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcont_enabled,
 			      sizeof(link_settings.defcont_enabled));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcont enabled, error: %d",
-				err);
+			mosh_error("Failed to read defcont enabled, error: %d",	err);
 			return err;
 		}
 		return 0;
@@ -114,10 +106,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcont_apn_str,
 			      sizeof(link_settings.defcont_apn_str));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcont APN, error: %d",
-				err);
+			mosh_error("Failed to read defcont APN, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -125,10 +114,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.pdn_family,
 			      sizeof(link_settings.pdn_family));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcont PDN family, error: %d",
-				err);
+			mosh_error("Failed to read defcont PDN family, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -137,10 +123,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcontauth_enabled,
 			      sizeof(link_settings.defcontauth_enabled));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcontauth enabled, error: %d",
-				err);
+			mosh_error("Failed to read defcontauth enabled, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -148,10 +131,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcontauth_uname_str,
 			      sizeof(link_settings.defcontauth_uname_str));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcontauth username, error: %d",
-				err);
+			mosh_error("Failed to read defcontauth username, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -159,10 +139,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcontauth_pword_str,
 			      sizeof(link_settings.defcontauth_pword_str));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcontauth password, error: %d",
-				err);
+			mosh_error("Failed to read defcontauth password, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -170,10 +147,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.defcontauth_prot,
 			      sizeof(link_settings.defcontauth_prot));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read defcontauth password, error: %d",
-				err);
+			mosh_error("Failed to read defcontauth password, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -181,10 +155,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.sysmode,
 			      sizeof(link_settings.sysmode));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read sysmode, error: %d",
-				err);
+			mosh_error("Failed to read sysmode, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -192,10 +163,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.sysmode_lte_preference,
 			      sizeof(link_settings.sysmode_lte_preference));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read LTE preference, error: %d",
-				err);
+			mosh_error("Failed to read LTE preference, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -203,10 +171,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.normal_mode_at_cmd_str_1,
 			      sizeof(link_settings.normal_mode_at_cmd_str_1));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read normal mode at cmd 1, error: %d",
-				err);
+			mosh_error("Failed to read normal mode at cmd 1, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -214,10 +179,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.normal_mode_at_cmd_str_2,
 			      sizeof(link_settings.normal_mode_at_cmd_str_2));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read normal mode at cmd 2, error: %d",
-				err);
+			mosh_error("Failed to read normal mode at cmd 2, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -225,10 +187,7 @@ static int link_sett_handler(const char *key, size_t len,
 		err = read_cb(cb_arg, &link_settings.normal_mode_at_cmd_str_3,
 			      sizeof(link_settings.normal_mode_at_cmd_str_3));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read normal mode at cmd 3, error: %d",
-				err);
+			mosh_error("Failed to read normal mode at cmd 3, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -237,10 +196,7 @@ static int link_sett_handler(const char *key, size_t len,
 			cb_arg, &link_settings.normal_mode_autoconn_enabled,
 			sizeof(link_settings.normal_mode_autoconn_enabled));
 		if (err < 0) {
-			shell_error(
-				shell_global,
-				"Failed to read normal mode autoconnect, error: %d",
-				err);
+			mosh_error("Failed to read normal mode autoconnect, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -257,13 +213,12 @@ int link_sett_save_defcont_enabled(bool enabled)
 	int err;
 
 	link_settings.defcont_enabled = enabled;
-	shell_print(shell_global, "link defcont %s",
-		    ((enabled == true) ? "enabled" : "disabled"));
+	mosh_print("link defcont %s", ((enabled == true) ? "enabled" : "disabled"));
 
 	err = settings_save_one(key, &link_settings.defcont_enabled,
 				sizeof(link_settings.defcont_enabled));
 	if (err) {
-		shell_error(shell_global, "%s: err %d from settings_save_one()", __func__, err);
+		mosh_error("%s: err %d from settings_save_one()", __func__, err);
 		return err;
 	}
 	return 0;
@@ -288,15 +243,16 @@ int link_sett_save_defcont_pdn_family(enum pdn_fam family)
 	err = settings_save_one(key, &family, sizeof(enum pdn_fam));
 
 	if (err) {
-		shell_error(shell_global, "Saving of family failed with err %d", err);
+		mosh_error("Saving of family failed with err %d", err);
 		return err;
 	}
 
 	link_settings.pdn_family = family;
 
-	shell_print(shell_global, "Key \"%s\" with value \"%d\" / \"%s\" saved",
-		    key, family,
-		    link_pdn_lib_family_to_string(family, tmp_str));
+	mosh_print(
+		"Key \"%s\" with value \"%d\" / \"%s\" saved",
+		key, family,
+		link_pdn_lib_family_to_string(family, tmp_str));
 
 	return 0;
 }
@@ -316,27 +272,27 @@ int link_sett_save_defcont_apn(const char *defcont_apn_str)
 
 	err = settings_save_one(key, defcont_apn_str, len + 1);
 	if (err) {
-		shell_error(shell_global, "%s: err %d from settings_save_one()", (__func__), err);
+		mosh_error("%s: err %d from settings_save_one()", (__func__), err);
 		return err;
 	}
-	shell_print(shell_global, "%s: key %s with value %s saved",
-		    (__func__), key, defcont_apn_str);
+	mosh_print("%s: key %s with value %s saved", (__func__), key, defcont_apn_str);
 
 	strcpy(link_settings.defcont_apn_str, defcont_apn_str);
 
 	return 0;
 }
 
-void link_sett_defcont_conf_shell_print(const struct shell *shell)
+void link_sett_defcont_conf_shell_print(void)
 {
 	char tmp_str[16];
 
-	shell_print(shell, "link defcont config:");
-	shell_print(shell, "  Enabled: %s", link_settings.defcont_enabled ? "true" : "false");
-	shell_print(shell, "  APN: %s", link_settings.defcont_apn_str);
-	shell_print(shell, "  PDN family: %d (\"%s\")",
-		    link_settings.pdn_family,
-		    link_pdn_lib_family_to_string(link_settings.pdn_family, tmp_str));
+	mosh_print("link defcont config:");
+	mosh_print("  Enabled: %s", link_settings.defcont_enabled ? "true" : "false");
+	mosh_print("  APN: %s", link_settings.defcont_apn_str);
+	mosh_print(
+		"  PDN family: %d (\"%s\")",
+		link_settings.pdn_family,
+		link_pdn_lib_family_to_string(link_settings.pdn_family, tmp_str));
 }
 
 /* ****************************************************************************/
@@ -347,13 +303,12 @@ int link_sett_save_defcontauth_enabled(bool enabled)
 	int err;
 
 	link_settings.defcontauth_enabled = enabled;
-	shell_print(shell_global, "link defcontauth  %s",
-		    ((enabled == true) ? "enabled" : "disabled"));
+	mosh_print("link defcontauth  %s", ((enabled == true) ? "enabled" : "disabled"));
 
 	err = settings_save_one(key, &link_settings.defcontauth_enabled,
 				sizeof(link_settings.defcontauth_enabled));
 	if (err) {
-		shell_error(shell_global, "%s: erro %d from settings_save_one()", (__func__), err);
+		mosh_error("%s: erro %d from settings_save_one()", (__func__), err);
 		return err;
 	}
 
@@ -373,21 +328,18 @@ int link_sett_save_defcontauth_username(const char *username_str)
 	int len = strlen(username_str);
 
 	if (len > LINK_SETT_DEFCONTAUTH_MAX_UNAME_STR_LEN) {
-		shell_error(shell_global, "%s: username length over the limit %d",
-			    __func__, LINK_SETT_DEFCONTAUTH_MAX_UNAME_STR_LEN);
+		mosh_error(
+			"%s: username length over the limit %d",
+			__func__, LINK_SETT_DEFCONTAUTH_MAX_UNAME_STR_LEN);
 		return -EINVAL;
 	}
 
 	err = settings_save_one(key, username_str, len + 1);
 	if (err) {
-		shell_error(
-			shell_global,
-			"Saving of authentication username failed with err %d",
-			err);
+		mosh_error("Saving of authentication username failed with err %d", err);
 		return err;
 	}
-	shell_print(shell_global, "Key \"%s\" with value \"%s\" saved", key,
-		    username_str);
+	mosh_print("Key \"%s\" with value \"%s\" saved", key, username_str);
 
 	strcpy(link_settings.defcontauth_uname_str, username_str);
 
@@ -401,21 +353,18 @@ int link_sett_save_defcontauth_password(const char *password_str)
 	int len = strlen(password_str);
 
 	if (len > LINK_SETT_DEFCONTAUTH_MAX_PWORD_STR_LEN) {
-		shell_error(shell_global, "%s: username length over the limit %d",
-			    __func__, LINK_SETT_DEFCONTAUTH_MAX_PWORD_STR_LEN);
+		mosh_error(
+			"%s: username length over the limit %d",
+			__func__, LINK_SETT_DEFCONTAUTH_MAX_PWORD_STR_LEN);
 		return -EINVAL;
 	}
 
 	err = settings_save_one(key, password_str, len + 1);
 	if (err) {
-		shell_error(
-			shell_global,
-			"Saving of authentication password failed with err %d",
-			err);
+		mosh_error("Saving of authentication password failed with err %d", err);
 		return err;
 	}
-	shell_print(shell_global, "Key \"%s\" with value \"%s\" saved", key,
-		    password_str);
+	mosh_print("Key \"%s\" with value \"%s\" saved", key, password_str);
 
 	strcpy(link_settings.defcontauth_pword_str, password_str);
 
@@ -432,22 +381,18 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 	err = link_shell_pdn_auth_prot_to_pdn_lib_method_map(auth_prot,
 							     &method);
 	if (err) {
-		shell_error(shell_global, "Uknown auth protocol %d", auth_prot);
+		mosh_error("Uknown auth protocol %d", auth_prot);
 		return -EINVAL;
 	}
 
 	err = settings_save_one(key, &auth_prot, sizeof(enum pdn_auth));
 	if (err) {
-		shell_error(
-			shell_global,
-			"Saving of authentication protocol failed with err %d",
-			err);
+		mosh_error("Saving of authentication protocol failed with err %d", err);
 		return err;
 	}
 	link_settings.defcontauth_prot = method;
 
-	shell_print(shell_global, "Key \"%s\" with value \"%d\" saved", key,
-		    method);
+	mosh_print("Key \"%s\" with value \"%d\" saved", key, method);
 
 	return 0;
 }
@@ -469,25 +414,23 @@ char *link_sett_defcontauth_password_get(void)
 	return link_settings.defcontauth_pword_str;
 }
 
-void link_sett_defcontauth_conf_shell_print(const struct shell *shell)
+void link_sett_defcontauth_conf_shell_print(void)
 {
 	static const char *const prot_type_str[] = { "None", "PAP", "CHAP" };
 
-	shell_print(shell, "link defcontauth config:");
-	shell_print(shell, "  Enabled: %s",
-		    link_settings.defcontauth_enabled ? "true" : "false");
-	shell_print(shell, "  Username: %s",
-		    link_settings.defcontauth_uname_str);
-	shell_print(shell, "  Password: %s",
-		    link_settings.defcontauth_pword_str);
-	shell_print(shell, "  Authentication protocol: %s",
-		    prot_type_str[link_settings.defcontauth_prot]);
+	mosh_print("link defcontauth config:");
+	mosh_print("  Enabled: %s",
+			link_settings.defcontauth_enabled ? "true" : "false");
+	mosh_print("  Username: %s", link_settings.defcontauth_uname_str);
+	mosh_print("  Password: %s", link_settings.defcontauth_pword_str);
+	mosh_print("  Authentication protocol: %s",
+			prot_type_str[link_settings.defcontauth_prot]);
 }
 
 /* ****************************************************************************/
 
 int link_sett_sysmode_save(enum lte_lc_system_mode mode,
-			    enum lte_lc_system_mode_preference lte_pref)
+			   enum lte_lc_system_mode_preference lte_pref)
 {
 	const char *key = LINK_SETT_KEY "/" LINK_SETT_SYSMODE_KEY;
 	const char *lte_pref_key = LINK_SETT_KEY "/" LINK_SETT_SYSMODE_LTE_PREFERENCE_KEY;
@@ -495,43 +438,35 @@ int link_sett_sysmode_save(enum lte_lc_system_mode mode,
 
 	err = settings_save_one(key, &mode, sizeof(mode));
 	if (err) {
-		shell_error(
-			shell_global,
-			"link_sett_save_sysmode: erro %d from settings_save_one()",
-			err);
+		mosh_error("link_sett_save_sysmode: erro %d from settings_save_one()", err);
 		return err;
 	}
 	link_settings.sysmode = mode;
-	shell_print(shell_global, "sysmode %d saved successfully to settings",
-		    mode);
+	mosh_print("sysmode %d saved successfully to settings", mode);
 
 	err = settings_save_one(lte_pref_key, &lte_pref, sizeof(lte_pref));
 	if (err) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"link_sett_save_sysmode for lte pref: erro %d from settings_save_one()",
 			err);
 		return err;
 	}
 	link_settings.sysmode_lte_preference = lte_pref;
-	shell_print(shell_global,
-		    "LTE preference %d saved successfully to settings",
-		    lte_pref);
+	mosh_print("LTE preference %d saved successfully to settings", lte_pref);
 
 	return 0;
 }
 
-void link_sett_sysmode_print(const struct shell *shell)
+void link_sett_sysmode_print(void)
 {
 	char snum[64];
 
-	shell_print(shell, "link sysmode config:");
-	shell_print(shell, "  mode: %s",
-		    link_shell_sysmode_to_string(link_sett_sysmode_get(),
-						  snum));
-	shell_print(shell, "  LTE preference: %s",
-		    link_shell_sysmode_preferred_to_string(
-			    link_sett_sysmode_lte_preference_get(), snum));
+	mosh_print("link sysmode config:");
+	mosh_print("  mode: %s", link_shell_sysmode_to_string(link_sett_sysmode_get(), snum));
+	mosh_print(
+		"  LTE preference: %s",
+		link_shell_sysmode_preferred_to_string(
+			link_sett_sysmode_lte_preference_get(), snum));
 }
 
 int link_sett_sysmode_get(void)
@@ -562,7 +497,7 @@ char *link_sett_normal_mode_at_cmd_str_get(uint8_t mem_slot)
 		return link_settings.normal_mode_at_cmd_str_3;
 	}
 
-	shell_error(shell_global, "%s:unsupported memory slot %d", __func__, mem_slot);
+	mosh_error("%s:unsupported memory slot %d", __func__, mem_slot);
 	return NULL;
 }
 
@@ -574,8 +509,7 @@ int link_sett_save_normal_mode_at_cmd_str(const char *at_str, uint8_t mem_slot)
 	char *at_cmd_ram_storage_ptr;
 
 	if (len > CONFIG_MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"%s: at command string length (%d) over the limit %d",
 			(__func__), len, CONFIG_MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN);
 		return -EINVAL;
@@ -594,21 +528,19 @@ int link_sett_save_normal_mode_at_cmd_str(const char *at_str, uint8_t mem_slot)
 			link_settings.normal_mode_at_cmd_str_3;
 		key = LINK_SETT_KEY "/" LINK_SETT_NORMAL_MODE_AT_CMD_3_KEY;
 	} else {
-		shell_error(shell_global, "%s: unsupported memory slot %d", (__func__), mem_slot);
+		mosh_error("%s: unsupported memory slot %d", (__func__), mem_slot);
 		return -EINVAL;
 	}
 
 	err = settings_save_one(key, at_str, len + 1);
 	if (err) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"Saving of normal mode at cmd %d to settings failed with err %d",
 			mem_slot, err);
 		return err;
 	}
 
-	shell_print(shell_global, "Key \"%s\" with value \"%s\" saved", key,
-		    at_str);
+	mosh_print("Key \"%s\" with value \"%s\" saved", key, at_str);
 
 	strcpy(at_cmd_ram_storage_ptr, at_str);
 	return 0;
@@ -633,8 +565,7 @@ int link_sett_clear_normal_mode_at_cmd_str(uint8_t mem_slot)
 			link_settings.normal_mode_at_cmd_str_3;
 		key = LINK_SETT_KEY "/" LINK_SETT_NORMAL_MODE_AT_CMD_3_KEY;
 	} else {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"link_sett_delete_normal_mode_at_cmd_str: unsupported memory slot %d",
 			mem_slot);
 		return -EINVAL;
@@ -642,29 +573,25 @@ int link_sett_clear_normal_mode_at_cmd_str(uint8_t mem_slot)
 
 	err = settings_save_one(key, '\0', 1);
 	if (err) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"Clearing of normal mode at cmd %d to settings failed with err %d",
 			mem_slot, err);
 		return err;
 	}
 
-	shell_print(shell_global, "Key \"%s\" cleared", key);
+	mosh_print("Key \"%s\" cleared", key);
 
 	at_cmd_ram_storage_ptr[0] = '\0';
 
 	return 0;
 }
 
-void link_sett_normal_mode_at_cmds_shell_print(const struct shell *shell)
+void link_sett_normal_mode_at_cmds_shell_print(void)
 {
-	shell_print(shell, "link normal mode at commands:");
-	shell_print(shell, "  Memory slot 1: \"%s\"",
-		    link_settings.normal_mode_at_cmd_str_1);
-	shell_print(shell, "  Memory slot 2: \"%s\"",
-		    link_settings.normal_mode_at_cmd_str_2);
-	shell_print(shell, "  Memory slot 3: \"%s\"",
-		    link_settings.normal_mode_at_cmd_str_3);
+	mosh_print("link normal mode at commands:");
+	mosh_print("  Memory slot 1: \"%s\"", link_settings.normal_mode_at_cmd_str_1);
+	mosh_print("  Memory slot 2: \"%s\"", link_settings.normal_mode_at_cmd_str_2);
+	mosh_print("  Memory slot 3: \"%s\"", link_settings.normal_mode_at_cmd_str_3);
 }
 
 /* ****************************************************************************/
@@ -676,18 +603,14 @@ int link_sett_save_normal_mode_autoconn_enabled(bool enabled)
 	int err;
 
 	link_settings.normal_mode_autoconn_enabled = enabled;
-	shell_print(shell_global, "link nmodeauto %s",
-		    ((enabled == true) ? "enabled" : "disabled"));
+	mosh_print("link nmodeauto %s", ((enabled == true) ? "enabled" : "disabled"));
 
 	err = settings_save_one(
 		key, &link_settings.normal_mode_autoconn_enabled,
 		sizeof(link_settings.normal_mode_autoconn_enabled));
 
 	if (err) {
-		shell_error(
-			shell_global,
-			"link_sett_save_defcont_enabled: err %d from settings_save_one()",
-			err);
+		mosh_error("link_sett_save_defcont_enabled: err %d from settings_save_one()", err);
 		return err;
 	}
 	return 0;
@@ -698,12 +621,12 @@ bool link_sett_is_normal_mode_autoconn_enabled(void)
 	return link_settings.normal_mode_autoconn_enabled;
 }
 
-void link_sett_normal_mode_autoconn_shell_print(const struct shell *shell)
+void link_sett_normal_mode_autoconn_shell_print(void)
 {
-	shell_print(shell, "link nmodeauto settings:");
-	shell_print(shell, "  Autoconnect enabled: %s",
-		    link_settings.normal_mode_autoconn_enabled ? "true" :
-		    "false");
+	mosh_print("link nmodeauto settings:");
+	mosh_print(
+		"  Autoconnect enabled: %s",
+		link_settings.normal_mode_autoconn_enabled ? "true" : "false");
 }
 
 /* ****************************************************************************/
@@ -717,24 +640,22 @@ static void link_sett_ram_data_init(void)
 	link_settings.pdn_family = PDN_FAM_IPV4V6;
 
 	strcpy(link_settings.defcont_apn_str, LINK_SETT_DEFCONT_DEFAULT_APN);
-	strcpy(link_settings.defcontauth_uname_str,
-	       LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
-	strcpy(link_settings.defcontauth_pword_str,
-	       LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
+	strcpy(link_settings.defcontauth_uname_str, LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
+	strcpy(link_settings.defcontauth_pword_str, LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
 }
 
 /* ****************************************************************************/
 
-void link_sett_all_print(const struct shell *shell)
+void link_sett_all_print(void)
 {
-	link_sett_sysmode_print(shell);
-	link_sett_defcont_conf_shell_print(shell);
-	link_sett_defcontauth_conf_shell_print(shell);
-	link_sett_normal_mode_at_cmds_shell_print(shell);
-	link_sett_normal_mode_autoconn_shell_print(shell);
+	link_sett_sysmode_print();
+	link_sett_defcont_conf_shell_print();
+	link_sett_defcontauth_conf_shell_print();
+	link_sett_normal_mode_at_cmds_shell_print();
+	link_sett_normal_mode_autoconn_shell_print();
 }
 
-void link_sett_defaults_set(const struct shell *shell)
+void link_sett_defaults_set(void)
 {
 	link_sett_ram_data_init();
 
@@ -743,10 +664,8 @@ void link_sett_defaults_set(const struct shell *shell)
 	link_sett_save_defcont_apn(LINK_SETT_DEFCONT_DEFAULT_APN);
 
 	link_sett_save_defcontauth_enabled(false);
-	link_sett_save_defcontauth_username(
-		LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
-	link_sett_save_defcontauth_password(
-		LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
+	link_sett_save_defcontauth_username(LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
+	link_sett_save_defcontauth_password(LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
 	link_sett_save_defcontauth_prot(PDN_AUTH_NONE);
 
 	link_sett_sysmode_default_set();
@@ -757,13 +676,13 @@ void link_sett_defaults_set(const struct shell *shell)
 
 	link_sett_save_normal_mode_autoconn_enabled(true);
 
-	shell_print(shell, "link settings reseted");
+	mosh_print("link settings reseted");
 }
 
 static struct settings_handler cfg = { .name = LINK_SETT_KEY,
 				       .h_set = link_sett_handler };
 
-int link_sett_init(const struct shell *shell)
+int link_sett_init(void)
 {
 	int err;
 
@@ -772,21 +691,17 @@ int link_sett_init(const struct shell *shell)
 
 	err = settings_subsys_init();
 	if (err) {
-		shell_error(
-			shell_global,
-			"Failed to initialize settings subsystem, error: %d",
-			err);
+		mosh_error("Failed to initialize settings subsystem, error: %d", err);
 		return err;
 	}
 	err = settings_register(&cfg);
 	if (err) {
-		shell_error(shell_global, "Cannot register settings handler %d",
-			    err);
+		mosh_error("Cannot register settings handler %d", err);
 		return err;
 	}
 	err = settings_load();
 	if (err) {
-		shell_error(shell_global, "Cannot load settings %d", err);
+		mosh_error("Cannot load settings %d", err);
 		return err;
 	}
 	return 0;

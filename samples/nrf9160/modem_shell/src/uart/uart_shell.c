@@ -14,6 +14,7 @@
 
 #include "uart_shell.h"
 #include "uart.h"
+#include "mosh_print.h"
 
 bool uart_disable_during_sleep_requested;
 
@@ -22,7 +23,7 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 	int ret = 1;
 
 	if (argc > 1) {
-		shell_error(shell, "%s: subcommand not found", argv[1]);
+		mosh_error("%s: subcommand not found", argv[1]);
 		ret = -EINVAL;
 	}
 
@@ -45,14 +46,14 @@ static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 
 	sleep_time = atoi(argv[1]);
 	if (sleep_time < 0) {
-		shell_error(shell, "disable: invalid sleep time");
+		mosh_error("disable: invalid sleep time");
 		return -EINVAL;
 	}
 
 	if (sleep_time > 0) {
-		shell_print(shell, "disable: disabling UARTs for %d seconds", sleep_time);
+		mosh_print("disable: disabling UARTs for %d seconds", sleep_time);
 	} else {
-		shell_print(shell, "disable: disabling UARTs indefinitely");
+		mosh_print("disable: disabling UARTs indefinitely");
 	}
 
 	k_sleep(K_MSEC(500)); /* allow little time for printing the notification */
@@ -65,10 +66,10 @@ static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-void uart_toggle_power_state_at_event(const struct shell *shell, const struct lte_lc_evt *const evt)
+void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt)
 {
 	if (evt->type == LTE_LC_EVT_MODEM_SLEEP_ENTER) {
-		shell_print(shell, "Modem sleep enter: disabling UARTs requested");
+		mosh_print("Modem sleep enter: disabling UARTs requested");
 		k_sleep(K_MSEC(500)); /* allow little time for printing the notification */
 		disable_uarts();
 	} else if (evt->type == LTE_LC_EVT_MODEM_SLEEP_EXIT) {
@@ -76,7 +77,7 @@ void uart_toggle_power_state_at_event(const struct shell *shell, const struct lt
 	}
 }
 
-void uart_toggle_power_state(const struct shell *shell)
+void uart_toggle_power_state(void)
 {
 	const struct device *uart_dev;
 	enum pm_device_state uart0_power_state;
@@ -86,14 +87,14 @@ void uart_toggle_power_state(const struct shell *shell)
 	if (uart_dev) {
 		err = pm_device_state_get(uart_dev, &uart0_power_state);
 		if (err) {
-			shell_print(shell,
-				   "Failed to assess UART power state, pm_device_state_get: %d.",
-				    err);
+			mosh_print(
+				"Failed to assess UART power state, pm_device_state_get: %d.",
+				err);
 			return;
 		}
 
 		if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
-			shell_print(shell, "Disabling UARTs");
+			mosh_print("Disabling UARTs");
 
 			/* allow little time for printing the notification */
 			k_sleep(K_MSEC(500));
@@ -115,22 +116,22 @@ void uart_toggle_power_state(const struct shell *shell)
 			if (uart_dev) {
 				pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
 			}
-			shell_print(shell, "Enabling UARTs");
+			mosh_print("Enabling UARTs");
 
 			/* stop timer if uarts were disabled with command 'uart disable' */
 			k_timer_stop(&uart_reenable_timer);
 		}
 		if (err) {
-			shell_print(shell, "Failed to change UART power state");
+			mosh_print("Failed to change UART power state");
 		}
 	} else {
-		shell_print(shell, "Failed to change UART power state");
+		mosh_print("Failed to change UART power state");
 	}
 }
 
-static int cmd_uart_disable_when_sleep(const struct shell *shell)
+static int cmd_uart_disable_when_sleep(void)
 {
-	shell_print(shell, "during_sleep: disabling UARTs during the modem sleep mode");
+	mosh_print("during_sleep: disabling UARTs during the modem sleep mode");
 
 	/* Setting the flag to indicate that UARTs are requested to be disabled should the
 	 * modem enter sleep mode.
@@ -139,9 +140,9 @@ static int cmd_uart_disable_when_sleep(const struct shell *shell)
 	return 0;
 }
 
-static int cmd_uart_enable_when_sleep(const struct shell *shell)
+static int cmd_uart_enable_when_sleep(void)
 {
-	shell_print(shell, "during_sleep: enabling UARTs during the modem sleep mode");
+	mosh_print("during_sleep: enabling UARTs during the modem sleep mode");
 
 	/* Reset the flag, no dot disable UARTs when the modem enters sleep mode. */
 	uart_disable_during_sleep_requested = false;

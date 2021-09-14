@@ -56,12 +56,11 @@ struct icmp_ping_shell_cmd_argv {
 /**
  * @brief ICMP initiator.
  *
- * @param shell Requesting shell.
  * @param target_name Target domain name.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int icmp_ping_start(const struct shell *shell, struct icmp_ping_shell_cmd_argv *ping_args);
+int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args);
 
 #endif /* MOSH_ICMP_PING_H */
