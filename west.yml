@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a64e96d17cc741937a8f5ff01a824ef0df22f662
+      revision: 5bfea3862a45ed9beda1fa1a4f5cd2c594ab7c48
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -88,7 +88,6 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
-          - openthread
           - segger
           - tinycbor
           - tinycrypt
@@ -134,6 +133,10 @@ manifest:
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: 50bddddf7fb45e4ce87bc3619df06db55d181856
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: 6e2ab99d68f5cd4c6ad5d728b7c7baadfcd22429
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
