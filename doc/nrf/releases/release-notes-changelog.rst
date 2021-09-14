@@ -51,12 +51,20 @@ nRF9160
 nRF5
 ====
 
-There are no entries for this section yet.
+nRF Desktop
+-----------
+
+* Updated:
+
+  * Updated information about custom build types.
 
 Common
 ======
 
-The following changes are relevant for all device families.
+Edge Impulse
+------------
+
+* Updated information about custom build types.
 
 Common Application Framework (CAF)
 ----------------------------------
