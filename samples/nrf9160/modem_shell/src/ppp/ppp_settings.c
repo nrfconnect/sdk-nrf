@@ -5,18 +5,15 @@
  */
 
 #include <stdio.h>
-#include <strings.h>
-
+#include <string.h>
 #include <assert.h>
 
-#include <shell/shell.h>
 #include <drivers/uart.h>
 #include <settings/settings.h>
 
+#include "mosh_print.h"
 #include "ppp_ctrl.h"
 #include "ppp_settings.h"
-
-extern const struct shell *shell_global;
 
 #define PPP_SETT_KEY "ppp_settings"
 
@@ -39,11 +36,10 @@ static int ppp_settings_uart_dev_conf_get(struct uart_config *uart_conf)
 	if (ppp_uart_dev) {
 		ret = uart_config_get(ppp_uart_dev, uart_conf);
 		if (ret != 0) {
-			shell_warn(shell_global, "Cannot get PPP uart config, ret %d", ret);
+			mosh_warn("Cannot get PPP uart config, ret %d", ret);
 		}
 	} else {
-		shell_warn(shell_global, "No PPP uart device with name %s",
-			   CONFIG_NET_PPP_UART_NAME);
+		mosh_warn("No PPP uart device with name %s", CONFIG_NET_PPP_UART_NAME);
 		ret = -1;
 	}
 	return ret;
@@ -56,11 +52,10 @@ static int ppp_settings_uart_dev_conf_set(struct uart_config *uart_conf)
 	if (ppp_uart_dev) {
 		ret = uart_configure(ppp_uart_dev, uart_conf);
 		if (ret != 0) {
-			shell_warn(shell_global, "Cannot get PPP uart config, ret %d", ret);
+			mosh_warn("Cannot get PPP uart config, ret %d", ret);
 		}
 	} else {
-		shell_warn(shell_global, "No PPP uart device with name %s",
-			   CONFIG_NET_PPP_UART_NAME);
+		mosh_warn("No PPP uart device with name %s", CONFIG_NET_PPP_UART_NAME);
 		ret = -1;
 	}
 	return ret;
@@ -76,31 +71,31 @@ static int ppp_settings_handler(const char *key, size_t len, settings_read_cb re
 	if (strcmp(key, PPP_SETT_UART_BAUDRATE) == 0) {
 		ret = read_cb(cb_arg, &ppp_uart_conf.baudrate, sizeof(ppp_uart_conf.baudrate));
 		if (ret < 0) {
-			shell_error(shell_global, "Failed to read uart_baudrate, error: %d", ret);
+			mosh_error("Failed to read uart_baudrate, error: %d", ret);
 			return ret;
 		}
 	} else if (strcmp(key, PPP_SETT_UART_PARITY) == 0) {
 		ret = read_cb(cb_arg, &ppp_uart_conf.parity, sizeof(ppp_uart_conf.parity));
 		if (ret < 0) {
-			shell_error(shell_global, "Failed to read uart_parity, error: %d", ret);
+			mosh_error("Failed to read uart_parity, error: %d", ret);
 			return ret;
 		}
 	} else if (strcmp(key, PPP_SETT_UART_STOP_BITS) == 0) {
 		ret = read_cb(cb_arg, &ppp_uart_conf.stop_bits, sizeof(ppp_uart_conf.stop_bits));
 		if (ret < 0) {
-			shell_error(shell_global, "Failed to read uart_stop_bits, error: %d", ret);
+			mosh_error("Failed to read uart_stop_bits, error: %d", ret);
 			return ret;
 		}
 	} else if (strcmp(key, PPP_SETT_UART_DATA_BITS) == 0) {
 		ret = read_cb(cb_arg, &ppp_uart_conf.data_bits, sizeof(ppp_uart_conf.data_bits));
 		if (ret < 0) {
-			shell_error(shell_global, "Failed to read uart_data_bits, error: %d", ret);
+			mosh_error("Failed to read uart_data_bits, error: %d", ret);
 			return ret;
 		}
 	} else if (strcmp(key, PPP_SETT_UART_FLOW_CTRL) == 0) {
 		ret = read_cb(cb_arg, &ppp_uart_conf.flow_ctrl, sizeof(ppp_uart_conf.flow_ctrl));
 		if (ret < 0) {
-			shell_error(shell_global, "Failed to read uart_flow_ctrl, error: %d", ret);
+			mosh_error("Failed to read uart_flow_ctrl, error: %d", ret);
 			return ret;
 		}
 	}
@@ -156,7 +151,7 @@ int ppp_uart_settings_write(struct uart_config *uart_conf)
 
 	ret = ppp_settings_uart_dev_conf_set(uart_conf);
 	if (ret) {
-		shell_error(shell_global, "Failed to set setting to PPP uart %s, error: %d", ret);
+		mosh_error("Failed to set setting to PPP uart %s, error: %d", ret);
 		return ret;
 	}
 
@@ -164,7 +159,7 @@ int ppp_uart_settings_write(struct uart_config *uart_conf)
 	return 0;
 
 return_err:
-	shell_error(shell_global, "Failed to save key %s, error: %d", key, ret);
+	mosh_error("Failed to save key %s, error: %d", key, ret);
 	return ret;
 }
 
@@ -180,40 +175,39 @@ int ppp_settings_init(void)
 
 	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
 	if (!ppp_uart_dev) {
-		shell_warn(shell_global, "Cannot get ppp dev binding");
+		mosh_warn("Cannot get ppp dev binding");
 		ppp_uart_dev = NULL;
 	}
 
 	/* Read defaults: */
 	ret = ppp_settings_uart_dev_conf_get(&ppp_uart_conf);
 	if (ret) {
-		shell_error(shell_global, "Failed to get current uart settings, error: %d", ret);
+		mosh_error("Failed to get current uart settings, error: %d", ret);
 		return ret;
 	}
 
 	ret = settings_subsys_init();
 	if (ret) {
-		shell_error(shell_global, "Failed to initialize settings subsystem, error: %d",
-			    ret);
+		mosh_error("Failed to initialize settings subsystem, error: %d", ret);
 		return ret;
 	}
 
 	ret = settings_register(&cfg);
 	if (ret) {
-		shell_error(shell_global, "Cannot register settings handler %d", ret);
+		mosh_error("Cannot register settings handler %d", ret);
 		return ret;
 	}
 
 	ret = settings_load();
 	if (ret) {
-		shell_error(shell_global, "Cannot load settings %d", ret);
+		mosh_error("Cannot load settings %d", ret);
 		return ret;
 	}
 
 	/* Set possible custom uart config: */
 	ret = ppp_settings_uart_dev_conf_set(&ppp_uart_conf);
 	if (ret) {
-		shell_error(shell_global, "Failed to set custom uart settings, error: %d", ret);
+		mosh_error("Failed to set custom uart settings, error: %d", ret);
 		return ret;
 	}
 	ppp_uart_conf_valid = true;

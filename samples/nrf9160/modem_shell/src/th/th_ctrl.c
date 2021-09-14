@@ -9,12 +9,12 @@
 #include <assert.h>
 #include <shell/shell.h>
 #include "utils/str_utils.h"
+#include "mosh_print.h"
 
 #if defined(CONFIG_MOSH_IPERF3)
 #include <sys/select.h>
 #include <iperf_api.h>
 #endif
-extern const struct shell *shell_global;
 
 #define TH_RESPONSE_BUFFER_SIZE 10240
 
@@ -96,11 +96,10 @@ static void th_ctrl_util_duplicate_argv_free(int argc, char **argv)
 
 static void th_ctrl_work_handler(struct k_work *work_item)
 {
-	struct th_ctrl_data *data =
-		CONTAINER_OF(work_item, struct th_ctrl_data, work);
+	struct th_ctrl_data *data = CONTAINER_OF(work_item, struct th_ctrl_data, work);
 	int ret;
 
-	shell_print(data->shell, "Starting a thread #%d", data->th_nbr);
+	mosh_print("Starting thread #%d", data->th_nbr);
 
 	assert(data->argv != NULL);
 
@@ -115,48 +114,42 @@ static void th_ctrl_work_handler(struct k_work *work_item)
 				 &(data->kill_signal));
 	}
 
-	shell_print(data->shell,
-		    "--------------------------------------------------");
-	shell_print(data->shell, "iperf_main returned %d from a thread #%d",
-		    ret, data->th_nbr);
+	mosh_print("--------------------------------------------------");
+	mosh_print("iperf_main returned %d from a thread #%d", ret, data->th_nbr);
 	if (data->background) {
-		shell_print(
-			data->shell,
-			"Use shell command to print results: \"th results %d\"",
-			data->th_nbr);
+		mosh_print("Use shell command to print results: \"th results %d\"", data->th_nbr);
 	}
-	shell_print(data->shell,
-		    "--------------------------------------------------");
+	mosh_print("--------------------------------------------------");
 }
 
-static void th_ctrl_data_status_print(const struct shell *shell,
-				      struct th_ctrl_data *data)
+static void th_ctrl_data_status_print(struct th_ctrl_data *data)
 {
 	char *print_buf;
 
-	shell_print(shell, "thread #%d status:", data->th_nbr);
+	mosh_print("thread #%d status:", data->th_nbr);
 	if (data->results_str != NULL && strlen(data->results_str)) {
-		shell_print(shell, "  Results available");
+		mosh_print("  Results available");
 		if (k_work_is_pending(&(data->work))) {
-			shell_print(shell, "  thread is running");
+			mosh_print("  thread is running");
 		} else {
-			shell_print(shell, "  thread is not running");
+			mosh_print("  thread is not running");
 		}
 		print_buf = (char *)calloc(data->cmd_len + 1, sizeof(char));
-		shell_print(shell, "  command: %s",
-			    th_ctrl_get_command_str_from_argv(
-				    data->argc, data->argv, print_buf,
-				    data->cmd_len + 1));
+		mosh_print(
+			"  command: %s",
+			th_ctrl_get_command_str_from_argv(
+				data->argc, data->argv, print_buf,
+				data->cmd_len + 1));
 		free(print_buf);
 	} else {
-		shell_print(shell, "  Nothing");
+		mosh_print("  Nothing");
 	}
 }
 
-void th_ctrl_status_print(const struct shell *shell)
+void th_ctrl_status_print(void)
 {
-	th_ctrl_data_status_print(shell, &th_work_data_1);
-	th_ctrl_data_status_print(shell, &th_work_data_2);
+	th_ctrl_data_status_print(&th_work_data_1);
+	th_ctrl_data_status_print(&th_work_data_2);
 }
 
 void th_ctrl_kill_em_all(void)
@@ -169,56 +162,54 @@ void th_ctrl_kill_em_all(void)
 	}
 }
 
-void th_ctrl_kill(const struct shell *shell, int nbr)
+void th_ctrl_kill(int nbr)
 {
 	if (nbr == 1) {
 		if (k_work_is_pending(&(th_work_data_1.work))) {
 			k_poll_signal_raise(&th_work_data_1.kill_signal, 1);
 		} else {
-			shell_print(shell, "Thread #1 not running");
+			mosh_print("Thread #1 not running");
 		}
 	} else if (nbr == 2) {
 		if (k_work_is_pending(&(th_work_data_2.work))) {
 			k_poll_signal_raise(&th_work_data_2.kill_signal, 2);
 		} else {
-			shell_print(shell, "Thread #2 not running");
+			mosh_print("Thread #2 not running");
 		}
 	}
 }
 
-static void th_ctrl_data_result_print(const struct shell *shell,
-				      struct th_ctrl_data *data)
+static void th_ctrl_data_result_print(struct th_ctrl_data *data)
 {
 	if (data->results_str == NULL || !strlen(data->results_str)) {
-		shell_print(shell, "No results for thread #%d", data->th_nbr);
+		mosh_print("No results for thread #%d", data->th_nbr);
 	} else {
-		shell_print(shell, "thread #%d results:", data->th_nbr);
-		shell_print(shell, "-------------------------------------");
-		shell_print(shell, "%s", data->results_str);
-		shell_print(shell, "-------------------------------------");
+		mosh_print("thread #%d results:", data->th_nbr);
+		mosh_print("-------------------------------------");
+		/* Don't add timestamp or any other formatting for results_str */
+		mosh_print_no_format(data->results_str);
+		mosh_print("-------------------------------------");
 
 		/* Delete data if the work is done */
 		if (!k_work_is_pending(&(data->work))) {
 			free(data->results_str);
 			data->results_str = NULL;
-			shell_print(shell, "Note: th results #%d were deleted.",
-				    data->th_nbr);
+			mosh_print("Note: th results #%d were deleted.", data->th_nbr);
 
 			/* Clean up for cmd argv */
-			th_ctrl_util_duplicate_argv_free(data->argc,
-							 data->argv);
+			th_ctrl_util_duplicate_argv_free(data->argc, data->argv);
 			data->argc = 0;
 			data->argv = NULL;
 		}
 	}
 }
 
-void th_ctrl_result_print(const struct shell *shell, int nbr)
+void th_ctrl_result_print(int nbr)
 {
 	if (nbr == 1) {
-		th_ctrl_data_result_print(shell, &th_work_data_1);
+		th_ctrl_data_result_print(&th_work_data_1);
 	} else if (nbr == 2) {
-		th_ctrl_data_result_print(shell, &th_work_data_2);
+		th_ctrl_data_result_print(&th_work_data_2);
 	}
 }
 
@@ -238,9 +229,7 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 		data->results_str =
 			(char *)calloc(TH_RESPONSE_BUFFER_SIZE, sizeof(char));
 		if (data->results_str == NULL) {
-			shell_error(
-				shell,
-				"Cannot start a thread: no memory to store a response");
+			mosh_error("Cannot start a thread: no memory to store a response");
 			return;
 		}
 	} else if (data->results_str != NULL) {
@@ -257,9 +246,7 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 	data->argc = argc - 1; /* Jump to actual command */
 	data->argv = th_ctrl_util_duplicate_argv(argc - 1, &argv[1]);
 	if (data->argv == NULL) {
-		shell_error(
-			shell,
-			"Cannot start a thread: no memory for duplicated cmd args");
+		mosh_error("Cannot start a thread: no memory for duplicated cmd args");
 		return;
 	}
 
@@ -275,26 +262,22 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 	}
 }
 
-void th_ctrl_start(const struct shell *shell, size_t argc, char **argv,
-		   bool is_background)
+void th_ctrl_start(const struct shell *shell, size_t argc, char **argv, bool is_background)
 {
 	/* Only iperf3 currently supported */
 	if (strcmp(argv[1], "iperf3") != 0) {
-		shell_error(shell, "Only iperf3 is supported currently.");
+		mosh_error("Only iperf3 is supported currently.");
 		return;
 	}
 
-	shell_print(shell, "Starting ...");
+	mosh_print("Starting ...");
 
 	if (!k_work_is_pending(&(th_work_data_1.work))) {
-		th_ctrl_data_start(&th_work_data_1, shell, argc, argv,
-				   is_background);
+		th_ctrl_data_start(&th_work_data_1, shell, argc, argv, is_background);
 	} else if (!k_work_is_pending(&(th_work_data_2.work))) {
-		th_ctrl_data_start(&th_work_data_2, shell, argc, argv,
-				   is_background);
+		th_ctrl_data_start(&th_work_data_2, shell, argc, argv, is_background);
 	} else {
-		shell_error(shell,
-			    "Worker threads are all busy. Try again later.");
+		mosh_error("Worker threads are all busy. Try again later.");
 	}
 }
 

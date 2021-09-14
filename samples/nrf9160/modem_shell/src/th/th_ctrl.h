@@ -11,11 +11,10 @@
 #define TH_BG_THREADS_MAX_AMOUNT 2
 
 void th_ctrl_init(void);
-void th_ctrl_result_print(const struct shell *shell, int nbr);
-void th_ctrl_status_print(const struct shell *shell);
-void th_ctrl_start(const struct shell *shell, size_t argc, char **argv,
-		   bool bg_thread);
-void th_ctrl_kill(const struct shell *shell, int nbr);
+void th_ctrl_result_print(int nbr);
+void th_ctrl_status_print(void);
+void th_ctrl_start(const struct shell *shell, size_t argc, char **argv, bool bg_thread);
+void th_ctrl_kill(int nbr);
 void th_ctrl_kill_em_all(void);
 
 #endif /* TH_CTRL_H */

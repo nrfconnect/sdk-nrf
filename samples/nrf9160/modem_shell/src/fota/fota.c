@@ -9,19 +9,17 @@
 
 #include <zephyr.h>
 #include <power/reboot.h>
-#include <shell/shell.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 
 #include "fota.h"
+#include "mosh_print.h"
 
 #define MOSH_FOTA_TLS_SECURITY_TAG 4242424
 
 static const char root_ca_cert[] = {
 #include "cert/Baltimore-CyberTrust-Root"
 };
-
-extern const struct shell *shell_global;
 
 static void reboot_timer_handler(struct k_timer *dummy)
 {
@@ -46,28 +44,23 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
-		shell_print(shell_global, "FOTA: Progress %d%%",
-			    evt->progress);
+		mosh_print("FOTA: Progress %d%%", evt->progress);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		shell_print(
-			shell_global,
-			"FOTA: Download finished, rebooting in 5 seconds...");
+		mosh_print("FOTA: Download finished, rebooting in 5 seconds...");
 		k_timer_start(&reboot_timer, K_SECONDS(5), K_NO_WAIT);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
-		shell_print(shell_global, "FOTA: Still erasing...");
+		mosh_print("FOTA: Still erasing...");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
-		shell_print(shell_global, "FOTA: Erasing finished");
+		mosh_print("FOTA: Erasing finished");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		shell_error(shell_global, "FOTA: Error, %s",
-			    get_error_cause(evt->cause));
+		mosh_error("FOTA: Error, %s", get_error_cause(evt->cause));
 		break;
 	default:
-		shell_error(shell_global, "FOTA: Unknown event %d",
-			    evt->id);
+		mosh_error("FOTA: Unknown event %d", evt->id);
 		break;
 	}
 }

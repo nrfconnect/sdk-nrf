@@ -70,6 +70,13 @@ config MOSH_FOTA
 	help
 	  FOTA for performing software updates over-the-air for both modem and application side.
 
+config MOSH_PRINT_BUFFER_SIZE
+	int "Buffer size used when printing modem shell output"
+	default 1024
+	help
+	  If the printed string exceeds this buffer, an error message is printed first and
+	  then the requested string cut into the length of this buffer.
+
 if MOSH_IPERF3
 menu "MoSH iperf3 command selections"
 

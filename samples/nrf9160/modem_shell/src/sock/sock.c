@@ -6,7 +6,6 @@
 
 #include <shell/shell.h>
 #include <assert.h>
-#include <strings.h>
 #include <stdio.h>
 #if defined(CONFIG_POSIX_API)
 #include <unistd.h>
@@ -27,6 +26,7 @@
 #include "link_api.h"
 #include "net_utils.h"
 #include "str_utils.h"
+#include "mosh_print.h"
 
 extern struct k_poll_signal mosh_signal;
 
@@ -84,7 +84,6 @@ K_MUTEX_DEFINE(sock_info_mutex);
 K_SEM_DEFINE(sock_sem, 0, 1);
 
 struct sock_info sockets[MAX_SOCKETS] = { 0 };
-extern const struct shell *shell_global;
 
 static void sock_info_clear(struct sock_info *socket_info)
 {
@@ -92,7 +91,7 @@ static void sock_info_clear(struct sock_info *socket_info)
 
 	if (k_work_delayable_busy_get(&socket_info->send_info.work) > 0) {
 		k_work_cancel_delayable(&socket_info->send_info.work);
-		shell_print(shell_global, "Socket data send periodic stop");
+		mosh_print("Socket data send periodic stop");
 	}
 	if (socket_info->send_buffer != NULL) {
 		free(socket_info->send_buffer);
@@ -129,17 +128,18 @@ static struct sock_info *get_socket_info_by_id(int socket_id)
 	struct sock_info *socket_info = NULL;
 
 	if (socket_id == SOCK_ID_NONE) {
-		shell_error(shell_global, "Socket id not given. -i option is mandatory");
+		mosh_error("Socket id not given. -i option is mandatory");
 		return NULL;
 	}
 	if (socket_id < 0 || socket_id > MAX_SOCKETS) {
-		shell_error(shell_global, "Socket id=%d must a postive number smaller than %d",
-			    socket_id, MAX_SOCKETS);
+		mosh_error(
+			"Socket id=%d must a postive number smaller than %d",
+			socket_id, MAX_SOCKETS);
 		return NULL;
 	}
 	socket_info = &(sockets[socket_id]);
 	if (!socket_info->in_use) {
-		shell_error(shell_global, "Socket id=%d not available", socket_id);
+		mosh_error("Socket id=%d not available", socket_id);
 		return NULL;
 	}
 	return socket_info;
@@ -207,8 +207,7 @@ static bool sock_send_buffer_calloc(struct sock_info *socket_info, uint32_t size
 	socket_info->send_buffer_size = size;
 	socket_info->send_buffer = calloc(size + 1, 1);
 	if (socket_info->send_buffer == NULL) {
-		shell_error(
-			shell_global,
+		mosh_error(
 			"Out of memory while reserving send buffer of size %d bytes",
 			socket_info->send_buffer_size);
 		return false;
@@ -236,46 +235,38 @@ static int sock_validate_parameters(
 {
 	/* Validate family parameter */
 	if (family != AF_INET && family != AF_INET6 && family != AF_PACKET) {
-		shell_error(shell_global, "Unsupported address family=%d", family);
+		mosh_error("Unsupported address family=%d", family);
 		return -EINVAL;
 	}
 
 	/* Validate type parameter */
 	if (type != SOCK_STREAM && type != SOCK_DGRAM && type != SOCK_RAW) {
-		shell_error(shell_global, "Unsupported address type=%d", type);
+		mosh_error("Unsupported address type=%d", type);
 		return -EINVAL;
 	}
 
 	/* Do security related validation */
 	if (secure) {
 		if (type == SOCK_RAW) {
-			shell_error(shell_global, "Security not supported with address type=%d",
-				    type);
+			mosh_error("Security not supported with address type=%d", type);
 			return -EINVAL;
 		}
 
 		if (sec_tag < 0) {
-			shell_error(shell_global,
-				    "Security tag must be given when security is enabled");
+			mosh_error("Security tag must be given when security is enabled");
 			return -EINVAL;
 		}
 	}
 
 	/* Validate port */
 	if (type != SOCK_RAW && (port < 1 || port > 65535)) {
-		shell_error(
-			shell_global,
-			"Port (%d) must be bigger than 0 and smaller than 65536",
-			port);
+		mosh_error("Port (%d) must be bigger than 0 and smaller than 65536", port);
 		return -EINVAL;
 	}
 
 	/* Validate bind port. Zero means that binding is not done. */
 	if (bind_port > 65535) {
-		shell_error(
-			shell_global,
-			"Bind port (%d) must be smaller than 65536",
-			bind_port);
+		mosh_error("Bind port (%d) must be smaller than 65536", bind_port);
 		return -EINVAL;
 	}
 	return 0;
@@ -321,7 +312,7 @@ static int sock_getaddrinfo(
 
 	if ((address == NULL) || (strlen(address) == 0)) {
 		if (type != SOCK_RAW) {
-			shell_error(shell_global, "Address not given");
+			mosh_error("Address not given");
 			return -EINVAL;
 		}
 	} else {
@@ -332,19 +323,11 @@ static int sock_getaddrinfo(
 		err = getaddrinfo(address, NULL, &hints, &socket_info->addrinfo);
 		if (err) {
 			if (err == DNS_EAI_SYSTEM) {
-				shell_error(
-					shell_global,
-					"getaddrinfo() failed, err %d errno %d",
-					err,
-					errno);
+				mosh_error("getaddrinfo() failed, err %d errno %d", err, errno);
 			} else {
-				shell_error(
-					shell_global,
-					"getaddrinfo() failed, err %d",
-					err);
+				mosh_error("getaddrinfo() failed, err %d", err);
 			}
-			err = -EADDRNOTAVAIL;
-			return err;
+			return -EADDRNOTAVAIL;
 		}
 
 		/* Set port to address info */
@@ -377,7 +360,7 @@ static int sock_set_tls_options(
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
 	if (err) {
-		shell_error(shell_global, "Unable to set security tag, errno %d", errno);
+		mosh_error("Unable to set security tag, errno %d", errno);
 		err = errno;
 		return -EINVAL;
 	}
@@ -390,7 +373,7 @@ static int sock_set_tls_options(
 	}
 	err = setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
 	if (err) {
-		shell_error(shell_global, "Unable to set session cache, errno %d", errno);
+		mosh_error("Unable to set session cache, errno %d", errno);
 		return errno;
 	}
 
@@ -409,7 +392,7 @@ static int sock_set_tls_options(
 	}
 	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
-		shell_error(shell_global, "Unable to set peer verify, errno %d", errno);
+		mosh_error("Unable to set peer verify, errno %d", errno);
 		return errno;
 	}
 
@@ -417,7 +400,7 @@ static int sock_set_tls_options(
 	if (strlen(peer_hostname) > 0) {
 		err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, &peer_hostname, strlen(peer_hostname));
 		if (err) {
-			shell_error(shell_global, "Unable to set peer hostname, errno %d", errno);
+			mosh_error("Unable to set peer hostname, errno %d", errno);
 			return errno;
 		}
 	}
@@ -456,7 +439,7 @@ static int sock_bind(
 
 	err = bind(fd, sa_local_ptr, sa_local_len);
 	if (err) {
-		shell_error(shell_global, "Unable to bind, errno %d", errno);
+		mosh_error("Unable to bind, errno %d", errno);
 		return errno;
 	}
 	return 0;
@@ -471,7 +454,7 @@ static int sock_bind_to_pdp_context(struct sock_info *socket_info, int pdn_cid)
 
 	err = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (err) {
-		shell_error(shell_global, "cannot read current connection info: %d", err);
+		mosh_error("cannot read current connection info: %d", err);
 		return -EINVAL;
 	}
 
@@ -487,14 +470,13 @@ static int sock_bind_to_pdp_context(struct sock_info *socket_info, int pdn_cid)
 	if (found) {
 		err = net_utils_socket_pdn_id_set(socket_info->fd, pdn_id);
 		if (err) {
-			shell_error(
-				shell_global,
+			mosh_error(
 				"Cannot bind socket id=%d to PDN ID %d",
 				socket_info->id,
 				pdn_id);
 		}
 	} else {
-		shell_error(shell_global, "PDN context with CID=%d doesn't exist", pdn_cid);
+		mosh_error("PDN context with CID=%d doesn't exist", pdn_cid);
 		err = -EINVAL;
 	}
 
@@ -522,25 +504,20 @@ int sock_open_and_connect(
 	int proto = 0;
 	int fd = 0;
 
-	shell_print(shell_global,
-		    "Socket open and connect family=%d, type=%d, port=%d, bind_port=%d, "
-		    "pdn_cid=%d, address=%s",
-		    family, type, port, bind_port, pdn_cid, address);
+	mosh_print("Socket open and connect family=%d, type=%d, port=%d, bind_port=%d, "
+		   "pdn_cid=%d, address=%s",
+		   family, type, port, bind_port, pdn_cid, address);
 	if (secure) {
-		shell_print(shell_global,
-			    "                        secure=%d, sec_tag=%d, session_cache=%d, "
-			    "peer_verify=%d, peer_hostname=%s",
-			    secure, sec_tag, session_cache, peer_verify, peer_hostname);
+		mosh_print("                        secure=%d, sec_tag=%d, session_cache=%d, "
+			   "peer_verify=%d, peer_hostname=%s",
+			   secure, sec_tag, session_cache, peer_verify, peer_hostname);
 	}
 
 	/* Reserve socket ID and structure for a new connection */
 	struct sock_info *socket_info = reserve_socket_id();
 
 	if (socket_info == NULL) {
-		shell_error(
-			shell_global,
-			"Socket creation failed. MAX_SOCKETS=%d exceeded",
-			MAX_SOCKETS);
+		mosh_error("Socket creation failed. MAX_SOCKETS=%d exceeded", MAX_SOCKETS);
 		goto connect_error;
 	}
 
@@ -562,18 +539,14 @@ int sock_open_and_connect(
 	fd = socket(family, type, proto);
 	if (fd < 0) {
 		if (errno == ENFILE || errno == EMFILE) {
-			shell_error(
-				shell_global,
+			mosh_error(
 				"Socket creation failed due to maximum number of sockets in the "
 				"system exceeded (%d). Notice that all file descriptors in the "
 				"system are taken into account and not just sockets created "
 				"through this application.",
 				CONFIG_POSIX_MAX_FDS);
 		} else {
-			shell_error(
-				shell_global,
-				"Socket create failed, err %d",
-				errno);
+			mosh_error("Socket create failed, err %d", errno);
 		}
 		err = errno;
 		goto connect_error;
@@ -619,7 +592,7 @@ int sock_open_and_connect(
 			socket_info->addrinfo->ai_addr,
 			socket_info->addrinfo->ai_addrlen);
 		if (err) {
-			shell_error(shell_global, "Unable to connect, errno %d", errno);
+			mosh_error("Unable to connect, errno %d", errno);
 			err = errno;
 			goto connect_error;
 		}
@@ -633,8 +606,7 @@ int sock_open_and_connect(
 	/* Trigger socket receive handler if it's waiting for socket creation */
 	k_sem_give(&sock_sem);
 
-	shell_print(
-		shell_global,
+	mosh_print(
 		"Socket created socket_id=%d, fd=%d",
 		socket_info->id,
 		fd);
@@ -661,21 +633,16 @@ static void print_throughput_summary(uint32_t data_len, int64_t time_ms)
 {
 	double throughput = calculate_throughput(data_len, time_ms);
 
-	shell_print(
-		shell_global,
-		"Summary:\n"
-		"Data length: %7u bytes\n"
-		"Time:        %7.2f s\n"
-		"Throughput:  %7.0f bit/s",
-		data_len,
-		(float)time_ms / 1000,
-		throughput);
+	mosh_print("Summary:");
+	mosh_print("  Data length: %7u bytes", data_len);
+	mosh_print("  Time:        %7.2f s", (float)time_ms / 1000);
+	mosh_print("  Throughput:  %7.0f bit/s", throughput);
 }
 
 static void sock_print_data_hex(uint8_t *buffer, uint32_t buffer_size)
 {
 	/* Print received data in hexadecimal format having 8 bytes per line.
-	 * This is not made with single shell_print because we would need to
+	 * This is not made with single mosh_print because we would need to
 	 * reserve a lot bigger buffer for converting all data into hexadecimal string.
 	 */
 	char hex_data[81];
@@ -690,7 +657,7 @@ static void sock_print_data_hex(uint8_t *buffer, uint32_t buffer_size)
 		for (int i = 0; i < print_chars; i++) {
 			sprintf(hex_data + i * 5, "0x%02X ", buffer[data_printed + i]);
 		}
-		shell_print(shell_global, "\t%s", hex_data);
+		mosh_print("\t%s", hex_data);
 		data_printed += print_chars;
 	}
 }
@@ -709,17 +676,17 @@ static int sock_send(
 	k_poll_signal_check(&mosh_signal, &set, &res);
 	if (set && res == MOSH_SIGNAL_KILL) {
 		k_poll_signal_reset(&mosh_signal);
-		shell_error(shell_global,
-			    "KILL signal received - exiting");
+		mosh_error("KILL signal received - exiting");
 		return -ECANCELED;
 	}
 
 	if (log_data) {
 		if (data_hex_format) {
-			shell_print(shell_global, "Socket data send:");
+			mosh_print("Socket data send:");
 			sock_print_data_hex(data, length);
 		} else {
-			shell_print(shell_global, "Socket data send:\n\t%s", data);
+			mosh_print("Socket data send:");
+			mosh_print("\t%s", data);
 		}
 	}
 
@@ -744,10 +711,7 @@ static int sock_send(
 		 * Hence, we'll log only if we have blocking socket
 		 */
 		if (sock_get_blocking_mode(socket_info->fd)) {
-			shell_print(
-				shell_global,
-				"socket send failed, err %d",
-				errno);
+			mosh_print("socket send failed, err %d", errno);
 		}
 		return -1;
 	}
@@ -762,8 +726,7 @@ static void data_send_work_handler(struct k_work *item)
 	int ret;
 
 	if (!socket_info->in_use) {
-		shell_print(
-			shell_global,
+		mosh_print(
 			"Socket id=%d not in use. Fatal error and sending won't work.",
 			socket_info->id);
 		k_work_cancel_delayable(&socket_info->send_info.work);
@@ -821,8 +784,7 @@ static void sock_send_random_data_length(struct sock_info *socket_info)
 				socket_info->send_bytes_sent,
 				ul_time_intermediate_ms);
 
-			shell_print(
-				shell_global,
+			mosh_print(
 				"%7u bytes, %6.2fs, %6.0f bit/s",
 				socket_info->send_bytes_sent,
 				(float)ul_time_intermediate_ms / 1000,
@@ -876,8 +838,7 @@ int sock_send_data(
 
 		/* Interval is not supported with data length */
 		if (interval != SOCK_SEND_DATA_INTERVAL_NONE) {
-			shell_error(
-				shell_global,
+			mosh_error(
 				"Data length and interval cannot be specified at the same time");
 			return -EINVAL;
 		}
@@ -891,8 +852,7 @@ int sock_send_data(
 			return -ENOMEM;
 		}
 
-		shell_print(
-			shell_global,
+		mosh_print(
 			"Sending %d bytes of data with buffer_size=%d, blocking=%d",
 			random_data_length,
 			send_buffer_size,
@@ -904,8 +864,7 @@ int sock_send_data(
 		 */
 		if ((socket_info->type == SOCK_STREAM && send_buffer_size > 4096) ||
 		    (socket_info->type == SOCK_DGRAM && send_buffer_size > 1200)) {
-			shell_warn(
-				shell_global,
+			mosh_warn(
 				"Sending %d bytes of data with buffer_size=%d, blocking=%d",
 				random_data_length, send_buffer_size, blocking);
 		}
@@ -932,10 +891,9 @@ int sock_send_data(
 			/* Stop periodic data sending */
 			if (k_work_delayable_busy_get(&socket_info->send_info.work) > 0) {
 				k_work_cancel_delayable(&socket_info->send_info.work);
-				shell_print(shell_global, "Socket data send periodic stop");
+				mosh_print("Socket data send periodic stop");
 			} else {
-				shell_error(shell_global,
-					    "Socket data send stop: periodic data not started");
+				mosh_error("Socket data send stop: periodic data not started");
 				return -EINVAL;
 			}
 		} else if (interval > 0) {
@@ -943,9 +901,9 @@ int sock_send_data(
 
 			/* Data to be sent must also be specified */
 			if (data_out_length < 1) {
-				shell_error(shell_global,
-					    "Data sending interval is specified without "
-					    "data to be sent");
+				mosh_error(
+					"Data sending interval is specified without "
+					"data to be sent");
 				return -EINVAL;
 			}
 
@@ -957,10 +915,7 @@ int sock_send_data(
 
 			socket_info->send_info.data_format_hex = data_format_hex;
 			socket_info->send_info.interval = interval;
-			shell_print(
-				shell_global,
-				"Socket data send periodic with interval=%d",
-				interval);
+			mosh_print("Socket data send periodic with interval=%d", interval);
 			k_work_init_delayable(
 				&socket_info->send_info.work,
 				data_send_work_handler);
@@ -972,7 +927,7 @@ int sock_send_data(
 		/* Send data if it's given and is not zero length */
 		sock_send(socket_info, data_out, data_out_length, true, data_format_hex);
 	} else {
-		shell_print(shell_global, "No send parameters given");
+		mosh_print("No send parameters given");
 		return -EINVAL;
 	}
 	return 0;
@@ -1044,10 +999,10 @@ static void sock_receive_handler(void)
 				if (receive_buffer == NULL) {
 					receive_buffer = k_calloc(SOCK_RECEIVE_BUFFER_SIZE + 1, 1);
 					if (receive_buffer == NULL) {
-						shell_error(shell_global,
-							    "Out of memory while reserving "
-							    "receive buffer of size %d bytes",
-							    SOCK_RECEIVE_BUFFER_SIZE);
+						mosh_error(
+							"Out of memory while reserving "
+							"receive buffer of size %d bytes",
+							SOCK_RECEIVE_BUFFER_SIZE);
 						break;
 					}
 				}
@@ -1079,18 +1034,18 @@ static void sock_receive_handler(void)
 				}
 
 				if (socket_info->log_receive_data) {
-					shell_print(shell_global,
-						    "Received data for socket "
-						    "socket_id=%d, buffer_size=%d:",
-						    socket_id,
-						    buffer_size);
+					mosh_print(
+						"Received data for socket "
+						"socket_id=%d, buffer_size=%d:",
+						socket_id,
+						buffer_size);
 
 					if (socket_info->recv_print_format ==
 						SOCK_RECV_PRINT_FORMAT_HEX) {
 
 						sock_print_data_hex(receive_buffer, buffer_size);
 					} else { /* SOCK_RECV_PRINT_FORMAT_STR */
-						shell_print(shell_global, "\t%s", receive_buffer);
+						mosh_print("\t%s", receive_buffer);
 					}
 				}
 				memset(receive_buffer, '\0', SOCK_RECEIVE_BUFFER_SIZE);
@@ -1099,24 +1054,24 @@ static void sock_receive_handler(void)
 				sock_send_random_data_length(socket_info);
 			}
 			if (fds[i].revents & POLLERR) {
-				shell_print(shell_global,
-					    "Error from socket id=%d (fd=%d), closing",
-					    socket_id, fds[i].fd);
+				mosh_print(
+					"Error from socket id=%d (fd=%d), closing",
+					socket_id, fds[i].fd);
 				sock_info_clear(socket_info);
 			}
 			if (fds[i].revents & POLLHUP) {
-				shell_print(shell_global,
-					    "Socket id=%d (fd=%d) disconnected so closing.",
-					    socket_id, fds[i].fd);
+				mosh_print(
+					"Socket id=%d (fd=%d) disconnected so closing.",
+					socket_id, fds[i].fd);
 				sock_info_clear(socket_info);
 			}
 			if (fds[i].revents & POLLNVAL) {
-				shell_print(shell_global, "Socket id=%d invalid", socket_id);
+				mosh_print("Socket id=%d invalid", socket_id);
 				sock_info_clear(socket_info);
 			}
 		}
 	}
-	shell_print(shell_global, "%s exit", __func__);
+	mosh_print("%s exit", __func__);
 }
 
 K_THREAD_DEFINE(sock_receive_thread, SOCK_RECEIVE_STACK_SIZE,
@@ -1136,15 +1091,13 @@ int sock_recv(int socket_id, bool receive_start, int data_length, bool blocking,
 		switch (print_format) {
 		case SOCK_RECV_PRINT_FORMAT_STR:
 		case SOCK_RECV_PRINT_FORMAT_HEX:
-			shell_print(
-				shell_global,
+			mosh_print(
 				"Receive print format changed for socket id=%d",
 				socket_info->id);
 			socket_info->recv_print_format = print_format;
 			break;
 		default:
-			shell_error(
-				shell_global,
+			mosh_error(
 				"Receive data print format (%d) must be %d or %d",
 				print_format,
 				SOCK_RECV_PRINT_FORMAT_STR,
@@ -1152,8 +1105,7 @@ int sock_recv(int socket_id, bool receive_start, int data_length, bool blocking,
 			return -EINVAL;
 		}
 	} else if (receive_start) {
-		shell_print(shell_global,
-			    "Receive data calculation start socket id=%d", socket_info->id);
+		mosh_print("Receive data calculation start socket id=%d", socket_info->id);
 		/* Set any leftover blocking sockets to non-blocking */
 		sock_all_set_nonblocking();
 		socket_info->recv_start_throughput = true;
@@ -1184,7 +1136,7 @@ int sock_close(int socket_id)
 	if (socket_info == NULL) {
 		return -EINVAL;
 	}
-	shell_print(shell_global, "Close socket id=%d, fd=%d", socket_info->id, socket_info->fd);
+	mosh_print("Close socket id=%d, fd=%d", socket_info->id, socket_info->fd);
 	sock_info_clear(socket_info);
 	return 0;
 }
@@ -1194,13 +1146,11 @@ static int sock_rai_option_set(int fd, int option, char *option_string)
 	int err = setsockopt(fd, SOL_SOCKET, option, NULL, 0);
 
 	if (err) {
-		shell_error(shell_global,
-			    "setsockopt() for %s failed with error %d",
-			    option_string, errno);
+		mosh_error("setsockopt() for %s failed with error %d", option_string, errno);
 		return err;
 	}
 
-	shell_print(shell_global, "Socket option %s set", option_string);
+	mosh_print("Socket option %s set", option_string);
 	return 0;
 }
 
@@ -1215,7 +1165,7 @@ int sock_rai(int socket_id, bool rai_last, bool rai_no_data,
 	}
 
 	if (!rai_last && !rai_no_data && !rai_one_resp && !rai_ongoing && !rai_wait_more) {
-		shell_error(shell_global, "No socket specific RAI options given with -i");
+		mosh_error("No socket specific RAI options given with -i");
 	}
 
 	/* SO_RAI_LAST */
@@ -1270,21 +1220,21 @@ int sock_list(void)
 
 		if (socket_info->in_use) {
 			opened_sockets = true;
-			shell_print(shell_global,
-				    "Socket id=%d, fd=%d, family=%d, type=%d, port=%d, "
-				    "bind_port=%d, pdn=%d",
-				    i,
-				    socket_info->fd,
-				    socket_info->family,
-				    socket_info->type,
-				    socket_info->port,
-				    socket_info->bind_port,
-				    socket_info->pdn_cid);
+			mosh_print(
+				"Socket id=%d, fd=%d, family=%d, type=%d, port=%d, "
+				"bind_port=%d, pdn=%d",
+				i,
+				socket_info->fd,
+				socket_info->family,
+				socket_info->type,
+				socket_info->port,
+				socket_info->bind_port,
+				socket_info->pdn_cid);
 		}
 	}
 
 	if (!opened_sockets) {
-		shell_print(shell_global, "There are no open sockets");
+		mosh_print("There are no open sockets");
 	}
 	return 0;
 }

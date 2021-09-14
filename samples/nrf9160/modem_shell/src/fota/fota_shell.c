@@ -11,20 +11,19 @@
 #include <shell/shell.h>
 
 #include "fota.h"
+#include "mosh_print.h"
 
 static const char fota_server_eu[] = "nrf-test-eu.s3.amazonaws.com";
 static const char fota_server_usa[] = "nrf-test-us.s3.amazonaws.com";
 static const char fota_server_jpn[] = "nrf-test-jpn.s3.amazonaws.com";
 static const char fota_server_au[] = "nrf-test-au.s3.amazonaws.com";
 
-extern const struct shell *shell_global;
-
 static int print_help(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 1;
 
 	if (argc > 1) {
-		shell_error(shell, "%s: subcommand not found", argv[1]);
+		mosh_error("%s: subcommand not found", argv[1]);
 		ret = -EINVAL;
 	}
 
@@ -44,8 +43,6 @@ static int cmd_fota_download(const struct shell *shell, size_t argc,
 	int err;
 	const char *fota_server;
 
-	shell_global = shell;
-
 	if (strcmp(argv[1], "eu") == 0) {
 		fota_server = fota_server_eu;
 	} else if (strcmp(argv[1], "us") == 0) {
@@ -55,21 +52,21 @@ static int cmd_fota_download(const struct shell *shell, size_t argc,
 	} else if (strcmp(argv[1], "au") == 0) {
 		fota_server = fota_server_au;
 	} else {
-		shell_error(shell, "FOTA: Unknown server: %s", argv[1]);
+		mosh_error("FOTA: Unknown server: %s", argv[1]);
 		return -EINVAL;
 	}
 
-	shell_print(shell, "FOTA: Starting download...");
+	mosh_print("FOTA: Starting download...");
 
 	err = fota_start(fota_server, argv[2]);
 
 	if (err) {
-		shell_error(shell, "Failed to start FOTA download, error %d",
+		mosh_error("Failed to start FOTA download, error %d",
 			    err);
 		return err;
 	}
 
-	shell_print(shell, "FOTA: Download started");
+	mosh_print("FOTA: Download started");
 
 	return 0;
 }

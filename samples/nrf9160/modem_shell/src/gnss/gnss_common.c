@@ -6,12 +6,10 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include <zephyr.h>
-#include <shell/shell.h>
 #include <modem/at_cmd.h>
 
-extern const struct shell *shell_global;
+#include "mosh_print.h"
 
 int gnss_configure_lna(void)
 {
@@ -26,7 +24,7 @@ int gnss_configure_lna(void)
 	if (xmagpio_command[0] != '\0') {
 		err = at_cmd_write(xmagpio_command, NULL, 0, NULL);
 		if (err) {
-			shell_error(shell_global, "Failed to send XMAGPIO command");
+			mosh_error("Failed to send XMAGPIO command");
 			return err;
 		}
 	}
@@ -34,7 +32,7 @@ int gnss_configure_lna(void)
 	if (xcoex0_command[0] != '\0') {
 		err = at_cmd_write(xcoex0_command, NULL, 0, NULL);
 		if (err) {
-			shell_error(shell_global, "Failed to send XCOEX0 command");
+			mosh_error("Failed to send XCOEX0 command");
 			return err;
 		}
 	}

@@ -9,7 +9,6 @@
 
 #include <zephyr.h>
 #include <init.h>
-#include <shell/shell.h>
 #include <assert.h>
 #include <nrf_modem_gnss.h>
 #if defined(CONFIG_SUPL_CLIENT_LIB)
@@ -17,12 +16,13 @@
 #include <supl_os_client.h>
 #endif
 
+#include "mosh_print.h"
 #include "gnss.h"
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 #include "gnss_supl_support.h"
 #endif
 
-#define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 768
+#define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
 #define GNSS_DATA_HANDLER_THREAD_PRIORITY   5
 
 #define GNSS_WORKQ_THREAD_STACK_SIZE 2048
@@ -48,8 +48,6 @@ static struct nrf_modem_gnss_agps_data_frame agps_data;
 static struct k_work gnss_stop_work;
 static struct k_work_delayable gnss_start_work;
 static struct k_work_delayable gnss_timeout_work;
-
-extern const struct shell *shell_global;
 
 static enum gnss_operation_mode operation_mode = GNSS_OP_MODE_CONTINUOUS;
 static uint32_t periodic_fix_interval;
@@ -159,49 +157,39 @@ static void gnss_event_handler(int event_id)
 	}
 }
 
-static void create_timestamp_string(uint32_t timestamp, char *timestamp_str)
-{
-	uint32_t hours;
-	uint32_t mins;
-	uint32_t secs;
-
-	secs = timestamp / 1000;
-	mins = secs / 60;
-	hours = mins / 60;
-	secs = secs % 60;
-	mins = mins % 60;
-
-	sprintf(timestamp_str, "%02d:%02d:%02d.%03d",
-		hours, mins, secs, timestamp % 1000);
-}
-
 static void print_pvt_flags(struct nrf_modem_gnss_pvt_data_frame *pvt)
 {
-	shell_print(shell_global, "\nFix valid:          %s",
-		    (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) ==
-		    NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ?
-		    "true" :
-		    "false");
-	shell_print(shell_global, "Leap second valid:  %s",
-		    (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID) ==
-		    NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID ?
-		    "true" :
-		    "false");
-	shell_print(shell_global, "Sleep between PVT:  %s",
-		    (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) ==
-		    NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT ?
-		    "true" :
-		    "false");
-	shell_print(shell_global, "Deadline missed:    %s",
-		    (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) ==
-		    NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED ?
-		    "true" :
-		    "false");
-	shell_print(shell_global, "Insuf. time window: %s",
-		    (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) ==
-		    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ?
-		    "true" :
-		    "false");
+	mosh_print("");
+	mosh_print(
+		"Fix valid:          %s",
+		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) ==
+		NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ?
+		"true" :
+		"false");
+	mosh_print(
+		"Leap second valid:  %s",
+		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID) ==
+		NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID ?
+		"true" :
+		"false");
+	mosh_print(
+		"Sleep between PVT:  %s",
+		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) ==
+		NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT ?
+		"true" :
+		"false");
+	mosh_print(
+		"Deadline missed:    %s",
+		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) ==
+		NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED ?
+		"true" :
+		"false");
+	mosh_print(
+		"Insuf. time window: %s",
+		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) ==
+		NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ?
+		"true" :
+		"false");
 }
 
 static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
@@ -212,42 +200,32 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 
 	print_pvt_flags(pvt);
 
-	if ((pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) ==
-	    NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
-		shell_print(shell_global, "Time:            %02d.%02d.%04d %02d:%02d:%02d.%03d",
-			    pvt->datetime.day,
-			    pvt->datetime.month,
-			    pvt->datetime.year,
-			    pvt->datetime.hour,
-			    pvt->datetime.minute,
-			    pvt->datetime.seconds,
-			    pvt->datetime.ms);
-		shell_print(shell_global,
-			    "Latitude:        %f\n"
-			    "Longitude:       %f\n"
-			    "Altitude:        %.1f m\n"
-			    "Accuracy:        %.1f m\n"
-			    "Speed:           %.1f m/s\n"
-			    "Speed accuracy:  %.1f m/s\n"
-			    "Heading:         %.1f deg\n"
-			    "PDOP:            %.1f\n"
-			    "HDOP:            %.1f\n"
-			    "VDOP:            %.1f\n"
-			    "TDOP:            %.1f",
-			    pvt->latitude,
-			    pvt->longitude,
-			    pvt->altitude,
-			    pvt->accuracy,
-			    pvt->speed,
-			    pvt->speed_accuracy,
-			    pvt->heading,
-			    pvt->pdop,
-			    pvt->hdop,
-			    pvt->vdop,
-			    pvt->tdop);
-		shell_print(shell_global,
-			    "Google maps URL: https://maps.google.com/?q=%f,%f",
-			    pvt->latitude, pvt->longitude);
+	if ((pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) == NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+		mosh_print(
+			"Time:            %02d.%02d.%04d %02d:%02d:%02d.%03d",
+			pvt->datetime.day,
+			pvt->datetime.month,
+			pvt->datetime.year,
+			pvt->datetime.hour,
+			pvt->datetime.minute,
+			pvt->datetime.seconds,
+			pvt->datetime.ms);
+
+		mosh_print("Latitude:        %f", pvt->latitude);
+		mosh_print("Longitude:       %f", pvt->longitude);
+		mosh_print("Altitude:        %.1f m", pvt->altitude);
+		mosh_print("Accuracy:        %.1f m", pvt->accuracy);
+		mosh_print("Speed:           %.1f m/s", pvt->speed);
+		mosh_print("Speed accuracy:  %.1f m/s", pvt->speed_accuracy);
+		mosh_print("Heading:         %.1f deg", pvt->heading);
+		mosh_print("PDOP:            %.1f", pvt->pdop);
+		mosh_print("HDOP:            %.1f", pvt->hdop);
+		mosh_print("VDOP:            %.1f", pvt->vdop);
+		mosh_print("TDOP:            %.1f", pvt->tdop);
+
+		mosh_print(
+			"Google maps URL: https://maps.google.com/?q=%f,%f",
+			pvt->latitude, pvt->longitude);
 	}
 
 	if (pvt_output_level < 2) {
@@ -261,18 +239,17 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 			continue;
 		}
 
-		shell_print(shell_global,
-			    "SV: %3d C/N0: %4.1f el: %2d az: %3d signal: %d in fix: %d "
-			    "unhealthy: %d",
-			    pvt->sv[i].sv,
-			    pvt->sv[i].cn0 * 0.1,
-			    pvt->sv[i].elevation,
-			    pvt->sv[i].azimuth,
-			    pvt->sv[i].signal,
-			    (pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) ==
-			    NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
-			    (pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) ==
-			    NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
+		mosh_print(
+			"SV: %3d C/N0: %4.1f el: %2d az: %3d signal: %d in fix: %d unhealthy: %d",
+			pvt->sv[i].sv,
+			pvt->sv[i].cn0 * 0.1,
+			pvt->sv[i].elevation,
+			pvt->sv[i].azimuth,
+			pvt->sv[i].signal,
+			(pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) ==
+			NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
+			(pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) ==
+			NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
 	}
 }
 
@@ -288,7 +265,7 @@ static void print_nmea(struct nrf_modem_gnss_nmea_data_frame *nmea)
 			break;
 		}
 	}
-	shell_print(shell_global, "%s", nmea->nmea_str);
+	mosh_print("%s", nmea->nmea_str);
 }
 
 static void get_agps_data_flags_string(char *flags_string, uint32_t data_flags)
@@ -333,7 +310,6 @@ static void get_agps_data_flags_string(char *flags_string, uint32_t data_flags)
 static void data_handler_thread_fn(void)
 {
 	struct event_item event;
-	char timestamp_str[16];
 
 	while (true) {
 		k_msgq_get(&event_msgq, &event, K_FOREVER);
@@ -345,8 +321,7 @@ static void data_handler_thread_fn(void)
 
 		case NRF_MODEM_GNSS_EVT_FIX:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Got fix", timestamp_str);
+				mosh_print("GNSS: Got fix");
 			}
 			break;
 
@@ -358,17 +333,14 @@ static void data_handler_thread_fn(void)
 			if (event_output_level > 0) {
 				char flags_string[48];
 
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
 				get_agps_data_flags_string(
 					flags_string,
 					((struct nrf_modem_gnss_agps_data_frame *)
 					 event.data)->data_flags);
 
-				shell_print(
-					shell_global,
-					"[%s] GNSS: AGPS data needed (ephe: 0x%08x, alm: 0x%08x, "
+				mosh_print(
+					"GNSS: AGPS data needed (ephe: 0x%08x, alm: 0x%08x, "
 					"flags: %s)",
-					timestamp_str,
 					((struct nrf_modem_gnss_agps_data_frame *)
 					 event.data)->sv_mask_ephe,
 					((struct nrf_modem_gnss_agps_data_frame *)
@@ -425,60 +397,43 @@ static void data_handler_thread_fn(void)
 
 		case NRF_MODEM_GNSS_EVT_BLOCKED:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Blocked by LTE",
-					    timestamp_str);
+				mosh_print("GNSS: Blocked by LTE");
 			}
 			break;
 
 		case NRF_MODEM_GNSS_EVT_UNBLOCKED:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Unblocked by LTE",
-					    timestamp_str);
+				mosh_print("GNSS: Unblocked by LTE");
 			}
 			break;
 
 		case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Wakeup",
-					    timestamp_str);
+				mosh_print("GNSS: Wakeup");
 			}
 			break;
 
 		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Timeout, entering sleep",
-					    timestamp_str);
+				mosh_print("GNSS: Timeout, entering sleep");
 			}
 			break;
 
 		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global, "[%s] GNSS: Fix, entering sleep",
-					    timestamp_str);
+				mosh_print("GNSS: Fix, entering sleep");
 			}
 			break;
 
 		case NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_print(shell_global,
-					    "[%s] GNSS: Reference altitude for 3-satellite fix "
-					    "expired",
-					    timestamp_str);
+				mosh_print("GNSS: Reference altitude for 3-satellite fix expired");
 			}
 			break;
 
 		default:
 			if (event_output_level > 0) {
-				create_timestamp_string(k_uptime_get_32(), timestamp_str);
-				shell_warn(shell_global,
-					   "[%s] GNSS: Unknown event %d received",
-					   timestamp_str, event.id);
+				mosh_warn("GNSS: Unknown event %d received", event.id);
 			}
 			break;
 		}
@@ -511,8 +466,7 @@ static void get_agps_data(struct k_work *item)
 
 	get_agps_data_flags_string(flags_string, agps_data.data_flags);
 
-	shell_print(
-		shell_global,
+	mosh_print(
 		"GNSS: Getting AGPS data (ephe: 0x%08x, alm: 0x%08x, flags: %s)...",
 		agps_data.sv_mask_ephe,
 		agps_data.sv_mask_alm,
@@ -572,17 +526,17 @@ static int inject_agps_data(void *agps,
 	get_agps_data_type_string(type_string, type);
 
 	if (err) {
-		shell_error(shell_global,
-			    "GNSS: Failed to send AGPS data, type: %s (err: %d)",
-			    type_string,
-			    errno);
+		mosh_error(
+			"GNSS: Failed to send AGPS data, type: %s (err: %d)",
+			type_string,
+			errno);
 		return err;
 	}
 
-	shell_print(shell_global,
-		    "GNSS: Injected AGPS data, type: %s, size: %d",
-		    type_string,
-		    agps_size);
+	mosh_print(
+		"GNSS: Injected AGPS data, type: %s, size: %d",
+		type_string,
+		agps_size);
 
 	return 0;
 }
@@ -594,18 +548,14 @@ static void start_gnss_work_fn(struct k_work *item)
 	ARG_UNUSED(item);
 
 	int err;
-	char timestamp_str[16];
 
 	err = nrf_modem_gnss_start();
 
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to start GNSS");
+		mosh_error("GNSS: Failed to start GNSS");
 	} else {
 		if (event_output_level > 0) {
-			create_timestamp_string(k_uptime_get_32(), timestamp_str);
-
-			shell_print(shell_global, "[%s] GNSS: Search started",
-				    timestamp_str);
+			mosh_print("GNSS: Search started");
 		}
 	}
 
@@ -628,7 +578,7 @@ static void stop_gnss_work_fn(struct k_work *item)
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS");
 	}
 }
 
@@ -637,18 +587,14 @@ static void handle_timeout_work_fn(struct k_work *item)
 	ARG_UNUSED(item);
 
 	int err;
-	char timestamp_str[16];
 
 	if (event_output_level > 0) {
-		create_timestamp_string(k_uptime_get_32(), timestamp_str);
-
-		shell_print(shell_global, "[%s] GNSS: Search timeout",
-			    timestamp_str);
+		mosh_print("GNSS: Search timeout");
 	}
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS");
 	}
 }
 
@@ -696,7 +642,7 @@ static void gnss_api_init(void)
 		(void)supl_init(&supl_api);
 #endif
 	} else {
-		shell_error(shell_global, "GNSS: Failed to initialize GNSS API");
+		mosh_error("GNSS: Failed to initialize GNSS API");
 	}
 }
 
@@ -720,7 +666,7 @@ int gnss_start(void)
 
 	err = nrf_modem_gnss_start();
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to start GNSS");
+		mosh_error("GNSS: Failed to start GNSS");
 	}
 
 	return err;
@@ -741,7 +687,7 @@ int gnss_stop(void)
 
 	err = nrf_modem_gnss_stop();
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to stop GNSS");
+		mosh_error("GNSS: Failed to stop GNSS");
 	}
 
 	return err;
@@ -772,13 +718,13 @@ int gnss_delete_data(enum gnss_data_delete data)
 		break;
 
 	default:
-		shell_error(shell_global, "GNSS: Invalid erase data value");
+		mosh_error("GNSS: Invalid erase data value");
 		return -1;
 	}
 
 	err = nrf_modem_gnss_nv_data_delete(delete_mask);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to delete NV data");
+		mosh_error("GNSS: Failed to delete NV data");
 	}
 
 	return err;
@@ -794,13 +740,13 @@ int gnss_set_continuous_mode(void)
 
 	err = nrf_modem_gnss_fix_interval_set(1);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval");
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(0);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry");
 	}
 
 	return err;
@@ -816,13 +762,13 @@ int gnss_set_single_fix_mode(uint16_t fix_retry)
 
 	err = nrf_modem_gnss_fix_interval_set(0);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval");
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(fix_retry);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry");
 	}
 
 	return err;
@@ -843,13 +789,13 @@ int gnss_set_periodic_fix_mode(uint32_t fix_interval, uint16_t fix_retry)
 	 */
 	err = nrf_modem_gnss_fix_interval_set(1);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval");
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(0);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry");
 	}
 
 	return err;
@@ -865,13 +811,13 @@ int gnss_set_periodic_fix_mode_gnss(uint16_t fix_interval, uint16_t fix_retry)
 
 	err = nrf_modem_gnss_fix_interval_set(fix_interval);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix interval");
+		mosh_error("GNSS: Failed to set fix interval");
 		return err;
 	}
 
 	err = nrf_modem_gnss_fix_retry_set(fix_retry);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set fix retry");
+		mosh_error("GNSS: Failed to set fix retry");
 	}
 
 	return err;
@@ -883,7 +829,7 @@ int gnss_set_system_mask(uint8_t system_mask)
 
 	err = nrf_modem_gnss_system_mask_set(system_mask);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set system mask");
+		mosh_error("GNSS: Failed to set system mask");
 	}
 
 	return err;
@@ -910,13 +856,13 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy)
 		break;
 
 	default:
-		shell_error(shell_global, "GNSS: Invalid duty cycling policy");
+		mosh_error("GNSS: Invalid duty cycling policy");
 		return -1;
 	}
 
 	err = nrf_modem_gnss_power_mode_set(power_mode);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set duty cycling policy");
+		mosh_error("GNSS: Failed to set duty cycling policy");
 	}
 
 	return err;
@@ -930,7 +876,7 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 
 	err = nrf_modem_gnss_elevation_threshold_set(elevation);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set elevation threshold");
+		mosh_error("GNSS: Failed to set elevation threshold");
 	}
 
 	return err;
@@ -952,7 +898,7 @@ int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabl
 
 	err = nrf_modem_gnss_use_case_set(use_case);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set use case, check modem FW version");
+		mosh_error("GNSS: Failed to set use case, check modem FW version");
 	}
 
 	return err;
@@ -966,7 +912,7 @@ int gnss_set_nmea_mask(uint16_t nmea_mask)
 
 	err = nrf_modem_gnss_nmea_mask_set(nmea_mask);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set NMEA mask");
+		mosh_error("GNSS: Failed to set NMEA mask");
 	} else {
 		nmea_mask_set = true;
 	}
@@ -987,7 +933,7 @@ int gnss_set_priority_time_windows(bool value)
 	}
 
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set priority time windows");
+		mosh_error("GNSS: Failed to set priority time windows");
 	}
 
 	return err;
@@ -1014,13 +960,13 @@ int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode)
 		dynamics_mode = NRF_MODEM_GNSS_DYNAMICS_AUTOMOTIVE;
 		break;
 	default:
-		shell_error(shell_global, "GNSS: Invalid dynamics mode value %d", mode);
+		mosh_error("GNSS: Invalid dynamics mode value %d", mode);
 		return -EINVAL;
 	}
 
 	err = nrf_modem_gnss_dyn_mode_change(dynamics_mode);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to change dynamics mode");
+		mosh_error("GNSS: Failed to change dynamics mode");
 	}
 
 	return err;
@@ -1043,13 +989,13 @@ int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode mode)
 		break;
 
 	default:
-		shell_error(shell_global, "GNSS: Invalid QZSS NMEA mode value %d", mode);
+		mosh_error("GNSS: Invalid QZSS NMEA mode value %d", mode);
 		return -EINVAL;
 	}
 
 	err = nrf_modem_gnss_qzss_nmea_mode_set(nmea_mode);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set QZSS NMEA mode");
+		mosh_error("GNSS: Failed to set QZSS NMEA mode");
 	}
 
 	return err;
@@ -1063,7 +1009,7 @@ int gnss_set_qzss_mask(uint16_t mask)
 
 	err = nrf_modem_gnss_qzss_prn_mask_set(mask);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set QZSS PRN mask");
+		mosh_error("GNSS: Failed to set QZSS PRN mask");
 	}
 
 	return err;
@@ -1093,7 +1039,7 @@ int gnss_set_1pps_mode(const struct gnss_1pps_mode *config)
 	}
 
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set 1PPS mode");
+		mosh_error("GNSS: Failed to set 1PPS mode");
 	}
 
 	return err;
@@ -1116,13 +1062,13 @@ int gnss_set_timing_source(enum gnss_timing_source source)
 		break;
 
 	default:
-		shell_error(shell_global, "GNSS: Invalid timing source");
+		mosh_error("GNSS: Invalid timing source");
 		return -EINVAL;
 	}
 
 	err = nrf_modem_gnss_timing_source_set(timing_source);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set timing source");
+		mosh_error("GNSS: Failed to set timing source");
 	}
 
 	return err;
@@ -1143,7 +1089,7 @@ int gnss_set_agps_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 
 	return 0;
 #else
-	shell_error(shell_global, "GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
 	return -EOPNOTSUPP;
 #endif
 }
@@ -1155,7 +1101,7 @@ int gnss_set_agps_automatic(bool value)
 
 	return 0;
 #else
-	shell_error(shell_global, "GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
 	return -EOPNOTSUPP;
 #endif
 }
@@ -1195,7 +1141,7 @@ int gnss_inject_agps_data(void)
 
 	return 0;
 #else
-	shell_error(shell_global, "GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
 	return -EOPNOTSUPP;
 #endif
 }

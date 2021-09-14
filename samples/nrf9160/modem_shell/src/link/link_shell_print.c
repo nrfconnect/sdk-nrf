@@ -12,6 +12,7 @@
 
 #include "link.h"
 #include "link_shell_print.h"
+#include "mosh_print.h"
 
 const char *
 link_shell_print_sleep_type_to_string(enum lte_lc_modem_sleep_type sleep_type, char *out_str_buff)
@@ -27,8 +28,7 @@ link_shell_print_sleep_type_to_string(enum lte_lc_modem_sleep_type sleep_type, c
 					 out_str_buff);
 }
 
-void link_shell_print_modem_sleep_notif(const struct shell *shell,
-					 const struct lte_lc_evt *const evt)
+void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 {
 	struct lte_lc_modem_sleep modem_sleep = evt->modem_sleep;
 	char snum[64] = { 0 };
@@ -41,35 +41,30 @@ void link_shell_print_modem_sleep_notif(const struct shell *shell,
 		 *  exits sleep. The time parameter associated with this event signifies the time
 		 *  until modem exits sleep.
 		 */
-		shell_print(
-			shell,
+		mosh_print(
 			"Modem sleep exit pre-warning: time: %.2f seconds, type: %s",
 			time_in_secs,
-			link_shell_print_sleep_type_to_string(modem_sleep.type,
-							       snum));
+			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
 		break;
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
 		/** This event will be received when the modem exits sleep. */
-		shell_print(shell,
-			    "Modem sleep exit: time: %.2f seconds, type: %s",
-			    time_in_secs,
-			    link_shell_print_sleep_type_to_string(
-				    modem_sleep.type, snum));
+		mosh_print(
+			"Modem sleep exit: time: %.2f seconds, type: %s",
+			time_in_secs,
+			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
 		break;
 	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
 		/** This event will be received when the modem enters sleep.
 		 *  The time parameter associated with this event signifies
 		 *  the duration of the sleep.
 		 */
-		shell_print(shell,
-			    "Modem sleep enter: time: %.2f seconds, type: %s",
-			    time_in_secs,
-			    link_shell_print_sleep_type_to_string(
-				    modem_sleep.type, snum));
+		mosh_print(
+			"Modem sleep enter: time: %.2f seconds, type: %s",
+			time_in_secs,
+			link_shell_print_sleep_type_to_string(modem_sleep.type, snum));
 		break;
 	default:
-		shell_print(shell, "Unknown type of modem sleep event %d",
-			    evt->type);
+		mosh_print("Unknown type of modem sleep event %d", evt->type);
 	}
 }
 
@@ -144,37 +139,34 @@ const char *link_shell_sysmode_currently_active_to_string(int actmode,
 	return link_shell_map_to_string(mapping_table, actmode, out_str_buff);
 }
 
-void link_shell_print_reg_status(const struct shell *shell,
-				  enum lte_lc_nw_reg_status reg_status)
+void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status)
 {
 	switch (reg_status) {
 	case LTE_LC_NW_REG_NOT_REGISTERED:
-		shell_print(shell,
-			    "Network registration status: not registered");
+		mosh_print("Network registration status: not registered");
 		break;
 	case LTE_LC_NW_REG_SEARCHING:
-		shell_print(shell, "Network registration status: searching");
+		mosh_print("Network registration status: searching");
 		break;
 	case LTE_LC_NW_REG_REGISTRATION_DENIED:
-		shell_print(shell, "Network registration status: denied");
+		mosh_print("Network registration status: denied");
 		break;
 	case LTE_LC_NW_REG_UNKNOWN:
-		shell_print(shell, "Network registration status: unknown");
+		mosh_print("Network registration status: unknown");
 		break;
 	case LTE_LC_NW_REG_UICC_FAIL:
-		shell_print(shell, "Network registration status: UICC fail");
+		mosh_print("Network registration status: UICC fail");
 		break;
 	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
-		shell_print(
-			shell,
-			"Network registration status: Connected - emergency");
+		mosh_print("Network registration status: Connected - emergency");
 		break;
 	case LTE_LC_NW_REG_REGISTERED_HOME:
 	case LTE_LC_NW_REG_REGISTERED_ROAMING:
-		shell_print(shell, "Network registration status: %s",
-			    reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-			    "Connected - home network" :
-			    "Connected - roaming");
+		mosh_print(
+			"Network registration status: %s",
+			reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+			"Connected - home network" :
+			"Connected - roaming");
 	default:
 		break;
 	}

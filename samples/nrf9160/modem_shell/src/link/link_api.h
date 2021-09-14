@@ -44,11 +44,10 @@ struct pdp_context_info_array {
 	size_t size;
 };
 
-void link_api_modem_info_get_for_shell(const struct shell *shell,
-					bool connected);
+void link_api_modem_info_get_for_shell(bool connected);
 
 #if defined(CONFIG_AT_CMD)
-void link_api_coneval_read_for_shell(const struct shell *shell);
+void link_api_coneval_read_for_shell(void);
 
 int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info);
 

@@ -6,12 +6,13 @@
 
 #include <shell/shell.h>
 #include <assert.h>
-#include <strings.h>
+#include <string.h>
 #include <stdio.h>
 #include <getopt.h>
 
 #include "sms.h"
 #include "mosh_defines.h"
+#include "mosh_print.h"
 
 /* Maximum length of the message data that can be specified with -m option */
 #define SMS_MAX_MESSAGE_LEN CONFIG_SHELL_CMD_BUFF_SIZE
@@ -22,8 +23,6 @@ enum sms_command {
 	SMS_CMD_SEND,
 	SMS_CMD_RECV
 };
-
-extern const struct shell *shell_global;
 
 static const char sms_usage_str[] =
 	"Usage: sms <command> [options]\n"
@@ -53,7 +52,7 @@ static struct option long_options[] = {
 
 static void sms_print_usage(void)
 {
-	shell_print(shell_global, "%s", sms_usage_str);
+	mosh_print_no_format(sms_usage_str);
 }
 
 int sms_shell(const struct shell *shell, size_t argc, char **argv)
@@ -76,7 +75,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (!strcmp(argv[1], "recv")) {
 		command = SMS_CMD_RECV;
 	} else {
-		shell_error(shell, "Unsupported command=%s\n", argv[1]);
+		mosh_error("Unsupported command=%s\n", argv[1]);
 		sms_print_usage();
 		return -EINVAL;
 	}
@@ -104,8 +103,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'm': /* Message text */
 			send_data_len = strlen(optarg);
 			if (send_data_len > SMS_MAX_MESSAGE_LEN) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Data length %d exceeded. Maximum is %d. Given data: %s",
 					send_data_len,
 					SMS_MAX_MESSAGE_LEN,
@@ -135,10 +133,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 		err = sms_recv(arg_receive_start);
 		break;
 	default:
-		shell_error(
-			shell,
-			"Internal error. Unknown sms command=%d",
-			command);
+		mosh_error("Internal error. Unknown sms command=%d", command);
 		err = -EINVAL;
 		break;
 	}

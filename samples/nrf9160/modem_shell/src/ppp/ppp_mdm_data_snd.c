@@ -21,15 +21,14 @@
 
 #include <posix/poll.h>
 #include <posix/sys/socket.h>
-#include <shell/shell.h>
 
+#include "mosh_print.h"
 #include "ppp_ctrl.h"
 
 #define UPLINK_DATA_CLONE_TIMEOUT K_MSEC(1000)
 
 /* ppp globals: */
 extern struct net_if *ppp_iface_global;
-extern const struct shell *shell_global;
 extern int ppp_modem_data_socket_fd;
 extern int ppp_data_socket_fd;
 
@@ -80,13 +79,11 @@ static void ppp_modem_ul_data_thread_handler(void)
 
 					/* Note: no worth to handle partial sends for raw sockets */
 					if (ret < 0) {
-						shell_error(
-							shell_global,
+						mosh_error(
 							"ppp_mdm_data_snd: send() failed to modem: (%d), data len: %d\n",
 							-errno, recv_data_len);
 					} else if (ret != recv_data_len) {
-						shell_error(
-							shell_global,
+						mosh_error(
 							"ppp_mdm_data_snd: only partially sent to modem, only %d of original %d was sent",
 							ret, recv_data_len);
 					}

@@ -5,14 +5,12 @@
  */
 
 #include <stdlib.h>
-
 #include <zephyr.h>
 #include <shell/shell.h>
 #include <getopt.h>
 
+#include "mosh_print.h"
 #include "gnss.h"
-
-extern const struct shell *shell_global;
 
 static bool gnss_running;
 
@@ -21,7 +19,7 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 	int ret = 1;
 
 	if (argc > 1) {
-		shell_error(shell, "%s: subcommand not found", argv[1]);
+		mosh_error("%s: subcommand not found", argv[1]);
 		ret = -EINVAL;
 	}
 
@@ -40,7 +38,7 @@ static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 	int err;
 
 	if (gnss_running) {
-		shell_error(shell, "start: GNSS already running");
+		mosh_error("start: GNSS already running");
 		return -ENOEXEC;
 	}
 
@@ -48,7 +46,7 @@ static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 	if (!err) {
 		gnss_running = true;
 	} else {
-		shell_error(shell, "start: starting GNSS failed, err %d", err);
+		mosh_error("start: starting GNSS failed, err %d", err);
 	}
 
 	return err;
@@ -59,7 +57,7 @@ static int cmd_gnss_stop(const struct shell *shell, size_t argc, char **argv)
 	int err;
 
 	if (!gnss_running) {
-		shell_error(shell, "stop: GNSS not running");
+		mosh_error("stop: GNSS not running");
 		return -ENOEXEC;
 	}
 
@@ -67,7 +65,7 @@ static int cmd_gnss_stop(const struct shell *shell, size_t argc, char **argv)
 	if (!err) {
 		gnss_running = false;
 	} else {
-		shell_error(shell, "stop: stopping GNSS failed, err %d", err);
+		mosh_error("stop: stopping GNSS failed, err %d", err);
 	}
 
 	return err;
@@ -81,7 +79,7 @@ static int cmd_gnss_delete(const struct shell *shell, size_t argc, char **argv)
 static int cmd_gnss_delete_ephe(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -91,7 +89,7 @@ static int cmd_gnss_delete_ephe(const struct shell *shell, size_t argc, char **a
 static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -106,7 +104,7 @@ static int cmd_gnss_mode(const struct shell *shell, size_t argc, char **argv)
 static int cmd_gnss_mode_cont(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -116,7 +114,7 @@ static int cmd_gnss_mode_cont(const struct shell *shell, size_t argc, char **arg
 static int cmd_gnss_mode_single(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -124,10 +122,7 @@ static int cmd_gnss_mode_single(const struct shell *shell, size_t argc, char **a
 
 	timeout = atoi(argv[1]);
 	if (timeout < 0 || timeout > UINT16_MAX) {
-		shell_error(
-			shell,
-			"single: invalid timeout value %d",
-			timeout);
+		mosh_error("single: invalid timeout value %d", timeout);
 		return -EINVAL;
 	}
 
@@ -137,7 +132,7 @@ static int cmd_gnss_mode_single(const struct shell *shell, size_t argc, char **a
 static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -146,8 +141,7 @@ static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char *
 
 	interval = atoi(argv[1]);
 	if (interval <= 0) {
-		shell_error(
-			shell,
+		mosh_error(
 			"periodic: invalid interval value %d, the value must be greater than 0",
 			interval);
 		return -EINVAL;
@@ -155,8 +149,7 @@ static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char *
 
 	timeout = atoi(argv[2]);
 	if (timeout < 0 || timeout > UINT16_MAX) {
-		shell_error(
-			shell,
+		mosh_error(
 			"periodic: invalid timeout value %d, the value must be 0...65535",
 			timeout);
 		return -EINVAL;
@@ -168,7 +161,7 @@ static int cmd_gnss_mode_periodic(const struct shell *shell, size_t argc, char *
 static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -177,8 +170,7 @@ static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, c
 
 	interval = atoi(argv[1]);
 	if (interval < 10 || interval > UINT16_MAX) {
-		shell_error(
-			shell,
+		mosh_error(
 			"periodic_gnss: invalid interval value %d, the value must be 10...65535",
 			interval);
 		return -EINVAL;
@@ -186,8 +178,7 @@ static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, c
 
 	timeout = atoi(argv[2]);
 	if (timeout < 0 || timeout > UINT16_MAX) {
-		shell_error(
-			shell,
+		mosh_error(
 			"periodic_gnss: invalid timeout value %d, the value must be 0...65535",
 			timeout);
 		return -EINVAL;
@@ -204,7 +195,7 @@ static int cmd_gnss_dynamics(const struct shell *shell, size_t argc, char **argv
 static int cmd_gnss_dynamics_general(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -214,7 +205,7 @@ static int cmd_gnss_dynamics_general(const struct shell *shell, size_t argc, cha
 static int cmd_gnss_dynamics_stationary(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -224,7 +215,7 @@ static int cmd_gnss_dynamics_stationary(const struct shell *shell, size_t argc, 
 static int cmd_gnss_dynamics_pedestrian(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -234,7 +225,7 @@ static int cmd_gnss_dynamics_pedestrian(const struct shell *shell, size_t argc, 
 static int cmd_gnss_dynamics_automotive(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -250,7 +241,7 @@ static int cmd_gnss_config(const struct shell *shell, size_t argc, char **argv)
 static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -271,17 +262,16 @@ static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char *
 static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
 	int elevation;
 
 	if (argc != 2) {
-		shell_error(shell, "elevation: wrong parameter count");
-		shell_print(shell, "elevation: <angle>");
-		shell_print(
-			shell,
+		mosh_error("elevation: wrong parameter count");
+		mosh_print("elevation: <angle>");
+		mosh_print(
 			"angle:\tElevation threshold angle (in degrees, default 5). "
 			"Satellites with elevation angle less than the threshold are excluded.");
 		return -EINVAL;
@@ -290,7 +280,7 @@ static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, cha
 	elevation = atoi(argv[1]);
 
 	if (elevation < 0 || elevation > 90) {
-		shell_error(shell, "elevation: invalid elevation value %d", elevation);
+		mosh_error("elevation: invalid elevation value %d", elevation);
 		return -EINVAL;
 	}
 
@@ -300,7 +290,7 @@ static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, cha
 static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -324,7 +314,7 @@ static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char
 static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -353,7 +343,7 @@ static int cmd_gnss_config_powersave(const struct shell *shell, size_t argc, cha
 static int cmd_gnss_config_powersave_off(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -363,7 +353,7 @@ static int cmd_gnss_config_powersave_off(const struct shell *shell, size_t argc,
 static int cmd_gnss_config_powersave_perf(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -373,7 +363,7 @@ static int cmd_gnss_config_powersave_perf(const struct shell *shell, size_t argc
 static int cmd_gnss_config_powersave_power(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -393,7 +383,7 @@ static int cmd_gnss_config_qzss_nmea(const struct shell *shell, size_t argc, cha
 static int cmd_gnss_config_qzss_nmea_standard(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -403,7 +393,7 @@ static int cmd_gnss_config_qzss_nmea_standard(const struct shell *shell, size_t 
 static int cmd_gnss_config_qzss_nmea_custom(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -413,7 +403,7 @@ static int cmd_gnss_config_qzss_nmea_custom(const struct shell *shell, size_t ar
 static int cmd_gnss_config_qzss_mask(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -442,7 +432,7 @@ static int cmd_gnss_config_timing(const struct shell *shell, size_t argc, char *
 static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -452,7 +442,7 @@ static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, ch
 static int cmd_gnss_config_timing_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -467,7 +457,7 @@ static int cmd_gnss_priority(const struct shell *shell, size_t argc, char **argv
 static int cmd_gnss_priority_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -477,7 +467,7 @@ static int cmd_gnss_priority_enable(const struct shell *shell, size_t argc, char
 static int cmd_gnss_priority_disable(const struct shell *shell, size_t argc, char **argv)
 {
 	if (!gnss_running) {
-		shell_error(shell, "%s: start GNSS to execute command", argv[0]);
+		mosh_error("%s: start GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -521,17 +511,16 @@ static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **a
 	bool int_enabled;
 
 	if (argc != 9) {
-		shell_error(shell, "filter: wrong parameter count");
-		shell_print(shell,
-			    "filter: <ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>");
-		shell_print(shell, "ephe:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "alm:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "utc:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "klob:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "neq:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "time:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "pos:\n  0 = disabled\n  1 = enabled");
-		shell_print(shell, "integrity:\n  0 = disabled\n  1 = enabled");
+		mosh_error("filter: wrong parameter count");
+		mosh_print("filter: <ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>");
+		mosh_print("ephe:\n  0 = disabled\n  1 = enabled");
+		mosh_print("alm:\n  0 = disabled\n  1 = enabled");
+		mosh_print("utc:\n  0 = disabled\n  1 = enabled");
+		mosh_print("klob:\n  0 = disabled\n  1 = enabled");
+		mosh_print("neq:\n  0 = disabled\n  1 = enabled");
+		mosh_print("time:\n  0 = disabled\n  1 = enabled");
+		mosh_print("pos:\n  0 = disabled\n  1 = enabled");
+		mosh_print("integrity:\n  0 = disabled\n  1 = enabled");
 		return -EINVAL;
 	}
 
@@ -557,7 +546,7 @@ static int cmd_gnss_1pps(const struct shell *shell, size_t argc, char **argv)
 static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -566,8 +555,7 @@ static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **a
 
 	interval = atoi(argv[1]);
 	if (interval < 0 || interval > 1800) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start: invalid interval value %d, the value must be 0...1800",
 			interval);
 		return -EINVAL;
@@ -575,8 +563,7 @@ static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **a
 
 	pulse_width = atoi(argv[2]);
 	if (pulse_width < 1 || pulse_width > 500) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start: invalid pulse width value %d, the value must be 1...500",
 			interval);
 		return -EINVAL;
@@ -721,7 +708,7 @@ static int parse_time_string(char *time_string, uint8_t *hour, uint8_t *minute, 
 static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -730,8 +717,7 @@ static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char 
 
 	interval = atoi(argv[1]);
 	if (interval < 0 || interval > 1800) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start_at: invalid interval value %d, the value must be 0...1800",
 			interval);
 		return -EINVAL;
@@ -739,8 +725,7 @@ static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char 
 
 	pulse_width = atoi(argv[2]);
 	if (pulse_width < 1 || pulse_width > 500) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start_at: invalid pulse width value %d, the value must be 1...500",
 			interval);
 		return -EINVAL;
@@ -755,8 +740,7 @@ static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char 
 
 	/* Parse date */
 	if (parse_date_string(argv[3], &mode.year, &mode.month, &mode.day) != 0) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start_at: invalid date string %s",
 			argv[3]);
 		return -EINVAL;
@@ -764,8 +748,7 @@ static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char 
 
 	/* Parse time */
 	if (parse_time_string(argv[4], &mode.hour, &mode.minute, &mode.second) != 0) {
-		shell_error(
-			shell,
+		mosh_error(
 			"start_at: invalid time string %s",
 			argv[4]);
 		return -EINVAL;
@@ -777,7 +760,7 @@ static int cmd_gnss_1pps_enable_at(const struct shell *shell, size_t argc, char 
 static int cmd_gnss_1pps_disable(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
@@ -796,14 +779,14 @@ static int cmd_gnss_output(const struct shell *shell, size_t argc, char **argv)
 	int event_level;
 
 	if (argc != 4) {
-		shell_error(shell, "output: wrong parameter count");
-		shell_print(shell, "output: <pvt level> <nmea level> <event level>");
-		shell_print(shell, "pvt level:\n  0 = no PVT output\n  1 = PVT output");
-		shell_print(shell, "  2 = PVT output with SV information (default)");
-		shell_print(shell, "nmea level:\n  0 = no NMEA output (default)\n"
-				   "  1 = NMEA output");
-		shell_print(shell, "event level:\n  0 = no event output (default)\n"
-				   "  1 = event output");
+		mosh_error("output: wrong parameter count");
+		mosh_print("output: <pvt level> <nmea level> <event level>");
+		mosh_print("pvt level:\n  0 = no PVT output\n  1 = PVT output");
+		mosh_print("  2 = PVT output with SV information (default)");
+		mosh_print("nmea level:\n  0 = no NMEA output (default)\n"
+				"  1 = NMEA output");
+		mosh_print("event level:\n  0 = no event output (default)\n"
+				"  1 = event output");
 		return -EINVAL;
 	}
 
@@ -813,15 +796,15 @@ static int cmd_gnss_output(const struct shell *shell, size_t argc, char **argv)
 
 	err = gnss_set_pvt_output_level(pvt_level);
 	if (err) {
-		shell_error(shell_global, "output: invalid PVT output level");
+		mosh_error("output: invalid PVT output level");
 	}
 	err = gnss_set_nmea_output_level(nmea_level);
 	if (err) {
-		shell_error(shell_global, "output: invalid NMEA output level");
+		mosh_error("output: invalid NMEA output level");
 	}
 	err = gnss_set_event_output_level(event_level);
 	if (err) {
-		shell_error(shell_global, "output: invalid event output level");
+		mosh_error("output: invalid event output level");
 	}
 
 	return 0;

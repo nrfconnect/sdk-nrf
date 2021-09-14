@@ -7,8 +7,7 @@
 #ifndef MOSH_UART_SHELL_H
 #define MOSH_UART_SHELL_H
 
-void uart_toggle_power_state_at_event(const struct shell *shell,
-				       const struct lte_lc_evt *const evt);
+void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt);
 
 /**
  * @brief Toggles UART0 and UART1 power states.
@@ -19,6 +18,6 @@ void uart_toggle_power_state_at_event(const struct shell *shell,
  *
  * @param[in] shell Pointer to shell instance.
  */
-void uart_toggle_power_state(const struct shell *shell);
+void uart_toggle_power_state(void);
 
 #endif /* MOSH_UART_SHELL_H */

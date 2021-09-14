@@ -41,8 +41,8 @@
 #include "ppp/ppp_shell.h"
 #endif
 #include "uart/uart_shell.h"
+#include "mosh_print.h"
 
-extern const struct shell *shell_global;
 extern struct k_sem nrf_modem_lib_initialized;
 extern struct k_poll_signal mosh_signal;
 /**
@@ -50,7 +50,7 @@ extern struct k_poll_signal mosh_signal;
  */
 void nrf_modem_recoverable_error_handler(uint32_t error)
 {
-	shell_error(shell_global, "modem lib recoverable error: %u\n", error);
+	mosh_error("modem lib recoverable error: %u\n", error);
 }
 
 #if defined(CONFIG_LWM2M_CARRIER)
@@ -79,7 +79,7 @@ void lwm2m_print_err(const lwm2m_carrier_event_t *evt)
 			"Modem firmware update failed",
 	};
 
-	shell_error(shell_global, "%s, reason %d\n", strerr[err->code], err->value);
+	mosh_error("%s, reason %d\n", strerr[err->code], err->value);
 }
 
 void lwm2m_print_deferred(const lwm2m_carrier_event_t *evt)
@@ -105,52 +105,49 @@ void lwm2m_print_deferred(const lwm2m_carrier_event_t *evt)
 			"Server registration sequence not completed",
 	};
 
-	shell_error(shell_global, "Reason: %s, timeout: %d seconds\n",
-		    strdef[def->reason], def->timeout);
+	mosh_error("Reason: %s, timeout: %d seconds\n", strdef[def->reason], def->timeout);
 }
 
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
-	shell_global = shell_backend_uart_get_ptr();
-
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
-		shell_print(shell_global, "LwM2M carrier event: modem lib initialized");
+		mosh_print("LwM2M carrier event: modem lib initialized");
 		break;
 	case LWM2M_CARRIER_EVENT_CONNECTING:
-		shell_print(shell_global, "LwM2M carrier event: connecting");
+		mosh_print("LwM2M carrier event: connecting");
 		k_sem_give(&nrf_modem_lib_initialized);
 		break;
 	case LWM2M_CARRIER_EVENT_CONNECTED:
-		shell_print(shell_global, "LwM2M carrier event: connected");
+		mosh_print("LwM2M carrier event: connected");
 		break;
 	case LWM2M_CARRIER_EVENT_DISCONNECTING:
-		shell_print(shell_global, "LwM2M carrier event: disconnecting");
+		mosh_print("LwM2M carrier event: disconnecting");
 		break;
 	case LWM2M_CARRIER_EVENT_DISCONNECTED:
-		shell_print(shell_global, "LwM2M carrier event: disconnected");
+		mosh_print("LwM2M carrier event: disconnected");
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
-		shell_print(shell_global, "LwM2M carrier event: bootstrapped");
+		mosh_print("LwM2M carrier event: bootstrapped");
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_READY:
-		shell_print(shell_global, "LwM2M carrier event: LTE ready");
+		mosh_print("LwM2M carrier event: LTE ready");
 		break;
 	case LWM2M_CARRIER_EVENT_REGISTERED:
-		shell_print(shell_global, "LwM2M carrier event: registered");
+		mosh_print("LwM2M carrier event: registered");
 		break;
 	case LWM2M_CARRIER_EVENT_DEFERRED:
-		shell_print(shell_global, "LwM2M carrier event: deferred");
+		mosh_print("LwM2M carrier event: deferred");
 		lwm2m_print_deferred(event);
 		break;
 	case LWM2M_CARRIER_EVENT_FOTA_START:
-		shell_print(shell_global, "LwM2M carrier event: fota start");
+		mosh_print("LwM2M carrier event: fota start");
 		break;
 	case LWM2M_CARRIER_EVENT_REBOOT:
-		shell_print(shell_global, "LwM2M carrier event: reboot");
+		mosh_print("LwM2M carrier event: reboot");
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
-		shell_print(shell_global, "LwM2M carrier event: error");
+		mosh_print("LwM2M carrier event: error");
 		lwm2m_print_err(event);
 		break;
 	}
@@ -171,7 +168,7 @@ static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 static int cmd_curl(const struct shell *shell, size_t argc, char **argv)
 {
 	(void)curl_tool_main(argc, argv, &mosh_signal);
-	shell_print(shell, "\nDONE");
+	mosh_print("\nDONE");
 	return 0;
 }
 SHELL_CMD_REGISTER(curl, NULL, "For curl usage, just type \"curl --manual\"", cmd_curl);

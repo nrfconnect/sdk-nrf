@@ -6,7 +6,6 @@
 
 #include <shell/shell.h>
 #include <assert.h>
-#include <strings.h>
 #include <stdio.h>
 #if defined(CONFIG_POSIX_API)
 #include <unistd.h>
@@ -21,6 +20,7 @@
 
 #include "sock.h"
 #include "mosh_defines.h"
+#include "mosh_print.h"
 #include "link_api.h"
 #include "utils/net_utils.h"
 
@@ -35,8 +35,6 @@ enum sock_command {
 	SOCK_CMD_RAI,
 	SOCK_CMD_LIST
 };
-
-extern const struct shell *shell_global;
 
 static const char sock_usage_str[] =
 	"Usage: sock <subcommand> [options]\n"
@@ -173,7 +171,7 @@ static struct option long_options[] = {
 
 static void sock_print_usage(void)
 {
-	shell_print(shell_global, "%s", sock_usage_str);
+	mosh_print_no_format(sock_usage_str);
 }
 
 int sock_shell(const struct shell *shell, size_t argc, char **argv)
@@ -203,7 +201,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (!strcmp(command_str, "list")) {
 		command = SOCK_CMD_LIST;
 	} else {
-		shell_error(shell, "Unsupported command=%s\n", command_str);
+		mosh_error("Unsupported command=%s\n", command_str);
 		sock_print_usage();
 		return -EINVAL;
 	}
@@ -258,18 +256,14 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'I': /* PDN CID */
 			arg_pdn_cid = atoi(optarg);
 			if (arg_pdn_cid <= 0) {
-				shell_error(
-					shell,
-					"PDN CID (%d) must be positive integer.",
-					arg_pdn_cid);
+				mosh_error("PDN CID (%d) must be positive integer.", arg_pdn_cid);
 				return -EINVAL;
 			}
 			break;
 		case 'a': /* IP address, or hostname */
 			addr_len = strlen(optarg);
 			if (addr_len > SOCK_MAX_ADDR_LEN) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Address length %d exceeded. Maximum is %d.",
 					addr_len, SOCK_MAX_ADDR_LEN);
 				return -EINVAL;
@@ -279,8 +273,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'p': /* Port */
 			arg_port = atoi(optarg);
 			if (arg_port <= 0 || arg_port > 65535) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Port (%d) must be bigger than 0 and smaller than 65536.",
 					arg_port);
 				return -EINVAL;
@@ -294,8 +287,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (!strcmp(optarg, "packet")) {
 				arg_family = AF_PACKET;
 			} else {
-				shell_error(
-					shell,
+				mosh_error(
 					"Unsupported address family=%s. Supported values are: "
 					"'inet' (ipv4, default), 'inet6' (ipv6) or 'packet'",
 					optarg);
@@ -310,8 +302,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (!strcmp(optarg, "raw")) {
 				arg_type = SOCK_RAW;
 			} else {
-				shell_error(
-					shell,
+				mosh_error(
 					"Unsupported address type=%s. Supported values are: "
 					"'stream' (tcp, default), 'dgram' (udp) or 'raw'",
 					optarg);
@@ -321,8 +312,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'b': /* Bind port */
 			arg_bind_port = atoi(optarg);
 			if (arg_bind_port <= 0 || arg_bind_port > 65535) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Bind port (%d) must be bigger than 0 and "
 					"smaller than 65536.",
 					arg_bind_port);
@@ -335,8 +325,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'T': /* Security tag */
 			arg_sec_tag = atoi(optarg);
 			if (arg_sec_tag < 0) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Valid range for security tag (%d) is 0 ... 2147483647.",
 					arg_sec_tag);
 				return -EINVAL;
@@ -348,8 +337,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'V': /* TLS peer verify */
 			arg_peer_verify = atoi(optarg);
 			if (arg_peer_verify < 0 || arg_peer_verify > 2) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Valid values for peer verify (%d) are 0, 1 and 2.",
 					arg_peer_verify);
 				return -EINVAL;
@@ -358,8 +346,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'H': /* TLS peer hostname */
 			addr_len = strlen(optarg);
 			if (addr_len > SOCK_MAX_ADDR_LEN) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Peer hostname length %d exceeded. Maximum is %d.",
 					addr_len, SOCK_MAX_ADDR_LEN);
 				return -EINVAL;
@@ -369,8 +356,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'd': /* Data to be sent is available in send buffer */
 			send_data_len = strlen(optarg);
 			if (send_data_len > SOCK_MAX_SEND_DATA_LEN) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Data length %d exceeded. Maximum is %d. Given data: %s",
 					send_data_len, SOCK_MAX_SEND_DATA_LEN,
 					optarg);
@@ -390,8 +376,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case 's': /* Buffer size */
 			arg_buffer_size = atoi(optarg);
 			if (arg_buffer_size <= 0) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Buffer size %d must be a positive number",
 					arg_buffer_size);
 				return -EINVAL;
@@ -405,8 +390,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			int blocking = atoi(optarg);
 
 			if (blocking != 0 && blocking != 1) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Blocking (%d) must be either '0' (false) or '1' (true)",
 					optarg);
 				return -EINVAL;
@@ -423,8 +407,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 				arg_recv_print_format =
 					SOCK_RECV_PRINT_FORMAT_HEX;
 			} else {
-				shell_error(
-					shell,
+				mosh_error(
 					"Receive data print format (%s) must be 'str' or 'hex'",
 					optarg);
 				return -EINVAL;
@@ -499,8 +482,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		 * to normal mode since changing it.
 		 */
 		if (!rai_status) {
-			shell_warn(
-				shell,
+			mosh_warn(
 				"RAI is requested but RAI is disabled.\n"
 				"Use 'link rai' command to enable it for socket usage.");
 		}
@@ -518,10 +500,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		err = sock_list();
 		break;
 	default:
-		shell_error(
-			shell,
-			"Internal error. Unknown socket command=%d",
-			command);
+		mosh_error("Internal error. Unknown socket command=%d", command);
 		err = -EINVAL;
 		break;
 	}
