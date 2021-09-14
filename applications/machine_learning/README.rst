@@ -226,7 +226,7 @@ nRF Machine Learning build types
 ================================
 
 The nRF Machine Learning application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types for each supported board.
+Instead, it comes with configuration files for different build types for each supported board.
 
 .. include:: /gs_modifying.rst
    :start-after: build_types_overview_start
@@ -238,8 +238,9 @@ The application supports the following build types:
 * ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
 * ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
 
-The given board can also support some additional configurations of the nRF Machine Learning application.
-For example, the nRF52840 Development Kit supports ``ZDebugNUS`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
+|nrf_desktop_build_type_conf|
+For example, the nRF52840 Development Kit supports the ``ZDebugNUS`` configuration, which is defined in the :file:`app_ZDebugNUS.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
+This configuration uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
 
 .. note::
     `Selecting a build type`_ is optional.

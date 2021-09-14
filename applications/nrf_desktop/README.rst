@@ -379,9 +379,11 @@ The following build types are available for various boards in the nRF Desktop:
 * ``ZRelease`` -- Release version of the application with no debugging features.
 * ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``ZReleaseSplitLL`` -- ``ZRelease`` build type that selects Zephyr's Bluetooth Link Layer (see :ref:`zephyr:bluetooth-arch`).
 * ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
 * ``ZDebugB0`` -- ``ZDebug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``ZDebugSplitLL`` -- ``ZDebug`` build type that selects Zephyr's Bluetooth Link Layer (see :ref:`zephyr:bluetooth-arch`).
 * ``ZDebugWithShell`` -- ``ZDebug`` build type with the shell enabled.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
@@ -390,10 +392,11 @@ For example, if the ``ZDebugWithShell`` build type is not supported on the selec
 
 .. code-block:: console
 
-  Configuration file for build type ZDebugWithShell is missing.
+   Configuration file for build type ZDebugWithShell is missing.
 
-In addition to the build types mentioned above, some boards can provide more build types, which can be used to generate an application in a specific variant.
-For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK) or to select a different link layer (such as LLPM capable Nordic SoftDevice LL or standard Zephyr SW LL).
+|nrf_desktop_build_type_conf|
+For example, the nRF52840 Development Kit supports the ``ZDebug_keyboard`` configuration, which is defined in the :file:`app_ZDebug_keyboard.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
+This configuration lets you generate the application with the keyboard role.
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
 

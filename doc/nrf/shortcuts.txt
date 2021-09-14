@@ -71,6 +71,9 @@
    Some of the commands use an endpoint for sending packets, so no endpoint handler is allowed to be registered for this endpoint.
 
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. |nrf_desktop_build_type_conf| replace:: In addition to these build types, some boards can have additional build type configurations that you can use to generate an application in a specific variant.
+   Such board-specific configurations use dedicated :file:`app_*build_type*.conf` files, where the name of the configuration replaces the ``*build_type*`` part in the file name.
+   Given the potential number of such configurations, they are not listed above and you can read the description of each of them in the respective configuration file.
 
 .. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
 
