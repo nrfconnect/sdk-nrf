@@ -130,6 +130,8 @@ static void http_response_cb(struct http_response *rsp,
 		rest_ctx->response = rsp->body_start;
 	}
 
+	rest_ctx->total_response_len += rsp->data_len;
+
 	if (final_data == HTTP_DATA_FINAL) {
 		LOG_DBG("HTTP: All data received, status: %u %s",
 			rsp->http_status_code,
@@ -142,6 +144,10 @@ static void http_response_cb(struct http_response *rsp,
 
 		rest_ctx->status = rsp->http_status_code;
 		rest_ctx->response_len = rsp->content_length;
+
+		LOG_DBG("Content/Total: %d/%d",
+			rest_ctx->response_len,
+			rest_ctx->total_response_len);
 	}
 }
 
@@ -333,17 +339,26 @@ static int do_api_call(struct http_request *http_req, struct nrf_cloud_rest_cont
 	/* Ensure receive buffer stays NULL terminated */
 	--http_req->recv_buf_len;
 
-	rest_ctx->response	= NULL;
-	rest_ctx->response_len	= 0;
+	rest_ctx->response		= NULL;
+	rest_ctx->response_len		= 0;
+	rest_ctx->total_response_len	= 0;
 
+	/* The http_client timeout does not seem to work correctly, so
+	 * for now do not use a timeout.
+	 */
 	err = http_client_req(rest_ctx->connect_socket,
 			      http_req,
-			      rest_ctx->timeout_ms,
+			      NRF_CLOUD_REST_TIMEOUT_NONE,
 			      rest_ctx);
 
 	if (err < 0) {
 		LOG_ERR("http_client_req() error: %d", err);
 		err = -EIO;
+	} else if (rest_ctx->total_response_len >= rest_ctx->rx_buf_len) {
+		/* 1 byte is reserved to NULL terminate the response */
+		LOG_ERR("Receive buffer too small, %d bytes are required",
+			rest_ctx->total_response_len + 1);
+		err = -ENOBUFS;
 	} else {
 		err = 0;
 	}

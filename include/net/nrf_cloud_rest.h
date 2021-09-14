@@ -22,7 +22,6 @@
 extern "C" {
 #endif
 
-
 /** @defgroup nrf_cloud_rest nRF Cloud REST API
  * @{
  */
@@ -50,6 +49,9 @@ enum nrf_cloud_rest_agps_req_type {
 	NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED,
 };
 
+#define NRF_CLOUD_REST_TIMEOUT_MINIMUM		(5000)
+#define NRF_CLOUD_REST_TIMEOUT_NONE		(SYS_FOREVER_MS)
+
 /** @brief Parameters and data for using the nRF Cloud REST API */
 struct nrf_cloud_rest_context {
 
@@ -57,9 +59,17 @@ struct nrf_cloud_rest_context {
 	 * will make the connection.
 	 */
 	int connect_socket;
-	/** If the connection should remain after API call */
+	/** If the connection should remain after API call.
+	 * @note: A failed API call could result in the socket
+	 * being closed.
+	 */
 	bool keep_alive;
-	/** Timeout value for receiving response data */
+	/** Timeout value, in milliseconds, for receiving response data.
+	 * Minimum timeout value specified by NRF_CLOUD_REST_TIMEOUT_MINIMUM.
+	 * For no timeout, set to NRF_CLOUD_REST_TIMEOUT_NONE.
+	 * @note: This parameter is currently not used; set
+	 * CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT instead.
+	 */
 	int32_t timeout_ms;
 	/** Authentication string: JWT @ref modem_jwt.
 	 * The nRF Cloud device ID must be included in the sub claim.
@@ -68,7 +78,9 @@ struct nrf_cloud_rest_context {
 	 * in the iss claim.
 	 */
 	char *auth;
-	/** User allocated buffer for receiving API response.
+	/** User allocated buffer for receiving API response, which
+	 * includes the HTTPS headers, any response data and a terminating
+	 * NULL.
 	 * Buffer size should be limited according to the
 	 * maximum TLS receive size of the modem.
 	 */
@@ -85,10 +97,12 @@ struct nrf_cloud_rest_context {
 	/** Results from API call */
 	/** HTTP status of API call */
 	enum nrf_cloud_http_status status;
-	/** Start of response data in rx_buf */
+	/** Start of response content data in rx_buf */
 	char *response;
-	/** Length of response data */
+	/** Length of response content data */
 	size_t response_len;
+	/** Length of HTTPS headers + response content data */
+	size_t total_response_len;
 };
 
 /** @brief Data required for nRF Cloud cellular positioning request */
