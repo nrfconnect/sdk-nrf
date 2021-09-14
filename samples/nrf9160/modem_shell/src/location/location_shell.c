@@ -37,7 +37,8 @@ static const char location_usage_str[] =
 static const char location_get_usage_str[] =
 	"Usage: location get [--method <method>] [--interval <secs>]\n"
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
-	"[--gnss_timeout <timeout in secs>]\n"
+	"[--gnss_timeout <timeout in secs>] [--cellular_timeout <timeout in secs>]\n"
+	"[--wlan_timeout <timeout in secs>] [--wlan_service <service_string>]\n"
 	"Options:\n"
 	"  --method,           Location method: 'gnss', 'cellular' or 'wlan'. Multiple\n"
 	"                      '--method' parameters may be given to indicate list of\n"
@@ -48,7 +49,8 @@ static const char location_get_usage_str[] =
 	"                      default: 2)\n"
 	"  --gnss_timeout,     GNSS timeout in seconds\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
-	"  --wlan_timeout,     WLAN timeout in seconds\n";
+	"  --wlan_timeout,     WLAN timeout in seconds\n"
+	"  --wlan_service,     Used WLAN positioning service: 'here' (default), 'skyhook' or 'nrf'\n";
 
 /******************************************************************************/
 
@@ -60,6 +62,7 @@ enum {  LOCATION_SHELL_OPT_METHOD           = 1001,
 	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1005,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1006,
 	LOCATION_SHELL_OPT_WLAN_TIMEOUT     = 1007,
+	LOCATION_SHELL_OPT_WLAN_SERVICE     = 1008,
 };
 
 /* Specifying the expected options: */
@@ -71,6 +74,7 @@ static struct option long_options[] = {
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "wlan_timeout", required_argument, 0, LOCATION_SHELL_OPT_WLAN_TIMEOUT },
+	{ "wlan_service", required_argument, 0, LOCATION_SHELL_OPT_WLAN_SERVICE },
 	{ 0, 0, 0, 0 }
 };
 
@@ -126,7 +130,7 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 		if (event_data->method == LOC_METHOD_CELLULAR) {
 			shell_print(
 				shell_global,
-				"  Used service: %s",
+				"  used service: %s",
 				CONFIG_MULTICELL_LOCATION_HOSTNAME);
 		}
 		shell_print(shell_global, "  latitude: %.06f", event_data->location.latitude);
@@ -198,6 +202,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum loc_method method_list[LOC_MAX_METHODS] = { 0 };
 	int method_count = 0;
 
+	enum loc_wlan_service wlan_service = LOC_WLAN_SERVICE_HERE;
+
 	int opt;
 	int ret = 0;
 	int long_index = 0;
@@ -258,6 +264,18 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			wlan_timeout_set = true;
 			break;
 
+		case LOCATION_SHELL_OPT_WLAN_SERVICE:
+			if (strcmp(optarg, "nrf") == 0) {
+				wlan_service = LOC_WLAN_SERVICE_NRF_CLOUD;
+			} else if (strcmp(optarg, "here") == 0) {
+				wlan_service = LOC_WLAN_SERVICE_HERE;
+			} else if (strcmp(optarg, "skyhook") == 0) {
+				wlan_service = LOC_WLAN_SERVICE_SKYHOOK;
+			} else {
+				shell_error(shell, "Unknown WLAN positioning service. See usage:");
+				goto show_usage;
+			}
+			break;
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
 			interval_set = true;
@@ -350,6 +368,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 					methods[i].cellular.timeout = cellular_timeout;
 				}
 			} else if (methods[i].method == LOC_METHOD_WLAN) {
+				methods[i].wlan.service = wlan_service;
 				if (wlan_timeout_set) {
 					methods[i].wlan.timeout = wlan_timeout;
 				}
