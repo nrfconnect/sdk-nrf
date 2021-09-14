@@ -98,68 +98,71 @@ static struct bt_mesh_scene_srv *srv_find(uint16_t elem_idx)
 	return NULL;
 }
 
-static uint16_t current_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
+static uint16_t current_scene(const struct bt_mesh_scene_srv *srv)
 {
-	if (bt_mesh_model_transition_time(&srv->transition) &&
-	    srv->prev != srv->next && now < srv->transition_end) {
-		if (now < srv->transition_end - srv->transition.time) {
-			return srv->prev;
-		} else {
+	if (srv->next && k_work_delayable_is_pending(&srv->work)) {
+		/* When we're in a transition, the current scene should be NONE (see the Bluetooth
+		 * mesh model specification, section 5.1.3.2.1). Check that we're not just in a
+		 * delay phase:
+		 */
+		if (!srv->transition.delay ||
+		    (k_ticks_to_ms_near64(k_work_delayable_remaining_get(&srv->work)) <=
+		     srv->transition.time)) {
 			return BT_MESH_SCENE_NONE;
+		} else {
+			return srv->prev;
 		}
 	}
 
+	return srv->prev;
+}
+
+static uint16_t target_scene(const struct bt_mesh_scene_srv *srv)
+{
 	return srv->next;
 }
 
-static uint16_t target_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
+static void scene_status_encode(struct bt_mesh_scene_srv *srv, struct net_buf_simple *buf,
+				const struct bt_mesh_scene_state *state)
 {
-	if (bt_mesh_model_transition_time(&srv->transition) &&
-	    srv->prev != srv->next && now < srv->transition_end) {
-		return srv->next;
-	}
-
-	return BT_MESH_SCENE_NONE;
-}
-
-static void scene_status_encode(struct bt_mesh_scene_srv *srv,
-				struct net_buf_simple *buf,
-				enum bt_mesh_scene_status status)
-{
-	int64_t now = k_uptime_get();
-	uint16_t current = current_scene(srv, now);
-	uint16_t target = target_scene(srv, now);
-
 	bt_mesh_model_msg_init(buf, BT_MESH_SCENE_OP_STATUS);
-	net_buf_simple_add_u8(buf, status);
-	if (target != BT_MESH_SCENE_NONE) {
-		net_buf_simple_add_le16(buf, current);
-		net_buf_simple_add_le16(buf, target);
-		net_buf_simple_add_u8(buf, model_transition_encode(
-						   srv->transition_end - now));
+	net_buf_simple_add_u8(buf, state->status);
+	if (state->target != BT_MESH_SCENE_NONE) {
+		net_buf_simple_add_le16(buf, state->current);
+		net_buf_simple_add_le16(buf, state->target);
+		net_buf_simple_add_u8(buf, model_transition_encode(state->remaining_time));
 	} else {
-		net_buf_simple_add_le16(buf, current);
+		net_buf_simple_add_le16(buf, state->current);
 	}
 }
 
-static int scene_status_send(struct bt_mesh_scene_srv *srv,
-			     struct bt_mesh_msg_ctx *ctx,
-			     enum bt_mesh_scene_status status)
+static int scene_status_send(struct bt_mesh_scene_srv *srv, struct bt_mesh_msg_ctx *ctx,
+			     const struct bt_mesh_scene_state *state)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCENE_OP_STATUS,
 				 BT_MESH_SCENE_MSG_MAXLEN_STATUS);
 
-	scene_status_encode(srv, &buf, status);
+	scene_status_encode(srv, &buf, state);
 
 	return model_send(srv->model, ctx, &buf);
+}
+
+static void curr_scene_state_get(struct bt_mesh_scene_srv *srv, struct bt_mesh_scene_state *state)
+{
+	state->current = current_scene(srv);
+	state->target = target_scene(srv);
+	state->remaining_time = k_ticks_to_ms_near64(k_work_delayable_remaining_get(&srv->work));
+	state->status = BT_MESH_SCENE_SUCCESS;
 }
 
 static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
+	struct bt_mesh_scene_state state;
 
-	(void)scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+	curr_scene_state_get(srv, &state);
+	scene_status_send(srv, ctx, &state);
 
 	return 0;
 }
@@ -169,7 +172,7 @@ static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 	struct bt_mesh_model_transition transition;
-	enum bt_mesh_scene_status status;
+	struct bt_mesh_scene_state state;
 	uint16_t scene;
 	bool has_trans;
 	uint8_t tid;
@@ -185,21 +188,31 @@ static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 
 	if (tid_check_and_update(&srv->tid, tid, ctx)) {
 		BT_DBG("Duplicate TID");
-		scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+		curr_scene_state_get(srv, &state);
+		scene_status_send(srv, ctx, &state);
 		return 0;
 	}
 
 	err = bt_mesh_scene_srv_set(srv, scene, has_trans ? &transition : NULL);
-	status = ((err == -ENOENT) ? BT_MESH_SCENE_NOT_FOUND :
-				     BT_MESH_SCENE_SUCCESS);
-
-	if (ack) {
-		scene_status_send(srv, ctx, status);
+	if (err) {
+		curr_scene_state_get(srv, &state);
+		if (err == -ENOENT) {
+			state.status = BT_MESH_SCENE_NOT_FOUND;
+		}
+	} else {
+		state.status = BT_MESH_SCENE_SUCCESS;
+		state.current = srv->prev;
+		state.target = srv->next;
+		state.remaining_time = transition.time;
 	}
 
-	if (status == BT_MESH_SCENE_SUCCESS) {
+	if (ack) {
+		scene_status_send(srv, ctx, &state);
+	}
+
+	if (state.status == BT_MESH_SCENE_SUCCESS) {
 		/* Publish */
-		scene_status_send(srv, NULL, status);
+		scene_status_send(srv, NULL, &state);
 	}
 
 	return 0;
@@ -226,7 +239,7 @@ static int scene_register_status_send(struct bt_mesh_scene_srv *srv,
 					 2 * CONFIG_BT_MESH_SCENES_MAX);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_REGISTER_STATUS);
 	net_buf_simple_add_u8(&buf, status);
-	net_buf_simple_add_le16(&buf, current_scene(srv, k_uptime_get()));
+	net_buf_simple_add_le16(&buf, current_scene(srv));
 
 	for (int i = 0; i < srv->count; i++) {
 		net_buf_simple_add_le16(&buf, srv->all[i]);
@@ -531,7 +544,11 @@ static enum bt_mesh_scene_status scene_store(struct bt_mesh_scene_srv *srv,
 	scene_store_mod(srv, scene, false);
 	scene_store_mod(srv, scene, true);
 
-	srv->next = scene;
+	srv->prev = scene;
+	srv->next = BT_MESH_SCENE_NONE;
+	/* We're checking srv->next in the handler, so failure to cancel is okay: */
+	(void)k_work_cancel_delayable(&srv->work);
+
 	return BT_MESH_SCENE_SUCCESS;
 }
 
@@ -551,15 +568,16 @@ static void scene_delete(struct bt_mesh_scene_srv *srv, uint16_t *scene)
 		(void)bt_mesh_model_data_store(srv->model, false, path, NULL, 0);
 	}
 
-	int64_t now = k_uptime_get();
-	uint16_t target = target_scene(srv, now);
-	uint16_t current = current_scene(srv, now);
+	uint16_t target = target_scene(srv);
+	uint16_t current = current_scene(srv);
 
 	if (target == *scene ||
 	    (current == *scene && target == BT_MESH_SCENE_NONE)) {
 		srv->next = BT_MESH_SCENE_NONE;
-		srv->transition_end = 0U;
 		srv->prev = BT_MESH_SCENE_NONE;
+
+		/* Cancel failure checked in work handler. */
+		(void)k_work_cancel_delayable(&srv->work);
 	} else if (current == *scene && target != *scene) {
 		srv->prev = BT_MESH_SCENE_NONE;
 	}
@@ -662,11 +680,32 @@ const struct bt_mesh_model_op _bt_mesh_scene_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static void scene_srv_transition_end(struct k_work *work)
+{
+	struct bt_mesh_scene_srv *srv =
+		CONTAINER_OF(k_work_delayable_from_work(work), struct bt_mesh_scene_srv, work);
+
+	if (srv->next == BT_MESH_SCENE_NONE) {
+		/* This is already done */
+		return;
+	}
+
+	srv->prev = srv->next;
+	srv->next = BT_MESH_SCENE_NONE;
+
+	/* Publish at the end of the transition */
+	if (bt_mesh_model_transition_time(&srv->transition)) {
+		bt_mesh_scene_srv_pub(srv, NULL);
+	}
+}
+
 static int scene_srv_pub_update(struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
+	struct bt_mesh_scene_state state;
 
-	scene_status_encode(srv, &srv->pub_msg, BT_MESH_SCENE_SUCCESS);
+	curr_scene_state_get(srv, &state);
+	scene_status_encode(srv, &srv->pub_msg, &state);
 	return 0;
 }
 
@@ -677,6 +716,8 @@ static int scene_srv_init(struct bt_mesh_model *model)
 	sys_slist_prepend(&scene_servers, &srv->n);
 
 	srv->model = model;
+
+	k_work_init_delayable(&srv->work, scene_srv_transition_end);
 
 	net_buf_simple_init_with_data(&srv->pub_msg, srv->buf,
 				      sizeof(srv->buf));
@@ -760,7 +801,8 @@ static void scene_srv_reset(struct bt_mesh_model *model)
 	}
 
 	srv->prev = BT_MESH_SCENE_NONE;
-	srv->transition_end = 0;
+	/* We're checking srv->next in the handler, so failure to cancel is okay: */
+	(void)k_work_cancel_delayable(&srv->work);
 	srv->sigpages = 0;
 	srv->vndpages = 0;
 }
@@ -817,7 +859,8 @@ void bt_mesh_scene_invalidate(struct bt_mesh_model *mod)
 	}
 
 	srv->prev = BT_MESH_SCENE_NONE;
-	srv->transition_end = 0U;
+	/* We're checking srv->next in the handler, so failure to cancel is okay: */
+	(void)k_work_cancel_delayable(&srv->work);
 	srv->next = BT_MESH_SCENE_NONE;
 }
 
@@ -838,19 +881,20 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 		return -ENOENT;
 	}
 
-	srv->prev = current_scene(srv, k_uptime_get());
-
 	transition_time = bt_mesh_model_transition_time(transition);
 	if (transition_time) {
-		srv->transition_end = k_uptime_get() + transition_time;
 		srv->transition = *transition;
+		srv->prev = current_scene(srv);
+		srv->next = scene;
+		k_work_reschedule(&srv->work, K_MSEC(transition_time));
 	} else {
-		srv->transition_end = 0U;
-		srv->transition.delay = 0U;
-		srv->transition.time = 0U;
+		srv->prev = scene;
+		srv->next = BT_MESH_SCENE_NONE;
+		srv->transition.time = 0;
+		srv->transition.delay = 0;
+		/* We're checking srv->next in the handler, so failure to cancel is okay: */
+		(void)k_work_cancel_delayable(&srv->work);
 	}
-
-	srv->next = scene;
 
 	sprintf(path, "bt/mesh/s/%x/data/%x",
 		(srv->model->elem_idx << 8) | srv->model->mod_idx, scene);
@@ -868,16 +912,19 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,
 			  struct bt_mesh_msg_ctx *ctx)
 {
-	return scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+	struct bt_mesh_scene_state state;
+
+	curr_scene_state_get(srv, &state);
+	return scene_status_send(srv, ctx, &state);
 }
 
 uint16_t
 bt_mesh_scene_srv_current_scene_get(const struct bt_mesh_scene_srv *srv)
 {
-	return current_scene(srv, k_uptime_get());
+	return current_scene(srv);
 }
 
 uint16_t bt_mesh_scene_srv_target_scene_get(const struct bt_mesh_scene_srv *srv)
 {
-	return target_scene(srv, k_uptime_get());
+	return target_scene(srv);
 }

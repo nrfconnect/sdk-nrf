@@ -33,6 +33,20 @@ enum bt_mesh_scene_status {
 	BT_MESH_SCENE_NOT_FOUND,
 };
 
+/** Scene state */
+struct bt_mesh_scene_state {
+	/** Status of the previous operation. */
+	enum bt_mesh_scene_status status;
+	/** Current scene, or @ref BT_MESH_SCENE_NONE if no scene is active. */
+	uint16_t current;
+	/** Target scene, or @ref BT_MESH_SCENE_NONE if no transition is in
+	 *  progress.
+	 */
+	uint16_t target;
+	/** Remaining time of the scene transition in milliseconds. */
+	uint32_t remaining_time;
+};
+
 /** @cond INTERNAL_HIDDEN */
 #define BT_MESH_SCENE_OP_GET BT_MESH_MODEL_OP_2(0x82, 0x41)
 #define BT_MESH_SCENE_OP_RECALL BT_MESH_MODEL_OP_2(0x82, 0x42)

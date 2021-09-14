@@ -35,20 +35,6 @@ struct bt_mesh_scene_cli;
 						 _cli),                        \
 			 &_bt_mesh_scene_cli_cb)
 
-/** Scene state */
-struct bt_mesh_scene_state {
-	/** Status of the previous operation. */
-	enum bt_mesh_scene_status status;
-	/** Current scene, or @ref BT_MESH_SCENE_NONE if no scene is active. */
-	uint16_t current;
-	/** Target scene, or @ref BT_MESH_SCENE_NONE if no transition is in
-	 *  progress.
-	 */
-	uint16_t target;
-	/** Remaining time of the scene transition in milliseconds. */
-	uint32_t remaining_time;
-};
-
 /** Scene register parameters */
 struct bt_mesh_scene_register {
 	/** Status of the previous operation. */

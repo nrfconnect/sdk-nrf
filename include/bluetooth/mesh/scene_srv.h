@@ -89,8 +89,8 @@ struct bt_mesh_scene_srv {
 	/** Linked list node for Scene Server list */
 	sys_snode_t n;
 
-	/** Timestamp when the transition ends. */
-	uint64_t transition_end;
+	/** Transition timer */
+	struct k_work_delayable work;
 	/** Transition parameters. */
 	struct bt_mesh_model_transition transition;
 
