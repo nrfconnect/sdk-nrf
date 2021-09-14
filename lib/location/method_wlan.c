@@ -18,9 +18,15 @@
 
 #include "loc_core.h"
 
-#include "rest/rest_here_wlan.h" //TODO: generic include for services
+#include "rest/rest_here_wlan.h"
+#include "rest/rest_skyhook_wlan.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
+
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK),
+	"At least one WLAN positioning service must be enabled");
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
@@ -117,7 +123,6 @@ void method_wlan_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint
 		case NET_EVENT_WIFI_SCAN_DONE:
 			method_wlan_handle_wifi_scan_done(cb);
 			break;
-
 		default:
 			break;
 		}
@@ -131,7 +136,7 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 	struct loc_location location_result = { 0 };
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_wlan_config wlan_config = work_data->wlan_config;
-	int ret = 0;
+	int ret;
 
 	loc_core_timer_start(wlan_config.timeout);
 
@@ -149,20 +154,30 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 		LOG_WRN("Timeout for WLAN scanning - cannot fetch location");
 		ret = -1;
 	} else if (running) {
-		struct here_rest_wlan_pos_request request;
-		struct here_rest_wlan_pos_result result;
+		struct rest_wlan_pos_request request;
+		struct rest_wlan_pos_result result;
 
 		if (latest_scan_result_count > 0) {
 			/* Fill scanning results: */
 			request.mac_addr_count = latest_scan_result_count;
+			ret = -1;
 
 			for (int i = 0; i < latest_scan_result_count; i++) {
 				strcpy(request.mac_addresses[i].mac_addr_str,
 				       latest_scan_results[i].mac_addr_str);
 			}
-			ret = here_rest_wlan_pos_get(&request, &result);
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
+			if (wlan_config.service == LOC_WLAN_SERVICE_HERE) {
+				ret = here_rest_wlan_pos_get(&request, &result);
+			}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
+			if (wlan_config.service == LOC_WLAN_SERVICE_SKYHOOK) {
+				ret = skyhook_rest_wlan_pos_get(&request, &result);
+			}
+#endif
 			if (ret) {
-				LOG_ERR("Failed to acquire location from Here REST api, error: %d",
+				LOG_ERR("Failed to acquire location from WLAN positioning service REST api, error: %d",
 					ret);
 				ret = -1;
 			} else {
@@ -199,10 +214,30 @@ int method_wlan_cancel(void)
 int method_wlan_location_get(const struct loc_method_config *config)
 {
 	const struct loc_wlan_config wlan_config = config->wlan;
+	bool service_ok = false;
 
 	if (running) {
 		LOG_ERR("Previous operation ongoing.");
 		return -EBUSY;
+	}
+	/* Validate requested service: */
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
+	if (wlan_config.service == LOC_WLAN_SERVICE_HERE) {
+		service_ok = true;
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
+	if (wlan_config.service == LOC_WLAN_SERVICE_SKYHOOK) {
+		service_ok = true;
+	}
+#endif
+	if (wlan_config.service == LOC_WLAN_SERVICE_NRF_CLOUD) {
+		LOG_ERR("nRF Cloud location service is not supported for WLAN.");
+		return -EINVAL;
+	}
+	if (!service_ok) {
+		LOG_ERR("Requested WLAN positioning service not configured on.");
+		return -EINVAL;
 	}
 
 	k_work_init(&method_wlan_start_work.work_item, method_wlan_positioning_work_fn);

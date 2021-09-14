@@ -48,7 +48,7 @@ config LOCATION_METHOD_WLAN_SERVICE_HERE
 
 config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
 	bool "Wifi positioning using Skyhook service"
-	default n
+	default y
 	help
 	  Use Skyhook location service
 
@@ -57,8 +57,7 @@ config LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES
 	default 10
 	help
 	  Maximum number of MAC addresses to use when creating HTTP request.
-	  Increasing the max number will increase the library's RAM usage
-	  proportionally.
+	  Increasing the max number will increase the library's RAM usage.
 
 config LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT
 	int "Rest timeout, in seconds"
@@ -98,12 +97,12 @@ config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_HOSTNAME
 	help
 	  Server hostname to use when connecting to the selected location service
 
-config LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
-	string "HERE API key"
+config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY
+	string "SKyhook API key"
 	help
-	  HERE API key used for authentication
+	  SKyhook API key used for authentication
 
-config LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG
+config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_TLS_SEC_TAG
 	int "Security tag for TLS certificates"
 	default 176
 	help
@@ -111,7 +110,7 @@ config LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG
 	  service will be stored. TODO: ??? This sec tag will also be used to provision
 	  certificates when multicell_location_provision_certificate() is called.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+endif # LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
 
 endif # LOCATION_METHOD_WLAN
 

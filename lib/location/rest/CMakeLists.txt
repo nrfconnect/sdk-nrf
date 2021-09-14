@@ -6,3 +6,4 @@
 
 zephyr_library()
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE rest_here_wlan.c)
+zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK rest_skyhook_wlan.c)

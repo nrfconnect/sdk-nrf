@@ -15,31 +15,33 @@
 
 #include <net/srest_client.h>
 
-#include "rest_here_wlan.h"
+#include "rest_skyhook_wlan.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_HOSTNAME
+#define HOSTNAME	CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_HOSTNAME
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 BUILD_ASSERT(
-	sizeof(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY) > 1, "API key must be configured");
-#define AUTHENTICATION	"apiKey="CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
+	sizeof(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY) > 1, "API key must be configured");
 
-#define API_LOCATE_PATH		"/v2/locate"
-#define API_KEY_PARAM		"apiKey="CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
-#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM
+#define API_LOCATE_PATH		"/wps2/json/location"
+#define API_KEY_PARAM		"key="CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY
+#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user=foo" //TODO: fetch imei
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 #define HEADER_HOST            "Host: "HOSTNAME"\r\n"
 #define HEADER_CONNECTION      "Connection: close\r\n"
 
-#define HERE_WLAN_POS_JSON_KEY_WLAN "wlan"
 #define HTTPS_PORT 443
 
+#define SKYHOOK_WLAN_POS_JSON_KEY_WLAN "wifiAccessPoints"
 /******************************************************************************/
+/* Based on Skyhook JSON Location API v2.31:
+ * https://resources.skyhook.com/wiki/type/documentation/precision-location/api-documentation---json-location-api-v2-31/218036682
+ */
 
-static int here_wlan_rest_pos_req_json_format(
+static int skyhook_wlan_rest_pos_req_json_format(
 	const struct mac_address_info mac_address_arr[],
 	uint8_t mac_addr_count,
 	cJSON * const req_obj_out)
@@ -47,12 +49,21 @@ static int here_wlan_rest_pos_req_json_format(
 	cJSON *wlan_array = NULL;
 	cJSON *wlan_info_obj = NULL;
 	cJSON *mac_address_obj = NULL;
+	cJSON *false_string_obj = NULL;
 
 	if (!mac_address_arr || !mac_addr_count || !req_obj_out) {
 		return -EINVAL;
 	}
+	/* Request payload format example:
+	 * {"considerIp":"false","wifiAccessPoints":[{"macAddress":"06:06:06:06:06:06"},{},...]}
+	 */
+	false_string_obj = cJSON_CreateString("false");
+	if (!false_string_obj) {
+		goto cleanup;
+	}
+	cJSON_AddItemToObject(req_obj_out, "considerIP", false_string_obj);
 
-	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
+	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
 	if (!wlan_array) {
 		goto cleanup;
 	}
@@ -66,9 +77,9 @@ static int here_wlan_rest_pos_req_json_format(
 		if (!mac_address_obj) {
 			goto cleanup;
 		}
-		cJSON_AddItemToObject(wlan_info_obj, "mac", mac_address_obj);
+		cJSON_AddItemToObject(wlan_info_obj, "macAddress", mac_address_obj);
 
-		//TODO: RSSI: key: "rss"
+		//TODO: support for others attributes
 		if (!cJSON_AddItemToArray(wlan_array, wlan_info_obj)) {
 			cJSON_Delete(wlan_info_obj);
 			goto cleanup;
@@ -78,12 +89,12 @@ static int here_wlan_rest_pos_req_json_format(
 
 cleanup:
 	/* Only need to delete the wlan_array since all items (if any) were added to it */
-	cJSON_DeleteItemFromObject(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
-	LOG_ERR("Failed to format Here wlan location request, out of memory");
+	cJSON_DeleteItemFromObject(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
+	LOG_ERR("Failed to format Skyhook wlan location request, out of memory");
 	return -ENOMEM;
 }
 
-static int here_rest_format_wlan_pos_req_body(
+static int skyhook_rest_format_wlan_pos_req_body(
 	const struct mac_address_info mac_addresses[],
 	uint8_t mac_addr_count,
 	char **json_str_out)
@@ -95,7 +106,7 @@ static int here_rest_format_wlan_pos_req_body(
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = here_wlan_rest_pos_req_json_format(mac_addresses, mac_addr_count, req_obj);
+	err = skyhook_wlan_rest_pos_req_json_format(mac_addresses, mac_addr_count, req_obj);
 	if (err) {
 		goto cleanup;
 	}
@@ -111,8 +122,8 @@ cleanup:
 	return err;
 }
 
-static int here_wlan_rest_pos_response_parse(const char *const buf,
-					     struct rest_wlan_pos_result *result)
+static int skyhook_wlan_rest_pos_response_parse(const char *const buf,
+						struct rest_wlan_pos_result *result)
 {
 	int ret = 0;
 	struct cJSON *root_obj, *location_obj, *lat_obj, *lng_obj, *accuracy_obj;
@@ -120,10 +131,13 @@ static int here_wlan_rest_pos_response_parse(const char *const buf,
 	if (buf == NULL) {
 		return -EINVAL;
 	}
+	/* Response payload format example:
+	 * {"location":{"lat":61.49372,"lng":23.775702},"accuracy":50.0}
+	 */
 
 	root_obj = cJSON_Parse(buf);
 	if (!root_obj) {
-		LOG_ERR("No JSON found for here wlan positioning response");
+		LOG_ERR("No JSON found for skyhook wlan positioning response");
 		ret = -ENOMSG;
 		goto cleanup;
 	}
@@ -151,7 +165,7 @@ static int here_wlan_rest_pos_response_parse(const char *const buf,
 		goto cleanup;
 	}
 
-	accuracy_obj = cJSON_GetObjectItemCaseSensitive(location_obj, "accuracy");
+	accuracy_obj = cJSON_GetObjectItemCaseSensitive(root_obj, "accuracy");
 	if (accuracy_obj == NULL) {
 		LOG_ERR("No 'accuracy' object found");
 
@@ -173,14 +187,14 @@ cleanup:
 
 /******************************************************************************/
 
-int here_rest_wlan_pos_get(
+int skyhook_rest_wlan_pos_get(
 	const struct rest_wlan_pos_request *request,
 	struct rest_wlan_pos_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
 
-	char response_buf[1024];
+	char response_buf[1024]; //TODO: kconfig and not from stack
 
 	struct srest_req_resp_context rest_ctx = { 0 };
 	char *const headers[] = {
@@ -197,7 +211,7 @@ int here_rest_wlan_pos_get(
 	srest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
-	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG;
+	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_TLS_SEC_TAG;
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
@@ -205,12 +219,12 @@ int here_rest_wlan_pos_get(
 	rest_ctx.resp_buff_len = 1024;
 
 	/* Get the body/payload to request: */
-	ret = here_rest_format_wlan_pos_req_body(
+	ret = skyhook_rest_format_wlan_pos_req_body(
 		request->mac_addresses,
 		request->mac_addr_count,
 		&body);
 	if (ret) {
-		LOG_ERR("Failed to generate wlan positioning request, err: %d", ret);
+		LOG_ERR("Failed to generate skyhook positioning request, err: %d", ret);
 		goto clean_up;
 	}
 	rest_ctx.body = body;
@@ -226,9 +240,9 @@ int here_rest_wlan_pos_get(
 		/* Let it fail in parsing */
 	}
 
-	ret = here_wlan_rest_pos_response_parse(rest_ctx.response, result);
+	ret = skyhook_wlan_rest_pos_response_parse(rest_ctx.response, result);
 	if (ret) {
-		LOG_ERR("Here rest response parsing failed, err: %d", ret);
+		LOG_ERR("Skyhook rest response parsing failed, err: %d", ret);
 		ret = -EBADMSG;
 	}
 clean_up:
