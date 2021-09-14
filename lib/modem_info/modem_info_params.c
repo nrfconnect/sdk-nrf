@@ -33,6 +33,7 @@ int modem_info_params_init(struct modem_param_info *modem)
 	modem->network.gps_mode.type		= MODEM_INFO_GPS_MODE;
 	modem->network.date_time.type		= MODEM_INFO_DATE_TIME;
 	modem->network.apn.type			= MODEM_INFO_APN;
+	modem->network.rsrp.type		= MODEM_INFO_RSRP;
 
 	modem->sim.uicc.type			= MODEM_INFO_UICC;
 	modem->sim.iccid.type			= MODEM_INFO_ICCID;
