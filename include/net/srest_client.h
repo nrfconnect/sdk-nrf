@@ -72,7 +72,7 @@ struct srest_req_resp_context {
 	/** Response: */
 
 	/** User given timeout value for receiving a response data.
-	 * Default: CONFIG_LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT
+	 * Default: CONFIG_SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT
 	 */
 	int32_t timeout_ms;
 

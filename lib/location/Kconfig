@@ -59,13 +59,6 @@ config LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES
 	  Maximum number of MAC addresses to use when creating HTTP request.
 	  Increasing the max number will increase the library's RAM usage.
 
-config LOCATION_METHOD_WLAN_REST_REQUEST_TIMEOUT
-	int "Rest timeout, in seconds"
-	default 30
-	help
-	  Sets the timeout duration in seconds to use when sending REST request
-	  to WLAN positioning service provider.
-
 config LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE
 	int "Receive buffer size"
 	default 1024

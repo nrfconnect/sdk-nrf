@@ -8,6 +8,12 @@ menuconfig SREST_CLIENT_LIB
 
 if SREST_CLIENT_LIB
 
+config SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT
+	int "Rest request timeout, in seconds"
+	default 65
+	help
+	  Sets the timeout duration in seconds to wait for the response data.
+
 config SREST_CLIENT_LIB_SEND_TIMEOUT
 	int "Socket send timeout, in seconds"
 	default 60
