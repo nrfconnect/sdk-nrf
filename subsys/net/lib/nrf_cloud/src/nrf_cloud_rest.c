@@ -358,6 +358,7 @@ static int do_api_call(struct http_request *http_req, struct nrf_cloud_rest_cont
 			      NRF_CLOUD_REST_TIMEOUT_NONE,
 			      rest_ctx);
 
+
 	if (err < 0) {
 		LOG_ERR("http_client_req() error: %d", err);
 		err = -EIO;
