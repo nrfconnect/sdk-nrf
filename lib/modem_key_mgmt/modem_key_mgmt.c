@@ -7,96 +7,78 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <nrf_modem_limits.h>
 #include <modem/modem_key_mgmt.h>
 #include <logging/log.h>
 
-#define MODEM_KEY_MGMT_OP_LS "AT%CMNG=1"
-#define MODEM_KEY_MGMT_OP_RD "AT%CMNG=2"
-#define MODEM_KEY_MGMT_OP_WR "AT%CMNG=0"
-#define MODEM_KEY_MGMT_OP_RM "AT%CMNG=3"
-
 #define AT_CMNG_PARAMS_COUNT 5
 #define AT_CMNG_CONTENT_INDEX 4
+
+#define ENABLE 1
+#define DISABLE 0
 
 LOG_MODULE_REGISTER(modem_key_mgmt, CONFIG_MODEM_KEY_MGMT_LOG_LEVEL);
 
 static char scratch_buf[4096];
 
-static int cmee_is_active(void)
+static bool cmee_is_active(void)
 {
 	int err;
-	char response[sizeof("+CMEE: X\r\n")];
+	int active;
 
-	err = at_cmd_write("AT+CMEE?", response, sizeof(response), NULL);
-	if (err) {
-		return err;
+	err = nrf_modem_at_scanf("AT+CMEE?", "+CMEE: %d", &active);
+	if (err < 0) {
+		LOG_WRN("Failed to retrieve CMEE status, err %d", err);
+		return false;
 	}
 
-#define CMEE_STATUS 7
-
-	return (response[CMEE_STATUS] == '1');
+	return active ? true : false;
 }
 
-static int cmee_enable(void)
+static int cmee_control(int state)
 {
-	return at_cmd_write("AT+CMEE=1", NULL, 0, NULL);
+	return nrf_modem_at_printf("AT+CMEE=%d", state);
 }
 
-static int cmee_disable(void)
+static void cmee_enable(bool *was_enabled)
 {
-	return at_cmd_write("AT+CMEE=0", NULL, 0, NULL);
+	if (!cmee_is_active()) {
+		*was_enabled = false;
+		cmee_control(ENABLE);
+	} else {
+		*was_enabled = true;
+	}
 }
 
-static int translate_error(int err, enum at_cmd_state state)
+static void cmee_disable(void)
+{
+	cmee_control(DISABLE);
+}
+
+static int translate_error(int err)
 {
 	/* In case of CME error translate the error value to
 	 * an errno value.
 	 */
-	if ((err > 0) && (state == AT_CMD_ERROR_CME)) {
-		switch (err) {
-		case 513:
-			return -ENOENT;
-		case 514:
-			return -EPERM;
-		case 515:
-			return -ENOMEM;
-		case 518:
-			return -EACCES;
-		default:
-			/* Catch unexpected CME errors.
-			 * Return a magic value to make sure this
-			 * situation is clearly distinguishable.
-			 */
-			__ASSERT(false, "Untranslated CME error %d!", err);
-			return 0xBAADBAAD;
-		}
-	}
-
-	return err;
-}
-
-static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
-					 enum at_cmd_state *state)
-{
-	int err;
-	int cmee_was_active = cmee_is_active();
-
-	if (cmee_was_active < 0) {
-		return -EFAULT;
-	}
-
-	if (!cmee_was_active) {
-		cmee_enable();
-	}
-
-	err = at_cmd_write(cmd, buf, buf_len, state);
-
-	if (!cmee_was_active) {
-		cmee_disable();
+	switch (err) {
+	case 513:
+		return -ENOENT;
+	case 514:
+		return -EPERM;
+	case 515:
+		return -ENOMEM;
+	case 518:
+		return -EACCES;
+	default:
+		/* Catch unexpected CME errors.
+		 * Return a magic value to make sure this
+		 * situation is clearly distinguishable.
+		 */
+		__ASSERT(false, "Untranslated CME error %d!", err);
+		return 0xBAADBAAD;
 	}
 
 	return err;
@@ -107,22 +89,19 @@ static int key_fetch(nrf_sec_tag_t tag,
 		     enum modem_key_mgmt_cred_type cred_type)
 {
 	int err;
-	int written;
-	char cmd[32];
-	enum at_cmd_state state;
+	bool cmee_was_active;
 
-	written = snprintf(cmd, sizeof(cmd), "%s,%d,%d",
-			   MODEM_KEY_MGMT_OP_RD, tag, cred_type);
+	cmee_enable(&cmee_was_active);
 
-	if (written < 0 || written >= sizeof(cmd)) {
-		return -ENOBUFS;
+	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
+			       "AT%%CMNG=2,%d,%d", tag, cred_type);
+
+	if (!cmee_was_active) {
+		cmee_disable();
 	}
 
-	LOG_DBG("Sending: %s", log_strdup(cmd));
-	err = write_at_cmd_with_cme_enabled(cmd, scratch_buf,
-					    sizeof(scratch_buf), &state);
 	if (err) {
-		return translate_error(err, state);
+		return translate_error(nrf_modem_at_err(err));
 	}
 
 	return 0;
@@ -133,24 +112,26 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 const void *buf, size_t len)
 {
 	int err;
-	int written;
-	enum at_cmd_state state;
+	bool cmee_was_enabled;
 
 	if (buf == NULL || len == 0) {
 		return -EINVAL;
 	}
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%d,%d,\"%.*s\"", MODEM_KEY_MGMT_OP_WR, sec_tag,
-			   cred_type, len, (const char *)buf);
+	cmee_enable(&cmee_was_enabled);
 
-	if (written < 0 || written >= sizeof(scratch_buf)) {
-		return -ENOBUFS;
+	err = nrf_modem_at_printf("AT%%CMNG=0,%d,%d,\"%.*s\"",
+				  sec_tag, cred_type, len, (const char *)buf);
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
 	}
 
-	err = write_at_cmd_with_cme_enabled(scratch_buf, NULL, 0, &state);
+	if (err) {
+		return translate_error(nrf_modem_at_err(err));
+	}
 
-	return translate_error(err, state);
+	return 0;
 }
 
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
@@ -224,19 +205,21 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type)
 {
 	int err;
-	int written;
-	enum at_cmd_state state;
+	bool cmee_was_enabled;
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf), "%s,%d,%d",
-			   MODEM_KEY_MGMT_OP_RM, sec_tag, cred_type);
+	cmee_enable(&cmee_was_enabled);
 
-	if (written < 0 || written >= sizeof(scratch_buf)) {
-		return -ENOBUFS;
+	err = nrf_modem_at_printf("AT%%CMNG=3,%d,%d", sec_tag, cred_type);
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
 	}
 
-	err = write_at_cmd_with_cme_enabled(scratch_buf, NULL, 0, &state);
+	if (err) {
+		return translate_error(nrf_modem_at_err(err));
+	}
 
-	return translate_error(err, state);
+	return 0;
 }
 
 int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
@@ -251,28 +234,27 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  bool *exists, uint8_t *perm_flags)
 {
 	int err;
-	int written;
-	char cmd[32];
-	enum at_cmd_state state;
+	bool cmee_was_active;
 
 	if (exists == NULL || perm_flags == NULL) {
 		return -EINVAL;
 	}
 
-	written = snprintf(cmd, sizeof(cmd), "%s,%d,%d",
-			   MODEM_KEY_MGMT_OP_LS, sec_tag, cred_type);
+	cmee_enable(&cmee_was_active);
 
-	if (written < 0 || written >= sizeof(cmd)) {
-		return -ENOBUFS;
+	scratch_buf[0] = '\0';
+	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
+			       "AT%%CMNG=1,%d,%d", sec_tag, cred_type);
+
+	if (!cmee_was_active) {
+		cmee_disable();
 	}
 
-	err = write_at_cmd_with_cme_enabled(cmd, scratch_buf,
-					    sizeof(scratch_buf), &state);
 	if (err) {
-		return translate_error(err, state);
+		return translate_error(nrf_modem_at_err(err));
 	}
 
-	if (strlen(scratch_buf) > 0) {
+	if (strlen(scratch_buf) > strlen("OK\r\n")) {
 		*exists = true;
 		*perm_flags = 0;
 	} else {
