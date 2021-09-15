@@ -17,6 +17,13 @@ tests:
       - nrf52840dk_nrf52840
     tags: ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZDebugNUS"
+  applications.machine_learning.zdebug_rtt:
+    build_only: true
+    platform_allow: thingy53_nrf5340_cpuapp
+    integration_platforms:
+      - thingy53_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: "CMAKE_BUILD_TYPE=ZDebugRTT"
   applications.machine_learning.zrelease:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 thingy52_nrf52832 thingy53_nrf5340_cpuapp
