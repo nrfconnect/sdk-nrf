@@ -5,6 +5,7 @@ tests:
   applications.matter_weather_station:
     build_only: true
     platform_allow: thingy53_nrf5340_cpuapp
+    platform_exclude: thingy53_nrf5340_cpuappns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
     tags: ci_build
