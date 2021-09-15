@@ -161,6 +161,7 @@ Kconfig*                                  @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
+/tests/drivers/flash_nop_device/          @de-nordic
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/modules/tfm/                       @hakonfam
