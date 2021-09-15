@@ -104,6 +104,10 @@ matter_mapping = utils.get_intersphinx_mapping("matter")
 if matter_mapping:
     intersphinx_mapping["matter"] = matter_mapping
 
+tfm_mapping = utils.get_intersphinx_mapping("tfm")
+if tfm_mapping:
+    intersphinx_mapping["tfm"] = tfm_mapping
+
 # -- Options for doxyrunner plugin ---------------------------------------------
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
