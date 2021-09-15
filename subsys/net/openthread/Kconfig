@@ -60,8 +60,8 @@ config OPENTHREAD_THREAD_STACK_SIZE
 
 config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	int "OpenThread radio transmit workqueue stack size"
-	default 796 if SOC_NRF5340_CPUAPP
-	default 736
+	default 1084 if SOC_NRF5340_CPUAPP
+	default 1024
 
 endmenu
 
