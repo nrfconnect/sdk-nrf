@@ -15,6 +15,8 @@
 
 #define NET_CORE_SECONDARY_SLOT 1
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
+/* Hardcoded image size for network core slot 0. */
+#define NET_CORE_SLOT_0_IMG_SIZE (PM_MCUBOOT_PRIMARY_1_SIZE - PM_MCUBOOT_PAD_SIZE - 0x1000)
 
 #include <dfu/pcd.h>
 
@@ -23,9 +25,9 @@ int boot_read_image_header_hook(int img_index, int slot,
 {
 	if (img_index == 1 && slot == 0) {
 		img_head->ih_magic = IMAGE_MAGIC;
-		img_head->ih_hdr_size = IMAGE_HEADER_SIZE;
+		img_head->ih_hdr_size = PM_MCUBOOT_PAD_SIZE;
 		img_head->ih_load_addr = PM_MCUBOOT_PRIMARY_1_ADDRESS;
-		img_head->ih_img_size = PM_MCUBOOT_PRIMARY_1_SIZE - IMAGE_HEADER_SIZE;
+		img_head->ih_img_size = NET_CORE_SLOT_0_IMG_SIZE;
 		img_head->ih_flags = 0;
 		img_head->ih_ver.iv_major = 0;
 		img_head->ih_ver.iv_minor = 0;
