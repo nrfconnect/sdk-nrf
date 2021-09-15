@@ -13,6 +13,7 @@ rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
 rsource "serial/Kconfig"
+rsource "flash/Kconfig"
 
 if MPSL
 rsource "mpsl/Kconfig"
