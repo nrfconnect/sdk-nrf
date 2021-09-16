@@ -27,6 +27,15 @@ config SLM_AT_MAX_PARAM
 config SLM_NATIVE_TLS
 	bool "Use Zephyr mbedTLS"
 
+config SLM_WATCHDOG
+	bool "Watchdog support in SLM"
+	default y
+	select WATCHDOG
+
+config SLM_WATCHDOG_TIMEOUT_MSEC
+	int "Watchdog timeout in milliseconds"
+	default 60000
+
 #
 # external XTAL for UART
 #

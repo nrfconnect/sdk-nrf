@@ -213,6 +213,14 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using the TWI service.
 
+.. option:: CONFIG_SLM_WATCHDOG - Watchdog support in SLM
+
+   This option enables Watchdog feature.
+
+.. option:: CONFIG_SLM_WATCHDOG_TIMEOUT_MSEC - Watchdog timeout in milliseconds
+
+   This option specifies Watchdog timeout. If watchdog expired , SLM will reboot and send URC (Unsolicited Result Code) message #WDRESET.
+
 Additional configuration
 ========================
 

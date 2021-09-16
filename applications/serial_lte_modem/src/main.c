@@ -23,6 +23,9 @@
 #include <drivers/clock_control/nrf_clock_control.h>
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
+#if defined(CONFIG_SLM_WATCHDOG)
+#include "slm_watchdog.h"
+#endif
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
@@ -286,6 +289,10 @@ void start_execute(void)
 	k_work_queue_start(&slm_work_q, slm_wq_stack_area,
 			   K_THREAD_STACK_SIZEOF(slm_wq_stack_area),
 			   SLM_WQ_PRIORITY, NULL);
+#if defined(CONFIG_SLM_WATCHDOG)
+	slm_watchdog_init_and_start();
+#endif
+
 	k_work_init(&exit_idle_work, exit_idle);
 }
 

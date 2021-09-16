@@ -24,6 +24,7 @@ target_sources(app PRIVATE src/slm_at_fota.c)
 target_sources_ifdef(CONFIG_SLM_SMS app PRIVATE src/slm_at_sms.c)
 target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_native_tls.c)
 target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_at_cmng.c)
+target_sources_ifdef(CONFIG_SLM_WATCHDOG app PRIVATE src/slm_watchdog.c)
 
 add_subdirectory_ifdef(CONFIG_SLM_GNSS src/gnss)
 add_subdirectory_ifdef(CONFIG_SLM_FTPC src/ftp_c)
