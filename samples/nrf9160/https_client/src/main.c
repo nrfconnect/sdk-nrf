@@ -68,16 +68,13 @@ int cert_provision(void)
 	int err;
 	bool exists;
 	int mismatch;
-	uint8_t unused;
 
 	/* It may be sufficient for you application to check whether the correct
 	 * certificate is provisioned with a given tag directly using modem_key_mgmt_cmp().
 	 * Here, for the sake of the completeness, we check that a certificate exists
 	 * before comparing it with what we expect it to be.
 	 */
-	err = modem_key_mgmt_exists(TLS_SEC_TAG,
-				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    &exists, &unused);
+	err = modem_key_mgmt_exists(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
 	if (err) {
 		printk("Failed to check for certificates err %d\n", err);
 		return err;

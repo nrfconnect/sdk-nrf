@@ -262,7 +262,6 @@ int multicell_location_provision_certificate(bool overwrite)
 {
 	int err;
 	bool exists;
-	uint8_t unused;
 	const char *certificate = location_service_get_certificate();
 
 	if (certificate == NULL) {
@@ -272,7 +271,7 @@ int multicell_location_provision_certificate(bool overwrite)
 
 	err = modem_key_mgmt_exists(TLS_SEC_TAG,
 				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    &exists, &unused);
+				    &exists);
 	if (err) {
 		LOG_ERR("Failed to check for certificates err %d", err);
 		return err;

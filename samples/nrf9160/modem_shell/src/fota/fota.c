@@ -69,10 +69,9 @@ static bool fota_ca_cert_exists(void)
 {
 	int err;
 	bool exists;
-	uint8_t perm_flags;
 
 	err = modem_key_mgmt_exists(MOSH_FOTA_TLS_SECURITY_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    &exists, &perm_flags);
+				    &exists);
 
 	if (!err && exists) {
 		return true;

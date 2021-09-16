@@ -226,12 +226,12 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
-			  bool *exists, uint8_t *perm_flags)
+			  bool *exists)
 {
 	int err;
 	bool cmee_was_active;
 
-	if (exists == NULL || perm_flags == NULL) {
+	if (exists == NULL) {
 		return -EINVAL;
 	}
 
@@ -251,7 +251,6 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 
 	if (strlen(scratch_buf) > strlen("OK\r\n")) {
 		*exists = true;
-		*perm_flags = 0;
 	} else {
 		*exists = false;
 	}

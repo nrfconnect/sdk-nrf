@@ -117,8 +117,6 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
  * @param[in] cred_type		The credential type.
  * @param[out] exists		Whether the credential exists.
  *				Only valid if the operation is successful.
- * @param[out] perm_flags	The permission flags of the credential.
- *				Not yet implemented.
  *
  * @retval 0		On success.
  * @retval -ENOBUFS	Internal buffer is too small.
@@ -126,7 +124,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
  */
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
-			  bool *exists, uint8_t *perm_flags);
+			  bool *exists);
 
 #endif /* MODEM_KEY_MGMT_H__ */
 /**@} */
