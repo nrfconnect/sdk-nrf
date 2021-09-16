@@ -511,6 +511,7 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_hue hue = { .transition = &transition };
 	struct bt_mesh_light_sat sat = { .transition = &transition };
+	struct bt_mesh_lightness_status lightness = { 0 };
 
 	if (!srv->sat.model ||
 	    (srv->model->elem_idx > srv->sat.model->elem_idx)) {
@@ -552,14 +553,13 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 	/* Lift publication block from init function: */
 	srv->pub_pending = false;
 
+	srv->lightness->handlers->light_get(srv->lightness, NULL, &lightness);
+
 	struct bt_mesh_light_hsl_status status = {
 		.params = {
 			.hue = hue.lvl,
 			.saturation = sat.lvl,
-			/* The lightness server updated its "last" value in its
-			 * start function, which has already completed:
-			 */
-			.lightness = srv->lightness->last,
+			.lightness = lightness.current,
 		},
 		.remaining_time = 0,
 	};
