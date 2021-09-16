@@ -30,5 +30,6 @@ add_subdirectory_ifdef(CONFIG_SLM_FTPC src/ftp_c)
 add_subdirectory_ifdef(CONFIG_SLM_MQTTC src/mqtt_c)
 add_subdirectory_ifdef(CONFIG_SLM_HTTPC src/http_c)
 add_subdirectory_ifdef(CONFIG_SLM_TWI src/twi)
+add_subdirectory_ifdef(CONFIG_SLM_GPIO src/gpio)
 
 zephyr_include_directories(src)

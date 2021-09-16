@@ -45,3 +45,4 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
    MQTT_AT_commands
    HTTPC_AT_commands
    TWI_AT_commands
+   GPIO_AT_commands
