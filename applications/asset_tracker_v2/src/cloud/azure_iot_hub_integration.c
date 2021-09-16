@@ -15,15 +15,39 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
 #endif
 
-#define PROP_BAG_COUNT 1
-#define PROP_BAG_BATCH "batch"
+#define PROP_BAG_CONTENT_TYPE_KEY "%24.ct"
+#define PROP_BAG_CONTENT_TYPE_VALUE "application%2Fjson"
+#define PROP_BAG_CONTENT_ENCODING_KEY "%24.ce"
+#define PROP_BAG_CONTENT_ENCODING_VALUE "utf-8"
+#define PROP_BAG_BATCH_KEY "batch"
 
 #define REQUEST_DEVICE_TWIN_STRING ""
 
-static struct azure_iot_hub_prop_bag prop_bag_batch[PROP_BAG_COUNT] = {
-		[0].key = PROP_BAG_BATCH,
-		[0].value = NULL
+static struct azure_iot_hub_prop_bag prop_bag_message[] = {
+	{
+		.key = PROP_BAG_CONTENT_TYPE_KEY,
+		.value = PROP_BAG_CONTENT_TYPE_VALUE,
+	},
+	{
+		.key = PROP_BAG_CONTENT_ENCODING_KEY,
+		.value = PROP_BAG_CONTENT_ENCODING_VALUE,
+	},
 };
+static struct azure_iot_hub_prop_bag prop_bag_batch[] = {
+	{
+		.key = PROP_BAG_BATCH_KEY,
+		.value = NULL,
+	},
+	{
+		.key = PROP_BAG_CONTENT_TYPE_KEY,
+		.value = PROP_BAG_CONTENT_TYPE_VALUE,
+	},
+	{
+		.key = PROP_BAG_CONTENT_ENCODING_KEY,
+		.value = PROP_BAG_CONTENT_ENCODING_VALUE,
+	},
+};
+
 static char client_id_buf[CLIENT_ID_LEN + 1];
 static struct azure_iot_hub_config config;
 static cloud_wrap_evt_handler_t wrapper_evt_handler;
@@ -308,7 +332,9 @@ int cloud_wrap_ui_send(char *buf, size_t len)
 		.ptr = buf,
 		.len = len,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
-		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT
+		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
+		.topic.prop_bag = prop_bag_message,
+		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_message)
 	};
 
 	err = azure_iot_hub_send(&msg);
