@@ -146,6 +146,14 @@ endmenu # GPS
 
 menu "Device and modem"
 
+config CELL_POS_MULTICELL
+	bool "Multicell instead of single cell"
+	select NRF_CLOUD_CELL_POS
+	help
+	  Enabling this option also enables cellular positioning, with
+	  multiple neighboring cell sites included to improve location
+	  accuracy.
+
 config POWER_OPTIMIZATION_ENABLE
 	bool "Enable power optimization"
 	default y
