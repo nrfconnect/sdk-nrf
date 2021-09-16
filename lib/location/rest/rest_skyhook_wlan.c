@@ -43,71 +43,76 @@ BUILD_ASSERT(
  */
 
 static int skyhook_wlan_rest_pos_req_json_format(
-	const struct mac_address_info mac_address_arr[],
-	uint8_t mac_addr_count,
+	const struct wlan_scanning_result_info scanning_results[],
+	uint8_t wlan_scanning_result_count,
 	cJSON * const req_obj_out)
 {
-	cJSON *wlan_array = NULL;
+	cJSON *wlan_info_array = NULL;
 	cJSON *wlan_info_obj = NULL;
-	cJSON *mac_address_obj = NULL;
-	cJSON *false_string_obj = NULL;
 
-	if (!mac_address_arr || !mac_addr_count || !req_obj_out) {
+	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
 	/* Request payload format example:
 	 * {"considerIp":"false","wifiAccessPoints":[{"macAddress":"06:06:06:06:06:06"},{},...]}
 	 */
-	false_string_obj = cJSON_CreateString("false");
-	if (!false_string_obj) {
-		goto cleanup;
-	}
-	cJSON_AddItemToObject(req_obj_out, "considerIP", false_string_obj);
-
-	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
-	if (!wlan_array) {
+	if (!cJSON_AddStringToObjectCS(req_obj_out, "considerIP", "false")) {
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < mac_addr_count; ++i) {
-		const struct mac_address_info current_mac = mac_address_arr[i];
+	wlan_info_array = cJSON_AddArrayToObjectCS(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
+	if (!wlan_info_array) {
+		goto cleanup;
+	}
+
+	for (size_t i = 0; i < wlan_scanning_result_count; ++i) {
+		const struct wlan_scanning_result_info scan_result = scanning_results[i];
 
 		wlan_info_obj = cJSON_CreateObject();
 
-		mac_address_obj = cJSON_CreateString(current_mac.mac_addr_str);
-		if (!mac_address_obj) {
+		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "macAddress",scan_result.mac_addr_str)) {
 			goto cleanup;
 		}
-		cJSON_AddItemToObject(wlan_info_obj, "macAddress", mac_address_obj);
 
-		//TODO: support for others attributes
-		if (!cJSON_AddItemToArray(wlan_array, wlan_info_obj)) {
-			cJSON_Delete(wlan_info_obj);
+		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "ssid", scan_result.ssid_str)) {
+			goto cleanup;
+		}
+
+		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "channel", scan_result.channel)) {
+			goto cleanup;
+		}
+
+		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "rssi", scan_result.rssi)) {
+			goto cleanup;
+		}
+
+		if (!cJSON_AddItemToArray(wlan_info_array, wlan_info_obj)) {
 			goto cleanup;
 		}
 	}
 	return 0;
 
 cleanup:
-	/* Only need to delete the wlan_array since all items (if any) were added to it */
+	cJSON_Delete(wlan_info_obj);
 	cJSON_DeleteItemFromObject(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
 	LOG_ERR("Failed to format Skyhook wlan location request, out of memory");
 	return -ENOMEM;
 }
 
 static int skyhook_rest_format_wlan_pos_req_body(
-	const struct mac_address_info mac_addresses[],
-	uint8_t mac_addr_count,
+	const struct wlan_scanning_result_info scanning_results[],
+	uint8_t wlan_scanning_result_count,
 	char **json_str_out)
 {
-	if (!mac_addresses || !mac_addr_count || !json_str_out) {
+	if (!scanning_results || !wlan_scanning_result_count || !json_str_out) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = skyhook_wlan_rest_pos_req_json_format(mac_addresses, mac_addr_count, req_obj);
+	err = skyhook_wlan_rest_pos_req_json_format(scanning_results, wlan_scanning_result_count,
+						    req_obj);
 	if (err) {
 		goto cleanup;
 	}
@@ -223,8 +228,8 @@ int skyhook_rest_wlan_pos_get(
 
 	/* Get the body/payload to request: */
 	ret = skyhook_rest_format_wlan_pos_req_body(
-		request->mac_addresses,
-		request->mac_addr_count,
+		request->scanning_results,
+		request->wlan_scanning_result_count,
 		&body);
 	if (ret) {
 		LOG_ERR("Failed to generate skyhook positioning request, err: %d", ret);

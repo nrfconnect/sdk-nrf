@@ -52,11 +52,11 @@ config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
 	help
 	  Use Skyhook location service
 
-config LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES
-	int "Max number of MAC addresses used in a request"
+config LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT
+	int "Max number of WLAN scanning results"
 	default 10
 	help
-	  Maximum number of MAC addresses to use when creating HTTP request.
+	  Maximum number of WLAN scanning results to use when creating HTTP request.
 	  Increasing the max number will increase the library's RAM usage.
 
 config LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE

@@ -44,11 +44,14 @@ static bool running;
 static uint32_t current_scan_result_count;
 static uint32_t latest_scan_result_count;
 struct method_wlan_scan_result {
-	char mac_addr_str[WIFI_MAC_MAX_LEN];
+	char mac_addr_str[WIFI_MAC_MAX_LEN + 1];
+	char ssid_str[WIFI_SSID_MAX_LEN + 1];
+	uint8_t channel;
+	int8_t rssi;
 };
 
 static struct method_wlan_scan_result
-	latest_scan_results[CONFIG_LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES];
+	latest_scan_results[CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT];
 static K_SEM_DEFINE(wlan_scanning_ready, 0, 1);
 
 /******************************************************************************/
@@ -76,15 +79,25 @@ static int method_wlan_scanning_start(void)
 static void method_wlan_handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_scan_result *entry = (const struct wifi_scan_result *)cb->info;
+	struct method_wlan_scan_result *current; 
 
 	current_scan_result_count++;
+	current = &latest_scan_results[current_scan_result_count - 1];
 
-	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES) {
-		sprintf(latest_scan_results[current_scan_result_count - 1].mac_addr_str, "%s",
-			entry->mac);
-		LOG_DBG("scan result: mac address: %s",
+	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT) {
+		/* TODO: this seems to count that mac and ssid entries are null terminated */
+		sprintf(current->mac_addr_str, "%s", entry->mac);
+		sprintf(current->ssid_str, "%s", entry->ssid);
+		current->channel = entry->channel;
+		current->rssi = entry->rssi;
+
+		LOG_DBG("scan result #%d stored: ssid %s, mac address: %s, channel %d,",
+			current_scan_result_count,
 			log_strdup(
-				latest_scan_results[current_scan_result_count - 1].mac_addr_str));
+				current->ssid_str),
+			log_strdup(
+				current->mac_addr_str),
+			current->channel);
 	} else {
 		LOG_WRN("Scanning result (mac %s) did not fit to result buffer - dropping it",
 			log_strdup(entry->mac));
@@ -103,8 +116,8 @@ static void method_wlan_handle_wifi_scan_done(struct net_mgmt_event_callback *cb
 	k_sem_give(&wlan_scanning_ready);
 
 	latest_scan_result_count =
-		(current_scan_result_count > CONFIG_LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES) ?
-			CONFIG_LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES :
+		(current_scan_result_count > CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT) ?
+			CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT :
 			current_scan_result_count;
 	current_scan_result_count = 0;
 }
@@ -158,12 +171,18 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 
 		if (latest_scan_result_count > 0) {
 			/* Fill scanning results: */
-			request.mac_addr_count = latest_scan_result_count;
+			request.wlan_scanning_result_count = latest_scan_result_count;
 			ret = -1;
 
 			for (int i = 0; i < latest_scan_result_count; i++) {
-				strcpy(request.mac_addresses[i].mac_addr_str,
+				strcpy(request.scanning_results[i].mac_addr_str,
 				       latest_scan_results[i].mac_addr_str);
+				strcpy(request.scanning_results[i].ssid_str,
+				       latest_scan_results[i].ssid_str);
+				request.scanning_results[i].channel =
+					latest_scan_results[i].channel;
+				request.scanning_results[i].rssi =
+					latest_scan_results[i].rssi;
 			}
 
 			ret = rest_services_wlan_location_get(wlan_config.service, &request, &result);

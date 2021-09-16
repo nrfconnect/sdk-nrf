@@ -40,15 +40,15 @@ BUILD_ASSERT(
 /******************************************************************************/
 
 static int here_wlan_rest_pos_req_json_format(
-	const struct mac_address_info mac_address_arr[],
-	uint8_t mac_addr_count,
+	const struct wlan_scanning_result_info scanning_results[],
+	uint8_t wlan_scanning_result_count,
 	cJSON * const req_obj_out)
 {
 	cJSON *wlan_array = NULL;
 	cJSON *wlan_info_obj = NULL;
 	cJSON *mac_address_obj = NULL;
 
-	if (!mac_address_arr || !mac_addr_count || !req_obj_out) {
+	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
 
@@ -57,12 +57,12 @@ static int here_wlan_rest_pos_req_json_format(
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < mac_addr_count; ++i) {
-		const struct mac_address_info current_mac = mac_address_arr[i];
+	for (size_t i = 0; i < wlan_scanning_result_count; ++i) {
+		const struct wlan_scanning_result_info current_result = scanning_results[i];
 
 		wlan_info_obj = cJSON_CreateObject();
 
-		mac_address_obj = cJSON_CreateString(current_mac.mac_addr_str);
+		mac_address_obj = cJSON_CreateString(current_result.mac_addr_str);
 		if (!mac_address_obj) {
 			goto cleanup;
 		}
@@ -84,18 +84,18 @@ cleanup:
 }
 
 static int here_rest_format_wlan_pos_req_body(
-	const struct mac_address_info mac_addresses[],
-	uint8_t mac_addr_count,
+	const struct wlan_scanning_result_info scanning_results[],
+	uint8_t wlan_scanning_result_count,
 	char **json_str_out)
 {
-	if (!mac_addresses || !mac_addr_count || !json_str_out) {
+	if (!scanning_results || !wlan_scanning_result_count || !json_str_out) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = here_wlan_rest_pos_req_json_format(mac_addresses, mac_addr_count, req_obj);
+	err = here_wlan_rest_pos_req_json_format(scanning_results, wlan_scanning_result_count, req_obj);
 	if (err) {
 		goto cleanup;
 	}
@@ -208,8 +208,8 @@ int here_rest_wlan_pos_get(
 
 	/* Get the body/payload to request: */
 	ret = here_rest_format_wlan_pos_req_body(
-		request->mac_addresses,
-		request->mac_addr_count,
+		request->scanning_results,
+		request->wlan_scanning_result_count,
 		&body);
 	if (ret) {
 		LOG_ERR("Failed to generate wlan positioning request, err: %d", ret);

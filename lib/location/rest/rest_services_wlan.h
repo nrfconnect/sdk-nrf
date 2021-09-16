@@ -17,17 +17,20 @@
 #include <net/wifi.h>
 #include <modem/location.h>
 
-/** @brief Item for storing a WLAN MAC address */
-struct mac_address_info {
-	char mac_addr_str[WIFI_MAC_MAX_LEN];
+/** @brief Item for passing a WLAN scanning result */
+struct wlan_scanning_result_info {
+	char mac_addr_str[WIFI_MAC_MAX_LEN + 1];
+	char ssid_str[WIFI_SSID_MAX_LEN + 1];
+	uint8_t channel;
+	int8_t rssi;
 };
 
-/** @brief Data required for WLAN positioning request */
+/** @brief Data used for WLAN positioning request */
 struct rest_wlan_pos_request {
-	/** MAC addresses */
-	struct mac_address_info
-		mac_addresses[CONFIG_LOCATION_METHOD_WLAN_MAX_MAC_ADDRESSES];
-	uint8_t mac_addr_count;
+	/** Scanning results */
+	struct wlan_scanning_result_info
+		scanning_results[CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT];
+	uint8_t wlan_scanning_result_count;
 };
 
 /** @brief WLAN positioning request result */
