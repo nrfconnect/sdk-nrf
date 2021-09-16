@@ -33,6 +33,10 @@ nRF9160
 
 * Updated:
 
+  * :ref:`serial_lte_modem` application:
+
+    * Added new AT commands related to the General Purpose Input/Output (GPIO).
+
   * :ref:`lwm2m_client` sample:
 
     * Added support for Thingy:91.

@@ -43,6 +43,9 @@
 #if defined(CONFIG_SLM_TWI)
 #include "slm_at_twi.h"
 #endif
+#if defined(CONFIG_SLM_GPIO)
+#include "slm_at_gpio.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
@@ -397,6 +400,11 @@ int handle_at_twi_read(enum at_cmd_type cmd_type);
 int handle_at_twi_write_read(enum at_cmd_type cmd_type);
 #endif
 
+#if defined(CONFIG_SLM_GPIO)
+int handle_at_gpio_configure(enum at_cmd_type cmd_type);
+int handle_at_gpio_operate(enum at_cmd_type cmd_type);
+#endif
+
 static struct slm_at_cmd {
 	char *string;
 	slm_at_handler_t handler;
@@ -489,6 +497,12 @@ static struct slm_at_cmd {
 	{"AT#XTWIR", handle_at_twi_read},
 	{"AT#XTWIWR", handle_at_twi_write_read},
 #endif
+
+#if defined(CONFIG_SLM_GPIO)
+	{"AT#XGPIOCFG", handle_at_gpio_configure},
+	{"AT#XGPIO", handle_at_gpio_operate},
+#endif
+
 };
 
 int handle_at_clac(enum at_cmd_type cmd_type)
@@ -605,6 +619,13 @@ int slm_at_init(void)
 		return -EFAULT;
 	}
 #endif
+#if defined(CONFIG_SLM_GPIO)
+	err = slm_at_gpio_init();
+	if (err) {
+		LOG_ERR("GPIO could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
 #if defined(CONFIG_SLM_TWI)
 	err = slm_at_twi_init();
 	if (err) {
@@ -680,6 +701,12 @@ void slm_at_uninit(void)
 	err = slm_at_twi_uninit();
 	if (err) {
 		LOG_ERR("TWI could not be uninit: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_GPIO)
+	err = slm_at_gpio_uninit();
+	if (err) {
+		LOG_ERR("GPIO could not be uninit: %d", err);
 	}
 #endif
 }
