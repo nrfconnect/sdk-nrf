@@ -103,9 +103,6 @@ choice MOSH_GNSS_API
 config MOSH_GNSS_INTERFACE
 	bool "GNSS interface"
 
-config MOSH_GNSS_SOCKET
-	bool "GNSS socket"
-
 config MOSH_GNSS_GPS_DRIVER
 	bool "GPS driver"
 
