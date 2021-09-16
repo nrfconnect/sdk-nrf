@@ -179,6 +179,14 @@ static struct k_work notify_pgps_work;
 static struct k_work motion_data_send_work;
 #endif
 static struct k_work no_sim_go_offline_work;
+#if defined(CONFIG_CELL_POS_MULTICELL)
+static struct k_work_delayable periodic_search_work;
+
+static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
+static struct lte_lc_cells_info cell_data = {
+	.neighbor_cells = neighbor_cells,
+};
+#endif
 
 #if defined(CONFIG_AT_CMD)
 #define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
@@ -456,31 +464,63 @@ static void notify_pgps(struct k_work *work)
 
 #if defined(CONFIG_NRF_CLOUD_CELL_POS)
 /* Cell-based location has a smaller payload, allow more frequent updates */
-#define CELL_POS_UPDATE_PERIOD (10 * 60 * MSEC_PER_SEC)
+#define CELL_POS_UPDATE_PERIOD_SEC (5 * 60)
+#define CELL_POS_UPDATE_PERIOD (CELL_POS_UPDATE_PERIOD_SEC * MSEC_PER_SEC)
 
 static void send_cell_pos_request(struct k_work *work)
 {
 	int err;
 	static int64_t last_request_timestamp;
+	struct lte_lc_cells_info *data = NULL;
 
 	ARG_UNUSED(work);
 
+#if !defined(CONFIG_CELL_POS_MULTICELL)
 	if ((last_request_timestamp != 0) &&
 	    (k_uptime_delta(&last_request_timestamp) < CELL_POS_UPDATE_PERIOD)) {
-		LOG_WRN("Cellular positioning request was sent less than 10 minutes ago");
-	} else {
-		LOG_INF("Sending cellular positioning request");
+		LOG_WRN("Cellular positioning request was sent less than %d seconds ago",
+			CELL_POS_UPDATE_PERIOD_SEC);
+		return;
+	}
+	LOG_INF("Sending cellular positioning request");
+#else
+	LOG_INF("Sending multicell positioning request");
+	data = &cell_data;
+#endif /* CONFIG_CELL_POS_MULTICELL */
 
-		err = nrf_cloud_cell_pos_request(NULL, false);
-		if (err) {
-			LOG_WRN("Failed to request cell pos data, error: %d", err);
-		} else {
-			last_request_timestamp = k_uptime_get();
-			LOG_INF("cellular positioning request sent");
-		}
+	/* change the 2nd parameter to false if the device does not need
+	 * the location response
+	 */
+	err = nrf_cloud_cell_pos_request(data, true);
+	if (err) {
+		LOG_WRN("Failed to request cell pos data, error: %d", err);
+	} else {
+		last_request_timestamp = k_uptime_get();
+		LOG_INF("Cellular positioning request sent");
 	}
 }
 #endif /* CONFIG_NRF_CLOUD_CELL_POS */
+
+#if defined(CONFIG_CELL_POS_MULTICELL)
+static void start_cell_measurements(void)
+{
+	int err = lte_lc_neighbor_cell_measurement();
+
+	if (err) {
+		LOG_ERR("Failed to initiate neighbor cell measurements");
+	}
+}
+
+static void periodic_search_work_fn(struct k_work *work)
+{
+	LOG_INF("Periodic start of multicell measurements");
+	start_cell_measurements();
+
+	k_work_reschedule(k_work_delayable_from_work(work),
+		K_MSEC(CELL_POS_UPDATE_PERIOD));
+}
+
+#endif /* CONFIG_CELL_POS_MULTICELL */
 
 #if defined(CONFIG_AGPS)
 /* Converts the A-GPS data request from GPS driver to GNSS API format. */
@@ -1567,6 +1607,9 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			 void *user_data)
 {
 	ARG_UNUSED(user_data);
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+	struct nrf_cloud_cell_pos_result result;
+#endif
 
 	switch (evt->type) {
 	case CLOUD_EVT_CONNECTED:
@@ -1605,6 +1648,24 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			break;
 		}
 
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+		/* log the location response from the cloud,
+		 * if configured in the request
+		 */
+		err = nrf_cloud_cell_pos_process(evt->data.msg.buf, &result);
+		if (err == 0) {
+			LOG_INF("Location obtained: ");
+			LOG_INF("\tLatitude: %f", result.lat);
+			LOG_INF("\tLongitude: %f", result.lon);
+			LOG_INF("\tAccuracy: %u", result.unc);
+			LOG_INF("\tType: %cCELL",
+				(result.type == CELL_POS_TYPE_MULTI) ? 'M' : 'S');
+			break;
+		} else if (err != 1) {
+			LOG_ERR("Error parsing cell pos response: %d", err);
+			break;
+		}
+#endif
 #if defined(CONFIG_AGPS)
 		err = agps_cloud_data_process(evt->data.msg.buf, evt->data.msg.len);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -1793,6 +1854,9 @@ static void work_init(void)
 #if defined(CONFIG_NRF_CLOUD_CELL_POS)
 	k_work_init_delayable(&send_cell_pos_request_work, send_cell_pos_request);
 #endif
+#if defined(CONFIG_CELL_POS_MULTICELL)
+	k_work_init_delayable(&periodic_search_work, periodic_search_work_fn);
+#endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init_delayable(&manage_pgps_work, manage_pgps);
 	k_work_init(&notify_pgps_work, notify_pgps);
@@ -1944,10 +2008,16 @@ static void sensors_init(void)
 		return;
 	}
 #if defined(CONFIG_NRF_CLOUD_CELL_POS)
+#if !defined(CONFIG_CELL_POS_MULTICELL)
 	/* Make initial cell-based location request */
 	k_work_reschedule_for_queue(&application_work_q,
 					&send_cell_pos_request_work,
 					K_SECONDS(1));
+#else
+	k_work_reschedule_for_queue(&application_work_q,
+				    &periodic_search_work,
+				    K_SECONDS(1));
+#endif
 #endif
 }
 
@@ -2095,13 +2165,61 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_CELL_UPDATE:
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
-#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+#if defined(CONFIG_NRF_CLOUD_CELL_POS) && !defined(CONFIG_CELL_POS_MULTICELL)
 		/* Request location based on new network info */
-		if (data_send_enabled() && evt->cell.id != -1) {
+		if (data_send_enabled() && evt->cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
 			k_work_reschedule_for_queue(&application_work_q,
 						       &send_cell_pos_request_work,
 						       K_SECONDS(1));
 		}
+#endif
+		break;
+	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
+		LOG_INF("Neighbor cell measurements received: %d",
+			evt->cells_info.ncells_count);
+#if defined(CONFIG_CELL_POS_MULTICELL)
+		if (!data_send_enabled()) {
+			LOG_DBG("Cannot send data; ignoring measurements.");
+			break;
+		}
+		if (evt->cells_info.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+			LOG_DBG("Cell ID not valid.");
+			break;
+		}
+
+		/* change the LED color based on the number of neighbors being used,
+		 * but defer to GPS control if that is also running
+		 */
+		if (!gps_control_is_enabled()) {
+			if (evt->cells_info.ncells_count > 1) {
+				ui_led_set_pattern(UI_LED_GPS_FIX);
+			} else if (evt->cells_info.ncells_count) {
+				ui_led_set_pattern(UI_LED_GPS_SEARCHING);
+			} else {
+				ui_led_set_pattern(UI_CLOUD_CONNECTED);
+			}
+		}
+
+		/* Copy current cell information. */
+		memcpy(&cell_data.current_cell,
+		       &evt->cells_info.current_cell,
+		       sizeof(struct lte_lc_cell));
+
+		/* Copy neighbor cell information if present. */
+		if (evt->cells_info.ncells_count > 0 && evt->cells_info.neighbor_cells) {
+			memcpy(neighbor_cells,
+			       evt->cells_info.neighbor_cells,
+			       sizeof(struct lte_lc_ncell) * evt->cells_info.ncells_count);
+
+			cell_data.ncells_count = evt->cells_info.ncells_count;
+		} else {
+			cell_data.ncells_count = 0;
+		}
+
+		/* Request location based on new network info */
+		k_work_reschedule_for_queue(&application_work_q,
+					       &send_cell_pos_request_work,
+					       K_SECONDS(1));
 #endif
 		break;
 	default:

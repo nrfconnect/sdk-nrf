@@ -77,21 +77,21 @@ However, both nRF9160 DK and Thingy:91 support build-time configuration for enab
 Demo mode
 	This is the default setting.
 	In this mode, the device maintains a continuous cellular link and can receive data at all times.
-	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=n``.
+	To enable this mode, set the :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` to ``n``.
 
 Request eDRX mode
 	In this mode, the device requests the eDRX feature from the cellular network to save power.
 	The device maintains a continuous cellular link.
 	The device is reachable only at the configured eDRX intervals or when the device sends data.
-	To enable this mode on an nRF9160 DK during run-time, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then set Switch 2 to the N.C. position.
-	On Thingy:91 and nRF9160 DK, the ``CONFIG_LTE_EDRX_REQ`` option is used to enable eDRX during build-time.
+	To enable this mode on an nRF9160 DK during run-time, set the :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` option to ``y`` and then set Switch 2 to the N.C. position.
+	On Thingy:91 and nRF9160 DK, the :kconfig:`CONFIG_LTE_EDRX_REQ` option is used to enable eDRX during build-time.
 
 Request Power Saving Mode (PSM)
 	In this mode, the device requests the PSM feature from the cellular network to save power.
 	The device maintains a continuous cellular link.
 	The device is reachable only at the configured PSM intervals or when the device sends data.
-	To enable this mode on an nRF9160 DK during run-time, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then set Switch 2 to the GND position.
-	On Thingy:91 and nRF9160 DK, the ``CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START`` option is used to enable PSM during build-time.
+	To enable this mode on an nRF9160 DK during run-time, set the :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` option to ``y`` and then set Switch 2 to the GND position.
+	On Thingy:91 and nRF9160 DK, the :kconfig:`CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START` option is used to enable PSM during build-time.
 
 Requirements
 ************
@@ -164,6 +164,13 @@ On the Thingy:91, the application state is indicated by a single RGB LED as foll
    * - Red
      - Error
 
+If multicell location services are used and GPS is not enabled, the LED colors change depending on the number of neighboring cell towers reported by the modem as follows:
+
+   * Blue = one cell tower
+   * Purple = two cell towers
+   * Green = three or more cell towers
+
+
 .. _lwm2m_carrier_support:
 
 Using the LwM2M carrier library
@@ -192,6 +199,25 @@ In order to use P-GPS instead of A-GPS, you can add the following parameter to y
 In order to use A-GPS and P-GPS at the same time, use the following instead:
 ``-DOVERLAY_CONFIG=overlay-agps-pgps.conf``
 
+Using nRF Cloud Cellular Positioning
+************************************
+If the accuracy of GPS is not required, battery life is very important, and reporting an approximate location is desired, cellular positioning is an option.
+
+With cellular positioning:
+
+   * The modem reports the current cell tower information to the application.
+   * The application reports this to nRF Cloud.
+   * nRF Cloud looks this up in a database.
+   * If enabled, nRF Cloud reports back the location to the device.
+
+There are two alternatives of cellular positioning:
+
+   * Single cell is least costly but less accurate.
+   * Multicell is more accurate.
+
+Single cell is enabled with the :kconfig:`CONFIG_NRF_CLOUD_CELL_POS` option and multicell is enabled with the :kconfig:`CONFIG_CELL_POS_MULTICELL` option.
+
+
 Using nRF Cloud FOTA
 ********************
 
@@ -208,7 +234,7 @@ Building and running
 .. include:: /includes/build_and_run_nrf9160.txt
 
 The Kconfig file of the application contains options to configure the application.
-For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power optimization or ``CONFIG_TEMP_USE_EXTERNAL`` to use an external temperature sensor instead of simulated temperature data.
+For example, configure the :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` option to enable power optimization or the :kconfig:`CONFIG_TEMP_USE_EXTERNAL` option to use an external temperature sensor instead of simulated temperature data.
 In |SES|, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK project` to browse and configure these options.
 Alternatively, use the command line tool ``menuconfig`` or configure the options directly in :file:`prj.conf`.
 
@@ -220,22 +246,7 @@ Alternatively, use the command line tool ``menuconfig`` or configure the options
 .. external_antenna_note_end
 
 This application supports the |NCS| :ref:`ug_bootloader`, but it is disabled by default.
-To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
-
-
-Using nRF Cloud A-GPS or P-GPS
-==============================
-
-By default, this application enables :ref:`lib_nrf_cloud_agps` (Assisted GPS) support.
-Each time the GPS unit attempts to get a location fix, it might require additional information from  `nRF Cloud`_ to speed up the time to get the fix.
-
-Alternatively, :ref:`lib_nrf_cloud_pgps` (Predicted GPS) downloads and stores assistance predictions in flash for one or two weeks, and does not require cloud support for each fix.
-
-To use P-GPS instead of A-GPS, add the following parameter to your build command:
-``-DOVERLAY_CONFIG=overlay-pgps.conf``
-
-To use A-GPS and P-GPS simultaneously, use the following parameter:
-``-DOVERLAY_CONFIG=overlay-agps-pgps.conf``
+To enable the immutable bootloader, set the :kconfig:`CONFIG_SECURE_BOOT` option to ``y``.
 
 
 Testing
