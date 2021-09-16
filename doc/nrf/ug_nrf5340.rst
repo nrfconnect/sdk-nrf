@@ -567,6 +567,44 @@ See the following instructions.
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
 
+Simultaneous multi-image DFU
+****************************
+
+The simultaneous update of multiple images is available for testing since |NCS| v1.7.0.
+It allows the updating of both the application core and the network core in one go.
+
+To enable the simultaneous update of multiple images in the MCUboot, set the following options:
+
+* :kconfig:`CONFIG_BOOT_UPGRADE_ONLY` - The simultaneous update of multiple images does not support network core image reversion, so you need to disable application image reversion.
+* :kconfig:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
+* :kconfig:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
+
+To enable the simultaneous update of multiple images in the application, in addition to enabling the MCUboot support, set the following options:
+
+* :kconfig:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
+
+Additionally, the memory partitions must be defined and include:
+
+* ``mcuboot_primary`` and ``mcuboot_secondary`` partitions for the application core image slots.
+* ``mcuboot_primary_1`` and ``mcuboot_secondary_1`` partitions for the network core image slots.
+* ``pcd_sram`` partition used for command exchange between the application core and the network core (see :kconfig:`CONFIG_PCD_APP`).
+
+.. note::
+
+   The application core does not have direct access to the network core flash memory.
+   The update image is passed indirectly using RAM.
+   Because of this, the ``mcuboot_primary_1`` must be stored in ``ram_flash`` region.
+   To enable providing such region on the device, see :kconfig:`CONFIG_FLASH_SIMULATOR`.
+
+Samples and applications built for Thingy:53 enable simultaneous update of multiple images by default.
+To learn more about Thingy:53, see :ref:`ug_thingy53`.
+
+Container for firmware update binaries
+======================================
+
+The build system will automatically place both the application core and the network core update binaries (:file:`app_update.bin` and :file:`net_core_app_update.bin`) into a container package named :file:`dfu_application.zip`.
+This container package can be used by update tools to pass both images during the simultaneous update of multiple images.
+
 .. _logging_cpunet:
 
 Getting logging output
