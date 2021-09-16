@@ -4,18 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <zephyr.h>
 #include <nrf_modem_at.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <nrf_modem_limits.h>
 #include <modem/modem_key_mgmt.h>
 #include <logging/log.h>
-
-#define AT_CMNG_PARAMS_COUNT 5
-#define AT_CMNG_CONTENT_INDEX 4
 
 #define ENABLE 1
 #define DISABLE 0
@@ -139,7 +135,7 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 			void *buf, size_t *len)
 {
 	int err;
-	struct at_param_list cmng_list;
+	char *begin, *end;
 
 	if (buf == NULL || len == NULL) {
 		return -EINVAL;
@@ -150,12 +146,26 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 		return err;
 	}
 
-	/* Must be freed */
-	at_params_list_init(&cmng_list, AT_CMNG_PARAMS_COUNT);
-	at_parser_params_from_str(scratch_buf, NULL, &cmng_list);
+	begin = scratch_buf;
+	for (size_t i = 0; i < 3; i++) {
+		begin = strchr(begin, '\"');
+		if (!begin) {
+			return -ENOENT;
+		}
+		begin++;
+	}
 
-	err = at_params_string_get(&cmng_list, AT_CMNG_CONTENT_INDEX, buf, len);
-	at_params_list_free(&cmng_list);
+	end = strchr(begin, '\"');
+	if (!end) {
+		return -ENOENT;
+	}
+
+	if (end - begin > *len) {
+		return -ENOMEM;
+	}
+
+	memcpy(buf, begin, end - begin);
+	*len = end - begin;
 
 	return err;
 }
@@ -165,8 +175,7 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		       const void *buf, size_t len)
 {
 	int err;
-	size_t size;
-	struct at_param_list cmng;
+	char *p;
 
 	if (buf == NULL) {
 		return -EINVAL;
@@ -177,23 +186,16 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		return err;
 	}
 
-	at_params_list_init(&cmng, AT_CMNG_PARAMS_COUNT);
-	at_parser_params_from_str(scratch_buf, NULL, &cmng);
-
-	/* Compare the size first, it's cheap */
-	at_params_size_get(&cmng, AT_CMNG_CONTENT_INDEX, &size);
-	if (size != len) {
-		LOG_DBG("Credential length %d bytes (expected %d)", size, len);
-		at_params_list_free(&cmng);
-		return 1;
+	p = scratch_buf;
+	for (size_t i = 0; i < 3; i++) {
+		p = strchr(p, '\"');
+		if (!p) {
+			return -ENOENT;
+		}
+		p++;
 	}
 
-	size = sizeof(scratch_buf);
-	at_params_string_get(&cmng, AT_CMNG_CONTENT_INDEX, scratch_buf, &size);
-
-	at_params_list_free(&cmng);
-
-	if (memcmp(scratch_buf, buf, len)) {
+	if (memcmp(p, buf, len)) {
 		LOG_DBG("Credential data mismatch");
 		return 1;
 	}

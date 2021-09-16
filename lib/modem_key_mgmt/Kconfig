@@ -6,7 +6,6 @@
 
 menuconfig MODEM_KEY_MGMT
 	bool "nRF9160 modem key management library"
-	depends on AT_CMD_PARSER
 	depends on NRF_MODEM_LIB
 
 if MODEM_KEY_MGMT
