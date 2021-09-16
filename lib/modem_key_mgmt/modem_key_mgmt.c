@@ -224,13 +224,6 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
-int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
-				  enum modem_key_mgmt_cred_type cred_type,
-				  uint8_t perm_flags)
-{
-	return -EOPNOTSUPP;
-}
-
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists, uint8_t *perm_flags)
