@@ -58,10 +58,6 @@ int carrier_cert_provision(ca_cert_tags_t * const tags)
 	bool mismatch = 0;
 	bool provisioned;
 
-	uint8_t dummy;
-
-	ARG_UNUSED(dummy);
-
 	if (tags == NULL) {
 		printk(ORANGE "ERROR: " NORMAL "Invalid input argument!\n");
 		return -1;
@@ -69,8 +65,7 @@ int carrier_cert_provision(ca_cert_tags_t * const tags)
 
 	for (int i = 0; i < ARRAY_SIZE(certs); i++) {
 		err = modem_key_mgmt_exists(
-			certs[i].tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-			&provisioned, &dummy);
+			certs[i].tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &provisioned);
 
 		if (err) {
 			goto cert_exit_empty;
