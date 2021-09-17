@@ -26,7 +26,10 @@ int link_shell_pdn_activate(int pdn_cid);
 
 int link_family_str_to_pdn_lib_family(enum pdn_fam *ret_fam, const char *family);
 const char *link_pdn_lib_family_to_string(enum pdn_fam pdn_family, char *out_fam_str);
+
 bool link_shell_pdn_info_is_in_list(uint8_t cid);
+void link_shell_pdn_info_list_remove(uint8_t cid);
+
 int link_shell_pdn_auth_prot_to_pdn_lib_method_map(int auth_proto, enum pdn_auth *method);
 
 #endif /* MOSH_LINK_SHELL_PDN_H */
