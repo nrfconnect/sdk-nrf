@@ -303,7 +303,6 @@ void loc_core_config_log(const struct loc_config *config)
 		} else if (type == LOC_METHOD_WLAN) {
 			LOG_DBG("      Timeout: %d", config->methods[i].wlan.timeout);
 		}
-
 	}
 }
 

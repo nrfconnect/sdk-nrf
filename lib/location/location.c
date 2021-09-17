@@ -51,12 +51,21 @@ int location_request(const struct loc_config *config)
 	struct loc_config default_config = { 0 };
 	struct loc_method_config methods[2] = { 0 };
 
-	if (config == NULL) {
-		LOG_DBG("No configuration given. Using default configuration.");
+	/* Go to default config handling if no config given or if no methods given */
+	if (config == NULL || config->methods_count == 0) {
 
 		loc_config_defaults_set(&default_config, 2, methods);
 		loc_config_method_defaults_set(&methods[0], LOC_METHOD_GNSS);
 		loc_config_method_defaults_set(&methods[1], LOC_METHOD_CELLULAR);
+
+		if (config != NULL) {
+			/* Top level configs are given and must be taken from given config */
+			LOG_DBG("No method configuration given. "
+				"Using default method configuration.");
+			default_config.interval = config->interval;
+		} else {
+			LOG_DBG("No configuration given. Using default configuration.");
+		}
 
 		config = &default_config;
 	}
@@ -94,10 +103,12 @@ void loc_config_defaults_set(
 	struct loc_method_config *methods)
 {
 	memset(config, 0, sizeof(struct loc_config));
-	memset(methods, 0, sizeof(struct loc_method_config) * methods_count);
+	if (methods_count > 0) {
+		memset(methods, 0, sizeof(struct loc_method_config) * methods_count);
+		config->methods = methods;
+	}
 
 	config->methods_count = methods_count;
-	config->methods = methods;
 	config->interval = 0;
 }
 
