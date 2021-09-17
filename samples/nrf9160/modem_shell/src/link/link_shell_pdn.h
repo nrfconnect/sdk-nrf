@@ -17,6 +17,7 @@ struct link_shell_pdn_auth {
 };
 
 void link_shell_pdn_init(void);
+void link_shell_pdn_events_subscribe(void);
 
 int link_shell_pdn_connect(const char *apn_name,
 			   const char *family_str,
