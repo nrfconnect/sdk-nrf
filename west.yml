@@ -103,7 +103,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: c8634082e4fa93bb6458bb7d238e6d4b7e487d4a
+      revision: 580e325c9f686432b8c55baed8a4b03249cc12cd
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -165,7 +165,7 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: 6017bbb9f0fb6e3af60fee2c8da2bc1811d634bb
+      revision: 5088dbcf37fd22606f978b06d68cede8cec65985
       groups:
       - homekit
     - name: find-my
