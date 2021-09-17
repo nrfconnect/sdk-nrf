@@ -211,7 +211,7 @@ static struct link_shell_pdn_info *link_shell_pdn_info_list_find(uint8_t cid)
 	return iterator;
 }
 
-static void link_shell_pdn_info_list_remove(uint8_t cid)
+void link_shell_pdn_info_list_remove(uint8_t cid)
 {
 	struct link_shell_pdn_info *found;
 

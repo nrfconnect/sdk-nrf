@@ -76,7 +76,7 @@ static void link_continuous_ncellmeas(struct k_work *work)
 static void link_api_activate_mosh_contexts(
 	struct pdn_activation_status_info pdn_act_status_arr[], int size)
 {
-	int i, esm;
+	int i, esm, ret;
 
 	/* Check that all context created by mosh link connect are active and if not,
 	 * then activate:
@@ -84,7 +84,14 @@ static void link_api_activate_mosh_contexts(
 	for (i = 0; i < size; i++) {
 		if (pdn_act_status_arr[i].activated == false &&
 		    link_shell_pdn_info_is_in_list(pdn_act_status_arr[i].cid)) {
-			(void)pdn_activate(pdn_act_status_arr[i].cid, &esm);
+			ret = pdn_activate(pdn_act_status_arr[i].cid, &esm);
+			if (ret) {
+				mosh_warn(
+					"Cannot reactivate ctx with CID #%d, err: %d, removing from the list",
+						pdn_act_status_arr[i].cid,
+						ret);
+				link_shell_pdn_info_list_remove(pdn_act_status_arr[i].cid);
+			}
 		}
 	}
 }
