@@ -32,24 +32,11 @@ static struct lte_lc_ncell neighbor_cells[CONFIG_MULTICELL_LOCATION_MAX_NEIGHBOR
 static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells,
 };
-static bool lte_connected;
 static bool running;
 
 void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			lte_connected = false;
-			break;
-		}
-
-		LOG_DBG("Network registration status: %s",
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-			"Connected - home network" : "Connected - roaming");
-		lte_connected = true;
-		break;
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
 		struct lte_lc_cells_info cells = evt->cells_info;
 		struct lte_lc_cell cur_cell = cells.current_cell;
@@ -151,6 +138,7 @@ int method_cellular_location_get(const struct loc_method_config *config)
 		LOG_ERR("Previous operation on going.");
 		return -EBUSY;
 	}
+	/* Note: LTE status not checked, let it fail in NCELLMEAS if no connection */
 
 	method_cellular_positioning_work.cellular_config = cellular_config;
 	k_work_submit_to_queue(loc_core_work_queue_get(),
@@ -179,7 +167,6 @@ int method_cellular_init(void)
 {
 	int ret;
 
-	lte_connected = false;
 	running = false;
 
 	k_work_init(&method_cellular_positioning_work.work_item,
