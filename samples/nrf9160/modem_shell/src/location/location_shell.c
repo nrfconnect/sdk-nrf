@@ -343,8 +343,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		struct loc_method_config methods[LOC_MAX_METHODS] = { 0 };
 		struct loc_config *real_config = &config;
 
-		if (method_count == 0) {
-			/* No methods given. Use NULL to indicate default configuration. */
+		if (method_count == 0 && !interval_set) {
+			/* No methods or top level config given. Use default config. */
 			real_config = NULL;
 		}
 
