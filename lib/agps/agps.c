@@ -294,7 +294,7 @@ int agps_cloud_data_process(const uint8_t *buf, size_t len)
 	int err = 0;
 
 #if defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
-	err = nrf_cloud_agps_process(buf, len, NULL);
+	err = nrf_cloud_agps_process(buf, len);
 	if (err) {
 		LOG_ERR("A-GPS failed, error: %d", err);
 		return err;

@@ -5,10 +5,8 @@
  */
 
 #include <zephyr.h>
-#include <device.h>
 #include <drivers/gps.h>
 #include <net/socket.h>
-#include <nrf_socket.h>
 #include <nrf_modem_gnss.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -32,25 +30,9 @@ extern void agps_print(enum nrf_cloud_agps_type type, void *data);
 
 static K_SEM_DEFINE(agps_injection_active, 1, 1);
 
-static int fd = -1;
 static bool agps_print_enabled;
-static const struct device *gps_dev;
 static struct gps_agps_request processed;
 static atomic_t request_in_progress;
-
-static enum gps_agps_type type_lookup_socket2gps[] = {
-	[NRF_GNSS_AGPS_UTC_PARAMETERS]	= GPS_AGPS_UTC_PARAMETERS,
-	[NRF_GNSS_AGPS_EPHEMERIDES]	= GPS_AGPS_EPHEMERIDES,
-	[NRF_GNSS_AGPS_ALMANAC]		= GPS_AGPS_ALMANAC,
-	[NRF_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION]
-					= GPS_AGPS_KLOBUCHAR_CORRECTION,
-	[NRF_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION]
-					= GPS_AGPS_NEQUICK_CORRECTION,
-	[NRF_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS]
-					= GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS,
-	[NRF_GNSS_AGPS_LOCATION]	= GPS_AGPS_LOCATION,
-	[NRF_GNSS_AGPS_INTEGRITY]	= GPS_AGPS_INTEGRITY,
-};
 
 void agps_print_enable(bool enable)
 {
@@ -199,42 +181,16 @@ int nrf_cloud_agps_request_all(void)
 	return nrf_cloud_agps_request(request);
 }
 
-/* Convert nrf_socket A-GPS type to GPS API type. */
-static inline enum gps_agps_type type_socket2gps(
-	nrf_gnss_agps_data_type_t type)
+static int send_to_modem(void *data, size_t data_len, uint16_t type)
 {
-	return type_lookup_socket2gps[type];
-}
-
-static int send_to_modem(void *data, size_t data_len,
-			 nrf_gnss_agps_data_type_t type)
-{
-	int err;
-
 	if (agps_print_enabled) {
 		agps_print(type, data);
 	}
 
-	if (gps_dev) {
-		/* GPS driver */
-		err = gps_agps_write(gps_dev, type_socket2gps(type), data, data_len);
-	} else if (fd != -1) {
-		/* GNSS socket */
-		err = nrf_sendto(fd, data, data_len, 0, &type, sizeof(type));
-		if (err < 0) {
-			err = -errno;
-		} else {
-			err = 0;
-		}
-	} else {
-		/* GNSS API */
-		err = nrf_modem_gnss_agps_write(data, data_len, type);
-	}
-
-	return err;
+	return nrf_modem_gnss_agps_write(data, data_len, type);
 }
 
-static int copy_utc(nrf_gnss_agps_data_utc_t *dst,
+static int copy_utc(struct nrf_modem_gnss_agps_data_utc *dst,
 		    struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -253,7 +209,7 @@ static int copy_utc(nrf_gnss_agps_data_utc_t *dst,
 	return 0;
 }
 
-static int copy_almanac(nrf_gnss_agps_data_almanac_t *dst,
+static int copy_almanac(struct nrf_modem_gnss_agps_data_almanac *dst,
 			struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -278,7 +234,7 @@ static int copy_almanac(nrf_gnss_agps_data_almanac_t *dst,
 	return 0;
 }
 
-static int copy_ephemeris(nrf_gnss_agps_data_ephemeris_t *dst,
+static int copy_ephemeris(struct nrf_modem_gnss_agps_data_ephemeris *dst,
 			  struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -315,7 +271,7 @@ static int copy_ephemeris(nrf_gnss_agps_data_ephemeris_t *dst,
 	return 0;
 }
 
-static int copy_klobuchar(nrf_gnss_agps_data_klobuchar_t *dst,
+static int copy_klobuchar(struct nrf_modem_gnss_agps_data_klobuchar *dst,
 			  struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -334,7 +290,7 @@ static int copy_klobuchar(nrf_gnss_agps_data_klobuchar_t *dst,
 	return 0;
 }
 
-static int copy_location(nrf_gnss_agps_data_location_t *dst,
+static int copy_location(struct nrf_modem_gnss_agps_data_location *dst,
 			 struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -353,7 +309,7 @@ static int copy_location(nrf_gnss_agps_data_location_t *dst,
 	return 0;
 }
 
-static int copy_time_and_tow(nrf_gnss_agps_data_system_time_and_sv_tow_t *dst,
+static int copy_time_and_tow(struct nrf_modem_gnss_agps_data_system_time_and_sv_tow *dst,
 			     struct nrf_cloud_apgs_element *src)
 {
 	if ((src == NULL) || (dst == NULL)) {
@@ -386,7 +342,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 
 	switch (agps_data->type) {
 	case NRF_CLOUD_AGPS_UTC_PARAMETERS: {
-		nrf_gnss_agps_data_utc_t utc;
+		struct nrf_modem_gnss_agps_data_utc utc;
 
 		processed.utc = true;
 		copy_utc(&utc, agps_data);
@@ -396,10 +352,10 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_UTC_PARAMETERS");
 
 		return send_to_modem(&utc, sizeof(utc),
-				     NRF_GNSS_AGPS_UTC_PARAMETERS);
+				     NRF_MODEM_GNSS_AGPS_UTC_PARAMETERS);
 	}
 	case NRF_CLOUD_AGPS_EPHEMERIDES: {
-		nrf_gnss_agps_data_ephemeris_t ephemeris;
+		struct nrf_modem_gnss_agps_data_ephemeris ephemeris;
 
 		processed.sv_mask_ephe |= (1 << (agps_data->ephemeris->sv_id - 1));
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -415,10 +371,10 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 			agps_data->ephemeris->sv_id);
 
 		return send_to_modem(&ephemeris, sizeof(ephemeris),
-				     NRF_GNSS_AGPS_EPHEMERIDES);
+				     NRF_MODEM_GNSS_AGPS_EPHEMERIDES);
 	}
 	case NRF_CLOUD_AGPS_ALMANAC: {
-		nrf_gnss_agps_data_almanac_t almanac;
+		struct nrf_modem_gnss_agps_data_almanac almanac;
 
 		processed.sv_mask_alm |= (1 << (agps_data->almanac->sv_id - 1));
 		copy_almanac(&almanac, agps_data);
@@ -426,30 +382,30 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 			agps_data->almanac->sv_id);
 
 		return send_to_modem(&almanac, sizeof(almanac),
-				     NRF_GNSS_AGPS_ALMANAC);
+				     NRF_MODEM_GNSS_AGPS_ALMANAC);
 	}
 	case NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION: {
-		nrf_gnss_agps_data_klobuchar_t klobuchar;
+		struct nrf_modem_gnss_agps_data_klobuchar klobuchar;
 
 		processed.klobuchar = true;
 		copy_klobuchar(&klobuchar, agps_data);
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION");
 
 		return send_to_modem(&klobuchar, sizeof(klobuchar),
-				NRF_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION);
+				     NRF_MODEM_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION);
 	}
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK: {
-		nrf_gnss_agps_data_system_time_and_sv_tow_t time_and_tow;
+		struct nrf_modem_gnss_agps_data_system_time_and_sv_tow time_and_tow;
 
 		processed.system_time_tow = true;
 		copy_time_and_tow(&time_and_tow, agps_data);
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK");
 
 		return send_to_modem(&time_and_tow, sizeof(time_and_tow),
-				     NRF_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+				     NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
 	}
 	case NRF_CLOUD_AGPS_LOCATION: {
-		nrf_gnss_agps_data_location_t location = {0};
+		struct nrf_modem_gnss_agps_data_location location = {0};
 
 		processed.position = true;
 		copy_location(&location, agps_data);
@@ -460,7 +416,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_LOCATION");
 
 		return send_to_modem(&location, sizeof(location),
-				     NRF_GNSS_AGPS_LOCATION);
+				     NRF_MODEM_GNSS_AGPS_LOCATION);
 	}
 	case NRF_CLOUD_AGPS_INTEGRITY:
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_INTEGRITY");
@@ -468,7 +424,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 		processed.integrity = true;
 		return send_to_modem(agps_data->integrity,
 				     sizeof(agps_data->integrity),
-				     NRF_GNSS_AGPS_INTEGRITY);
+				     NRF_MODEM_GNSS_AGPS_INTEGRITY);
 	default:
 		LOG_WRN("Unknown AGPS data type: %d", agps_data->type);
 		break;
@@ -547,7 +503,7 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 	return len;
 }
 
-int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
+int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 {
 	int err;
 	struct nrf_cloud_apgs_element element = {0};
@@ -574,20 +530,6 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 	}
 
 	LOG_DBG("A-GPS_injection_active LOCKED");
-
-	if (socket) {
-		LOG_DBG("Using user-provided socket, fd %d", fd);
-
-		gps_dev = NULL;
-		fd = *socket;
-	} else {
-		gps_dev = device_get_binding("NRF9160_GPS");
-		if (gps_dev != NULL) {
-			LOG_DBG("Using GPS driver to input assistance data");
-		} else {
-			LOG_DBG("Using GNSS API to input assistance data");
-		}
-	}
 
 	while (parsed_len < buf_len) {
 		size_t element_size =

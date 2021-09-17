@@ -43,12 +43,10 @@ int nrf_cloud_agps_request_all(void);
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
- * @param socket Pointer to GNSS socket to which A-GPS data will be injected.
- *		 If NULL, the nRF9160 GPS driver is used to inject the data.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
-int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket);
+int nrf_cloud_agps_process(const char *buf, size_t buf_len);
 
 /**@brief Query which A-GPS elements were actually received
  *

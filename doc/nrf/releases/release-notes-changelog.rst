@@ -44,6 +44,10 @@ nRF9160
 
     * Removed GNSS socket API support.
 
+  * :ref:`lib_nrf_cloud` library:
+
+    * Removed GNSS socket API support from A-GPS and P-GPS.
+
 nRF5
 ====
 
