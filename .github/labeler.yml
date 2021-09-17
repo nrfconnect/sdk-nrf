@@ -176,6 +176,9 @@
   - "subsys/ieee802154/**/*"
   - "subsys/net/lib/coap_utils/**/*"
   - "subsys/net/openthread/**/*"
+  - "drivers/mpsl/**/*"
+  - "drivers/hw_cc310/*"
+  - "modules/nrfxlib/nrf_802154/**/*"
 
 "CI-nfc-test":
   - "subsys/nfc/**/*"
