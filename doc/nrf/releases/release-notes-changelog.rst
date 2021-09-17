@@ -72,6 +72,13 @@ nRF Desktop
 
   * Updated information about custom build types.
 
+Zigbee
+------
+
+* Added:
+
+   * :ref:`Zigbee shell <zigbee_shell_sample>`.
+
 Common
 ======
 
