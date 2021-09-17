@@ -9,8 +9,6 @@
 #include <device.h>
 #include <drivers/gps.h>
 #include <storage/stream_flash.h>
-#include <net/socket.h>
-#include <nrf_socket.h>
 
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -433,7 +431,7 @@ static void prediction_work_handler(struct k_work *work)
 	ret = nrf_cloud_pgps_find_prediction(&p);
 	if (ret >= 0) {
 		LOG_DBG("found prediction %d; injecting to modem", ret);
-		ret = nrf_cloud_pgps_inject(p, NULL, NULL);
+		ret = nrf_cloud_pgps_inject(p, NULL);
 		if (ret) {
 			LOG_ERR("Error injecting prediction:%d", ret);
 		} else {
@@ -789,8 +787,7 @@ int nrf_cloud_pgps_preemptive_updates(void)
 }
 
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct gps_agps_request *request,
-			  const int *socket)
+			  const struct gps_agps_request *request)
 {
 	int err;
 	int ret = 0;
@@ -848,8 +845,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 			/* send time */
 			err = nrf_cloud_agps_process((const char *)&sys_time,
 						     sizeof(sys_time) -
-						     sizeof(sys_time.time.sv_tow),
-						     socket);
+						     sizeof(sys_time.time.sv_tow));
 			if (err) {
 				LOG_ERR("Error injecting P-GPS sys_time (%u, %u): %d",
 					sys_time.time.date_day, sys_time.time.time_full_s,
@@ -886,8 +882,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 			saved_location->longitude);
 		/* send location */
 
-		err = nrf_cloud_agps_process((const char *)&location, sizeof(location),
-					     socket);
+		err = nrf_cloud_agps_process((const char *)&location, sizeof(location));
 		if (err) {
 			LOG_ERR("Error injecting P-GPS location (%d, %d): %d",
 				location.location.latitude, location.location.longitude,
@@ -908,7 +903,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 					     sizeof(p->schema_version) +
 					     sizeof(p->ephemeris_type) +
 					     sizeof(p->ephemeris_count) +
-					     sizeof(p->ephemerii), socket);
+					     sizeof(p->ephemerii));
 		if (err) {
 			LOG_ERR("Error injecting ephermerii:%d", err);
 			ret = err;

@@ -623,7 +623,7 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 	case PGPS_EVT_AVAILABLE:
 		LOG_DBG("PGPS_EVT_AVAILABLE");
 
-		err = nrf_cloud_pgps_inject(event->prediction, &agps_request, NULL);
+		err = nrf_cloud_pgps_inject(event->prediction, &agps_request);
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
 		}

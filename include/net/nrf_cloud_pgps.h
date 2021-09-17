@@ -250,14 +250,11 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
  *
  * @param p Pointer to a prediction.
  * @param request Which assistance elements the modem needs. May be NULL.
- * @param socket Pointer to GNSS socket to which P-GPS data will be injected.
- * If NULL, the nRF9160 GPS driver is used to inject the data.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct gps_agps_request *request,
-			  const int *socket);
+			  const struct gps_agps_request *request);
 
 /**@brief Find out if P-GPS update is in progress
  *

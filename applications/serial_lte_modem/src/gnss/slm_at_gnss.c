@@ -354,10 +354,10 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		err = read_agps_req(&req);
 		if (err) {
 			/* All assistance elements as requested */
-			err = nrf_cloud_pgps_inject(event->prediction, &req, NULL);
+			err = nrf_cloud_pgps_inject(event->prediction, &req);
 		} else {
 			/* ephemerides assistance only */
-			err = nrf_cloud_pgps_inject(event->prediction, NULL, NULL);
+			err = nrf_cloud_pgps_inject(event->prediction, NULL);
 		}
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
@@ -543,7 +543,7 @@ static void on_cloud_evt_data_received(const struct cloud_event *const evt)
 	int err = 0;
 
 	if (run_type == RUN_TYPE_AGPS) {
-		err = nrf_cloud_agps_process(evt->data.msg.buf, evt->data.msg.len, NULL);
+		err = nrf_cloud_agps_process(evt->data.msg.buf, evt->data.msg.len);
 		if (err) {
 			LOG_INF("Unable to process A-GPS data, error: %d", err);
 		}

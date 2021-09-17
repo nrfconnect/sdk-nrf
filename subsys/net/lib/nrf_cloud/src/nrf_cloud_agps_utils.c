@@ -7,9 +7,9 @@
 #include <zephyr.h>
 
 #include <net/nrf_cloud_agps.h>
-#include <nrf_socket.h>
+#include <nrf_modem_gnss.h>
 
-static void print_utc(nrf_gnss_agps_data_utc_t *data)
+static void print_utc(struct nrf_modem_gnss_agps_data_utc *data)
 {
 	printk("utc:\n");
 	printk("\ta1: %d\n", data->a1);
@@ -22,7 +22,7 @@ static void print_utc(nrf_gnss_agps_data_utc_t *data)
 	printk("\tdelta_tlsf: %d\n", data->delta_tlsf);
 }
 
-static void print_ephemeris(nrf_gnss_agps_data_ephemeris_t *data)
+static void print_ephemeris(struct nrf_modem_gnss_agps_data_ephemeris *data)
 {
 	printk("ephemeris:\n");
 	printk("\tsv_id: %d\n", data->sv_id);
@@ -53,7 +53,7 @@ static void print_ephemeris(nrf_gnss_agps_data_ephemeris_t *data)
 	printk("\tcuc: %d\n", data->cuc);
 }
 
-static void print_almanac(nrf_gnss_agps_data_almanac_t *data)
+static void print_almanac(struct nrf_modem_gnss_agps_data_almanac *data)
 {
 	printk("almanac\n");
 	printk("\tsv_id: %d\n", data->sv_id);
@@ -72,7 +72,7 @@ static void print_almanac(nrf_gnss_agps_data_almanac_t *data)
 	printk("\taf1: %d\n", data->af1);
 }
 
-static void print_klobuchar(nrf_gnss_agps_data_klobuchar_t *data)
+static void print_klobuchar(struct nrf_modem_gnss_agps_data_klobuchar *data)
 {
 	printk("klobuchar\n");
 	printk("\talpha0: %d\n", data->alpha0);
@@ -85,8 +85,7 @@ static void print_klobuchar(nrf_gnss_agps_data_klobuchar_t *data)
 	printk("\tbeta3: %d\n", data->beta3);
 }
 
-static void print_clock_and_tows(
-	nrf_gnss_agps_data_system_time_and_sv_tow_t *data)
+static void print_clock_and_tows(struct nrf_modem_gnss_agps_data_system_time_and_sv_tow *data)
 {
 	printk("clock_and_tows\n");
 	printk("\tdate_day: %d\n", data->date_day);
@@ -95,14 +94,14 @@ static void print_clock_and_tows(
 	printk("\tsv_mask: 0x%08x\n", data->sv_mask);
 	printk("\tsv_tow\n");
 
-	for (size_t i = 0; i < NRF_GNSS_AGPS_MAX_SV_TOW; i++) {
+	for (size_t i = 0; i < NRF_MODEM_GNSS_AGPS_MAX_SV_TOW; i++) {
 		printk("\t\tsv_tow[%d]\n", i);
 		printk("\t\t\ttlm: %d\n", data->sv_tow[i].tlm);
 		printk("\t\t\tflags: 0x%02x\n", data->sv_tow[i].flags);
 	}
 }
 
-static void print_location(nrf_gnss_agps_data_location_t *data)
+static void print_location(struct nrf_modem_gnss_agps_data_location *data)
 {
 	printk("location\n");
 	printk("\tlatitude: %d\n", data->latitude);
@@ -115,47 +114,47 @@ static void print_location(nrf_gnss_agps_data_location_t *data)
 	printk("\tconfidence: %d\n", data->confidence);
 }
 
-static void print_integrity(nrf_gnss_agps_data_integrity_t *data)
+static void print_integrity(struct nrf_modem_gnss_agps_data_integrity *data)
 {
 	printk("integrity\n");
 	printk("\tintegrity_mask: %d\n", data->integrity_mask);
 }
 
-void agps_print(nrf_gnss_agps_data_type_t type, void *data)
+void agps_print(uint16_t type, void *data)
 {
 
 	switch (type) {
-	case NRF_GNSS_AGPS_UTC_PARAMETERS: {
-		print_utc((nrf_gnss_agps_data_utc_t *)data);
+	case NRF_MODEM_GNSS_AGPS_UTC_PARAMETERS: {
+		print_utc((struct nrf_modem_gnss_agps_data_utc *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_EPHEMERIDES: {
-		print_ephemeris((nrf_gnss_agps_data_ephemeris_t *)data);
+	case NRF_MODEM_GNSS_AGPS_EPHEMERIDES: {
+		print_ephemeris((struct nrf_modem_gnss_agps_data_ephemeris *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_ALMANAC: {
-		print_almanac((nrf_gnss_agps_data_almanac_t *)data);
+	case NRF_MODEM_GNSS_AGPS_ALMANAC: {
+		print_almanac((struct nrf_modem_gnss_agps_data_almanac *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION: {
-		print_klobuchar((nrf_gnss_agps_data_klobuchar_t *)data);
+	case NRF_MODEM_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION: {
+		print_klobuchar((struct nrf_modem_gnss_agps_data_klobuchar *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION: {
+	case NRF_MODEM_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION: {
 		printk("nequick unhandled\n");
 		break;
 	}
-	case NRF_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS: {
+	case NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS: {
 		print_clock_and_tows(
-			(nrf_gnss_agps_data_system_time_and_sv_tow_t *)data);
+			(struct nrf_modem_gnss_agps_data_system_time_and_sv_tow *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_LOCATION: {
-		print_location((nrf_gnss_agps_data_location_t *)data);
+	case NRF_MODEM_GNSS_AGPS_LOCATION: {
+		print_location((struct nrf_modem_gnss_agps_data_location *)data);
 		break;
 	}
-	case NRF_GNSS_AGPS_INTEGRITY: {
-		print_integrity((nrf_gnss_agps_data_integrity_t *)data);
+	case NRF_MODEM_GNSS_AGPS_INTEGRITY: {
+		print_integrity((struct nrf_modem_gnss_agps_data_integrity *)data);
 		break;
 	}
 	default:

@@ -431,7 +431,7 @@ static void manage_pgps(struct k_work *work)
 	int err;
 
 	LOG_INF("Sending prediction to modem...");
-	err = nrf_cloud_pgps_inject(prediction, &agps_request, NULL);
+	err = nrf_cloud_pgps_inject(prediction, &agps_request);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
