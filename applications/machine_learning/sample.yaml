@@ -5,7 +5,7 @@ tests:
   applications.machine_learning.zdebug:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 thingy52_nrf52832 thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuappns
+    platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52840dk_nrf52840
       - thingy52_nrf52832
@@ -21,7 +21,7 @@ tests:
   applications.machine_learning.zdebug_rtt:
     build_only: true
     platform_allow: thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuappns
+    platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
     tags: ci_build
@@ -29,7 +29,7 @@ tests:
   applications.machine_learning.zrelease:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 thingy52_nrf52832 thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuappns
+    platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52840dk_nrf52840
       - thingy52_nrf52832
