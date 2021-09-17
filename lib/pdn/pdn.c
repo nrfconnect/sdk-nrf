@@ -142,6 +142,28 @@ int pdn_init(void)
 	}
 #endif
 
+#if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
+	err = pdn_ctx_configure(0, CONFIG_PDN_DEFAULT_APN,
+				CONFIG_PDN_DEFAULT_FAM, NULL);
+	if (err) {
+		LOG_ERR("Failed to configure default CID, err %d", err);
+		return -1;
+	}
+
+#if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
+	/* +CGAUTH=<cid>[,<auth_prot>[,<userid>[,<password>]]] */
+	BUILD_ASSERT(sizeof(CONFIG_PDN_DEFAULT_USERNAME) > 1, "Username not defined");
+
+	err = pdn_ctx_auth_set(0, CONFIG_PDN_DEFAULT_AUTH,
+			       CONFIG_PDN_DEFAULT_USERNAME,
+			       CONFIG_PDN_DEFAULT_PASSWORD);
+	if (err) {
+		LOG_ERR("Failed to set auth params for default CID, err %d", err);
+		return -1;
+	}
+#endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
+#endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
+
 	for (size_t i = 0; i < ARRAY_SIZE(pdn_contexts); i++) {
 		pdn_contexts[i].context_id = CID_UNASSIGNED;
 	}
@@ -364,29 +386,6 @@ int pdn_default_apn_get(char *buf, size_t len)
 static int pdn_sys_init(const struct device *unused)
 {
 	int err;
-
-#if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
-	err = pdn_ctx_configure(0, CONFIG_PDN_DEFAULT_APN,
-				CONFIG_PDN_DEFAULT_FAM, NULL);
-	if (err) {
-		LOG_ERR("Failed to configure default CID, err %d", err);
-		return -1;
-	}
-
-#if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
-	/* +CGAUTH=<cid>[,<auth_prot>[,<userid>[,<password>]]] */
-	BUILD_ASSERT(sizeof(CONFIG_PDN_DEFAULT_USERNAME) > 1, "Username not defined");
-
-	err = pdn_ctx_auth_set(0, CONFIG_PDN_DEFAULT_AUTH,
-			       CONFIG_PDN_DEFAULT_USERNAME,
-			       CONFIG_PDN_DEFAULT_PASSWORD);
-	if (err) {
-		LOG_ERR("Failed to set auth params for default CID, err %d",
-			err);
-		return -1;
-	}
-#endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
-#endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
 
 	err = pdn_init();
 	if (err) {
