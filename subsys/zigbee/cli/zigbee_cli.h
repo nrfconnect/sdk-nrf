@@ -55,4 +55,13 @@ void zb_cli_debug_set(zb_bool_t debug);
  */
 zb_bool_t zb_cli_debug_get(void);
 
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+/**@brief Function for getting the state of the Zigbee NVRAM.
+ *
+ * @retval ZB_TRUE  Zigbee NVRAM is enabled.
+ * @retval ZB_FALSE Zigbee NVRAM is disabled.
+ */
+zb_bool_t zb_cli_nvram_enabled(void);
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+
 #endif /* ZIGBEE_CLI_H__ */

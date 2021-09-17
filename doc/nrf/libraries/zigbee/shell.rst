@@ -122,6 +122,7 @@ Example:
    history            :Command history.
    kernel             :Kernel commands
    nrf_clock_control  :Clock control commmands
+   nvram              :Zigbee NVRAM manipulation
    resize             :Console gets terminal screen size or assumes default in
                       case the readout fails. It must be executed after each
                       terminal width change to ensure correct text display.
@@ -855,6 +856,38 @@ Resume Zigbee scheduler processing.
 .. code-block::
 
    zscheduler resume
+
+----
+
+.. _nvram_enable:
+
+nvram enable
+============
+
+Enable Zigbee NVRAM.
+
+.. note::
+    |precondition2|
+
+.. code-block::
+
+   nvram enable
+
+----
+
+.. _nvram_disable:
+
+nvram disable
+=============
+
+Disable Zigbee NVRAM.
+
+.. note::
+    |precondition2|
+
+.. code-block::
+
+   nvram disable
 
 .. |precondition| replace:: Setting only before :ref:`bdb_start`.
    Reading only after :ref:`bdb_start`.

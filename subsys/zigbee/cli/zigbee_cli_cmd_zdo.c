@@ -1365,6 +1365,23 @@ static int cmd_zb_eui64(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_ieee_addr_t addr;
 
+	if (zigbee_is_stack_started()) {
+		zb_cli_print_error(shell, "Stack already started", ZB_FALSE);
+		return -ENOEXEC;
+	}
+
+	if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+	    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+	    ) {
+		shell_warn(
+			shell,
+			"Zigbee stack has been configured in the past.\r\n"
+			"Please disable NVRAM to change the channel mask.");
+		return -ENOEXEC;
+	}
+
 	if (argc == 2) {
 		if (parse_long_address(argv[1], addr)) {
 			zb_set_long_address(addr);
