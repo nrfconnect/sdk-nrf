@@ -73,18 +73,32 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_nwk_device_type_t role;
 
-		role = zb_get_network_role();
-		if (role == ZB_NWK_DEVICE_TYPE_NONE) {
-			role = default_role;
-		}
+	if (!zigbee_is_stack_started()
+	    && zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+	    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+	    ) {
+		shell_warn(
+			shell,
+			"Zigbee stack has been configured in the past.\r\n"
+			"Please start the Zigbee stack to check the configured role.");
+		return -ENOEXEC;
+	}
 
-		if (role == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-			shell_print(shell, "zc");
-		} else if (role == ZB_NWK_DEVICE_TYPE_ROUTER) {
-			shell_print(shell, "zr");
-		} else if (role == ZB_NWK_DEVICE_TYPE_ED) {
-			shell_print(shell, "zed");
-		}
+	if (zigbee_is_stack_started()) {
+		role = zb_get_network_role();
+	} else {
+		role = default_role;
+	}
+
+	if (role == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+		shell_print(shell, "zc");
+	} else if (role == ZB_NWK_DEVICE_TYPE_ROUTER) {
+		shell_print(shell, "zr");
+	} else if (role == ZB_NWK_DEVICE_TYPE_ED) {
+		shell_print(shell, "zed");
+	}
 
 	zb_cli_print_done(shell, ZB_FALSE);
 	return 0;
@@ -111,6 +125,22 @@ static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
 	zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
 	return -ENOEXEC;
 #else
+	if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+	    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+	    ) {
+		shell_warn(
+			shell,
+			"Zigbee stack has been configured in the past.\r\n"
+			"Please use the same role or disable NVRAM to change the Zigbee role.");
+	} else {
+		shell_info(
+			shell,
+			"Zigbee shell does not erase the NVRAM between reboots, but is not aware of the previously configured role.\r\n"
+			"Remember to set the coordinator role after rebooting the device.");
+	}
+
 	default_role = ZB_NWK_DEVICE_TYPE_COORDINATOR;
 	shell_print(shell, "Coordinator set");
 	zb_cli_print_done(shell, ZB_FALSE);
@@ -170,6 +200,17 @@ static int cmd_zb_role_zr(const struct shell *shell, size_t argc, char **argv)
 	zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
 	return -ENOEXEC;
 #else
+	if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+	    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+	    ) {
+		shell_warn(
+			shell,
+			"Zigbee stack has been configured in the past.\r\n"
+			"Please use the same role or disable NVRAM to change the Zigbee role.");
+	}
+
 	default_role = ZB_NWK_DEVICE_TYPE_ROUTER;
 	shell_print(shell, "Router role set");
 	zb_cli_print_done(shell, ZB_FALSE);
@@ -285,6 +326,19 @@ static int cmd_zb_extpanid(const struct shell *shell, size_t argc, char **argv)
 					   ZB_FALSE);
 			return -ENOEXEC;
 		}
+
+		if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+		    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+		    ) {
+			shell_warn(
+				shell,
+				"Zigbee stack has been configured in the past.\r\n"
+				"Please disable NVRAM to change the Extended PAN ID.");
+			return -ENOEXEC;
+		}
+
 		if (parse_long_address(argv[1], extpanid)) {
 			zb_set_extended_pan_id(extpanid);
 			zb_cli_print_done(shell, ZB_FALSE);
@@ -323,6 +377,18 @@ static int cmd_zb_panid(const struct shell *shell, size_t argc, char **argv)
 		if (zigbee_is_stack_started()) {
 			zb_cli_print_error(shell, "Stack already started",
 					   ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+		    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+		    ) {
+			shell_warn(
+				shell,
+				"Zigbee stack has been configured in the past.\r\n"
+				"Please disable NVRAM to change the PAN ID.");
 			return -ENOEXEC;
 		}
 
@@ -399,6 +465,18 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 		if (zigbee_is_stack_started()) {
 			zb_cli_print_error(shell, "Stack already started",
 					   ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+		    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+		    ) {
+			shell_warn(
+				shell,
+				"Zigbee stack has been configured in the past.\r\n"
+				"Please disable NVRAM to change the channel mask.");
 			return -ENOEXEC;
 		}
 
@@ -754,6 +832,18 @@ static int cmd_zb_nwkkey(const struct shell *shell, size_t argc, char **argv)
 
 	if (zigbee_is_stack_started()) {
 		zb_cli_print_error(shell, "Stack already started", ZB_FALSE);
+		return -ENOEXEC;
+	}
+
+	if (zigbee_is_nvram_initialised()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+	    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+	    ) {
+		shell_warn(
+			shell,
+			"Zigbee stack has been configured in the past.\r\n"
+			"Please disable NVRAM to change the preconfigured network key.");
 		return -ENOEXEC;
 	}
 

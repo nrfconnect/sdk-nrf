@@ -673,7 +673,7 @@ static void rejoin_the_network(zb_uint8_t param)
 #if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 			LOG_INF("Network rejoin procedure stopped as %sscheduled.",
 				(wait_for_user_input) ? "" : "NOT ");
-#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
+#else
 			LOG_INF("Network rejoin procedure stopped.");
 #endif
 		} else if (!is_rejoin_in_progress) {
@@ -768,7 +768,7 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
 	 * joining on user_input_indication().
 	 */
 	wait_for_user_input = was_scheduled;
-#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
+#else
 	ZVUNUSED(was_scheduled);
 #endif
 
@@ -783,7 +783,7 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
 #if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 			LOG_INF("Network rejoin procedure stopped as %sscheduled.",
 				(wait_for_user_input) ? "" : "not ");
-#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
+#else
 			LOG_INF("Network rejoin procedure stopped.");
 #endif
 		} else {
