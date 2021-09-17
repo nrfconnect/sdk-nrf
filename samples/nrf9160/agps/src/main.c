@@ -182,7 +182,7 @@ static void on_agps_needed(struct gps_agps_request request)
 
 	agps_request_convert(&agps_request, &request);
 
-	int err = agps_request_send(agps_request, AGPS_SOCKET_NOT_PROVIDED);
+	int err = agps_request_send(agps_request);
 
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data, error: %d", err);
