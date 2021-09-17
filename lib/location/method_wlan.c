@@ -17,6 +17,7 @@
 #include <modem/location.h>
 
 #include "loc_core.h"
+#include "loc_utils.h"
 
 #include "rest/rest_services_wlan.h"
 
@@ -161,13 +162,18 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 		return;
 	}
 
-	ret = k_sem_take(&wlan_scanning_ready, K_FOREVER);
-	if (ret) {
-		LOG_WRN("Timeout for WLAN scanning - cannot fetch location");
-		ret = -1;
-	} else if (running) {
+	k_sem_take(&wlan_scanning_ready, K_FOREVER);
+	
+	if (running) {
 		struct rest_wlan_pos_request request;
 		struct rest_wlan_pos_result result;
+
+		if (!loc_utils_is_default_pdn_active()) {
+			LOG_WRN("Default PDN context is NOT active, cannot retrieve location");
+			loc_core_event_cb_error();
+			running = false;
+			return;
+		}
 
 		if (latest_scan_result_count > 0) {
 			/* Fill scanning results: */
@@ -230,6 +236,7 @@ int method_wlan_location_get(const struct loc_method_config *config)
 		LOG_ERR("Previous operation ongoing.");
 		return -EBUSY;
 	}
+
 	/* Validate requested service: */
 #if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
 	if (wlan_config.service == LOC_WLAN_SERVICE_HERE) {
