@@ -75,7 +75,10 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 		.exp_delta_s = (5 * 60),
 		.sec_tag = CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG,
 		.key = JWT_KEY_TYPE_CLIENT_PRIV,
-		.alg = JWT_ALG_TYPE_ES256
+		.alg = JWT_ALG_TYPE_ES256,
+		/* Set to NULL so a properly sized buffer is allocated */
+		.jwt_buf = NULL,
+		.jwt_sz = 0
 	};
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
@@ -101,6 +104,7 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
 
 	modem_jwt_free(jwt.jwt_buf);
+	jwt.jwt_buf = NULL;
 
 	if (!err) {
 		location->accuracy = (double)result.unc;
