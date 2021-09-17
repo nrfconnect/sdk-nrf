@@ -8,9 +8,7 @@
 #include <stdio.h>
 #include <logging/log.h>
 #include <net/socket.h>
-#include <nrf_socket.h>
 #include <nrf_modem_gnss.h>
-#include <device.h>
 #include <drivers/gps.h>
 
 #if defined(CONFIG_AGPS_SRC_SUPL)
@@ -23,60 +21,10 @@
 LOG_MODULE_REGISTER(agps, CONFIG_AGPS_LOG_LEVEL);
 
 #if defined(CONFIG_AGPS_SRC_SUPL)
-static const struct device *gps_dev;
-static int gnss_fd = -1;
 static int supl_fd = -1;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
-static enum gps_agps_type type_lookup_api2driver[] = {
-	[NRF_MODEM_GNSS_AGPS_UTC_PARAMETERS] =
-		GPS_AGPS_UTC_PARAMETERS,
-	[NRF_MODEM_GNSS_AGPS_EPHEMERIDES] =
-		GPS_AGPS_EPHEMERIDES,
-	[NRF_MODEM_GNSS_AGPS_ALMANAC] =
-		GPS_AGPS_ALMANAC,
-	[NRF_MODEM_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION] =
-		GPS_AGPS_KLOBUCHAR_CORRECTION,
-	[NRF_MODEM_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION] =
-		GPS_AGPS_NEQUICK_CORRECTION,
-	[NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS] =
-		GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS,
-	[NRF_MODEM_GNSS_AGPS_LOCATION] =
-		GPS_AGPS_LOCATION,
-	[NRF_MODEM_GNSS_AGPS_INTEGRITY]	=
-		GPS_AGPS_INTEGRITY
-};
-
-/* Convert GNSS API A-GPS type to GPS driver type. */
-static inline enum gps_agps_type type_api2driver(uint16_t type)
-{
-	return type_lookup_api2driver[type];
-}
-
 #if defined(CONFIG_AGPS_SRC_SUPL)
-static int send_to_modem(void *data, size_t data_len, uint16_t type)
-{
-	int err;
-
-	if (gps_dev) {
-		/* GPS driver */
-		err = gps_agps_write(gps_dev, type_api2driver(type), data, data_len);
-	} else if (gnss_fd != -1) {
-		/* GNSS socket */
-		err = nrf_sendto(gnss_fd, data, data_len, 0, &type, sizeof(type));
-		if (err < 0) {
-			err = -errno;
-		} else {
-			err = 0;
-		}
-	} else {
-		/* GNSS API */
-		err = nrf_modem_gnss_agps_write(data, data_len, type);
-	}
-
-	return err;
-}
-
 static int inject_agps_type(void *agps,
 			    size_t agps_size,
 			    uint16_t type,
@@ -85,7 +33,7 @@ static int inject_agps_type(void *agps,
 	ARG_UNUSED(user_data);
 	int err;
 
-	err = send_to_modem(agps, agps_size, type);
+	err = nrf_modem_gnss_agps_write(agps, agps_size, type);
 	if (err) {
 		LOG_ERR("Failed to send A-GPS data, type: %d (err: %d)",
 			type, err);
@@ -235,7 +183,7 @@ static ssize_t supl_read(void *buf, size_t nbytes, void *user_data)
 	return rc;
 }
 
-static int init_supl(int socket)
+static int init_supl(void)
 {
 	int err;
 	struct supl_api supl_api = {
@@ -250,19 +198,6 @@ static int init_supl(int socket)
 	if (err) {
 		LOG_ERR("Failed to initialize SUPL library, error: %d", err);
 		return err;
-	}
-
-	if (socket) {
-		LOG_DBG("Using user-provided socket, fd %d", socket);
-
-		gnss_fd = socket;
-	} else {
-		gps_dev = device_get_binding("NRF9160_GPS");
-		if (gps_dev != NULL) {
-			LOG_DBG("Using GPS driver to input assistance data");
-		} else {
-			LOG_DBG("Using GNSS API to input assistance data");
-		}
 	}
 
 	LOG_INF("SUPL is initialized");
@@ -298,7 +233,7 @@ cleanup:
 
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
-int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
+int agps_request_send(struct nrf_modem_gnss_agps_data_frame request)
 {
 	int err;
 
@@ -306,7 +241,7 @@ int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
 	static bool supl_is_init;
 
 	if (!supl_is_init) {
-		err = init_supl(socket);
+		err = init_supl();
 		if (err) {
 			LOG_ERR("SUPL initialization failed, error: %d", err);
 			return err;

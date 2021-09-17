@@ -1021,7 +1021,7 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 	 * selected as the A-GPS source via the CONFIG_AGPS_SRC_NRF_CLOUD option.
 	 */
 #if defined(CONFIG_AGPS) && (defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_AGPS_SRC_SUPL))
-	err = agps_request_send(*incoming_request, AGPS_SOCKET_NOT_PROVIDED);
+	err = agps_request_send(*incoming_request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");
