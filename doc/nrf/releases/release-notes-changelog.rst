@@ -47,6 +47,10 @@ nRF9160
 
 * Updated:
 
+  * All samples
+
+    * All samples built for the nRF9160 SoC now have the :ref:`nrf_modem` library enabled by default.
+
   * :ref:`lib_nrf_cloud` library:
 
     * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.  If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`

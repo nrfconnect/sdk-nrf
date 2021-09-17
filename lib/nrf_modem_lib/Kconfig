@@ -9,10 +9,18 @@ menuconfig NRF_MODEM_LIB
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
 	select NRF_MODEM
+	default y if SOC_NRF9160_SICA && TRUSTED_EXECUTION_NONSECURE
 	help
 	  Use Nordic Modem library.
 
 if NRF_MODEM_LIB
+
+# Redefine this symbol here and give it a non-zero default value
+# so that the Zephyr system heap is enabled, the offloading layer
+# depends on it
+config HEAP_MEM_POOL_SIZE
+	int
+	default 512
 
 config NRF_MODEM_LIB_SYS_INIT
 	bool "Initialize during SYS_INIT"
