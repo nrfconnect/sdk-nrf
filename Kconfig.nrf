@@ -41,6 +41,10 @@ config ZTEST_STACKSIZE
 config PRIVILEGED_STACK_SIZE
 	default 2048 if ZTEST
 
+# nRF Connect SDK needs larger mcumgr buffers when supporting multi-image DFU.
+config MCUMGR_BUF_SIZE
+	default 1024 if UPDATEABLE_IMAGE_NUMBER > 1
+
 # Set ENTROPY_GENERATOR to true for TF-M or SPM builds with enabled
 # RNG provided from secure services.
 config ENTROPY_GENERATOR
