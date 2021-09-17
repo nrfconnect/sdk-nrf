@@ -149,36 +149,33 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 	struct loc_location location_result = { 0 };
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_wlan_config wlan_config = work_data->wlan_config;
-	int ret;
+	int err;
 
 	loc_core_timer_start(wlan_config.timeout);
 
-	ret = method_wlan_scanning_start();
-	if (ret) {
-		LOG_WRN("Cannot start WLAN scanning, err %d", ret);
-		loc_core_event_cb_error();
-		k_sem_give(&wlan_scanning_ready);
-		running = false;
-		return;
+	err = method_wlan_scanning_start();
+	if (err) {
+		LOG_WRN("Cannot start WLAN scanning, err %d", err);
+		goto return_error;
 	}
 
 	k_sem_take(&wlan_scanning_ready, K_FOREVER);
-	
 	if (running) {
 		struct rest_wlan_pos_request request;
 		struct rest_wlan_pos_result result;
 
 		if (!loc_utils_is_default_pdn_active()) {
-			LOG_WRN("Default PDN context is NOT active, cannot retrieve location");
-			loc_core_event_cb_error();
-			running = false;
-			return;
+			/* No worth to start trying to fetch with the REST api over cellular.
+			 * Thus, fail faster in this case and safe the trying "costs".
+			 */
+			LOG_WRN("Default PDN context is NOT active, cannot retrieve a location");
+			err = -1;
+			goto return_error;
 		}
 
-		if (latest_scan_result_count > 0) {
+		if (latest_scan_result_count > 1) {
 			/* Fill scanning results: */
 			request.wlan_scanning_result_count = latest_scan_result_count;
-			ret = -1;
 
 			for (int i = 0; i < latest_scan_result_count; i++) {
 				strcpy(request.scanning_results[i].mac_addr_str,
@@ -191,11 +188,11 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 					latest_scan_results[i].rssi;
 			}
 
-			ret = rest_services_wlan_location_get(wlan_config.service, &request, &result);
-			if (ret) {
-				LOG_ERR("Failed to acquire location from WLAN positioning service REST api, error: %d",
-					ret);
-				ret = -1;
+			err = rest_services_wlan_location_get(wlan_config.service, &request, &result);
+			if (err) {
+				LOG_ERR("Failed to acquire a location from WLAN positioning service REST api, error: %d",
+					err);
+				err = -1;
 			} else {
 				location_result.latitude = result.latitude;
 				location_result.longitude = result.longitude;
@@ -206,12 +203,20 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 				}
 			}
 		} else {
-			LOG_ERR("No scanning results");
-			ret = -1;
+			if (latest_scan_result_count == 1) {
+				/* Following statement seems to be true at least with Here
+				 * (400: bad request) and also with Skyhook (404: not found).
+				 * Thus, fail faster in this case and safe the data transfer costs.
+				 */
+				LOG_WRN("Retrieving a location based on a single WLAN access point is not possible");
+			} else {
+				LOG_WRN("No WLAN scanning results");
+			}
+			err = -1;
 		}
 	}
-
-	if (ret) {
+return_error:
+	if (err) {
 		loc_core_event_cb_error();
 		running = false;
 	}
