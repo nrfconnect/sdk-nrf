@@ -575,6 +575,9 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 		/* Enable Rel14 features before going to normal mode */
 		link_enable_rel14_features();
 
+		/* (Re)register for PDN lib notifications */
+		link_shell_pdn_events_subscribe();
+
 		/* (Re)register for rsrp notifications: */
 		modem_info_rsrp_register(link_rsrp_signal_handler);
 

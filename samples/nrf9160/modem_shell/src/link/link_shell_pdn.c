@@ -8,8 +8,8 @@
 
 #include <shell/shell.h>
 
+#include <nrf_modem_at.h>
 #include <modem/pdn.h>
-#include <modem/at_cmd.h>
 
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp_ctrl.h"
@@ -337,25 +337,30 @@ int link_shell_pdn_activate(int pdn_cid)
 	return ret;
 }
 
-void link_shell_pdn_init(void)
+void link_shell_pdn_events_subscribe(void)
 {
 	int err;
 
 	/* Register to the necessary packet domain AT notifications */
-	err = at_cmd_write("AT+CNEC=16", NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT+CNEC=16");
 	if (err) {
 		mosh_error("AT+CNEC=16 failed, err %d\n", err);
 		return;
 	}
 
-	err = at_cmd_write("AT+CGEREP=1", NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT+CGEREP=1");
 	if (err) {
 		mosh_error("AT+CGEREP=1 failed, err %d\n", err);
 		return;
 	}
+	pdn_default_callback_set(link_pdn_event_handler);
+}
+
+void link_shell_pdn_init(void)
+{
 
 	pdn_init();
-	pdn_default_callback_set(link_pdn_event_handler);
+	link_shell_pdn_events_subscribe();
 	sys_dlist_init(&pdn_info_list);
 }
 
