@@ -48,6 +48,10 @@ nRF9160
 
     * Removed GNSS socket API support from A-GPS and P-GPS.
 
+  * :ref:`multicell_location` sample:
+
+    * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
+
 nRF5
 ====
 
