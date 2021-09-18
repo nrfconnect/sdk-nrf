@@ -60,6 +60,31 @@ static int parse_jwt_at_cmd_resp(char *const jwt_resp)
 	return 0;
 }
 
+static void base64_url_format(char *const base64_string)
+{
+	if (base64_string == NULL) {
+		return;
+	}
+
+	char *found = NULL;
+
+	/* replace '+' with "-" */
+	for (found = base64_string; (found = strchr(found, '+'));) {
+		*found = '-';
+	}
+
+	/* replace '/' with "_" */
+	for (found = base64_string; (found = strchr(found, '/'));) {
+		*found = '_';
+	}
+
+	/* remove padding '=' */
+	found = strchr(base64_string, '=');
+	if (found) {
+		*found = '\0';
+	}
+}
+
 int modem_jwt_generate(struct jwt_data *const jwt)
 {
 	if (!jwt) {
@@ -148,6 +173,8 @@ cleanup:
 		}
 
 		if (ret == 0) {
+			/* Remove any non-base64url characters */
+			base64_url_format(cmd_resp);
 			memcpy(jwt->jwt_buf, cmd_resp, jwt_sz);
 		}
 	}
