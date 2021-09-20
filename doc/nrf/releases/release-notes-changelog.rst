@@ -163,6 +163,7 @@ Edge Impulse
 
 * Added non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
 * Added secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
+* Added power manager to the :ref:`nrf_machine_learning_app` application.
 * Updated information about custom build types.
 
 Common Application Framework (CAF)
