@@ -92,10 +92,8 @@ static bool is_enabled(const struct bt_mesh_light_ctrl_srv *srv)
 
 static void schedule_resume_timer(struct bt_mesh_light_ctrl_srv *srv)
 {
-	if (CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY) {
-		k_work_reschedule(
-			&srv->timer,
-			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY));
+	if (srv->resume) {
+		k_work_reschedule(&srv->timer, K_SECONDS(srv->resume));
 		atomic_set_bit(&srv->flags, FLAG_RESUME_TIMER);
 	}
 }
@@ -600,8 +598,7 @@ static void timeout(struct k_work *work)
 		CONTAINER_OF(dwork, struct bt_mesh_light_ctrl_srv, timer);
 
 	if (!is_enabled(srv)) {
-		if (CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY &&
-		    atomic_test_and_clear_bit(&srv->flags, FLAG_RESUME_TIMER)) {
+		if (srv->resume && atomic_test_and_clear_bit(&srv->flags, FLAG_RESUME_TIMER)) {
 			BT_DBG("Resuming LC server");
 			ctrl_enable(srv);
 		}
@@ -1528,6 +1525,8 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	k_work_init_delayable(&srv->reg.timer, reg_step);
 #endif
+
+	srv->resume = CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY;
 
 	srv->pub.msg = &srv->pub_buf;
 	srv->pub.update = update_handler;

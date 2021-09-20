@@ -162,6 +162,8 @@ struct bt_mesh_light_ctrl_srv {
 	/* Publication data */
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 3)];
+	/** Resume control timeout (in seconds) */
+	uint16_t resume;
 	/** Setup model publish parameters */
 	struct bt_mesh_model_pub setup_pub;
 	/* Publication buffer */
