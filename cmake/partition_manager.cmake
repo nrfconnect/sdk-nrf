@@ -624,6 +624,7 @@ to the external flash")
       -o ${final_merged}
       ${domain_hex_files}
       DEPENDS
+      ${domain_hex_files}
       ${global_hex_depends}
       )
 
