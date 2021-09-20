@@ -9,4 +9,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(flash_nop_device)
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE ${app_sources}
+  ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/drivers/flash/flash_nop_device.c
+)

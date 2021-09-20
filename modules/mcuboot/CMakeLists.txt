@@ -167,6 +167,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     SOURCE_DIR ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr
     )
 
+  get_shared(multi_image_update IMAGE mcuboot PROPERTY NRF53_MULTI_IMAGE_UPDATE)
+  if(multi_image_update)
+    zephyr_library()
+
+    zephyr_library_sources(drivers/flash/flash_nop_device.c)
+  endif()
+
   set(merged_hex_file
     ${PROJECT_BINARY_DIR}/mcuboot_primary_app.hex)
   set(merged_hex_file_depends
