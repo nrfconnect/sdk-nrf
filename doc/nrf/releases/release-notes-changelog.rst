@@ -65,6 +65,9 @@ nRF9160: Asset Tracker v2
 * Updated the application to start sending neighbor cell measurement data to nRF Cloud.
 * Added content-type and encoding properties to outgoing Azure MQTT messages.
 * Added support for A-GPS and P-GPS in Azure IoT Hub integration.
+* Added new overlay configuration files and split the :file:`prj.conf` file to several files that now bind specific features.
+  To build with a specific feature, such as P-GPS, Memfault or communications with AWS IoT, you need to include the respective overlay configuration in the build command.
+  This is documented in :ref:`asset_tracker_v2_description`.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

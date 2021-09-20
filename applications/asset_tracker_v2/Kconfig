@@ -17,7 +17,7 @@ choice LOG_MODE
 	default LOG_MODE_IMMEDIATE
 endchoice
 
-menu "Asset Tracker"
+menu "Asset Tracker v2"
 
 config ASSET_TRACKER_V2_APP_VERSION
 	string "Asset Tracker application firmware version"

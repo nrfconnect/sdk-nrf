@@ -283,6 +283,7 @@ Currently, the application supports the following services and technologies in t
 When the application is configured to communicate with `AWS IoT Core`_ or `Azure IoT Hub`_, it supports processing of received A-GPS and P-GPS data through the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
 This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 SiP using the pre-established MQTT connection.
 This approach saves data and energy costs related to maintaining multiple connections.
+Requesting and processing of A-GPS data is enabled by default when building for all supported cloud providers.
 
 .. note::
    |gps_tradeoffs|
@@ -360,10 +361,12 @@ The default values for the device configuration parameters can be set by manipul
 Mandatory library configuration
 ===============================
 
-You can set the mandatory library-specific Kconfig options in the :file:`prj.conf` file of the application.
+You can set the mandatory library-specific Kconfig options in the designated :file:`overlay-<feature>.conf` file located in the root folder of the application.
 
 Configurations for AWS IoT library
 ----------------------------------
+
+These options are located in the :file:`overlay-aws.conf` file.
 
 * :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :kconfig:`CONFIG_AWS_IOT_SEC_TAG`
@@ -371,6 +374,8 @@ Configurations for AWS IoT library
 
 Configurations for Azure IoT Hub library
 ----------------------------------------
+
+These options are located in the :file:`overlay-azure.conf` file.
 
 * :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 * :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
@@ -389,10 +394,6 @@ You can add the following optional configurations to configure the heap or to pr
 * :kconfig:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
 * :kconfig:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
 
-The application supports Predicted GPS (P-GPS).
-To enable P-GPS, set the :kconfig:`CONFIG_NRF_CLOUD_PGPS` option.
-It enables requesting and processing of P-GPS data from nRF Cloud.
-
 Configuration files
 ===================
 
@@ -407,7 +408,10 @@ The following configuration files are available in the application folder:
 * :file:`prj.conf` - Configuration file common for all build targets
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
-* :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
+* :file:`overlay-aws.conf` - Configuration file to set AWS as cloud provider.
+* :file:`overlay-azure.conf` - Configuration file to set Azure as cloud provider.
+* :file:`overlay-pgps.conf` - Configuration file to enable P-GPS.
+* :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power, such as LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_. To take advantage of all Memfault features in the application, you must build Memfault with the debug module enabled. To enable the debug module, include both :file:`overlay-debug.conf` and :file:`overlay-memfault.conf` in the ``west build`` command.
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support. See :ref:`atv2_lwm2m_carrier_support` for more information.
@@ -425,6 +429,12 @@ Building and running
 Before building and running the firmware ensure that the cloud side is set up.
 Also, the device must be provisioned and configured with the certificates according to the instructions for the respective cloud for the connection attempt to succeed.
 
+The application defaults to using nRF Cloud as the cloud provider.
+However, you can change the cloud provider by specifying the overlay file that corresponds to another supported cloud provider when building the application.
+Set the CMake variable ``OVERLAY_CONFIG`` when calling the ``west build`` command.
+You can set this variable to contain a list of overlays that will be patched in, each enabling a specific feature.
+See :ref:`building_with_overlays` on how to combine overlay configuration files to enable multiple features at the same time.
+
 .. note::
 
    This application supports :ref:`ug_bootloader`, which is disabled by default.
@@ -437,27 +447,29 @@ Also, the device must be provisioned and configured with the certificates accord
 .. external_antenna_note_start
 
 .. note::
-   For nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` option to ``y`` when building the application to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_GPS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
+
+.. _building_with_overlays:
 
 Building with overlays
 ======================
 
-To build with Kconfig overlay, it must be based to the build system, as shown in the following example:
+To build with a Kconfig overlay, it must be passed to the build system, as shown in the following example:
 
 .. code-block:: console
 
    west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-low-power.conf
 
-The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160_ns.conf`.
+This command builds for the nRF9160 DK using the configurations found in the :file:`overlay-low-power.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
 If some options are defined in both files, the options set in the overlay take precedence.
 
 To build with multiple overlay files, ``-DOVERLAY_CONFIG`` must be set to a list of overlay configurations, as shown in the following example:
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-debug.conf;overlay-memfault.conf"
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-aws.conf;overlay-debug.conf;overlay-memfault.conf"
 
 Testing
 =======
@@ -653,6 +665,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_fota`
 * :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_date_time`
 * :ref:`lte_lc_readme`
 * :ref:`modem_info_readme`

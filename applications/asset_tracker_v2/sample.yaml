@@ -9,29 +9,32 @@ tests:
     build_only: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     tags: ci_build
+  applications.asset_tracker_v2.nrf_cloud-pgps:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-pgps.conf
+    tags: ci_build
   applications.asset_tracker_v2.aws:
     build_only: true
     platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
-      - CONFIG_AWS_IOT_SEC_TAG=42
-      - CONFIG_AWS_IOT=y
-      - CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE=y
-      - CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE=y
-      - CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST=y
-      - CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN=2048
-      - CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN=2048
-      - CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT=1
-      - CONFIG_AWS_IOT_CLIENT_ID_APP=y
-      - CONFIG_AWS_FOTA=y
-      - CONFIG_NRF_CLOUD=n
-      - CONFIG_AGPS=n
-      - CONFIG_AGPS_SRC_NRF_CLOUD=n
-      - CONFIG_NRF_CLOUD_AGPS=n
-      - CONFIG_NRF_CLOUD_PGPS=n
-      - CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD=n
-      - CONFIG_NRF_CLOUD_SEND_TIMEOUT=n
-      - CONFIG_GPS_MODULE_NMEA=n
+    extra_args: OVERLAY_CONFIG="overlay-aws.conf"
+    tags: ci_build
+  applications.asset_tracker_v2.aws-pgps:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
+    extra_args: OVERLAY_CONFIG="overlay-aws.conf;overlay-pgps.conf"
+    tags: ci_build
+  applications.asset_tracker_v2.aws-all:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
+    extra_args: OVERLAY_CONFIG="overlay-aws.conf;overlay-pgps.conf;overlay-debug.conf;overlay-memfault.conf"
     tags: ci_build
   applications.asset_tracker_v2.azure:
     build_only: true
@@ -39,24 +42,39 @@ tests:
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
-      - CONFIG_AZURE_IOT_HUB=y
-      - CONFIG_AZURE_IOT_HUB_DPS=y
-      - CONFIG_AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST=y
-      - CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP=y
-      - CONFIG_AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN=2048
-      - CONFIG_AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN=2048
-      - CONFIG_AZURE_IOT_HUB_TOPIC_PROPERTY_BAG_PREFIX=n
-      - CONFIG_AZURE_IOT_HUB_STACK_SIZE=4096
-      - CONFIG_AZURE_FOTA=y
-      - CONFIG_AZURE_FOTA_TLS=y
-      - CONFIG_AZURE_IOT_HUB_SEC_TAG=11
-      - CONFIG_AZURE_FOTA_SEC_TAG=11
-      - CONFIG_NRF_CLOUD=n
-      - CONFIG_AGPS=n
-      - CONFIG_AGPS_SRC_NRF_CLOUD=n
-      - CONFIG_NRF_CLOUD_AGPS=n
-      - CONFIG_NRF_CLOUD_PGPS=n
-      - CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD=n
-      - CONFIG_NRF_CLOUD_SEND_TIMEOUT=n
-      - CONFIG_GPS_MODULE_NMEA=n
+    extra_args: OVERLAY_CONFIG="overlay-azure.conf"
+    tags: ci_build
+  applications.asset_tracker_v2.debug:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-debug.conf
+    tags: ci_build
+  applications.asset_tracker_v2.debug-memfault:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
+    extra_args: OVERLAY_CONFIG="overlay-debug.conf;overlay-memfault.conf"
+    tags: ci_build
+  applications.asset_tracker_v2.memfault:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
+    extra_args: OVERLAY_CONFIG=overlay-memfault.conf
+    tags: ci_build
+  applications.asset_tracker_v2.low-power:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-low-power.conf
+    tags: ci_build
+  applications.asset_tracker_v2.carrier:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-carrier.conf
     tags: ci_build
