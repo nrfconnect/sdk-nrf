@@ -1,4 +1,5 @@
-from os import PathLike
+import re
+from os import PathLike, environ
 from pathlib import Path
 from typing import Dict, Tuple, Optional
 
@@ -15,6 +16,7 @@ _MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
 ALL_DOCSETS = {
     "nrf": ("nRF Connect SDK", "index", "manifest"),
     "nrfx": ("nrfx", "index", "hal_nordic"),
+    "find-my": ("Apple Find My", "index", "find-my"),
     "nrfxlib": ("nrfxlib", "README", "nrfxlib"),
     "zephyr": ("Zephyr Project", "index", "zephyr"),
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
@@ -25,7 +27,7 @@ ALL_DOCSETS = {
 """All supported docsets (name: title, home page, manifest project name)."""
 
 
-def get_docsets(docset: str) -> Dict[str, str]:
+def get_docsets(docset: str) -> Dict[str, Tuple[str, str, str]]:
     """Obtain all docsets that should be displayed.
 
     Args:
@@ -34,7 +36,13 @@ def get_docsets(docset: str) -> Dict[str, str]:
     Returns:
         Dictionary of docsets.
     """
+    zephyr_modules = re.split(r'[\s,;]+', environ.get("ZEPHYR_MODULE_NAMES") or "")
+
     docsets = ALL_DOCSETS.copy()
+
+    if "find-my" not in zephyr_modules:
+        del docsets["find-my"]
+
     del docsets[docset]
     return docsets
 
