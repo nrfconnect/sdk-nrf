@@ -36,7 +36,7 @@ static uint8_t read_fn(struct bt_conn *conn, uint8_t err,
 		len = MIN(len, sizeof(struct bt_throughput_metrics));
 		memcpy(&metrics, data, len);
 
-		if (callbacks->data_read) {
+		if (callbacks && callbacks->data_read) {
 			return callbacks->data_read(&metrics);
 		}
 	}
@@ -74,7 +74,7 @@ static ssize_t write_callback(struct bt_conn *conn,
 
 	LOG_DBG("Received data.");
 
-	if (callbacks->data_received) {
+	if (callbacks && callbacks->data_received) {
 		callbacks->data_received(met_data);
 	}
 
@@ -89,7 +89,7 @@ static ssize_t read_callback(struct bt_conn *conn,
 
 	len = MIN(sizeof(struct bt_throughput_metrics), len);
 
-	if (callbacks->data_send) {
+	if (callbacks && callbacks->data_send) {
 		callbacks->data_send(metrics);
 	}
 
