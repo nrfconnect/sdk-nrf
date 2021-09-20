@@ -10,6 +10,33 @@ menuconfig CLOUD_MODULE
 
 if CLOUD_MODULE
 
+# Only a single cloud MQTT service is supported at a time.
+CLOUD_SERVICE_SELECTOR := choice
+
+# nRF Cloud A-GPS is enabled by default when building for all supported cloud transport services.
+# A-GPS takes precedence if both A-GPS and P-GPS are enabled at the same time. Therefore, A-GPS is
+# disabled when enabling P-GPS.
+config NRF_CLOUD_AGPS
+	default y if !NRF_CLOUD_PGPS
+
+# Enable MQTT clean session by default. This is to ensure that the configured cloud MQTT service
+# client library always subscribes to the necessary topics.
+config MQTT_CLEAN_SESSION
+	default y
+
+# Kconfig options that are specific to the nRF Cloud MQTT transport service library.
+if NRF_CLOUD_MQTT
+
+choice NRF_CLOUD_SEND_SOCKET
+	default NRF_CLOUD_SEND_TIMEOUT
+endchoice
+
+# MQTT Transport library
+config MQTT_CLEAN_SESSION
+	default y
+
+endif # NRF_CLOUD_MQTT
+
 config CLOUD_THREAD_STACK_SIZE
 	int "Cloud module thread stack size"
 	default 6144 if NRF_CLOUD_MQTT && DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT

@@ -37,7 +37,12 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_MODULE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_CLOUD_CONNECT_RETRIES < 14,
-	    "Cloud connect retries too large");
+	     "Cloud connect retries too large");
+
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
+	     IS_ENABLED(CONFIG_AWS_IOT)	       ||
+	     IS_ENABLED(CONFIG_AZURE_IOT_HUB),
+	     "A cloud transport service must be enabled");
 
 struct cloud_msg_data {
 	union {

@@ -47,7 +47,7 @@ config NRF_CLOUD_PORT
 config NRF_CLOUD_IPV6
 	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
 
-choice
+choice NRF_CLOUD_SEND_SOCKET
 	prompt "Socket behavior when sending"
 	default NRF_CLOUD_SEND_BLOCKING
 
