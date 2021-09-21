@@ -1,0 +1,9 @@
+sample:
+  name: HTTP application update sample
+tests:
+  samples.nrf9160.http_update.application_update:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    tags: ci_build
