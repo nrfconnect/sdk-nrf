@@ -84,6 +84,21 @@ static void date_time_notify_event(const struct date_time_evt *evt)
 	}
 }
 
+static void date_time_schedule_update(void)
+{
+	/* If periodic updates are requested in the configuration
+	 * and next update hasn't been already scheduled.
+	 */
+	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0 &&
+	    !k_work_delayable_is_pending(&time_work)) {
+
+		LOG_DBG("New date time update in: %d seconds",
+			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
+
+		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+	}
+}
+
 #if defined(CONFIG_DATE_TIME_MODEM)
 static int time_modem_get(void)
 {
@@ -105,7 +120,9 @@ static int time_modem_get(void)
 
 	/* Want to match 6 args */
 	if (rc != 6) {
-		LOG_ERR("Could not get cellular network time, error: %d", rc);
+		LOG_WRN("Did not get time from cellular network (error: %d). "
+			"This is normal as some cellular networks don't provide it or "
+			"time may not be available yet.", rc);
 		return rc;
 	}
 
@@ -121,6 +138,8 @@ static int time_modem_get(void)
 
 	time_aux.date_time_utc = (int64_t)timeutil_timegm64(&date_time) * 1000;
 	time_aux.last_date_time_update = k_uptime_get();
+
+	LOG_DBG("Time obtained from cellular network");
 
 	return 0;
 }
@@ -221,20 +240,19 @@ static int time_NTP_server_get(void)
 			MSEC_PER_SEC * CONFIG_DATE_TIME_NTP_QUERY_TIME_SECONDS,
 			&sntp_time);
 		if (err) {
-			LOG_DBG("Not getting time from NTP server %s, error %d",
+			LOG_DBG("Did not get time from NTP server %s, error %d",
 				log_strdup(servers[i].server_str), err);
 			LOG_DBG("Trying another address...");
 			continue;
 		}
-
-		LOG_DBG("Got time response from NTP server %s",
+		LOG_DBG("Time obtained from NTP server %s",
 			log_strdup(servers[i].server_str));
 		time_aux.date_time_utc = (int64_t)sntp_time.seconds * 1000;
 		time_aux.last_date_time_update = k_uptime_get();
 		return 0;
 	}
 
-	LOG_WRN("Not getting time from any NTP server");
+	LOG_WRN("Did not get time from any NTP server");
 
 	return -ENODATA;
 }
@@ -248,8 +266,9 @@ static int current_time_check(void)
 		return -ENODATA;
 	}
 
-	if ((k_uptime_get() - time_aux.last_date_time_update) >
-	    CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS * 1000) {
+	if ((k_uptime_get() - time_aux.last_date_time_update) >=
+	    CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS * MSEC_PER_SEC) {
+
 		LOG_DBG("Current date time too old");
 		return -ENODATA;
 	}
@@ -268,8 +287,9 @@ static void new_date_time_get(void)
 
 		err = current_time_check();
 		if (err == 0) {
-			LOG_DBG("Time successfully obtained");
+			LOG_DBG("Using previously obtained time");
 			initial_valid_time = true;
+			date_time_schedule_update();
 			date_time_notify_event(&evt);
 			continue;
 		}
@@ -277,37 +297,33 @@ static void new_date_time_get(void)
 		LOG_DBG("Current time not valid");
 
 #if defined(CONFIG_DATE_TIME_MODEM)
-		LOG_DBG("Fallback on cellular network time");
+		LOG_DBG("Getting time from cellular network");
 
 		err = time_modem_get();
 		if (err == 0) {
-			LOG_DBG("Time from cellular network obtained");
 			initial_valid_time = true;
 			evt.type = DATE_TIME_OBTAINED_MODEM;
+			date_time_schedule_update();
 			date_time_notify_event(&evt);
 			continue;
 		}
-
-		LOG_DBG("Not getting cellular network time. "
-			"This is normal as some cellular networks don't provide it.");
 #endif
 #if defined(CONFIG_DATE_TIME_NTP)
-		LOG_DBG("Fallback on NTP server");
+		LOG_DBG("Getting time from NTP server");
 
 		err = time_NTP_server_get();
 		if (err == 0) {
-			LOG_DBG("Time from NTP server obtained");
 			initial_valid_time = true;
 			evt.type = DATE_TIME_OBTAINED_NTP;
+			date_time_schedule_update();
 			date_time_notify_event(&evt);
 			continue;
 		}
-
-		LOG_DBG("Not getting time from NTP server");
 #endif
-		LOG_DBG("Not getting time from any time source");
+		LOG_DBG("Did not get time from any time source");
 
 		evt.type = DATE_TIME_NOT_OBTAINED;
+		date_time_schedule_update();
 		date_time_notify_event(&evt);
 	}
 }
@@ -318,20 +334,15 @@ K_THREAD_DEFINE(time_thread, CONFIG_DATE_TIME_THREAD_STACK_SIZE,
 
 static void date_time_handler(struct k_work *work)
 {
-	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
-		k_sem_give(&time_fetch_sem);
-
-		LOG_DBG("New date time update in: %d seconds",
-			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
-
-		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
-	}
+	k_sem_give(&time_fetch_sem);
 }
 
 static int date_time_init(const struct device *unused)
 {
-	k_work_init_delayable(&time_work, date_time_handler);
-	k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
+		k_work_init_delayable(&time_work, date_time_handler);
+		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+	}
 
 	return 0;
 }
