@@ -282,7 +282,7 @@ This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`
 This approach saves data and energy costs related to maintaining multiple connections.
 
 .. note::
-   For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
+   |gps_tradeoffs|
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.

@@ -321,6 +321,9 @@ Also, note that due to satellite clock inaccuracies, not all functional satellit
 This means that the number of satellites having valid predicted Ephemerides reduces in number roughly after ten days.
 Hence, the GNSS module needs to download the Ephemeris data from the satellite broadcast if no predicted Ephemeris is found for that satellite to be able to use the satellite.
 
+.. note::
+   |gps_tradeoffs|
+
 nRF Cloud A-GPS compared with SUPL library
 ------------------------------------------
 
