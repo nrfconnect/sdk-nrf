@@ -184,7 +184,7 @@ static const struct modem_info_data mcc_data = {
 	.data_name	= MCC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= AT_PARAM_TYPE_STRING,
 };
 
 static const struct modem_info_data mnc_data = {
@@ -192,7 +192,7 @@ static const struct modem_info_data mnc_data = {
 	.data_name	= MNC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= AT_PARAM_TYPE_STRING,
 };
 
 static const struct modem_info_data cellid_data = {
