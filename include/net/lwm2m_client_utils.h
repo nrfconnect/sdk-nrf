@@ -74,12 +74,12 @@ void lwm2m_verify_modem_fw_update(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 /**
- * @brief Initialize Connection Monitor object
+ * @brief Initialize Connectivity Monitoring object
  */
 int lwm2m_init_connmon(void);
 
 /**
- * @brief Update Connection Monitor object
+ * @brief Update Connectivity Monitoring object
  */
 int lwm2m_update_connmon(void);
 #endif

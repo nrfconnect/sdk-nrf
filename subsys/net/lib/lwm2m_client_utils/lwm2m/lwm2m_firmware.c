@@ -15,9 +15,11 @@
 #include <net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
 #include <sys/reboot.h>
-
+#include <net/fota_download.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
+/* Firmware update needs access to internal functions as well */
+#include <lwm2m_engine.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
@@ -32,8 +34,13 @@ static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 #endif
 
 static int image_type;
+static char *fota_path;
+static char *fota_host;
+static int fota_sec_tag;
+static bool fota_download_finished;
 
 static struct k_work_delayable reboot_work;
+static struct k_work download_work;
 
 void client_acknowledge(void);
 
@@ -69,13 +76,17 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 		goto cleanup;
 	}
 
-	ret = dfu_target_done(true);
-	if (ret != 0) {
-		LOG_ERR("Failed to upgrade %s firmware.",
-			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
-				"modem" :
-				"application");
-		goto cleanup;
+	if (!fota_download_finished) {
+		/* Fota download client already handled this */
+		ret = dfu_target_done(true);
+		if (ret != 0) {
+			LOG_ERR("Failed to upgrade %s firmware.",
+				image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
+					"modem" :
+					"application");
+			goto cleanup;
+		}
+		fota_download_finished = false;
 	}
 
 	LOG_INF("Rebooting device");
@@ -205,15 +216,119 @@ cleanup:
 	return ret;
 }
 
+static void fota_download_callback(const struct fota_download_evt *evt)
+{
+	switch (evt->id) {
+	/* These two cases return immediately */
+	case FOTA_DOWNLOAD_EVT_PROGRESS:
+		LOG_DBG("DL progress %d", evt->progress);
+		return;
+	default:
+		return;
+
+	/* Following cases mark end of FOTA download */
+	case FOTA_DOWNLOAD_EVT_CANCELLED:
+	case FOTA_DOWNLOAD_EVT_ERROR:
+		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
+		lwm2m_firmware_set_update_state(STATE_IDLE);
+		break;
+	case FOTA_DOWNLOAD_EVT_FINISHED:
+		LOG_INF("FOTA download finished");
+		lwm2m_firmware_set_update_state(STATE_DOWNLOADED);
+		fota_download_finished = true;
+		break;
+	}
+	k_free(fota_host);
+	fota_host = NULL;
+	fota_path = NULL;
+}
+
+static void start_fota_download(struct k_work *work)
+{
+	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, NULL, 0);
+
+	if (ret < 0) {
+		LOG_ERR("fota_download_start() failed, return code %d", ret);
+		lwm2m_firmware_set_update_state(STATE_IDLE);
+		k_free(fota_host);
+		fota_host = NULL;
+		fota_path = NULL;
+	}
+}
+
+static int write_dl_uri(uint16_t obj_inst_id,
+			uint16_t res_id, uint16_t res_inst_id,
+			uint8_t *data, uint16_t data_len,
+			bool last_block, size_t total_size)
+{
+	int ret;
+
+	LOG_INF("write URI: %s", log_strdup((char *) data));
+	ret = fota_download_init(fota_download_callback);
+	if (ret != 0) {
+		LOG_ERR("fota_download_init() returned %d", ret);
+		return -EBUSY;
+	}
+
+	if (fota_host) {
+		LOG_ERR("FOTA download already ongoing");
+		return -EBUSY;
+	}
+
+	fota_download_finished = false;
+
+	bool is_tls = strncmp((char *) data, "https://", 8) == 0 ||
+		      strncmp((char *) data, "coaps://", 8) == 0;
+	if (is_tls) {
+		fota_sec_tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
+	} else {
+		fota_sec_tag = -1;
+	}
+
+	/* Find the end of protocol marker https:// or coap:// */
+	char *s = strstr((char *) data, "://");
+
+	if (!s) {
+		LOG_ERR("Host not found");
+		return -EINVAL;
+	}
+	s += strlen("://");
+
+	/* Find the end of host name, which is start of path */
+	char  *e = strchr(s, '/');
+
+	if (!e) {
+		LOG_ERR("Path not found");
+		return -EINVAL;
+	}
+
+	/* Path can point to a string, which is kept in LwM2M engine's memory */
+	fota_path = e + 1; /* Skip the '/' from path */
+	int len = e - (char *) data;
+
+	/* For host, I need to allocate space, as I need to copy the substring */
+	fota_host = k_malloc(len + 1);
+	if (!fota_host) {
+		LOG_ERR("Failed to allocate memory");
+		return -ENOMEM;
+	}
+	strncpy(fota_host, (char *)data, len);
+	fota_host[len] = 0;
+
+	k_work_submit(&download_work);
+	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
+	return 0;
+}
+
 int lwm2m_init_firmware(void)
 {
 	k_work_init_delayable(&reboot_work, reboot_work_handler);
-
+	k_work_init(&download_work, start_fota_download);
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	/* setup data buffer for block-wise transfer */
 	lwm2m_engine_register_pre_write_callback("5/0/0", firmware_get_buf);
+	lwm2m_engine_register_post_write_callback("5/0/1", write_dl_uri);
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
-
 	return 0;
 }
 
