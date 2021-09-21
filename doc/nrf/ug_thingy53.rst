@@ -9,6 +9,9 @@ Working with Thingy:53
 
 Nordic Thingy:53 is a battery-operated prototyping platform for IoT Systems.
 
+.. note::
+  |thingy53_unreleased|
+
 Thingy:53 integrates the following components:
 
 * nRF5340 SoC - Supporting Bluetooth® Low Energy, IEEE 802.15.4 based protocols and Near Field Communication (NFC).
