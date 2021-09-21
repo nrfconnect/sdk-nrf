@@ -13,11 +13,11 @@ Once the device is connected, the library supports the querying the device to re
 The library provides a basic combination of LwM2M objects, which forms a common communication framework for applications that communicate with an LwM2M server.
 Following are the fixed set of readily initialized objects that are available to the users:
 
-* Firmware object
-* Connection monitoring object
+* Firmware Update object
+* Connectivity Monitoring object
 * Device object
 * Location object
-* Security object
+* LwM2M Security object
 
 These objects do not indicate a complete set of resources that a device is expected to support.
 Based on the use case, a user application can, and is expected to, define additional set of resources based on the capabilities of the device.
@@ -32,17 +32,19 @@ By default, the library uses LTE-M for connecting and it does not utilize a boot
 The library does not use LwM2M Queue mode also.
 To use NB-IoT, a bootstrap server, or the queue mode, follow the implementation details described in the :ref:`lwm2m_client` sample.
 
-Configure the following parameters when using this library:
+Enable the following parameters when using this library:
 
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS` enabled
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` enabled
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT` enabled
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` enabled
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT` enabled
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS`
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT`
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT`
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT`
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT`
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT`
 
-Support for the objects can be set individually but are enabled by default.
-Disable the :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``reboot`` resource on your application because of a mandatory requirement.
+Support for the objects are enabled by default but they can be set individually.
+Disable the :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``Reboot`` resource on your application because of a mandatory requirement.
+
+If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
 
 Defining custom objects
 ***********************
@@ -68,7 +70,7 @@ To define custom objects, complete the following steps:
 #. Pass the resource information to the LwM2M client utils library to register callbacks for the resource and to publish the sensor data.
 
 The following example describes how you can define an object that follows the Generic Sensor definition from IPSO.
-To enable the support for Generic Sensor set the Kconfig option :kconfig:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
+To enable the support for Generic Sensor, set the Kconfig option :kconfig:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
 
 To define an object that follows the Generic Sensor definition, complete the following steps:
 

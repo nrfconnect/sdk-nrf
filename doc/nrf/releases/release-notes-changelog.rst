@@ -73,6 +73,10 @@ nRF9160
       * The possibility to send to and receive from nRF Cloud JSON messages in data mode.
       * The ability to read out the ``sec_tag`` and the UUID of the device.
 
+  * :ref:`lib_lwm2m_client_utils` library:
+
+    * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
+
 nRF5
 ====
 

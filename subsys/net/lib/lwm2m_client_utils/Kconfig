@@ -47,6 +47,18 @@ config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 	select FLASH
 	select MPU_ALLOW_FLASH_WRITE
 
+if LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
+	int "Security tag for FOTA download library"
+	default 16842753
+	help
+	  This security tag is used when firmware image is fetch from
+	  https:// or coaps:// URI. It has no effect on usage of http:// or coap://
+	  -1 disables the usage of security tag.
+
+endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library
