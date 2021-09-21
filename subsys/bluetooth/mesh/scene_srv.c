@@ -868,6 +868,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 			  struct bt_mesh_model_transition *transition)
 {
 	int32_t transition_time;
+	uint16_t curr;
 	char path[25];
 	int err;
 
@@ -881,10 +882,21 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 		return -ENOENT;
 	}
 
+	curr = current_scene(srv);
+	if (scene == curr) {
+		srv->prev = scene;
+		srv->next = BT_MESH_SCENE_NONE;
+		srv->transition.time = 0;
+		srv->transition.delay = 0;
+		/* We're checking srv->next in the handler, so failure to cancel is okay: */
+		(void)k_work_cancel_delayable(&srv->work);
+		return 0;
+	}
+
 	transition_time = bt_mesh_model_transition_time(transition);
 	if (transition_time) {
 		srv->transition = *transition;
-		srv->prev = current_scene(srv);
+		srv->prev = curr;
 		srv->next = scene;
 		k_work_reschedule(&srv->work, K_MSEC(transition_time));
 	} else {
