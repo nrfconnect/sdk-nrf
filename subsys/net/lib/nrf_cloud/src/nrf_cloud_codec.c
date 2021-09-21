@@ -189,7 +189,9 @@ static int json_format_modem_info_data_obj(cJSON *const data_obj,
 	    json_add_num_cs(data_obj, NRF_CLOUD_JSON_AREA_CODE_KEY,
 		modem_info->network.area_code.value) ||
 	    json_add_num_cs(data_obj, NRF_CLOUD_JSON_CELL_ID_KEY,
-		(uint32_t)modem_info->network.cellid_dec)) {
+		(uint32_t)modem_info->network.cellid_dec) ||
+	    json_add_num_cs(data_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
+		RSRP_ADJ(modem_info->network.rsrp.value))) {
 		return -ENOMEM;
 	}
 
