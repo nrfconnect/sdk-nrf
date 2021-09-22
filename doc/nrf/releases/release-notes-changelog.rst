@@ -326,6 +326,7 @@ Updated:
 * :ref:`caf_power_manager` documentation page with the state transition diagram.
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 * The :ref:`caf_power_manager` now has a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
+* Extended the functionality of the :ref:`caf_sensor_sampler` with passive and active power management.
 
 Modem libraries
 ---------------
