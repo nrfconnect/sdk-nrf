@@ -13,4 +13,6 @@ manifest:
       revision: master-prd
       import:
         name-blocklist: [sdk-nrf]
+      userdata:
+        downstream: always
 
