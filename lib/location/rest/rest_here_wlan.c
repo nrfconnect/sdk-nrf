@@ -46,12 +46,13 @@ static int here_wlan_rest_pos_req_json_format(
 {
 	cJSON *wlan_array = NULL;
 	cJSON *wlan_info_obj = NULL;
-	cJSON *mac_address_obj = NULL;
 
 	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
-
+	/* Based on:
+	 * https://developer.here.com/documentation/positioning-api/dev_guide/topics/construct-locate-request.html
+	 */
 	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
 	if (!wlan_array) {
 		goto cleanup;
@@ -62,13 +63,14 @@ static int here_wlan_rest_pos_req_json_format(
 
 		wlan_info_obj = cJSON_CreateObject();
 
-		mac_address_obj = cJSON_CreateString(current_result.mac_addr_str);
-		if (!mac_address_obj) {
+		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "mac", current_result.mac_addr_str)) {
 			goto cleanup;
 		}
-		cJSON_AddItemToObject(wlan_info_obj, "mac", mac_address_obj);
 
-		//TODO: RSSI: key: "rss"
+		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "rss", current_result.rssi)) {
+			goto cleanup;
+		}
+
 		if (!cJSON_AddItemToArray(wlan_array, wlan_info_obj)) {
 			cJSON_Delete(wlan_info_obj);
 			goto cleanup;
