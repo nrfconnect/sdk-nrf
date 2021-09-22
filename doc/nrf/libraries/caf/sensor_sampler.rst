@@ -55,6 +55,7 @@ To do so, complete the following steps:
    * :c:member:`sensor_config.chan_cnt` - Size of the :c:member:`sensor_config.chans` array.
    * :c:member:`sensor_config.sampling_period_ms` - Sensor sampling period, in milliseconds.
    * :c:member:`sensor_config.active_events_limit` - Maximum number of unprocessed :c:struct:`sensor_event`.
+   * :c:member:`sensor_config.suspend_pm_state` - The power state to be set for the sensor when it receives a suspend event.
 
    For example, the file content could look like follows:
 

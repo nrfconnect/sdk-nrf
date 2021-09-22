@@ -11,6 +11,23 @@ menuconfig CAF_SENSOR_SAMPLER
 
 if CAF_SENSOR_SAMPLER
 
+config CAF_SENSOR_SAMPLER_PM
+	bool "Sensor sampler passive power management"
+	depends on CAF_POWER_MANAGER
+	default y
+	help
+	  This option enables reaction to power events in the sensor sampler module.
+
+config CAF_SENSOR_SAMPLER_ACTIVE_PM
+	bool "Sensor sampler active power management"
+	depends on CAF_SENSOR_SAMPLER_PM
+	select CAF_POWER_MANAGER_EVENTS
+	default y
+	help
+	  This option allows sensor sampler to actively manage the power.
+	  Sensor sampler generates power events depending on the sensors data,
+	  state and configuration.
+
 config CAF_SENSOR_SAMPLER_DEF_PATH
 	string "Configuration file"
 	default "sensor_sampler_def.h"

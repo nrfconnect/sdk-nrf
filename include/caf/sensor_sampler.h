@@ -29,19 +29,76 @@ struct trigger {
 	struct trigger_activation activation;
 };
 
+/**
+ * @brief Description of single channel
+ *
+ * The description of the channel to do the measurement on.
+ */
 struct sampled_channel {
+	/** @brief Channel identifier */
 	enum sensor_channel chan;
+	/** @brief Number of data samples in selected channel */
 	uint8_t data_cnt;
 };
 
+/**
+ * @brief Sensor configuration
+ *
+ * The sensor configuration is provided by the application in file specified by
+ * the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH` option.
+ */
 struct sensor_config {
+	/**
+	 * @brief Device name
+	 *
+	 * The device name that would be used to access the interface
+	 * using device_get_binding().
+	 */
 	const char *dev_name;
+	/**
+	 * @brief Event descriptor
+	 *
+	 * Descriptor that would be used to identify source of sensor_events
+	 * by the application modules.
+	 */
 	const char *event_descr;
+	/**
+	 * @brief Used channels description
+	 *
+	 * Channels in the sensor that should be handled by sensor sampler module
+	 */
 	const struct sampled_channel *chans;
+	/**
+	 * @brief Number of channels
+	 *
+	 * Number of channels handled for the sensor
+	 */
 	uint8_t chan_cnt;
+	/**
+	 * @brief Allowed number of unprocessed events
+	 *
+	 * This is a protection against OOM error when event processing is blocked.
+	 * No more events related to this sensor than the number defined would
+	 * be passed to event manager.
+	 */
 	uint8_t active_events_limit;
+	/**
+	 * @brief Sampling period
+	 */
 	unsigned int sampling_period_ms;
+	/**
+	 * @brief Sensor trigger configuration
+	 *
+	 * Trigger is used for sensor activity checking and to wake up
+	 * from suspend.
+	 */
 	struct trigger *trigger;
+	/**
+	 * @brief Power state used to suspend sensor
+	 *
+	 * This power state would be set when sensor is suspended
+	 */
+	enum pm_device_state suspend_pm_state;
 };
 
 #ifdef __cplusplus
