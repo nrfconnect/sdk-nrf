@@ -17,6 +17,7 @@
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agps.h>
+#include <stdlib.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
@@ -142,9 +143,9 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-static int method_gnss_get_modem_info(struct modem_param_info *const modem_info)
+static int method_gnss_get_modem_info(struct lte_lc_cell *serving_cell)
 {
-	__ASSERT_NO_MSG(modem_info != NULL);
+	__ASSERT_NO_MSG(serving_cell != NULL);
 
 	int err = modem_info_init();
 
@@ -154,19 +155,39 @@ static int method_gnss_get_modem_info(struct modem_param_info *const modem_info)
 		return err;
 	}
 
-	err = modem_info_params_init(modem_info);
-	if (err) {
-		LOG_ERR("Could not initialize modem info parameters, error: %d",
-			err);
+	char resp_buf_cellid[MODEM_INFO_MAX_RESPONSE_SIZE];
+	char resp_buf_tac[MODEM_INFO_MAX_RESPONSE_SIZE];
+	char resp_buf_cops[MODEM_INFO_MAX_RESPONSE_SIZE];
+
+	err = modem_info_string_get(MODEM_INFO_CELLID,
+				    resp_buf_cellid,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		LOG_ERR("Could not obtain cell id");
 		return err;
 	}
 
-	err = modem_info_params_get(modem_info);
-	if (err) {
-		LOG_ERR("Could not obtain cell information, error: %d",
-			err);
+	err = modem_info_string_get(MODEM_INFO_AREA_CODE,
+				    resp_buf_tac,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		LOG_ERR("Could not obtain tracking area code");
 		return err;
 	}
+
+	/* Request for MODEM_INFO_MNC returns both MNC and MCC in the same string. */
+	err = modem_info_string_get(MODEM_INFO_MNC, resp_buf_cops, MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		LOG_ERR("Could not obtain current operator information");
+		return err;
+	}
+
+	serving_cell->id = strtol(resp_buf_cellid, NULL, 16);
+	serving_cell->tac = strtol(resp_buf_tac, NULL, 16);
+	serving_cell->mnc = strtol(&resp_buf_cops[3], NULL, 10);
+	/* Null-terminated MCC, read and store it. */
+	resp_buf_cops[3] = '\0';
+	serving_cell->mcc = strtol(resp_buf_cops, NULL, 10);
 
 	return 0;
 }
@@ -183,10 +204,6 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 		.fragment_size = 0
 	};
 
-	/* TODO: Consider using something else than modem info, because struct modem_param_info is
-	 * huge. That's why the memory here is allocated statically.
-	 */
-	static struct modem_param_info modem_info = {0};
 	struct nrf_cloud_rest_agps_request request = {
 						      NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
 						      &agps_request,
@@ -194,17 +211,12 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	struct lte_lc_cell serving_cell = {0};
 	struct lte_lc_cells_info net_info = {serving_cell, 0, NULL};
 
-	int err = method_gnss_get_modem_info(&modem_info);
+	int err = method_gnss_get_modem_info(&serving_cell);
 
 	if (err) {
 		LOG_WRN("Requesting A-GPS data without location assistance");
 	} else {
 		/* Network info for the location request. */
-		serving_cell.mcc = modem_info.network.mcc.value;
-		serving_cell.mnc = modem_info.network.mnc.value;
-		serving_cell.id = modem_info.network.cellid_dec;
-		serving_cell.tac = modem_info.network.area_code.value;
-
 		net_info.current_cell = serving_cell;
 		request.net_info = &net_info;
 	}
