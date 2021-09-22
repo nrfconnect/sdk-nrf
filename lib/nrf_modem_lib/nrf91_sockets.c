@@ -18,6 +18,7 @@
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
+#include <nrf_gai_errors.h>
 #include <sockets_internal.h>
 #include <sys/fdtable.h>
 #include <zephyr.h>
@@ -485,21 +486,36 @@ static int z_to_nrf_protocol(int proto)
 	}
 }
 
-static int nrf_to_z_dns_error_code(int nrf_error)
+static int nrf_to_z_dns_error_code(int nrf_gai_err)
 {
-	switch (nrf_error) {
-	case NRF_ENOMEM:
-		return DNS_EAI_MEMORY;
-	case NRF_EAGAIN:
+	switch (nrf_gai_err) {
+	case NRF_EAI_ADDRFAMILY:
+		return DNS_EAI_ADDRFAMILY;
+	case NRF_EAI_AGAIN:
 		return DNS_EAI_AGAIN;
-	case NRF_EAFNOSUPPORT:
+	case NRF_EAI_BADFLAGS:
+		return DNS_EAI_BADFLAGS;
+	case NRF_EAI_FAIL:
+		return DNS_EAI_FAIL;
+	case NRF_EAI_FAMILY:
+		return DNS_EAI_FAMILY;
+	case NRF_EAI_MEMORY:
+		return DNS_EAI_MEMORY;
+	case NRF_EAI_NODATA:
+		return DNS_EAI_NODATA;
+	case NRF_EAI_NONAME:
 		return DNS_EAI_NONAME;
-	case NRF_EINPROGRESS:
+	case NRF_EAI_SERVICE:
+		return DNS_EAI_SERVICE;
+	case NRF_EAI_SOCKTYPE:
+		return DNS_EAI_SOCKTYPE;
+	case NRF_EAI_INPROGRESS:
 		return DNS_EAI_INPROGRESS;
-	case NRF_ENETUNREACH:
-		errno = ENETUNREACH;
-	default:
+	case NRF_EAI_SYSTEM:
 		return DNS_EAI_SYSTEM;
+	default:
+		__ASSERT(false, "Untranslated nrf_getaddrinfo() return value %d", nrf_gai_err);
+		return -1;
 	}
 }
 
