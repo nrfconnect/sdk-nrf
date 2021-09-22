@@ -18,6 +18,12 @@ function(generate_dfu_zip)
     message(FATAL_ERROR "Missing required param")
   endif()
 
+  get_filename_component(APPNAME ${APPLICATION_SOURCE_DIR} NAME)
+  if(CONFIG_BUILD_OUTPUT_META)
+    set(meta_info_file ${PROJECT_BINARY_DIR}/${KERNEL_META_NAME})
+    set(meta_argument --meta-info-file ${meta_info_file})
+  endif()
+
   add_custom_command(
     OUTPUT ${GENZIP_OUTPUT}
     COMMAND
@@ -25,11 +31,13 @@ function(generate_dfu_zip)
     ${NRF_DIR}/scripts/bootloader/generate_zip.py
     --bin-files ${GENZIP_BIN_FILES}
     --output ${GENZIP_OUTPUT}
+    --name "${APPNAME}"
+    ${meta_argument}
     ${GENZIP_SCRIPT_PARAMS}
     "type=${GENZIP_TYPE}"
     "board=${CONFIG_BOARD}"
     "soc=${CONFIG_SOC}"
-    DEPENDS ${GENZIP_BIN_FILES}
+    DEPENDS ${GENZIP_BIN_FILES} ${meta_info_file}
     )
 
   get_filename_component(TARGET_NAME ${GENZIP_OUTPUT} NAME)
