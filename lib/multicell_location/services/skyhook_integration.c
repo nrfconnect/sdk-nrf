@@ -164,11 +164,6 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 		return -EINVAL;
 	}
 
-	if (cell_data->current_cell.id == 0) {
-		LOG_WRN("No cells were found");
-		return -ENOENT;
-	}
-
 	err = modem_info_init();
 	if (err) {
 		LOG_ERR("modem_info_init failed, error: %d", err);

@@ -52,6 +52,10 @@ nRF9160
 
     * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
 
+  * :ref:`lte_lc_readme` library:
+
+    * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
+
 nRF5
 ====
 

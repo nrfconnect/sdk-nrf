@@ -226,10 +226,10 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		shell_print(shell_global, "Neighbor cell measurement results:");
 
 		/* Current cell: */
-		if (cur_cell.id) {
+		if (cur_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
 			char tmp_ta_str[12];
 
-			if (cur_cell.timing_advance == 65535) {
+			if (cur_cell.timing_advance == LTE_LC_CELL_TIMING_ADVANCE_INVALID) {
 				sprintf(tmp_ta_str, "\"not valid\"");
 			} else {
 				sprintf(tmp_ta_str, "%d", cur_cell.timing_advance);

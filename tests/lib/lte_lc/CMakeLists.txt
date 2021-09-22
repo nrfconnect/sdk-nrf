@@ -20,6 +20,7 @@ target_sources(app
 target_include_directories(app
   PRIVATE
   ${ZEPHYR_BASE}/../nrf/lib/lte_link_control/
+  ${ZEPHYR_BASE}/../nrf/include/modem/
 )
 
 target_compile_options(app

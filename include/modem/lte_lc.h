@@ -262,6 +262,8 @@ struct lte_lc_edrx_cfg {
 #define LTE_LC_CELL_EARFCN_MAX			262143
 #define LTE_LC_CELL_RSRP_INVALID		255
 #define LTE_LC_CELL_RSRQ_INVALID		255
+#define LTE_LC_CELL_EUTRAN_ID_INVALID		UINT32_MAX
+#define LTE_LC_CELL_EUTRAN_ID_MAX		268435455
 
 struct lte_lc_cell {
 	/** Mobile Country Code. */
@@ -270,7 +272,7 @@ struct lte_lc_cell {
 	/** Mobile Network Code. */
 	int mnc;
 
-	/** E-UTRAN cell ID. */
+	/** E-UTRAN cell ID, range 0 - LTE_LC_CELL_EUTRAN_ID_MAX */
 	uint32_t id;
 
 	/** Tracking area code. */
@@ -357,7 +359,8 @@ struct lte_lc_ncell {
 };
 
 /** @brief Structure containing results of neighbor cell measurements.
- *	   The current cell information is valid if the current cell ID is non-zero.
+ *	   The current cell information is valid if the current cell ID is not
+ *	   set to LTE_LC_CELL_EUTRAN_ID_INVALID.
  *	   The ncells_count member indicates whether or not the structure contains
  *	   valid neighbor cell information. If it is zero, no cells were found, and
  *	   the information in the rest of structure members do not contain valid data.

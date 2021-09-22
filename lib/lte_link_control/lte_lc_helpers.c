@@ -535,7 +535,7 @@ int parse_cereg(const char *at_response,
 		cell->id = strtoul(str_buf, NULL, 16);
 	} else if (cell) {
 		cell->tac = UINT32_MAX;
-		cell->id = UINT32_MAX;
+		cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	}
 
 	if (lte_mode) {
@@ -647,9 +647,10 @@ uint32_t neighborcell_count_get(const char *at_response)
 /* Parse NCELLMEAS notification and put information into struct lte_lc_cells_info.
  *
  * Returns 0 on successful cell measurements and population of struct.
- *	     A non-zero current cell ID indicates that current cell information
- *	     is valid. The ncells_count indicates for how many neighbor cells
- *	     the data is valid.
+ *	     The current cell information is valid if the current cell ID is
+ *	     not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
+ *	     The ncells_count indicates how many neighbor cells were parsed
+ *	     into the neighbor_cells array.
  * Returns 1 on measurement failure
  * Returns -E2BIG if not all cells were parsed due to memory limitations
  * Returns otherwise a negative error code.
@@ -671,6 +672,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	size_t param_count = get_char_frequency(at_response, ',') + 3;
 
 	cells->ncells_count = 0;
+	cells->current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 
 	err = at_params_list_init(&resp_list, param_count);
 	if (err) {
@@ -721,6 +723,9 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
+	if (tmp > LTE_LC_CELL_EUTRAN_ID_MAX) {
+		tmp = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	}
 	cells->current_cell.id = tmp;
 
 	/* PLMN */
