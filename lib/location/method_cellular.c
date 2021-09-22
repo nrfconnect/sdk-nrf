@@ -97,7 +97,6 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	}
 
 	ret = k_sem_take(&cellmeas_data_ready, K_SECONDS(60)); /* TODO: timeout to params? */
-
 	if (ret) {
 		LOG_WRN("Timeout for waiting cell measurements - cannot fetch location");
 		loc_core_event_cb_error();
@@ -110,8 +109,10 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			return;
 		}
 
-		/* TODO: pass a device id / IMEI (fetched runtime?) */
-		ret = multicell_location_get(&cell_data, NULL, &location);
+		ret = multicell_location_get(
+			&cell_data,
+			((strlen(CONFIG_LOCATION_DEVICE_ID)) ? CONFIG_LOCATION_DEVICE_ID : NULL),
+			&location);
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d",
 				ret);
