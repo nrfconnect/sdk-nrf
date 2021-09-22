@@ -38,6 +38,9 @@ BUILD_ASSERT(
 #define HTTPS_PORT 443
 
 /******************************************************************************/
+/* Based on:
+ * https://developer.here.com/documentation/positioning-api/dev_guide/topics/construct-locate-request.html
+ */
 
 static int here_wlan_rest_pos_req_json_format(
 	const struct wlan_scanning_result_info scanning_results[],
@@ -50,9 +53,6 @@ static int here_wlan_rest_pos_req_json_format(
 	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
-	/* Based on:
-	 * https://developer.here.com/documentation/positioning-api/dev_guide/topics/construct-locate-request.html
-	 */
 	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
 	if (!wlan_array) {
 		goto cleanup;
