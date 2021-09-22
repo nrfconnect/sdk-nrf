@@ -75,6 +75,9 @@ nrf_cloud_wlan_rest_pos_req_json_format(const struct wlan_scanning_result_info s
 			goto cleanup;
 		}
 
+		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "channel", scan_result.channel)) {
+			goto cleanup;
+		}
 		//TODO: frequency
 
 		if (!cJSON_AddItemToArray(wlan_info_array, wlan_info_obj)) {
