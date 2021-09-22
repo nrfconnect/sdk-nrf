@@ -89,6 +89,21 @@ config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_SEC_TAG
 	  Modem security tag which contains the JWT signing key for nRF Cloud.
 	  Usually the same as NRF_CLOUD_SEC_TAG but cannot put as depend on that
 	  because NRF_CLOUD lib not (currently) used with LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD.
+
+config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
+	bool "JWT generated on the fly based on device id"
+	default y
+	help
+	  If enabled, then JWT generated on the run time based on device id.
+	  Otherwise the value from CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_STRING
+	  is used.
+
+if !LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
+config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_STRING
+	string "JWT set at compile time (TODO: to be removed, only at dev time)"
+	default "Your JWT"
+endif
+
 endif # LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD
 
 if LOCATION_METHOD_WLAN_SERVICE_HERE

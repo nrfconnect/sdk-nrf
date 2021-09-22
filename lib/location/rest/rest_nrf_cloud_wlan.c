@@ -214,6 +214,7 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	char *auth_hdr = NULL;
 	char *jwt_str = NULL;
 	int ret = 0;
+#ifdef CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
 	struct jwt_data jwt = {
 		.subject = ((strlen(CONFIG_LOCATION_DEVICE_ID)) ? CONFIG_LOCATION_DEVICE_ID : NULL),
 		.audience = NULL,
@@ -225,13 +226,16 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 		.jwt_buf = NULL,
 		.jwt_sz = 0
 	};
-
 	ret = modem_jwt_generate(&jwt);
 	if (ret) {
 		LOG_ERR("Failed to generate JWT, error: %d", ret);
 		return ret;
 	}
 	jwt_str = jwt.jwt_buf;
+#else
+	/* TODO: this option shall be removed */
+	jwt_str = CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_STRING;
+#endif
 
 	/* Format auth header */
 	ret = nrf_cloud_rest_wlan_generate_auth_header(jwt_str, &auth_hdr);
@@ -239,7 +243,8 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 		LOG_ERR("Could not format HTTP auth header, err: %d", ret);
 		goto clean_up;
 	}
-	char *const headers[] = { HEADER_HOST, HEADER_CONTENT_TYPE, (char *const)auth_hdr,
+	char *const headers[] = { HEADER_HOST, HEADER_CONTENT_TYPE, HEADER_CONNECTION,
+				  (char *const)auth_hdr,
 				  /* Note: Content-length set according to payload */
 				  NULL };
 
@@ -283,8 +288,9 @@ clean_up:
 	if (body) {
 		cJSON_free(body);
 	}
+#ifdef CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
 	modem_jwt_free(jwt.jwt_buf);
 	jwt.jwt_buf = NULL;
-
+#endif
 	return ret;
 }
