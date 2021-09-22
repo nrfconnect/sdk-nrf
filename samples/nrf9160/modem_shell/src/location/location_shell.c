@@ -50,7 +50,7 @@ static const char location_get_usage_str[] =
 	"  --gnss_timeout,     GNSS timeout in seconds\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
 	"  --wlan_timeout,     WLAN timeout in seconds\n"
-	"  --wlan_service,     Used WLAN positioning service: 'here' (default), 'skyhook' or 'nrf'\n";
+	"  --wlan_service,     Used WLAN positioning service: 'nrf' (default), 'skyhook' or 'here'\n";
 
 /******************************************************************************/
 
@@ -202,7 +202,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum loc_method method_list[LOC_MAX_METHODS] = { 0 };
 	int method_count = 0;
 
-	enum loc_wlan_service wlan_service = LOC_WLAN_SERVICE_HERE;
+	enum loc_wlan_service wlan_service = LOC_WLAN_SERVICE_NRF_CLOUD;
 
 	int opt;
 	int ret = 0;
