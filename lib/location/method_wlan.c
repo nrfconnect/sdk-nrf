@@ -253,10 +253,11 @@ int method_wlan_location_get(const struct loc_method_config *config)
 		service_ok = true;
 	}
 #endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD)
 	if (wlan_config.service == LOC_WLAN_SERVICE_NRF_CLOUD) {
-		LOG_ERR("nRF Cloud location service is not supported for WLAN.");
-		return -EINVAL;
+		service_ok = true;
 	}
+#endif
 	if (!service_ok) {
 		LOG_ERR("Requested WLAN positioning service not configured on.");
 		return -EINVAL;

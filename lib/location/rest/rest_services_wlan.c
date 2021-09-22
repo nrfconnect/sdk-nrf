@@ -12,8 +12,15 @@
 
 #include <modem/location.h>
 
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
 #include "rest_here_wlan.h"
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
 #include "rest_skyhook_wlan.h"
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD)
+#include "rest_nrf_cloud_wlan.h"
+#endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -36,6 +43,13 @@ int rest_services_wlan_location_get(enum loc_wlan_service service,
 #if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
 	if (service == LOC_WLAN_SERVICE_SKYHOOK) {
 		ret = skyhook_rest_wlan_pos_get(loc_wlan_receive_buffer,
+						CONFIG_LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE,
+						request, result);
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD)
+	if (service == LOC_WLAN_SERVICE_NRF_CLOUD) {
+		ret = nrf_cloud_rest_wlan_pos_get(loc_wlan_receive_buffer,
 						CONFIG_LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE,
 						request, result);
 	}

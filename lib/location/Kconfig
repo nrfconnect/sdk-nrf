@@ -40,6 +40,13 @@ endif # NRF_CLOUD_AGPS
 
 if LOCATION_METHOD_WLAN
 
+config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD
+	bool "nRF Cloud location service"
+	default y
+	depends on MODEM_JWT
+	help
+	  Use HERE location service
+
 config LOCATION_METHOD_WLAN_SERVICE_HERE
 	bool "Wifi positioning using Here service"
 	default y
@@ -66,6 +73,24 @@ config LOCATION_METHOD_WLAN_REST_RECV_BUF_SIZE
 	  Size of the buffer used to store the response from the WLAN positioning
 	  service.
 
+if LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD
+config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_HOSTNAME
+	string "nRF Cloud REST API hostname"
+	default "api.nrfcloud.com"
+	help
+	  Server hostname to use when connecting to the selected locations service.
+	  Usually the same as NRF_CLOUD_REST_HOST_NAME but cannot put as depend on that
+	  because NRF_CLOUD lib not (currently) used with LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD.	  
+
+config LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_SEC_TAG
+	int "Security tag for JWT signing"
+	default 16842753
+	help
+	  Modem security tag which contains the JWT signing key for nRF Cloud.
+	  Usually the same as NRF_CLOUD_SEC_TAG but cannot put as depend on that
+	  because NRF_CLOUD lib not (currently) used with LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD.
+endif # LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD
+
 if LOCATION_METHOD_WLAN_SERVICE_HERE
 
 config LOCATION_METHOD_WLAN_SERVICE_HERE_HOSTNAME
@@ -87,7 +112,7 @@ config LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG
 	  service will be stored. TODO: ??? This sec tag will also be used to provision
 	  certificates when multicell_location_provision_certificate() is called.
 
-endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+endif # LOCATION_METHOD_WLAN_SERVICE_HERE
 
 if LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
 
@@ -113,6 +138,14 @@ config LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_TLS_SEC_TAG
 endif # LOCATION_METHOD_WLAN_SERVICE_SKYHOOK
 
 endif # LOCATION_METHOD_WLAN
+
+config LOCATION_DEVICE_ID
+	string "Device ID set at compile time"
+	default ""
+	help
+	  Set the device id that is used for JWT generation. This is needed if
+	  other than UUID was used as a Device ID with cloud key registering
+	  or provisioning.
 
 module = LOCATION
 module-str = Location
