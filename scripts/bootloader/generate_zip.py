@@ -7,6 +7,8 @@
 import argparse
 import json
 import time
+import yaml
+from pathlib import Path, PurePath
 from zipfile import ZipFile
 from os import path
 
@@ -21,6 +23,15 @@ def parse_args():
     parser.add_argument('--output', required=True, type=argparse.FileType(mode='w'), help='Output zip path')
     parser.add_argument('--bin-files', required=True, type=argparse.FileType(mode='r'), nargs='+',
                         help='Bin files to be stored in zip')
+    parser.add_argument('--meta-info-file', required=False,
+                        help='''File containg build meta info for an nRF Connect
+                        SDK build. The Zephyr and nRF Connect SDK revisions
+                        will be fetched from the build meta info file and
+                        append to the manifest content. The format of the file
+                        must follow the structure of the Zephyr build info meta
+                        file.''')
+    parser.add_argument('--name', required=False, help='Optional name to display to the user to help identify the '
+                        'purpose of this update')
     return parser.parse_known_args()
 
 
@@ -36,6 +47,27 @@ if __name__ == '__main__':
         'time': int(time.time()),
         'files': list()
     }
+
+    if args.name is not None:
+        manifest['name'] = args.name
+
+    if args.meta_info_file is not None:
+        meta_file = PurePath(args.meta_info_file)
+        if Path(meta_file).is_file():
+            with Path(meta_file).open('r') as f:
+                meta = yaml.safe_load(f.read())
+
+        zephyr_revision = meta.get('zephyr', {}).get('revision')
+        nrf_revision = None
+
+        for module in meta.get('modules', []):
+            if module.get('name') == 'nrf':
+                nrf_revision = module.get('revision')
+                break
+
+        firmware_revisions = {'zephyr': {'revision': zephyr_revision},
+                              'nrf': {'revision': nrf_revision}}
+        manifest['firmware'] = firmware_revisions
 
     shared_info = dict()
     special_info = dict()
