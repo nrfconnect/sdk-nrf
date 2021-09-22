@@ -56,7 +56,7 @@ enum loc_accuracy {
 
 /** WLAN positioning service. */
 enum loc_wlan_service {
-	/** nRF Cloud location service (note: NOT SUPPORTED!!!!). */
+	/** nRF Cloud location service. */
 	LOC_WLAN_SERVICE_NRF_CLOUD,
 	/**Here location service. */
 	LOC_WLAN_SERVICE_HERE,
