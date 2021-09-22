@@ -40,7 +40,12 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 		rest_ctx = (struct srest_req_resp_context *)user_data;
 	}
 
-	if (rsp->body_found && rsp->body_start) {
+	/* If the entire HTTP response is not received in a single "recv" call
+	 * then this could be called multiple times, with a different value in
+	 * rsp->body_start. Only set rest_ctx->response once, the first time,
+	 * which will be the start of the body.
+	 */
+	if (rest_ctx && !rest_ctx->response && rsp->body_found && rsp->body_start) {
 		rest_ctx->response = rsp->body_start;
 	}
 
@@ -48,8 +53,7 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 	 * We are not currently supporting partial data to be received
 	 */
 	if (final_data == HTTP_DATA_MORE) {
-		LOG_WRN("Partial data received(%zd bytes) - not supported and data discarded",
-			rsp->data_len);
+		LOG_WRN("Partial data received(%zd bytes)", rsp->data_len);
 	} else if (final_data == HTTP_DATA_FINAL) {
 		LOG_DBG("HTTP: All data received (len: %d), status: %u %s",
 			rsp->content_length, 
