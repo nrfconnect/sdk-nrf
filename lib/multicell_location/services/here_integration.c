@@ -145,11 +145,6 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 		return -EINVAL;
 	}
 
-	if (cell_data->current_cell.id == 0) {
-		LOG_WRN("No cells were found");
-		return -ENOENT;
-	}
-
 	if (neighbors_to_use == 0) {
 		len = snprintk(body, sizeof(body), HTTP_REQUEST_BODY_NO_NEIGHBORS,
 			       cell_data->current_cell.mcc,

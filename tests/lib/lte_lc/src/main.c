@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "lte_lc_helpers.h"
+#include "lte_lc.h"
 
 static void test_parse_edrx(void)
 {
@@ -408,6 +409,8 @@ static void test_parse_ncellmeas(void)
 
 	err = parse_ncellmeas(resp2, &cells);
 	zassert_equal(err, 1, "parse_ncellmeas was expected to return 1, but returned %d", err);
+	zassert_equal(cells.current_cell.id, LTE_LC_CELL_EUTRAN_ID_INVALID, "Wrong cell ID");
+	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
 
 	memset(&cells, 0, sizeof(cells));
 

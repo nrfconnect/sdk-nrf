@@ -192,7 +192,7 @@ static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 
 static bool is_cellid_valid(uint32_t cellid)
 {
-	if (cellid == UINT32_MAX) {
+	if (cellid == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 		return false;
 	}
 
@@ -423,7 +423,7 @@ static void at_handler(void *context, const char *response)
 			evt_handler(&evt);
 			break;
 		default:
-			LOG_ERR("Parsing of neighbour cells failed, err: %d", err);
+			LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
 			break;
 		}
 

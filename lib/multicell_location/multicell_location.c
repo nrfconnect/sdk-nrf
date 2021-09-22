@@ -216,6 +216,11 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 		return -EINVAL;
 	}
 
+	if (cell_data->current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+		LOG_WRN("Invalid cell ID, device may not be connected to a network");
+		return -ENOENT;
+	}
+
 	if (cell_data->ncells_count > CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS) {
 		LOG_WRN("Found %d neighbor cells, but %d cells will be used in location request",
 			cell_data->ncells_count, CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS);

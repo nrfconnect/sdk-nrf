@@ -84,7 +84,10 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			evt->cell.id, evt->cell.tac);
 
 		if (evt->cell.id != prev_cell_id) {
-			k_work_submit(&cell_change_search_work);
+			if (evt->cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
+				k_work_submit(&cell_change_search_work);
+			}
+
 			prev_cell_id = evt->cell.id;
 		}
 		break;
@@ -99,7 +102,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
 		LOG_INF("Neighbor cell measurements received");
 
-		if (evt->cells_info.current_cell.id == 0) {
+		if (evt->cells_info.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 			LOG_DBG("Cell ID not valid.");
 			break;
 		}
@@ -222,7 +225,7 @@ static void periodic_search_work_fn(struct k_work *work)
 
 static void print_cell_data(void)
 {
-	if (cell_data.current_cell.id == 0) {
+	if (cell_data.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 		LOG_WRN("No cells were found");
 		return;
 	}

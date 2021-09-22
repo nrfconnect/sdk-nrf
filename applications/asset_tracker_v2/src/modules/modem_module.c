@@ -215,8 +215,12 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		send_cell_update(evt->cell.id, evt->cell.tac);
 		break;
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
-		LOG_DBG("Neighbor cell measurements received");
-		send_neighbor_cell_update((struct lte_lc_cells_info *)&evt->cells_info);
+		if (evt->cells_info.current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
+			LOG_DBG("Neighbor cell measurements received");
+			send_neighbor_cell_update((struct lte_lc_cells_info *)&evt->cells_info);
+		} else {
+			LOG_DBG("Neighbor cell measurement was not successful");
+		}
 		break;
 	default:
 		break;
