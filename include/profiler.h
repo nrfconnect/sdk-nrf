@@ -19,9 +19,9 @@
 #include <sys/util.h>
 #include <sys/__assert.h>
 
-#ifndef CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS
+#ifndef CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS
 /** Maximum number of custom events. */
-#define CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS 0
+#define CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS 0
 #endif
 
 /** @brief Set of flags for enabling/disabling profiling for given event types.
@@ -103,7 +103,7 @@ static inline const char *profiler_get_event_descr(size_t profiler_event_id)
 static inline bool is_profiling_enabled(size_t profiler_event_id)
 {
 	if (IS_ENABLED(CONFIG_PROFILER)) {
-		__ASSERT_NO_MSG(profiler_event_id < CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS);
+		__ASSERT_NO_MSG(profiler_event_id < CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS);
 		return (profiler_enabled_events & BIT(profiler_event_id)) != 0;
 	}
 	return false;

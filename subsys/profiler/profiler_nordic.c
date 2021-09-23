@@ -32,8 +32,8 @@ enum nordic_command {
 	NORDIC_COMMAND_INFO	= 3
 };
 
-char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
-	  [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
+char descr[CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS]
+	  [CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
 static char *arg_types_encodings[] = {
 					"u8",  /* uint8_t */
 					"s8",  /* int8_t */
@@ -205,30 +205,30 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 	k_sched_lock();
 	uint8_t ne = profiler_num_events;
 	size_t temp = snprintf(descr[ne],
-			CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
+			CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
 			"%s,%d", name, ne);
 	size_t pos = temp;
 
-	__ASSERT_NO_MSG((pos < CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
+	__ASSERT_NO_MSG((pos < CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
 			 && (temp > 0));
 
 	for (size_t t = 0; t < arg_cnt; t++) {
 		temp = snprintf(descr[ne] + pos,
-			 CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS - pos,
+			 CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS - pos,
 			 ",%s", arg_types_encodings[arg_types[t]]);
 		pos += temp;
 		__ASSERT_NO_MSG(
-		  (pos < CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
+		  (pos < CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
 		   && (temp > 0));
 	}
 
 	for (size_t t = 0; t < arg_cnt; t++) {
 		temp = snprintf(descr[ne] + pos,
-			CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS - pos,
+			CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS - pos,
 			",%s", args[t]);
 		pos += temp;
 		__ASSERT_NO_MSG(
-		  (pos < CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
+		  (pos < CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS)
 		   && (temp > 0));
 	}
 	/* Memory barrier to make sure that data is visible
