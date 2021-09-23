@@ -172,6 +172,7 @@ Added:
 
 * :ref:`caf_preview_sample` sample.
 * :ref:`caf_ble_state_pm` CAF module.
+* :ref:`caf_buttons_pm_keep_alive`.
 
 Updated:
 

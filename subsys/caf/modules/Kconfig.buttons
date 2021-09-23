@@ -23,6 +23,14 @@ config CAF_BUTTONS_PM_EVENTS
 	depends on CAF_PM_EVENTS
 	default y
 
+config CAF_BUTTONS_PM_KEEP_ALIVE
+	bool "Generate keep alive power event on button press"
+	depends on CAF_POWER_MANAGER
+	select CAF_KEEP_ALIVE_EVENTS
+	default y
+	help
+	  Every button press would generate keep alive event.
+
 config CAF_BUTTONS_SCAN_INTERVAL
 	int "Buttons scan interval in ms"
 	default 2
