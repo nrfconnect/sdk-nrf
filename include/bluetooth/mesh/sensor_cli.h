@@ -527,14 +527,15 @@ int bt_mesh_sensor_cli_setting_set_unack(
 
 /** @brief Read sensor data from all sensors on a server.
  *
- *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  This call is blocking if the @c sensors buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
  *  bt_mesh_sensor_cli_handlers::data callback.
  *
  *  @param[in]  cli       Sensor client instance.
  *  @param[in]  ctx       Message context parameters, or NULL to use the
  *                        configured publish parameters.
- *  @param[in]  sensors   List of sensor data values.
+ *  @param[out] sensors   Array of the sensors data to fill with the response, or NULL
+ *                        to keep from blocking.
  *  @param[in,out] count  The number of elements in the @c sensors array.
  *                        Will be changed to reflect the resulting number
  *                        of elements in a list.
