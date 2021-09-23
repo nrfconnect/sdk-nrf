@@ -137,6 +137,14 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 		/* Prevent GNSS from starting while LTE is running. */
 		k_sem_reset(&entered_psm_mode);
 		break;
+	case LTE_LC_EVT_PSM_UPDATE:
+		/* If the PSM becomes disabled e.g. due to network change, allow GNSS to be started
+		 * in case there was a pending position request waiting for the sleep to start.
+		 */
+		if ((evt->psm_cfg.tau == -1) || (evt->psm_cfg.active_time == -1)) {
+			k_sem_give(&entered_psm_mode);
+		}
+		break;
 	default:
 		break;
 	}
