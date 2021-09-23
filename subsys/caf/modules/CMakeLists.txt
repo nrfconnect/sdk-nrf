@@ -14,6 +14,8 @@ zephyr_library_sources_ifdef(CONFIG_CAF_BLE_STATE_PM ble_state_pm.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BUTTONS buttons.c)
 
+zephyr_library_sources_ifdef(CONFIG_CAF_BUTTONS_PM_KEEP_ALIVE buttons_pm_keep_alive.c)
+
 zephyr_library_sources_ifdef(CONFIG_CAF_CLICK_DETECTOR click_detector.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_FACTORY_RESET_REQUEST factory_reset_request.c)
