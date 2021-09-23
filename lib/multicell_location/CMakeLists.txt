@@ -6,5 +6,4 @@
 
 zephyr_library()
 zephyr_library_sources(multicell_location.c)
-zephyr_library_sources_ifdef(CONFIG_MULTICELL_LOCATION_HTTP http_request.c)
 add_subdirectory(services)

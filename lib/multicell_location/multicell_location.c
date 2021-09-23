@@ -20,7 +20,6 @@
 #include <net/multicell_location.h>
 
 #include "location_service.h"
-#include "http_request.h"
 
 #include <logging/log.h>
 
@@ -31,7 +30,6 @@ LOG_MODULE_REGISTER(multicell_location, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NONE),
 	     "A location service must be enabled");
 
-static char http_request[CONFIG_MULTICELL_LOCATION_SEND_BUF_SIZE];
 static char recv_buf[CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE];
 
 
@@ -39,8 +37,6 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 			   const char * const device_id,
 			   struct multicell_location *location)
 {
-	int err;
-
 	if ((cell_data == NULL) || (location == NULL)) {
 		return -EINVAL;
 	}
@@ -56,38 +52,8 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 		LOG_WRN("Increase CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS to use more cells");
 	}
 
-	if (IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD)) {
-		return location_service_get_cell_location(cell_data, device_id, recv_buf,
-							  sizeof(recv_buf), location);
-	} else {
-		err = location_service_generate_request(cell_data, device_id,
-							http_request, sizeof(http_request));
-		if (err) {
-			LOG_ERR("Failed to generate HTTP request, error: %d", err);
-			return err;
-		}
-
-		LOG_DBG("Generated request:\n%s", log_strdup(http_request));
-
-		err = execute_http_request(http_request, strlen(http_request),
-					   recv_buf, sizeof(recv_buf));
-		if (err == -ETIMEDOUT) {
-			LOG_WRN("Data reception timed out, parsing potentially incomplete data");
-		} else if (err) {
-			LOG_ERR("HTTP request failed, error: %d", err);
-			return err;
-		}
-
-		LOG_DBG("Received response:\n%s", log_strdup(recv_buf));
-
-		err = location_service_parse_response(recv_buf, location);
-		if (err) {
-			LOG_ERR("Failed to parse HTTP response");
-			return -ENOMSG;
-		}
-	}
-
-	return 0;
+	return location_service_get_cell_location(
+		cell_data, device_id, recv_buf, sizeof(recv_buf), location);
 }
 
 int multicell_location_provision_certificate(bool overwrite)

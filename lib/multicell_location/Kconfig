@@ -217,13 +217,6 @@ config MULTICELL_LOCATION_RECV_BUF_SIZE
 	  Size of the buffer used to store the response from the location
 	  service.
 
-config MULTICELL_LOCATION_HTTP
-	bool
-	default y
-	help
-	  Use HTTP for requesting location from services. This exists here only
-	  to allow disabling of HTTP data transfer in tests for mocking purposes.
-
 module = MULTICELL_LOCATION
 module-str = Multicell location
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

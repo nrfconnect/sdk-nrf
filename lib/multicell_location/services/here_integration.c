@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <modem/lte_lc.h>
+#include <net/srest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 
@@ -25,13 +26,13 @@ LOG_MODULE_REGISTER(multicell_location_here, CONFIG_MULTICELL_LOCATION_LOG_LEVEL
 #define NEIGHBOR_ELEMENT_SIZE	36
 /* Neighbor buffer size that will hold all neighbor cell objects */
 #define NEIGHBOR_BUFFER_SIZE	(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS * NEIGHBOR_ELEMENT_SIZE)
-/* Estiamted size for HTTP request body */
+/* Estimated size for HTTP request body */
 #define HTTP_BODY_SIZE		(CURRENT_CELL_SIZE + NEIGHBOR_BUFFER_SIZE)
 
 #if IS_ENABLED(CONFIG_MULTICELL_LOCATION_HERE_V1)
-#define PATH		"/positioning/v1/locate"
+#define API_LOCATE_PATH		"/positioning/v1/locate"
 #elif IS_ENABLED(CONFIG_MULTICELL_LOCATION_HERE_V2)
-#define PATH		"/v2/locate"
+#define API_LOCATE_PATH		"/v2/locate"
 #endif
 
 #if IS_ENABLED(CONFIG_MULTICELL_LOCATION_HERE_USE_API_KEY)
@@ -45,12 +46,11 @@ BUILD_ASSERT(sizeof(API_APP_ID) > 1, "App ID must be configured");
 	"&app_id="CONFIG_MULTICELL_LOCATION_HERE_APP_ID
 #endif
 
-#define HTTP_REQUEST_HEADER						\
-	"POST "PATH"?"AUTHENTICATION" HTTP/1.1\r\n"			\
-	"Host: "HOSTNAME"\r\n"					        \
-	"Content-Type: application/json\r\n"				\
-	"Connection: close\r\n"						\
-	"Content-Length: %d\r\n\r\n"
+#define REQUEST_URL		API_LOCATE_PATH"?"AUTHENTICATION
+
+#define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
+#define HEADER_HOST            "Host: "HOSTNAME"\r\n"
+#define HEADER_CONNECTION      "Connection: close\r\n"
 
 #define HTTP_REQUEST_BODY						\
 	"{"								\
@@ -146,18 +146,12 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 	}
 
 	if (neighbors_to_use == 0) {
-		len = snprintk(body, sizeof(body), HTTP_REQUEST_BODY_NO_NEIGHBORS,
+		len = snprintk(buf, buf_len, HTTP_REQUEST_BODY_NO_NEIGHBORS,
 			       cell_data->current_cell.mcc,
 			       cell_data->current_cell.mnc,
 			       cell_data->current_cell.id);
-		if ((len < 0) || (len >= sizeof(body))) {
-			LOG_ERR("Too small buffer for HTTP request body");
-			return -ENOMEM;
-		}
-
-		len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", strlen(body), body);
 		if ((len < 0) || (len >= buf_len)) {
-			LOG_ERR("Too small buffer for HTTP request");
+			LOG_ERR("Too small buffer for HTTP request body");
 			return -ENOMEM;
 		}
 
@@ -193,19 +187,13 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 		strncat(neighbors, element, sizeof(neighbors) - strlen(neighbors));
 	}
 
-	len = snprintk(body, sizeof(body), HTTP_REQUEST_BODY,
+	len = snprintk(buf, buf_len, HTTP_REQUEST_BODY,
 		       cell_data->current_cell.mcc,
 		       cell_data->current_cell.mnc,
 		       cell_data->current_cell.id,
 		       neighbors);
-	if ((len < 0) || (len >= sizeof(body))) {
-		LOG_ERR("Too small buffer for HTTP request body");
-		return -ENOMEM;
-	}
-
-	len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", strlen(body), body);
 	if ((len < 0) || (len >= buf_len)) {
-		LOG_ERR("Too small buffer for HTTP request buffer");
+		LOG_ERR("Too small buffer for HTTP request body");
 		return -ENOMEM;
 	}
 
@@ -216,7 +204,6 @@ int location_service_parse_response(const char *response, struct multicell_locat
 {
 	int err;
 	struct cJSON *root_obj, *location_obj, *lat_obj, *lng_obj, *accuracy_obj;
-	char *json_start, *http_status;
 	static bool cjson_is_init;
 
 	if ((response == NULL) || (location == NULL)) {
@@ -229,28 +216,12 @@ int location_service_parse_response(const char *response, struct multicell_locat
 		cjson_is_init = true;
 	}
 
-
-	/* The expected response format is the following:
+	/* The expected body format of the response is the following:
 	 *
-	 * HTTP/1.1 <HTTP status, 200 OK if successful>
-	 * <Additional HTTP header elements>
-	 * <\r\n\r\n>
 	 * {"location":{"lat":<latitude>,"lng":<longitude>,"accuracy":<accuracy>}}
 	 */
 
-	http_status = strstr(response, "HTTP/1.1 200");
-	if (http_status == NULL) {
-		LOG_ERR("HTTP status was not \"200\"");
-		return -1;
-	}
-
-	json_start = strstr(response, "\r\n\r\n");
-	if (json_start == NULL) {
-		LOG_ERR("No payload found");
-		return -1;
-	}
-
-	root_obj = cJSON_Parse(json_start);
+	root_obj = cJSON_Parse(response);
 	if (root_obj == NULL) {
 		LOG_ERR("Could not parse JSON in payload");
 		return -1;
@@ -297,5 +268,63 @@ int location_service_parse_response(const char *response, struct multicell_locat
 clean_exit:
 	cJSON_Delete(root_obj);
 
+	return err;
+}
+
+int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
+				       const char * const device_id,
+				       char * const rcv_buf, const size_t rcv_buf_len,
+				       struct multicell_location *const location)
+{
+	int err;
+	struct srest_req_resp_context rest_ctx = { 0 };
+	char *const headers[] = {
+		HEADER_HOST,
+		HEADER_CONTENT_TYPE,
+		HEADER_CONNECTION,
+		/* Note: Content-length set according to payload in HTTP library */
+		NULL
+	};
+
+	err = location_service_generate_request(cell_data, device_id, body, sizeof(body));
+	if (err) {
+		LOG_ERR("Failed to generate HTTP request, error: %d", err);
+		return err;
+	}
+
+	LOG_DBG("Generated request body:\r\n%s", log_strdup(body));
+
+	/* Set the defaults: */
+	srest_client_request_defaults_set(&rest_ctx);
+	rest_ctx.http_method = HTTP_POST;
+	rest_ctx.url = REQUEST_URL;
+	rest_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG;
+	rest_ctx.port = CONFIG_MULTICELL_LOCATION_HTTPS_PORT;
+	rest_ctx.host = CONFIG_MULTICELL_LOCATION_HOSTNAME;
+	rest_ctx.header_fields = (const char **)headers;
+	rest_ctx.resp_buff = rcv_buf;
+	rest_ctx.resp_buff_len = rcv_buf_len;
+
+	/* Get the body/payload to request: */
+	rest_ctx.body = body;
+
+	err = srest_client_request(&rest_ctx);
+	if (err) {
+		LOG_ERR("Error from srest client lib, err: %d", err);
+		return err;
+	}
+
+	if (rest_ctx.http_status_code != SREST_HTTP_STATUS_OK) {
+		LOG_ERR("HTTP status: %d", rest_ctx.http_status_code);
+		/* Let it fail in parsing */
+	}
+
+	LOG_DBG("Received response body:\r\n%s", log_strdup(rest_ctx.response));
+
+	err = location_service_parse_response(rest_ctx.response, location);
+	if (err) {
+		LOG_ERR("Failed to parse HTTP response");
+		return -ENOMSG;
+	}
 	return err;
 }
