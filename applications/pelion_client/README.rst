@@ -301,6 +301,47 @@ The internal procedures refer to situations where both connection types interact
 
 The state transitions are related to the LED behavior, as described in `User interface`_.
 
+Requirements
+************
+
+The application supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840
+
+The nRF Pelion Client application is configured to compile and run as a non-secure application on nRF91's and nRF5340's Cortex-M33.
+Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
+
+Pelion Device Management requirements
+=====================================
+
+You need a developer account on `Pelion Device Management Portal`_.
+
+.. _pelion_client_reqs_build_types:
+
+nRF Pelion Client build types
+=============================
+
+The nRF Pelion Client application does not use a single :file:`prj.conf` file.
+Configuration files are provided for different build types for each supported board.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by nRF Pelion Client application, depending on your development kit and the building method.
+The application supports the following build types:
+
+* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
+* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+
+For more information, see the `Configuration files`_ section.
+
 User interface
 **************
 
@@ -346,47 +387,6 @@ The following table shows the LED behavior demonstrated by the application:
 +-------------------------------+------------------------------------+--------------------------------------------------------------------------------+
 
 See `Application states`_ for an overview of the application state transitions.
-
-Requirements
-************
-
-The application supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840
-
-The nRF Pelion Client application is configured to compile and run as a non-secure application on nRF91's and nRF5340's Cortex-M33.
-Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
-
-Pelion Device Management requirements
-=====================================
-
-You need a developer account on `Pelion Device Management Portal`_.
-
-.. _pelion_client_reqs_build_types:
-
-nRF Pelion Client build types
-=============================
-
-The nRF Pelion Client application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types for each supported board.
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
-
-Before you start testing the application, you can select one of the build types supported by nRF Pelion Client application, depending on your development kit and the building method.
-The application supports the following build types:
-
-* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
-* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
-
-For more information, see the `Configuration files`_ section.
 
 Configuration
 *************

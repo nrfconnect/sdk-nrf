@@ -96,6 +96,76 @@ For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not ena
 
 See :ref:`nrf_machine_learning_app_internal_modules` for detailed information about every module used by the nRF Machine Learning application.
 
+Requirements
+************
+
+The application supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy52_nrf52832, thingy53_nrf5340_cpuapp, nrf52840dk_nrf52840
+
+The available configurations use only built-in sensors or the simulated sensor signal.
+There is no need to connect any additional components to the board.
+
+Programming Thingy:52
+=====================
+
+The Thingy:52 does not have the J-Link debug IC and the application configuration does not use a bootloader.
+Use an external debugger to program the firmware.
+See :ref:`zephyr:thingy52_nrf52832` documentation for details.
+
+Programming Thingy:53
+=====================
+
+|thingy53_sample_note|
+
+Custom model requirements
+=========================
+
+The default application configurations rely on pretrained machine learning models that can be automatically downloaded during the application build.
+If you want to train and deploy a custom machine learning model using `Edge Impulse Studio`_, you need a user account for the Edge Impulse Studio web-based tool.
+The user account is not needed to perform predictions using the pretrained models.
+
+Data forwarding requirements
+============================
+
+To forward the collected data using `Edge Impulse's data forwarder`_, you must install the Edge Impulse CLI.
+See `Edge Impulse CLI installation guide`_ for instructions.
+
+Nordic UART Service requirements
+--------------------------------
+
+If you want to forward data over Nordic UART Service (NUS), you need an additional development kit that is able to run the :ref:`central_uart` sample.
+Check the sample Requirements section for the list of supported development kits.
+The sample is used to receive data over NUS and forward it to the host computer over UART.
+See `Testing with Thingy devices`_ for how to test this solution.
+
+.. _nrf_machine_learning_app_requirements_build_types:
+
+nRF Machine Learning build types
+================================
+
+The nRF Machine Learning application does not use a single :file:`prj.conf` file.
+Configuration files are provided for different build types for each supported board.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
+The application supports the following build types:
+
+* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
+* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+
+The given board can also support some additional configurations of the nRF Machine Learning application.
+For example, the nRF52840 Development Kit supports ``ZDebugNUS`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+
 User interface
 **************
 
@@ -174,77 +244,6 @@ By default, the application uses the following LED effects:
     * LED blinks slowly if it is not connected.
     * LED blinks with an average frequency if it is connected, but is not actively forwarding data.
     * LED blinks rapidly if it is connected and is actively forwarding data.
-
-Requirements
-************
-
-The application supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy52_nrf52832, thingy53_nrf5340_cpuapp, nrf52840dk_nrf52840
-
-The available configurations use only built-in sensors or the simulated sensor signal.
-There is no need to connect any additional components to the board.
-
-Programming Thingy:52
-=====================
-
-The Thingy:52 does not have the J-Link debug IC and the application configuration does not use a bootloader.
-Use an external debugger to program the firmware.
-See :ref:`zephyr:thingy52_nrf52832` documentation for details.
-
-Programming Thingy:53
-=====================
-
-|thingy53_sample_note|
-
-Custom model requirements
-=========================
-
-The default application configurations rely on pretrained machine learning models that can be automatically downloaded during the application build.
-If you want to train and deploy a custom machine learning model using `Edge Impulse Studio`_, you need a user account for the Edge Impulse Studio web-based tool.
-The user account is not needed to perform predictions using the pretrained models.
-
-Data forwarding requirements
-============================
-
-To forward the collected data using `Edge Impulse's data forwarder`_, you must install the Edge Impulse CLI.
-See `Edge Impulse CLI installation guide`_ for instructions.
-
-Nordic UART Service requirements
---------------------------------
-
-If you want to forward data over Nordic UART Service (NUS), you need an additional development kit that is able to run the :ref:`central_uart` sample.
-Check the sample Requirements section for the list of supported development kits.
-The sample is used to receive data over NUS and forward it to the host computer over UART.
-See `Testing with Thingy devices`_ for how to test this solution.
-
-.. _nrf_machine_learning_app_requirements_build_types:
-
-nRF Machine Learning build types
-================================
-
-The nRF Machine Learning application does not use a single :file:`prj.conf` file.
-Instead, it comes with configuration files for different build types for each supported board.
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
-
-Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
-The application supports the following build types:
-
-* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
-* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
-
-|nrf_desktop_build_type_conf|
-For example, the nRF52840 Development Kit supports the ``ZDebugNUS`` configuration, which is defined in the :file:`app_ZDebugNUS.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
-This configuration uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
 
 .. _nrf_machine_learning_app_configuration:
 
@@ -460,24 +459,6 @@ You can port the nRF Machine Learning application to any board available in the 
 To do so, create the board-specific directory in :file:`applications/machine_learning/configuration/` and add the application configuration files there.
 See the :ref:`nrf_machine_learning_app_configuration` for detailed information about the nRF Machine Learning application configuration.
 
-Dependencies
-************
-
-The application uses the following Zephyr drivers and libraries:
-
-* :ref:`zephyr:sensor_api`
-* :ref:`zephyr:uart_api`
-
-The application uses the following |NCS| libraries and drivers:
-
-* :ref:`event_manager`
-* :ref:`lib_caf`
-* :ref:`ei_wrapper`
-* :ref:`nus_service_readme`
-
-In addition, you can use the :ref:`central_uart` sample together with the application.
-The sample is used to receive data over NUS and forward it to the host over UART.
-
 .. _nrf_machine_learning_app_internal_modules:
 
 Application internal modules
@@ -531,3 +512,21 @@ The nRF Machine Learning application also uses the following dedicated applicati
    This could happen, for example, if the selected sensor sampling frequency is too high for the used implementation of the Edge Impulse data forwarder.
    Data forwarding is stopped to make sure that dropping samples is noticed by the user.
    If you switch to running the machine learning model and then switch back to data forwarding, the data will be again forwarded to the host.
+
+Dependencies
+************
+
+The application uses the following Zephyr drivers and libraries:
+
+* :ref:`zephyr:sensor_api`
+* :ref:`zephyr:uart_api`
+
+The application uses the following |NCS| libraries and drivers:
+
+* :ref:`event_manager`
+* :ref:`lib_caf`
+* :ref:`ei_wrapper`
+* :ref:`nus_service_readme`
+
+In addition, you can use the :ref:`central_uart` sample together with the application.
+The sample is used to receive data over NUS and forward it to the host over UART.
