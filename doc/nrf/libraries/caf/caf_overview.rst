@@ -10,7 +10,9 @@ Common Application Framework overview
 Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`event_manager`.
 Using CAF allows you to have a consistent event-based architecture in your application.
 
-An example of the application that is using the CAF modules in |NCS| is :ref:`nrf_desktop`.
+You can check the :ref:`caf_preview_sample` for a demonstration of how to add ready-for-use and custom CAF modules into an application.
+
+.. _caf_overview_architecture:
 
 Architecture
 ************
@@ -33,37 +35,39 @@ In your application, you can use any number of CAF modules together with your ow
 Custom modules can use both CAF and custom events.
 The figure shows an example application that uses one CAF module and one custom module, which has one custom event.
 
+.. _caf_overview_enabling:
+
 Enabling CAF
 ************
 
-To enable CAF, complete the following steps:
+To enable CAF, you need to enable the required Kconfig option and enable and initialize Event Manager.
+You then must submit the first ``module_state_event``, because CAF modules are initialized when they receive a :c:struct:`module_state_event` that reports ``MODULE_STATE_READY`` of the module ``main``.
+
+complete the following steps:
 
 1. Enable :kconfig:`CONFIG_CAF` Kconfig option in your project configuration file.
 #. Enable and initialize Event Manager.
    See :ref:`event_manager_configuration` for more details.
-#. Submit the first :c:struct:`module_state_event`.
+#. Submit the first :c:struct:`module_state_event`:
 
-Submit ``module_state_event``
-=============================
+   a. Add the following in your :file:`main.c` file:
 
-CAF modules are initialized when they receive a :c:struct:`module_state_event` that reports ``MODULE_STATE_READY`` of the module ``main``.
-For this to happen, you need to do the following:
+      .. code-block:: c
 
-1. Add the following in your :file:`main.c` file:
+         #define MODULE main
+         #include <caf/events/module_state_event.h>
 
-.. code-block:: c
+   #. Call the following function after Event Manager is initialized:
 
-   #define MODULE main
-   #include <caf/events/module_state_event.h>
+      .. code-block:: c
 
-#. Call the following function after Event Manager is initialized:
+         module_set_state(MODULE_STATE_READY);
 
-.. code-block:: c
+      This function call submits the required :c:struct:`module_state_event`.
 
-   module_set_state(MODULE_STATE_READY);
+   For an example implementation, see :file:`applications/nrf_desktop/src/main.c`.
 
-This function call submits the required :c:struct:`module_state_event`.
-For an example implementation, see :file:`applications/nrf_desktop/src/main.c`.
+.. _caf_overview_modules:
 
 CAF modules
 ***********
@@ -73,6 +77,8 @@ Each of these modules is available for use out of the box and needs to be enable
 
 There is no limit to the number of modules and events that can be used.
 However, Event Manager sets the limit of event types in an application to 32, and CAF inherits this limitation.
+
+.. _caf_overview_modules_configuration:
 
 Configuration of CAF modules
 ============================
@@ -89,8 +95,10 @@ When configuring CAF modules, you will be asked to use the following configurati
 CAF modules can use all or some of these methods.
 For example, enabling the :ref:`caf_ble_adv` requires enabling Kconfig options and creating a configuration file, while :ref:`caf_ble_state` can be configured using only Kconfig options.
 
+.. _caf_overview_modules_custom:
+
 Adding custom modules
-*********************
+=====================
 
 As part of your application, you can add your own custom modules.
 These modules can communicate using Event Manager's events.
@@ -104,6 +112,8 @@ However, if you want to add custom modules that communicate with CAF modules usi
 
 .. note::
     If you want a module to react to a CAF event, check the event's documentation for information about the event.
+
+.. _caf_overview_events:
 
 CAF events
 **********

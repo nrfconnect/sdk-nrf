@@ -1,0 +1,69 @@
+/* Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led1: led_pwm_1 {
+			status = "okay";
+			pwms = <&pwm1 14>;
+			label = "LED 2";
+		};
+	};
+
+	pwmleds2 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led2: led_pwm_2 {
+			status = "okay";
+			pwms = <&pwm2 15>;
+			label = "LED 3";
+		};
+	};
+
+	pwmleds3 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led3: led_pwm_3 {
+			status = "okay";
+			pwms = <&pwm3 16>;
+			label = "LED 4";
+		};
+	};
+};
+
+&pwm0 {
+	status = "okay";
+	ch0-pin = <13>;
+	ch0-inverted;
+};
+
+&pwm1 {
+	status = "okay";
+	ch0-pin = <14>;
+	ch0-inverted;
+};
+
+&pwm2 {
+	status = "okay";
+	ch0-pin = <15>;
+	ch0-inverted;
+};
+
+&pwm3 {
+	status = "okay";
+	ch0-pin = <16>;
+	ch0-inverted;
+};
+
+&pwm_led0 {
+	status = "okay";
+	pwms = <&pwm0 13>;
+	label = "LED 1";
+};
