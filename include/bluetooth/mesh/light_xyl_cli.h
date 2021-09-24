@@ -115,8 +115,8 @@ struct bt_mesh_light_xyl_cli {
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_get(struct bt_mesh_light_xyl_cli *cli,
 			  struct bt_mesh_msg_ctx *ctx,
@@ -137,8 +137,8 @@ int bt_mesh_light_xyl_get(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_set(struct bt_mesh_light_xyl_cli *cli,
 			  struct bt_mesh_msg_ctx *ctx,
@@ -175,8 +175,8 @@ int bt_mesh_light_xyl_set_unack(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_target_get(struct bt_mesh_light_xyl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
@@ -196,8 +196,8 @@ int bt_mesh_light_xyl_target_get(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_default_get(struct bt_mesh_light_xyl_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
@@ -218,8 +218,8 @@ int bt_mesh_light_xyl_default_get(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_default_set(struct bt_mesh_light_xyl_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
@@ -257,8 +257,8 @@ int bt_mesh_light_xyl_default_set_unack(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_light_xyl_range_get(struct bt_mesh_light_xyl_cli *cli,
 				struct bt_mesh_msg_ctx *ctx,
@@ -279,8 +279,8 @@ int bt_mesh_light_xyl_range_get(struct bt_mesh_light_xyl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  * @retval -EFAULT Invalid input range.
  */
 

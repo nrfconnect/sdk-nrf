@@ -125,8 +125,8 @@ struct bt_mesh_prop_cli {
  * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_client_props_get(struct bt_mesh_prop_cli *cli,
 				      struct bt_mesh_msg_ctx *ctx, uint16_t id,
@@ -155,8 +155,8 @@ int bt_mesh_prop_cli_client_props_get(struct bt_mesh_prop_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
@@ -185,8 +185,8 @@ int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx,
@@ -216,8 +216,8 @@ int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_user_prop_set(struct bt_mesh_prop_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
@@ -264,8 +264,8 @@ int bt_mesh_prop_cli_user_prop_set_unack(struct bt_mesh_prop_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
@@ -305,8 +305,8 @@ int bt_mesh_prop_cli_admin_prop_set_unack(struct bt_mesh_prop_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_prop_cli_mfr_prop_set(struct bt_mesh_prop_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
