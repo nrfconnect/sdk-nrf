@@ -28,10 +28,12 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
+#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #define AT_MDM_SLEEP_NOTIF_STOP "AT%XMODEMSLEEP=0" /* not used at the moment */
+#endif
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 #define AGPS_REQUEST_RECV_BUF_SIZE 3500
 #define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 500
@@ -123,6 +125,7 @@ static void method_gnss_notify_pgps(struct k_work *work)
 }
 #endif
 
+#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
 void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
@@ -149,6 +152,7 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 }
+#endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static int method_gnss_get_modem_info(struct lte_lc_cell *serving_cell)
@@ -425,6 +429,53 @@ int method_gnss_cancel(void)
 	return -err;
 }
 
+#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+static bool method_gnss_entered_psm(void)
+{
+	int ret = 0;
+	int tau;
+	int active_time;
+	enum lte_lc_system_mode mode;
+
+	lte_lc_system_mode_get(&mode, NULL);
+
+	/* Don't care about PSM if we are in GNSS only mode */
+	if (mode != LTE_LC_SYSTEM_MODE_GPS) {
+		ret = lte_lc_psm_get(&tau, &active_time);
+		if (ret < 0) {
+			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
+		} else if ((tau >= 0) & (active_time >= 0)) {
+			LOG_INF("Waiting for LTE to enter PSM: tau %d active_time %d",
+				tau, active_time);
+
+			/* Wait for the PSM to start. If semaphore is reset during the waiting
+			 * period, the position request was canceled.
+			 */
+			if (k_sem_take(&entered_psm_mode, K_FOREVER) == -EAGAIN) {
+				return false;
+			}
+			k_sem_give(&entered_psm_mode);
+		}
+	}
+	return true;
+}
+
+static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
+{
+	char buf_sub[48];
+	int err;
+
+	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START, 0, threshold_ms);
+
+	err = at_cmd_write(buf_sub, NULL, 0, NULL);
+	if (err) {
+		LOG_ERR("Cannot subscribe to modem sleep notifications, err %d", err);
+	} else {
+		LOG_DBG("Subscribed to modem sleep notifications");
+	}
+}
+#endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
+
 static void method_gnss_fix_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
@@ -476,34 +527,15 @@ static void method_gnss_timeout_work_fn(struct k_work *item)
 static void method_gnss_positioning_work_fn(struct k_work *work)
 {
 	int err = 0;
-	int ret = 0;
-	int tau;
-	int active_time;
-	enum lte_lc_system_mode mode;
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_gnss_config gnss_config = work_data->gnss_config;
 
-	lte_lc_system_mode_get(&mode, NULL);
-
-	/* Don't care about PSM if we are in GNSS only mode */
-	if (mode != LTE_LC_SYSTEM_MODE_GPS) {
-		ret = lte_lc_psm_get(&tau, &active_time);
-		if (ret < 0) {
-			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
-		} else if ((tau >= 0) & (active_time >= 0)) {
-			LOG_INF("Waiting for LTE to enter PSM: tau %d active_time %d",
-				tau, active_time);
-
-			/* Wait for the PSM to start. If semaphore is reset during the waiting
-			 * period, the position request was canceled. Thus, return without
-			 * doing anything
-			 */
-			if (k_sem_take(&entered_psm_mode, K_FOREVER) == -EAGAIN) {
-				return;
-			}
-			k_sem_give(&entered_psm_mode);
-		}
+#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+	if (!method_gnss_entered_psm()) {
+		/* Location request was cancelled while waiting for the PSM to start. Do nothing. */
+		return;
 	}
+#endif
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
@@ -547,21 +579,6 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	loc_core_timer_start(gnss_config.timeout);
 
 	LOG_INF("GNSS started");
-}
-
-void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
-{
-	char buf_sub[48];
-	int err;
-
-	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START, 0, threshold_ms);
-
-	err = at_cmd_write(buf_sub, NULL, 0, NULL);
-	if (err) {
-		LOG_ERR("Cannot subscribe to modem sleep notifications, err %d", err);
-	} else {
-		LOG_DBG("Subscribed to modem sleep notifications");
-	}
 }
 
 #if defined(CONFIG_DATE_TIME)
@@ -662,9 +679,6 @@ int method_gnss_init(void)
 		return -err;
 	}
 
-	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
-	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
-
 	k_work_init(&method_gnss_fix_work, method_gnss_fix_work_fn);
 	k_work_init(&method_gnss_timeout_work, method_gnss_timeout_work_fn);
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -676,7 +690,10 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_notify_pgps_work, method_gnss_notify_pgps);
 
 #endif
+#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
+	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
 	lte_lc_register_handler(method_gnss_lte_ind_handler);
-
+#endif
 	return 0;
 }
