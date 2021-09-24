@@ -1,0 +1,11 @@
+sample:
+  name: CAF
+  description: Common Application Framework sample
+tests:
+  samples.caf:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    tags: caf ci_build

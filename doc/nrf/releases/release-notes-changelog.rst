@@ -97,6 +97,9 @@ Edge Impulse
 Common Application Framework (CAF)
 ----------------------------------
 
+Added:
+
+* :ref:`caf_preview_sample` sample.
 
 Updated:
 
