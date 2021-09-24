@@ -127,8 +127,8 @@ struct bt_mesh_plvl_cli {
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_power_get(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
@@ -151,8 +151,8 @@ int bt_mesh_plvl_cli_power_get(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_power_set(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
@@ -191,8 +191,8 @@ int bt_mesh_plvl_cli_power_set_unack(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_range_get(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
@@ -214,8 +214,8 @@ int bt_mesh_plvl_cli_range_get(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_range_set(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
@@ -254,8 +254,8 @@ int bt_mesh_plvl_cli_range_set_unack(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);
@@ -276,8 +276,8 @@ int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
@@ -296,6 +296,7 @@ int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
@@ -319,8 +320,8 @@ int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_plvl_cli_last_get(struct bt_mesh_plvl_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);

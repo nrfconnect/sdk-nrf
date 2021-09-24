@@ -132,8 +132,8 @@ struct bt_mesh_lightness_cli {
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
@@ -159,8 +159,8 @@ int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
@@ -202,8 +202,8 @@ int bt_mesh_lightness_cli_light_set_unack(
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
@@ -225,8 +225,8 @@ int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_range_set(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
@@ -265,8 +265,8 @@ int bt_mesh_lightness_cli_range_set_unack(
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
 				      struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);
@@ -287,8 +287,8 @@ int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
 				      struct bt_mesh_msg_ctx *ctx,
@@ -307,6 +307,7 @@ int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
 					    struct bt_mesh_msg_ctx *ctx,
@@ -330,8 +331,8 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request
- * timed out without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_last_get(struct bt_mesh_lightness_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);

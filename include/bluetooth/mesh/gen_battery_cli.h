@@ -92,8 +92,8 @@ struct bt_mesh_battery_cli {
  * @retval -EALREADY A blocking request is already in progress.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_battery_cli_get(struct bt_mesh_battery_cli *cli,
 			    struct bt_mesh_msg_ctx *ctx,
