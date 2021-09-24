@@ -10,7 +10,10 @@ menuconfig NRF_MODEM_LIB
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
 	select NRF_MODEM
-	default y if TRUSTED_EXECUTION_NONSECURE
+	# The modem must be turned on to achieve low power consumption.
+	# But disable it for ZTEST's as some tests have HW
+	# resource-conflicts with NRF_MODEM_LIB.
+	default y if TRUSTED_EXECUTION_NONSECURE && !ZTEST
 	help
 	  Use Nordic Modem library.
 
