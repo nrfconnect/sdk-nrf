@@ -9,8 +9,7 @@
 #include <cstdint>
 
 struct AppEvent {
-
-	enum EventType : uint8_t { FunctionPress, FunctionRelease, FunctionTimer};
+	enum EventType : uint8_t { FunctionPress, FunctionRelease, FunctionTimer };
 
 	AppEvent() = default;
 	explicit AppEvent(EventType type) : Type(type) {}

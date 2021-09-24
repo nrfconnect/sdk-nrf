@@ -8,10 +8,12 @@
 
 #include "app_task.h"
 
-#include <controller/data_model/gen/CHIPClusters.h>
+#include <crypto/CHIPCryptoPAL.h>
+#include <lib/support/ErrorStr.h>
+#include <lib/support/ScopedBuffer.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/KeyValueStoreManager.h>
-#include <support/ErrorStr.h>
+#include <zap-generated/CHIPClusters.h>
 
 #include <logging/log.h>
 #include <net/net_ip.h>
@@ -67,11 +69,46 @@ CHIP_ERROR LightSwitch::Init()
 		return err;
 	}
 
+	chip::Crypto::P256Keypair ephemeralKey;
+	err = ephemeralKey.Initialize();
+
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("P256Keypair::Initialize() failed: %s", chip::ErrorStr(err));
+		return err;
+	}
+
+	chip::Platform::ScopedMemoryBuffer<uint8_t> rcac;
+	chip::Platform::ScopedMemoryBuffer<uint8_t> icac;
+	chip::Platform::ScopedMemoryBuffer<uint8_t> noc;
+
+	if (!rcac.Alloc(chip::Controller::kMaxCHIPDERCertLength) ||
+	    !icac.Alloc(chip::Controller::kMaxCHIPDERCertLength) ||
+	    !noc.Alloc(chip::Controller::kMaxCHIPDERCertLength)) {
+		LOG_ERR("Failed to allocated memory for certificate chain");
+		return CHIP_ERROR_NO_MEMORY;
+	}
+
+	chip::MutableByteSpan rcacSpan(rcac.Get(), chip::Controller::kMaxCHIPDERCertLength);
+	chip::MutableByteSpan icacSpan(icac.Get(), chip::Controller::kMaxCHIPDERCertLength);
+	chip::MutableByteSpan nocSpan(noc.Get(), chip::Controller::kMaxCHIPDERCertLength);
+
+	err = mOpCredDelegate.GenerateNOCChainAfterValidation(chip::kTestControllerNodeId, 0, ephemeralKey.Pubkey(),
+							      rcacSpan, icacSpan, nocSpan);
+
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Failed to issue certificate chain: %s", chip::ErrorStr(err));
+		return err;
+	}
+
 	chip::Controller::CommissionerInitParams commissionerParams = {};
 	commissionerParams.storageDelegate = &mStorageDelegate;
 	commissionerParams.operationalCredentialsDelegate = &mOpCredDelegate;
+	commissionerParams.ephemeralKeypair = &ephemeralKey;
+	commissionerParams.controllerRCAC = chip::ByteSpan(rcac.Get(), chip::Controller::kMaxCHIPDERCertLength);
+	commissionerParams.controllerICAC = chip::ByteSpan(icac.Get(), chip::Controller::kMaxCHIPDERCertLength);
+	commissionerParams.controllerNOC = chip::ByteSpan(noc.Get(), chip::Controller::kMaxCHIPDERCertLength);
 
-	err = mCommissioner.Init(chip::kTestControllerNodeId, commissionerParams);
+	err = mCommissioner.Init(commissionerParams);
 
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("DeviceCommissioner::Init() failed: %s", chip::ErrorStr(err));

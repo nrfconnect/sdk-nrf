@@ -152,11 +152,14 @@ The current |NCS| master branch is based on the Zephyr v2.7 development branch.
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``b77bfb047374b7013dbdf688f542b9326842a39e``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``9012f08de9b7340e7d59d51a7ec8a6cdcfda9d15``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* No changes yet
+* Added:
+
+  * Support for Administrator Commissioning Cluster, which allows enabling or disabling the commissioning window on a Matter device.
+    This is required by the Matter multi-admin functionality.
 
 Partition Manager
 =================

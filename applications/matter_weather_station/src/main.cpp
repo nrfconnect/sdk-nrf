@@ -12,8 +12,8 @@
 #include <usb/usb_device.h>
 #endif
 
+#include <lib/support/CHIPMem.h>
 #include <platform/CHIPDeviceLayer.h>
-#include <support/CHIPMem.h>
 #include <system/SystemError.h>
 
 LOG_MODULE_REGISTER(app);
@@ -60,8 +60,7 @@ int main()
 	}
 
 #ifdef CONFIG_OPENTHREAD_MTD_SED
-	err = ConnectivityMgr().SetThreadDeviceType(
-		ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
 		goto exit;
@@ -78,8 +77,7 @@ int main()
 		goto exit;
 	}
 #else
-	err = ConnectivityMgr().SetThreadDeviceType(
-		ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
 		goto exit;

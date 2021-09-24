@@ -17,7 +17,7 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#include <support/logging/CHIPLogging.h>
+#include <lib/support/logging/CHIPLogging.h>
 
 using namespace ::chip::DeviceLayer;
 
