@@ -28,6 +28,7 @@ class TargetCredentials(Enum):
     srv = "Server"
     clt = "Client"
     root = "Root"
+    erase = "erase"
 
     def __str__(self):
         return self.value
@@ -120,6 +121,15 @@ def provision_client_key_pair(modem, sec_tag, opemfile):
         logging.error("Provisioning - FAILURE")
         exit(1)
 
+def erase_sec_tag(modem, sec_tag):
+    resp = modem.at_cmd(",".join([cmng + "1", sec_tag]))
+    try:
+        for line in str(resp).split('\r\n'):
+            tag, type, _ = line.split()[1].split(',')
+            modem.at_cmd(",".join([cmng + "3", tag, type]))
+    except IndexError:
+        pass
+
 
 def main():
 
@@ -136,7 +146,7 @@ def main():
     parser.add_argument('-b', '--baudrate', metavar='baudrate',
                         type=str, help='serial port speed')
     parser.add_argument('-k', '--key_file', metavar='key_file', type=str,
-                        help='PEM formatted public key file')
+                        help='PEM formatted public key file', required=False)
     parser.add_argument('-s', '--sec_tag',  metavar='sec_tag',  type=str,
                         help='Security tag number - [0–9] for server PBK; [0–2147483647] for client private key')
 
@@ -146,11 +156,10 @@ def main():
         parser.error('No tty')
     if not args.baudrate:
         parser.error('No baudrate')
-    if not args.key_file:
-        parser.error('No key file')
-    else:
+    if args.key_file:
         kfile = os.path.expanduser(args.key_file)
-    if str(args.target) == "Server":
+
+    if str(args.target) == "Server" or str(args.target) == "Root":
         if not os.path.isfile(kfile):
             parser.error("No PEM formatted file found with given name")
     if str(args.target) == "Client":
@@ -162,9 +171,6 @@ def main():
 
     # Open AT shell connection
     modem = MoSH(args.tty, args.baudrate)
-    if not modem.is_ready():
-        logging.error("Modem is not ready")
-        exit(1)
 
     # Power off the modem
     if modem.at_cmd('AT+CFUN=0'):
@@ -179,6 +185,9 @@ def main():
 
     if str(args.target) == "Root":
         provision_root_ca(modem, args.sec_tag, kfile)
+
+    if str(args.target) == "erase":
+        erase_sec_tag(modem, args.sec_tag)
 
 
 if __name__ == "__main__":
