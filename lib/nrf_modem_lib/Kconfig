@@ -5,11 +5,12 @@
 
 menuconfig NRF_MODEM_LIB
 	bool "Enable Modem library"
+	depends on SOC_NRF9160_SICA
 	imply NRFX_IPC
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
 	select NRF_MODEM
-	default y if SOC_NRF9160_SICA && TRUSTED_EXECUTION_NONSECURE
+	default y if TRUSTED_EXECUTION_NONSECURE
 	help
 	  Use Nordic Modem library.
 
