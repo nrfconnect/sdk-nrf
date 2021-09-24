@@ -169,6 +169,11 @@ Partition Manager
 
 * Added the ``share_size`` functionality to let a partition share size with a partition in another region.
 
+Secure Partition Manager
+========================
+
+* All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+
 Documentation
 =============
 
