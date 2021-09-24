@@ -103,11 +103,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: b236d8c96fcd648f3c1c3654c9348e385343b645
+      revision: 8103747515ab31a554fa95c755e52d0d6af833f7
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: ca81d4a7c1dff40f214df7b8d99b6ac78e330049
+      revision: d2e93153863e7add9fae3849faf7de430258c0de
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
