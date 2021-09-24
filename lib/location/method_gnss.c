@@ -220,16 +220,14 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 						      NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
 						      &agps_request,
 						      NULL};
-	struct lte_lc_cell serving_cell = {0};
-	struct lte_lc_cells_info net_info = {serving_cell, 0, NULL};
+	struct lte_lc_cells_info net_info = {0};
 
-	int err = method_gnss_get_modem_info(&serving_cell);
+	/* Get network info for the A-GPS location request. */
+	int err = method_gnss_get_modem_info(&net_info.current_cell);
 
 	if (err) {
 		LOG_WRN("Requesting A-GPS data without location assistance");
 	} else {
-		/* Network info for the location request. */
-		net_info.current_cell = serving_cell;
 		request.net_info = &net_info;
 	}
 
