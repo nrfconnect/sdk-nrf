@@ -11,17 +11,6 @@ The Serial LTE Modem (SLM) application demonstrates how to use the nRF9160 as a 
 
 The application accepts both the modem-specific AT commands documented in the `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_ and proprietary AT commands documented in :ref:`SLM_AT_intro`.
 
-Requirements
-************
-
-The application supports the following development kit:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
-
-.. include:: /includes/spm.txt
-
 Overview
 ********
 
@@ -101,6 +90,17 @@ UART configuration:
    The GPIO output level on the nRF9160 side must be 3 V.
    You can set the VDD voltage with the **VDD IO** switch (**SW9**).
    See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information.
+
+Requirements
+************
+
+The application supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns
+
+.. include:: /includes/spm.txt
 
 Configuration
 *************

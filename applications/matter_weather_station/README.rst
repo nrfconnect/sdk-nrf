@@ -15,27 +15,6 @@ You can use this application as a reference for creating your own application.
 .. note::
     The Matter protocol is in an early development stage and must be treated as an experimental feature.
 
-Requirements
-************
-
-The application supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy53_nrf5340_cpuapp
-
-To commission the weather station device and control it remotely through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
-The recommended way of getting measurement values is using the mobile Matter controller application that comes with a neat graphical interface, performs measurements automatically and visualizes the data.
-
-To program a Thingy:53 device where the preprogrammed MCUboot bootloader has been erased, you need the external J-Link programmer.
-If you own an nRF5340 DK that has an onboard J-Link programmer, you can also use it for this purpose.
-
-If the Thingy:53 is programmed with Thingy:53-compatible sample or application, then you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
-See :ref:`thingy53_app_guide` for details.
-
-.. note::
-    |matter_gn_required_note|
-
 Overview
 ********
 
@@ -84,10 +63,26 @@ This application supports the following build types:
     `Selecting a build type`_ is optional.
     The ``ZDebug`` build type is used by default if no build type is explicitly selected.
 
-Configuration
-*************
+Requirements
+************
 
-|config|
+The application supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy53_nrf5340_cpuapp
+
+To commission the weather station device and control it remotely through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+The recommended way of getting measurement values is using the mobile Matter controller application that comes with a neat graphical interface, performs measurements automatically and visualizes the data.
+
+To program a Thingy:53 device where the preprogrammed MCUboot bootloader has been erased, you need the external J-Link programmer.
+If you own an nRF5340 DK that has an onboard J-Link programmer, you can also use it for this purpose.
+
+If the Thingy:53 is programmed with Thingy:53-compatible sample or application, then you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
+See :ref:`thingy53_app_guide` for details.
+
+.. note::
+    |matter_gn_required_note|
 
 User interface
 **************
@@ -116,6 +111,11 @@ USB port:
 
 NFC port with antenna attached:
     Used for obtaining the commissioning information from the Matter accessory device to start the commissioning procedure.
+
+Configuration
+*************
+
+|config|
 
 Building and running
 ********************
