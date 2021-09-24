@@ -216,12 +216,28 @@ config SPM_NRF_UARTE2_NS
 	bool "UARTE2 is Non-Secure"
 	default n
 
+config SPM_NRF_EGU0_NS
+	bool "EGU0 is Non-Secure"
+	default y
+
 config SPM_NRF_EGU1_NS
 	bool "EGU1 is Non-Secure"
 	default y
 
 config SPM_NRF_EGU2_NS
 	bool "EGU2 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU3_NS
+	bool "EGU3 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU4_NS
+	bool "EGU4 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU5_NS
+	bool "EGU5 is Non-Secure"
 	default y
 
 config SPM_NRF_FPU_NS
