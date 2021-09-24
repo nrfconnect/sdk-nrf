@@ -10,9 +10,9 @@
 #include "light_switch.h"
 #include "thread_util.h"
 
+#include <lib/support/CHIPMem.h>
+#include <lib/support/SafeInt.h>
 #include <platform/CHIPDeviceLayer.h>
-#include <support/CHIPMem.h>
-#include <support/SafeInt.h>
 
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>

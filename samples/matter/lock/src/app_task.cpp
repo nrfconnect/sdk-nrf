@@ -12,12 +12,14 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#include <app/common/gen/attribute-id.h>
-#include <app/common/gen/attribute-type.h>
-#include <app/common/gen/cluster-id.h>
+#include <app-common/zap-generated/attribute-id.h>
+#include <app-common/zap-generated/attribute-type.h>
+#include <app-common/zap-generated/cluster-id.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
+#include <credentials/DeviceAttestationCredsProvider.h>
+#include <credentials/examples/DeviceAttestationCredsExample.h>
 
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
@@ -25,6 +27,7 @@
 
 #include <algorithm>
 
+using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 LOG_MODULE_DECLARE(app);
@@ -82,7 +85,10 @@ int AppTask::Init()
 	BoltLockMgr().Init();
 
 	/* Init ZCL Data Model and start server */
-	InitServer();
+	chip::Server::GetInstance().Init();
+
+	/* Initialize device attestation config */
+	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -193,7 +199,7 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		break;
 	case AppEvent::Toggle:
 		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock :
-							       BoltLockManager::Action::Unlock,
+								     BoltLockManager::Action::Unlock,
 				  event.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::CompleteLockAction:
@@ -306,7 +312,7 @@ void AppTask::FunctionTimerEventHandler()
 
 void AppTask::StartThreadHandler()
 {
-	if (AddTestPairing() != CHIP_NO_ERROR) {
+	if (chip::Server::GetInstance().AddTestCommissioning() != CHIP_NO_ERROR) {
 		LOG_ERR("Failed to add test pairing");
 	}
 
@@ -322,19 +328,18 @@ void AppTask::StartBLEAdvertisingHandler()
 {
 	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
 	if (ConnectivityMgr().IsThreadProvisioned()) {
-		LOG_INF("NFC Tag emulation and Matter service BLE advertisement not started - device is commissioned to a Thread network.");
+		LOG_INF("NFC Tag emulation and Matter service BLE advertising not started - device is commissioned to a Thread network.");
 		return;
 	}
 
 	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-		LOG_INF("BLE Advertisement is already enabled");
+		LOG_INF("BLE advertising is already enabled");
 		return;
 	}
 
-	if (OpenDefaultPairingWindow(chip::ResetFabrics::kNo) == CHIP_NO_ERROR) {
-		LOG_INF("Enabled BLE Advertisement");
-	} else {
-		LOG_ERR("OpenDefaultPairingWindow() failed");
+	if (chip::Server::GetInstance().GetCommissioningWindowManager().OpenBasicCommissioningWindow() !=
+	    CHIP_NO_ERROR) {
+		LOG_ERR("OpenBasicCommissioningWindow() failed");
 	}
 }
 
@@ -344,21 +349,15 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 	if (event->Type != DeviceEventType::kCHIPoBLEAdvertisingChange)
 		return;
 
-    if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started)
-    {
-        if (NFCMgr().IsTagEmulationStarted())
-        {
-            LOG_INF("NFC Tag emulation is already started");
-        }
-        else
-        {
-            ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-        }
-    }
-    else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped)
-    {
-        NFCMgr().StopTagEmulation();
-    }
+	if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
+		if (NFCMgr().IsTagEmulationStarted()) {
+			LOG_INF("NFC Tag emulation is already started");
+		} else {
+			ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+		}
+	} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+		NFCMgr().StopTagEmulation();
+	}
 }
 #endif
 

@@ -11,11 +11,14 @@
 
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
+#include <credentials/DeviceAttestationCredsProvider.h>
+#include <credentials/examples/DeviceAttestationCredsExample.h>
 
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
 #include <zephyr.h>
 
+using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 LOG_MODULE_DECLARE(app);
@@ -63,7 +66,10 @@ int AppTask::Init()
 	k_timer_user_data_set(&sFunctionTimer, this);
 
 	/* Init ZCL Data Model and start server */
-	InitServer();
+	chip::Server::GetInstance().Init();
+
+	/* Initialize device attestation config */
+	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -80,7 +86,7 @@ int AppTask::StartApp()
 	}
 
 	AppEvent event = {};
-	
+
 	while (true) {
 		ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
 
@@ -181,7 +187,7 @@ void AppTask::FunctionTimerEventHandler()
 	if (sAppTask.mFunction == TimerFunction::FactoryReset) {
 		sAppTask.mFunction = TimerFunction::NoneSelected;
 		LOG_INF("Factory Reset triggered");
-		
+
 		sStatusLED.Set(true);
 		sUnusedLED.Set(true);
 		sUnusedLED_1.Set(true);
