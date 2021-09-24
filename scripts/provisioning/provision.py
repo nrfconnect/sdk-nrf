@@ -27,6 +27,7 @@ xpmng = "AT%XPMNG="
 class TargetCredentials(Enum):
     srv = "Server"
     clt = "Client"
+    root = "Root"
 
     def __str__(self):
         return self.value
@@ -50,6 +51,24 @@ def provision_server_public_key(modem, sec_tag, ipemfile):
 
     # You can't list public keys with CMNG, at least not yet
     if modem.at_cmd(",".join([cmng + "2", sec_tag, "5"])):
+        logging.debug("Provisioning - SUCCESS")
+    else:
+        logging.error("Provisioning - FAILURE")
+        exit(1)
+
+def provision_root_ca(modem, sec_tag, ipemfile):
+
+    # Check and remove existing credentials
+    modem.at_cmd(",".join([cmng + "3", sec_tag, "0"]))
+
+    # Write the PEM formatted CA to modem
+    with open(ipemfile) as f:
+        pbk_pem = f.read()
+        if modem.at_cmd(",".join([cmng + "0", sec_tag, "0", "\"" + pbk_pem + "\""])):
+            logging.error("Unable to commission root CA")
+            exit
+
+    if modem.at_cmd(",".join([cmng + "2", sec_tag, "0"])):
         logging.debug("Provisioning - SUCCESS")
     else:
         logging.error("Provisioning - FAILURE")
@@ -157,6 +176,9 @@ def main():
 
     if str(args.target) == "Client":
         provision_client_key_pair(modem, args.sec_tag, kfile)
+
+    if str(args.target) == "Root":
+        provision_root_ca(modem, args.sec_tag, kfile)
 
 
 if __name__ == "__main__":
