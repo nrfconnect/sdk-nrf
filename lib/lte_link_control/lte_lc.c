@@ -661,7 +661,8 @@ static int init_and_config(void)
 static int connect_lte(bool blocking)
 {
 	int err;
-	bool retry;
+	int tries = (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) ? 2 : 1);
+	enum lte_lc_func_mode current_func_mode;
 
 	if (!is_initialized) {
 		LOG_ERR("The LTE link controller is not initialized");
@@ -671,9 +672,17 @@ static int connect_lte(bool blocking)
 	k_sem_init(&link, 0, 1);
 
 	do {
-		retry = false;
+		tries--;
 
-		if (!IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
+		err = lte_lc_func_mode_get(&current_func_mode);
+		if (err) {
+			return err;
+		}
+
+		/* Change the modem sys-mode only if it's not running or is meant to change */
+		if (!IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT) &&
+		    ((current_func_mode == LTE_LC_FUNC_MODE_POWER_OFF) ||
+		     (current_func_mode == LTE_LC_FUNC_MODE_OFFLINE))) {
 			err = lte_lc_system_mode_set(sys_mode_target, mode_pref_current);
 			if (err) {
 				return err;
@@ -690,9 +699,12 @@ static int connect_lte(bool blocking)
 			LOG_INF("Network connection attempt timed out");
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
-			    (sys_mode_target == sys_mode_preferred)) {
-				sys_mode_target = sys_mode_fallback;
-				retry = true;
+			    (tries > 0)) {
+				if (sys_mode_target == sys_mode_preferred) {
+					sys_mode_target = sys_mode_fallback;
+				} else {
+					sys_mode_target = sys_mode_preferred;
+				}
 
 				err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 				if (err) {
@@ -703,8 +715,10 @@ static int connect_lte(bool blocking)
 			} else {
 				err = -ETIMEDOUT;
 			}
+		} else {
+			tries = 0;
 		}
-	} while (retry);
+	} while (tries > 0);
 
 	return err;
 }
