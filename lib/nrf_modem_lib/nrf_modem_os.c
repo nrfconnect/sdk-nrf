@@ -452,6 +452,7 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 	return 1; /* We should check if scheduling decision should be made */
 }
 
+#ifdef NRF_MODEM_LIB_TRACE_ENABLED
 ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 {
 	/*
@@ -470,6 +471,7 @@ void trace_task_create(void)
 			   trace_proxy_irq_handler, UNUSED_FLAGS);
 	irq_enable(TRACE_IRQ);
 }
+#endif
 
 void read_task_create(void)
 {
@@ -479,9 +481,9 @@ void read_task_create(void)
 	irq_enable(NRF_MODEM_APPLICATION_IRQ);
 }
 
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 void trace_uart_init(void)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
@@ -502,18 +504,16 @@ void trace_uart_init(void)
 	/* Initialize nrfx UARTE driver in blocking mode. */
 	/* TODO: use UARTE in non-blocking mode with IRQ handler. */
 	nrfx_uarte_init(&uarte_inst, &config, NULL);
-#endif
 }
+#endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 #define RTT_BUF_SZ		(CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE)
 static int trace_rtt_channel;
 static char rtt_buffer[RTT_BUF_SZ];
-#endif
 
 static void trace_rtt_init(void)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer,
 		sizeof(rtt_buffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
 
@@ -524,8 +524,8 @@ static void trace_rtt_init(void)
 		LOG_INF("RTT channel for modem trace is now %d",
 			trace_rtt_channel);
 	}
-#endif
 }
+#endif
 
 void *nrf_modem_os_alloc(size_t bytes)
 {
@@ -639,9 +639,17 @@ void nrf_modem_os_init(void)
 	read_task_create();
 
 	/* Configure and enable modem tracing over UART and RTT. */
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	trace_uart_init();
+#endif
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 	trace_rtt_init();
+#endif
+
+#ifdef NRF_MODEM_LIB_TRACE_ENABLED
 	trace_task_create();
+#endif
 
 	memset(&heap_diag, 0x00, sizeof(heap_diag));
 	memset(&shmem_diag, 0x00, sizeof(shmem_diag));
