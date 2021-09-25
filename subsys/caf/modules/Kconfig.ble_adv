@@ -20,6 +20,7 @@ config CAF_BLE_ADV_DEF_PATH
 config CAF_BLE_ADV_PM_EVENTS
 	bool "Power management events support"
 	depends on CAF_PM_EVENTS
+	default y
 
 config CAF_BLE_ADV_DIRECT_ADV
 	bool "Advertise to bonded peer directly"

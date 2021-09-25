@@ -20,6 +20,7 @@ config CAF_CLICK_DETECTOR_DEF_PATH
 config CAF_CLICK_DETECTOR_PM_EVENTS
 	bool "Power management events support"
 	depends on CAF_PM_EVENTS
+	default y
 	help
 	  React on power management events in click detector module.
 

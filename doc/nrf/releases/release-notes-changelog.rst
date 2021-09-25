@@ -54,7 +54,13 @@ Common
 
 The following changes are relevant for all device families.
 
-There are no entries for this section yet.
+Common Application Framework (CAF)
+----------------------------------
+
+
+Updated:
+
+* The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 
 MCUboot
 =======

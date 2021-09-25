@@ -31,6 +31,7 @@ config CAF_LEDS_PM_EVENTS
 	bool "Power management events support"
 	select DEVICE_POWER_MANAGEMENT
 	depends on CAF_PM_EVENTS
+	default y
 	help
 	  React on power management events in LEDs module.
 
