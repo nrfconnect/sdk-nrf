@@ -68,7 +68,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, thingy53_nrf5340_cpuapp, nrf21540dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 .. note::
    * The boards ``nrf52dk_nrf52810``, ``nrf52840dk_nrf52811``, and ``nrf52833dk_nrf52820`` only support the `Minimal sample variant`_.
