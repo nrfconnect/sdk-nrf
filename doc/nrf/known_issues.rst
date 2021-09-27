@@ -1,3 +1,5 @@
+:orphan:
+
 .. _known_issues:
 
 Known issues
@@ -211,7 +213,12 @@ nRF5
 
 nRF5340
 =======
-
+.. rst-class:: v1-7-0
+Possible assert when nrf5340 is using active scanning and advertiser is in scannable and directed mode
+  nrf5340 may assert and say that radio transmission is complete when the scanner board is nrf5340.
+  Scanner board must have active scanning.
+  Advertiser board must have scannable and directed advertising.
+  Advertiser board must also have CODED PHY on
 .. rst-class:: v1-7-0
 
 NCSDK-11432: DFU: Erasing secondary slot returns error response
