@@ -311,6 +311,18 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       return()
     endif()
 
+    # Arguments to imgtool.
+    if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
+      # Separate extra arguments into the proper format for adding to
+      # extra_post_build_commands.
+      #
+      # Use UNIX_COMMAND syntax for uniform results across host
+      # platforms.
+      separate_arguments(imgtool_extra UNIX_COMMAND ${CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS})
+    else()
+      set(imgtool_extra)
+    endif()
+
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py
@@ -320,6 +332,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
       --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
       --pad-header
+      ${imgtool_extra}
       )
 
     set(app_offset $<TARGET_PROPERTY:partition_manager,app_TO_SECONDARY>)
