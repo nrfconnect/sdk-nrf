@@ -44,6 +44,7 @@ enum pgps_state {
 	PGPS_NONE,
 	PGPS_INITIALIZING,
 	PGPS_EXPIRED,
+	PGPS_REQUEST_NEEDED,
 	PGPS_REQUESTING,
 	PGPS_LOADING,
 	PGPS_READY,
@@ -596,6 +597,16 @@ int nrf_cloud_pgps_request_all(void)
 }
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
+void nrf_cloud_pgps_request_reset(void)
+{
+	if (state == PGPS_REQUESTING) {
+		LOG_INF("Allowing another request");
+		state = PGPS_REQUEST_NEEDED;
+	}
+}
+#endif
+
 static int pgps_request(const struct gps_pgps_request *request)
 {
 	if (state == PGPS_NONE) {
@@ -625,6 +636,12 @@ static int pgps_request(const struct gps_pgps_request *request)
 		.request = (struct gps_pgps_request *)request,
 	};
 
+	/* The predictions loading process has begun. If the application
+	 * cannot complete the request, it must call nrf_cloud_pgps_request_reset().
+	 * This enables this library to attempt it again the next time
+	 * a P-GPS data update is needed.
+	 */
+	state = PGPS_REQUESTING;
 	if (evt_handler) {
 		evt_handler(&evt);
 	}
@@ -1367,39 +1384,34 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return -EINVAL;
 	}
 
-	if (state < PGPS_LOADING) {
-		state = PGPS_LOADING;
-		prev_pnum = 0xff;
-		/* until we get the header (which may or may not come first,
-		 * preinitialize the header with expected values
-		 */
-		if (!index.partial_request) {
-			index.header.prediction_count = NUM_PREDICTIONS;
-			index.header.prediction_period_min = PREDICTION_PERIOD;
-			index.period_sec =
-				index.header.prediction_period_min * SEC_PER_MIN;
-			memset(index.predictions, 0, sizeof(index.predictions));
-		} else {
-			for (pnum = index.pnum_offset;
-			     pnum < index.expected_count + index.pnum_offset; pnum++) {
-				index.predictions[pnum] = NULL;
-			}
+	state = PGPS_LOADING;
+	prev_pnum = 0xff;
+	if (!index.partial_request) {
+		index.header.prediction_count = NUM_PREDICTIONS;
+		index.header.prediction_period_min = PREDICTION_PERIOD;
+		index.period_sec =
+			index.header.prediction_period_min * SEC_PER_MIN;
+		memset(index.predictions, 0, sizeof(index.predictions));
+	} else {
+		for (pnum = index.pnum_offset;
+		     pnum < index.expected_count + index.pnum_offset; pnum++) {
+			index.predictions[pnum] = NULL;
 		}
-		index.loading_count = 0;
-		index.store_block = npgps_alloc_block();
-		if (index.store_block == NO_BLOCK) {
-			LOG_ERR("No free flash space!");
-			return -ENOMEM;
-		}
-		index.storage_extent = npgps_get_block_extent(index.store_block);
-		LOG_INF("opening storage at block:%d, len:%d", index.store_block,
-			index.storage_extent);
-		err = open_storage(npgps_block_to_offset(index.store_block),
-				   index.partial_request);
-		if (err) {
-			state = PGPS_NONE;
-			return err;
-		}
+	}
+	index.loading_count = 0;
+	index.store_block = npgps_alloc_block();
+	if (index.store_block == NO_BLOCK) {
+		LOG_ERR("No free flash space!");
+		return -ENOMEM;
+	}
+	index.storage_extent = npgps_get_block_extent(index.store_block);
+	LOG_INF("opening storage at block:%d, len:%d", index.store_block,
+		index.storage_extent);
+	err = open_storage(npgps_block_to_offset(index.store_block),
+			   index.partial_request);
+	if (err) {
+		state = PGPS_NONE;
+		return err;
 	}
 
 	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
