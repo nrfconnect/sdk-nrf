@@ -50,6 +50,10 @@ nRF9160
     * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
       A message published to the bulk topic is typically a combination of multiple messages.
 
+  * :ref:`asset_tracker_v2` application:
+
+    * Updated the application to start sending batch messages to the new bulk endpoint topic supported in nRF Cloud.
+
   * :ref:`multicell_location` sample:
 
     * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.

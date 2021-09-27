@@ -314,7 +314,7 @@ int cloud_wrap_batch_send(char *buf, size_t len)
 		.data.ptr = buf,
 		.data.len = len,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
-		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+		.topic_type = NRF_CLOUD_TOPIC_BULK,
 	};
 
 	err = nrf_cloud_send(&msg);

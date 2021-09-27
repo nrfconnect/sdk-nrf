@@ -539,8 +539,6 @@ Following are the current limitations in the nRF Cloud implementation of the Ass
 		}
 	}
 
-* nRF Cloud does not support a separate endpoint for *batch* data updates. To temporarily circumvent this, batched data updates are sent to the message endpoint.
-
 
 Dependencies
 ************
