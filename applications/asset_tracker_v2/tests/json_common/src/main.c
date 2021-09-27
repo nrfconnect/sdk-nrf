@@ -726,14 +726,7 @@ static void test_encode_configuration_data_object(void)
 		.gps_timeout = 60,
 		.accelerometer_threshold = 2,
 		.no_data.gnss = true,
-		.no_data.neighbor_cell = true,
-		.active_mode_fresh = true,
-		.gps_timeout_fresh = true,
-		.active_wait_timeout_fresh = true,
-		.movement_resolution_fresh = true,
-		.movement_timeout_fresh = true,
-		.accelerometer_threshold_fresh = true,
-		.nod_list_fresh = true,
+		.no_data.neighbor_cell = true
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
@@ -1148,8 +1141,7 @@ static void test_floating_point_encoding_configuration(void)
 	cJSON *decoded_config_obj;
 	struct cloud_data_cfg decoded_values = {0};
 	struct cloud_data_cfg data = {
-		.accelerometer_threshold = 2.22,
-		.accelerometer_threshold_fresh = true
+		.accelerometer_threshold = 2.22
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);

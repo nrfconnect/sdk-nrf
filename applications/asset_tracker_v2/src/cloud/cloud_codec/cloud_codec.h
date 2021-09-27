@@ -109,15 +109,6 @@ struct cloud_data_cfg {
 	double accelerometer_threshold;
 	/** Variable used to govern what data types are requested by the application. */
 	struct cloud_data_no_data no_data;
-
-	/** Flags to signify if the corresponding data value is fresh and can be used. */
-	bool active_mode_fresh		   : 1;
-	bool gps_timeout_fresh		   : 1;
-	bool active_wait_timeout_fresh	   : 1;
-	bool movement_resolution_fresh	   : 1;
-	bool movement_timeout_fresh	   : 1;
-	bool accelerometer_threshold_fresh : 1;
-	bool nod_list_fresh		   : 1;
 };
 
 struct cloud_data_accelerometer {

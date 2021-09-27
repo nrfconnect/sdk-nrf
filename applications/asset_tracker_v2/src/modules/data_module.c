@@ -530,17 +530,6 @@ static void config_distribute(enum data_module_event_type type)
 	EVENT_SUBMIT(data_module_event);
 }
 
-static void config_status_set_all(bool fresh)
-{
-	current_cfg.active_mode_fresh = fresh;
-	current_cfg.gps_timeout_fresh = fresh;
-	current_cfg.active_wait_timeout_fresh = fresh;
-	current_cfg.movement_resolution_fresh = fresh;
-	current_cfg.movement_timeout_fresh = fresh;
-	current_cfg.accelerometer_threshold_fresh = fresh;
-	current_cfg.nod_list_fresh = fresh;
-}
-
 static void data_send(enum data_module_event_type event,
 		      enum data_type type,
 		      struct cloud_codec_data *data)
@@ -753,21 +742,17 @@ static void config_get(void)
 	SEND_EVENT(data, DATA_EVT_CONFIG_GET);
 }
 
-static void config_send(bool send_all)
+static void config_send(void)
 {
 	int err;
 	struct cloud_codec_data codec;
 	struct data_module_event *evt;
 
-	if (send_all || IS_ENABLED(CONFIG_DATA_SEND_ALL_DEVICE_CONFIGURATIONS)) {
-		config_status_set_all(true);
-	}
-
 	err = cloud_codec_encode_config(&codec, &current_cfg);
 	if (err) {
 		LOG_ERR("Error encoding configuration, error: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
-		goto exit;
+		return;
 	}
 
 	evt = new_data_module_event();
@@ -778,9 +763,6 @@ static void config_send(bool send_all)
 	data_list_add_pending(codec.buf, codec.len, CONFIG);
 	EVENT_SUBMIT(evt);
 
-exit:
-	/* Reset the status flag of all configuations after the data has been sent. */
-	config_status_set_all(false);
 }
 
 static void data_ui_send(void)
@@ -877,7 +859,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 
 		config_change = true;
-		current_cfg.active_mode_fresh = true;
 	}
 
 	if (current_cfg.no_data.gnss != new_config->no_data.gnss) {
@@ -890,7 +871,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 
 		config_change = true;
-		current_cfg.nod_list_fresh = true;
 	}
 
 	if (current_cfg.no_data.neighbor_cell != new_config->no_data.neighbor_cell) {
@@ -903,7 +883,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 
 		config_change = true;
-		current_cfg.nod_list_fresh = true;
 	}
 
 	if (new_config->gps_timeout > 0) {
@@ -913,10 +892,10 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 			LOG_WRN("New GPS timeout: %d", current_cfg.gps_timeout);
 
 			config_change = true;
-			current_cfg.gps_timeout_fresh = true;
 		}
 	} else {
 		LOG_ERR("New GPS timeout out of range: %d", new_config->gps_timeout);
+		return;
 	}
 
 	if (new_config->active_wait_timeout > 0) {
@@ -926,10 +905,10 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 			LOG_WRN("New Active wait timeout: %d", current_cfg.active_wait_timeout);
 
 			config_change = true;
-			current_cfg.active_wait_timeout_fresh = true;
 		}
 	} else {
 		LOG_ERR("New Active timeout out of range: %d", new_config->active_wait_timeout);
+		return;
 	}
 
 	if (new_config->movement_resolution > 0) {
@@ -939,11 +918,11 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 			LOG_WRN("New Movement resolution: %d", current_cfg.movement_resolution);
 
 			config_change = true;
-			current_cfg.movement_resolution_fresh = true;
 		}
 	} else {
 		LOG_ERR("New Movement resolution out of range: %d",
 			new_config->movement_resolution);
+		return;
 	}
 
 	if (new_config->movement_timeout > 0) {
@@ -953,10 +932,10 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 			LOG_WRN("New Movement timeout: %d", current_cfg.movement_timeout);
 
 			config_change = true;
-			current_cfg.movement_timeout_fresh = true;
 		}
 	} else {
 		LOG_ERR("New Movement timeout out of range: %d", new_config->movement_timeout);
+		return;
 	}
 
 	if ((new_config->accelerometer_threshold < ACCELEROMETER_S_M2_MAX) &&
@@ -968,16 +947,15 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 				current_cfg.accelerometer_threshold);
 
 			config_change = true;
-			current_cfg.accelerometer_threshold_fresh = true;
 		}
 	} else {
 		LOG_ERR("New Accelerometer threshold out of range: %f",
 			new_config->accelerometer_threshold);
+		return;
 	}
 
 	/* If there has been a change in the currently applied device configuration we want to store
-	 * the configuration to flash, distribute it to other modules and acknowledge the change
-	 * back to cloud.
+	 * the configuration to flash and distribute it to other modules.
 	 */
 	if (config_change) {
 		int err = save_config(&current_cfg, sizeof(current_cfg));
@@ -987,11 +965,16 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 
 		config_distribute(DATA_EVT_CONFIG_READY);
-		config_send(false);
-		return;
 	}
 
 	LOG_DBG("No new values in incoming device configuration update message");
+	LOG_DBG("Acknowledge currently applied configuration back to cloud");
+
+	/* Always acknowledge all configurations back to cloud to avoid a potential mismatch
+	 * between reported parameters in the cloud-side state and parameters reported by the
+	 * device.
+	 */
+	config_send();
 }
 
 /**
@@ -1091,7 +1074,7 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_EMPTY)) {
-		config_send(true);
+		config_send();
 		return;
 	}
 }

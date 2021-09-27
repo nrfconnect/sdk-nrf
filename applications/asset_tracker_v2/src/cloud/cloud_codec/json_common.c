@@ -924,7 +924,6 @@ exit:
 int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const char *object_label)
 {
 	int err;
-	bool values_added = false;
 
 	if (object_label == NULL) {
 		LOG_WRN("Missing object label");
@@ -938,114 +937,78 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
-	if (data->active_mode_fresh) {
-		err = json_add_bool(config_obj, CONFIG_DEVICE_MODE,
-				    data->active_mode);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_bool(config_obj, CONFIG_DEVICE_MODE, data->active_mode);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->gps_timeout_fresh) {
-		err = json_add_number(config_obj, CONFIG_GPS_TIMEOUT,
-				      data->gps_timeout);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(config_obj, CONFIG_GPS_TIMEOUT, data->gps_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->active_wait_timeout_fresh) {
-		err = json_add_number(config_obj, CONFIG_ACTIVE_TIMEOUT,
-				      data->active_wait_timeout);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(config_obj, CONFIG_ACTIVE_TIMEOUT, data->active_wait_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->movement_resolution_fresh) {
-		err = json_add_number(config_obj, CONFIG_MOVE_RES,
-				      data->movement_resolution);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(config_obj, CONFIG_MOVE_RES, data->movement_resolution);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->movement_timeout_fresh) {
-		err = json_add_number(config_obj, CONFIG_MOVE_TIMEOUT,
-				      data->movement_timeout);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(config_obj, CONFIG_MOVE_TIMEOUT, data->movement_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->accelerometer_threshold_fresh) {
-		err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD,
-				      data->accelerometer_threshold);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-		values_added = true;
+	err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD, data->accelerometer_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
 	}
 
-	if (data->nod_list_fresh) {
-		cJSON *nod_list = cJSON_CreateArray();
+	cJSON *nod_list = cJSON_CreateArray();
 
-		if (nod_list == NULL) {
+	if (nod_list == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	/* If a flag in the no_data structure is set to true the corresponding JSON entry is
+	 * added to the no data array configuration.
+	 */
+	if (data->no_data.gnss) {
+		cJSON *gnss_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_GNSS);
+
+		if (gnss_str == NULL) {
+			cJSON_Delete(nod_list);
 			err = -ENOMEM;
 			goto exit;
 		}
 
-		/* If a flag in the no_data structure is set to true the corresponding JSON entry is
-		 * added to the no data array configuration.
-		 */
-		if (data->no_data.gnss) {
-			cJSON *gnss_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_GNSS);
-
-			if (gnss_str == NULL) {
-				cJSON_Delete(nod_list);
-				err = -ENOMEM;
-				goto exit;
-			}
-
-			json_add_obj_array(nod_list, gnss_str);
-		}
-
-		if (data->no_data.neighbor_cell) {
-			cJSON *ncell_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_NEIGHBOR_CELL);
-
-			if (ncell_str == NULL) {
-				cJSON_Delete(nod_list);
-				err = -ENOMEM;
-				goto exit;
-			}
-
-			json_add_obj_array(nod_list, ncell_str);
-		}
-
-		/* If there are no flag set in the no_data structure, an empty array is
-		 * encoded.
-		 */
-		values_added = true;
-		json_add_obj(config_obj, CONFIG_NO_DATA_LIST, nod_list);
+		json_add_obj_array(nod_list, gnss_str);
 	}
 
-	if (!values_added) {
-		err = -ENODATA;
-		LOG_WRN("No valid configuration data values present");
-		goto exit;
+	if (data->no_data.neighbor_cell) {
+		cJSON *ncell_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_NEIGHBOR_CELL);
+
+		if (ncell_str == NULL) {
+			cJSON_Delete(nod_list);
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj_array(nod_list, ncell_str);
 	}
 
+	/* If there are no flag set in the no_data structure, an empty array is encoded. */
+	json_add_obj(config_obj, CONFIG_NO_DATA_LIST, nod_list);
 	json_add_obj(parent, object_label, config_obj);
 
 	return 0;
