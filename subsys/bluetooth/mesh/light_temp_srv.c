@@ -271,10 +271,10 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 
 	if (move_set->delta != 0 && move_set->transition) {
-		uint64_t distance = abs(set.params.temp - status.current.temp);
-		uint32_t time_to_edge =
-			(distance * (uint64_t)move_set->transition->time) /
-			abs(move_set->delta);
+		/* Calculate the transition time to edge in the Generic Level space: */
+		int32_t lvl_target = (move_set->delta > 0 ? INT16_MAX : INT16_MIN);
+		int32_t lvl_delta = lvl_target - temp_to_lvl(srv, status.current.temp);
+		uint32_t time_to_edge = (move_set->transition->time * lvl_delta) / move_set->delta;
 
 		if (time_to_edge > 0) {
 			transition.time = time_to_edge;
