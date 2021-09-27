@@ -89,6 +89,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *payload,
 int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
+				   struct nrf_cloud_data *bulk_endpoint,
 				   struct nrf_cloud_data *m_endpoint);
 
 /** @brief Encodes state information. */

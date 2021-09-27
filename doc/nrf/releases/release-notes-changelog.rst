@@ -47,6 +47,8 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * Removed GNSS socket API support from A-GPS and P-GPS.
+    * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
+      A message published to the bulk topic is typically a combination of multiple messages.
 
   * :ref:`multicell_location` sample:
 

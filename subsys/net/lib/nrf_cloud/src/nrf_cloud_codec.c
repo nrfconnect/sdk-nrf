@@ -92,6 +92,7 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_MSGTYPE	"messageType"
 #define JSON_KEY_APPID		"appId"
 #define JSON_KEY_DATA		"data"
+#define JSON_KEY_TOPIC_BULK	"/bulk"
 
 int nrf_cloud_codec_init(void)
 {
@@ -547,7 +548,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		struct nrf_cloud_data m_endp;
 
 		/* Get the endpoint information. */
-		nct_dc_endpoint_get(&tx_endp, &rx_endp, &m_endp);
+		nct_dc_endpoint_get(&tx_endp, &rx_endp, NULL, &m_endp);
 		ret += json_add_str_cs(reported_obj, JSON_KEY_TOPIC_PRFX, m_endp.ptr);
 
 		/* Clear pairing config and pairingStatus fields. */
@@ -600,6 +601,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint,
+				   struct nrf_cloud_data *bulk_endpoint,
 				   struct nrf_cloud_data *m_endpoint)
 {
 	__ASSERT_NO_MSG(input != NULL);
@@ -607,6 +609,7 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 	__ASSERT_NO_MSG(input->len != 0);
 	__ASSERT_NO_MSG(tx_endpoint != NULL);
 	__ASSERT_NO_MSG(rx_endpoint != NULL);
+	__ASSERT_NO_MSG(bulk_endpoint != NULL);
 
 	int err;
 	cJSON *root_obj;
@@ -658,6 +661,22 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 		LOG_ERR("could not decode topic for %s", JSON_KEY_DEVICE_TO_CLOUD);
 		return err;
 	}
+
+	/* Populate bulk endpoint topic by copying and appending /bulk to the parsed
+	 * tx endpoint (d2c) topic.
+	 */
+	size_t bulk_ep_len_temp = tx_endpoint->len + sizeof(JSON_KEY_TOPIC_BULK);
+
+	bulk_endpoint->ptr = nrf_cloud_calloc(bulk_ep_len_temp, 1);
+	if (bulk_endpoint->ptr == NULL) {
+		cJSON_Delete(root_obj);
+		LOG_ERR("Could not allocate memory for bulk topic");
+		return -ENOMEM;
+	}
+
+	bulk_endpoint->len = snprintk((char *)bulk_endpoint->ptr, bulk_ep_len_temp, "%s%s",
+				       (char *)tx_endpoint->ptr,
+				       JSON_KEY_TOPIC_BULK);
 
 	cJSON *rx_obj = json_object_decode(topic_obj, JSON_KEY_CLOUD_TO_DEVICE);
 

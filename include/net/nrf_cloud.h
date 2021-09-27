@@ -145,6 +145,11 @@ enum nrf_cloud_topic_type {
 	NRF_CLOUD_TOPIC_STATE = 0x1,
 	/** Endpoint used to directly message the nRF Cloud Web UI. */
 	NRF_CLOUD_TOPIC_MESSAGE,
+	/** Endpoint used to publish bulk messages to nRF Cloud. Bulk messages combine multiple
+	 *  messages into a single message that will be unwrapped and re-published to the
+	 *  message topic in the nRF Cloud backend.
+	 */
+	NRF_CLOUD_TOPIC_BULK
 };
 
 /**@brief FOTA status reported to nRF Cloud. */

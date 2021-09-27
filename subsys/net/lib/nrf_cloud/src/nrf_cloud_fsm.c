@@ -356,16 +356,17 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
 	struct nrf_cloud_data rx;
 	struct nrf_cloud_data tx;
+	struct nrf_cloud_data bulk;
 	struct nrf_cloud_data endpoint;
 
-	err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, &endpoint);
+	err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, &bulk, &endpoint);
 	if (err) {
 		LOG_ERR("nrf_cloud_decode_data_endpoint failed %d", err);
 		return err;
 	}
 
 	/* Set the endpoint information. */
-	nct_dc_endpoint_set(&tx, &rx, &endpoint);
+	nct_dc_endpoint_set(&tx, &rx, &bulk, &endpoint);
 
 	return state_ua_pin_complete();
 }
