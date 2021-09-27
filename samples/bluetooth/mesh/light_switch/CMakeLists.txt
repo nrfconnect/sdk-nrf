@@ -22,5 +22,8 @@ target_include_directories(app PRIVATE include)
 target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP app PRIVATE
   boards/thingy53.c
 )
+target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP_NS app PRIVATE
+  boards/thingy53.c
+)
 
 # NORDIC SDK APP END

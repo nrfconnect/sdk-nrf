@@ -97,6 +97,20 @@ nRF Desktop
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
 
+Bluetooth® LE
+-------------
+
+* Updated:
+
+  * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+
+Bluetooth mesh
+--------------
+
+* Updated:
+
+  * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+
 Matter
 ------
 
@@ -117,6 +131,7 @@ Common
 Edge Impulse
 ------------
 
+* Added non-secure configuration for building with :ref:`zephyr:thingy53_nrf5340`.
 * Updated information about custom build types.
 
 Common Application Framework (CAF)
