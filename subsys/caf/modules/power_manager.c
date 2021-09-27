@@ -28,8 +28,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_POWER_MANAGER_LOG_LEVEL);
 #include <caf/events/force_power_down_event.h>
 
 
-#define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT)
-#define POWER_DOWN_TIMEOUT       K_SECONDS(CONFIG_CAF_POWER_MANAGER_TIMEOUT)
+#define POWER_DOWN_ERROR_TIMEOUT      K_SECONDS(CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT)
+#define POWER_DOWN_CHECK_INTERVAL_SEC 1
+#define POWER_DOWN_CHECK_INTERVAL     K_SECONDS(POWER_DOWN_CHECK_INTERVAL_SEC)
 
 
 enum power_state {
@@ -45,6 +46,8 @@ enum power_state {
 static enum power_state power_state;
 static struct k_work_delayable  power_down_trigger;
 static struct k_work_delayable  error_trigger;
+static bool keep_alive_flag;
+static size_t power_down_interval_counter;
 
 /* The first state that is excluded would have a bit set.
  * It means that allowed state is one higher (lower number)
@@ -57,9 +60,11 @@ static bool check_if_power_state_allowed(enum power_manager_level lvl);
 
 static void power_down_counter_reset(void)
 {
+	BUILD_ASSERT(POWER_DOWN_CHECK_INTERVAL_SEC <= CONFIG_CAF_POWER_MANAGER_TIMEOUT);
 	if ((power_state == POWER_STATE_IDLE) &&
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED)) {
-		k_work_reschedule(&power_down_trigger, POWER_DOWN_TIMEOUT);
+		power_down_interval_counter = 0;
+		k_work_reschedule(&power_down_trigger, POWER_DOWN_CHECK_INTERVAL);
 		LOG_DBG("Power down timer restarted");
 	}
 }
@@ -143,6 +148,19 @@ static void system_off_on_error(void)
 
 static void power_down(struct k_work *work)
 {
+	if (keep_alive_flag) {
+		keep_alive_flag = false;
+		power_down_counter_reset();
+		return;
+	}
+
+	power_down_interval_counter++;
+	if (power_down_interval_counter <
+	    (CONFIG_CAF_POWER_MANAGER_TIMEOUT) / (POWER_DOWN_CHECK_INTERVAL_SEC)) {
+		k_work_reschedule(&power_down_trigger, POWER_DOWN_CHECK_INTERVAL);
+		return;
+	}
+
 	__ASSERT_NO_MSG(power_state == POWER_STATE_IDLE);
 	__ASSERT_NO_MSG(check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED));
 
@@ -180,7 +198,7 @@ static void error(struct k_work *work)
 static bool event_handler(const struct event_header *eh)
 {
 	if (IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS) && is_keep_alive_event(eh)) {
-		power_down_counter_reset();
+		keep_alive_flag = true;
 
 		return false;
 	}
