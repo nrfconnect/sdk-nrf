@@ -80,9 +80,9 @@ static int settings_set(const char *key, size_t len_rd,
 		     strlen(SETTINGS_KEY_LOCATION)) &&
 	    (len_rd == sizeof(saved_location))) {
 		if (read_cb(cb_arg, (void *)&saved_location, len_rd) == len_rd) {
-			LOG_DBG("Read location:%d, %d, gps sec:%lld",
+			LOG_DBG("Read location:%d, %d, gps sec:%d",
 				saved_location.latitude, saved_location.longitude,
-				saved_location.gps_sec);
+				(int32_t)saved_location.gps_sec);
 			return 0;
 		}
 	}
@@ -117,9 +117,9 @@ static int save_location(void)
 {
 	int ret = 0;
 
-	LOG_DBG("Saving location:%d, %d; gps sec:%lld",
+	LOG_DBG("Saving location:%d, %d; gps sec:%d",
 		saved_location.latitude, saved_location.longitude,
-		saved_location.gps_sec);
+		(int32_t)saved_location.gps_sec);
 	ret = settings_save_one(SETTINGS_FULL_LOCATION,
 				&saved_location, sizeof(saved_location));
 	return ret;
@@ -212,7 +212,7 @@ static int64_t utc_to_gps_sec(const int64_t utc, int16_t *gps_time_ms)
 	}
 	gps_sec = (utc_sec - GPS_TO_UNIX_UTC_OFFSET_SECONDS) + gps_leap_seconds;
 
-	LOG_DBG("Converted UTC sec:%lld to GPS sec:%lld", utc_sec, gps_sec);
+	LOG_DBG("Converted UTC sec:%d to GPS sec:%d", (int32_t)utc_sec, (int32_t)gps_sec);
 	return gps_sec;
 }
 
@@ -221,8 +221,8 @@ int64_t npgps_gps_day_time_to_sec(uint16_t gps_day, uint32_t gps_time_of_day)
 	int64_t gps_sec = (int64_t)gps_day * SEC_PER_DAY + gps_time_of_day;
 
 #if PGPS_DEBUG
-	LOG_DBG("Converted GPS day:%u, time of day:%u to GPS sec:%lld",
-		gps_day, gps_time_of_day, gps_sec);
+	LOG_DBG("Converted GPS day:%u, time of day:%u to GPS sec:%d",
+		gps_day, gps_time_of_day, (int32_t)gps_sec);
 #endif
 	return gps_sec;
 }
@@ -236,8 +236,8 @@ void npgps_gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day,
 	day = (uint16_t)(gps_sec / SEC_PER_DAY);
 	time = (uint32_t)(gps_sec - (day * SEC_PER_DAY));
 #if PGPS_DEBUG
-	LOG_DBG("Converted GPS sec:%lld to day:%u, time of day:%u, week:%u",
-		gps_sec, day, time,
+	LOG_DBG("Converted GPS sec:%d to day:%u, time of day:%u, week:%u",
+		(int32_t)gps_sec, day, time,
 		(uint16_t)(day / DAYS_PER_WEEK));
 #endif
 	if (gps_day) {

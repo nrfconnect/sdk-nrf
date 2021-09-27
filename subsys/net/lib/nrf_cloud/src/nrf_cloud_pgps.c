@@ -187,8 +187,8 @@ static int validate_prediction(const struct nrf_cloud_pgps_prediction *p,
 
 	if ((gps_sec < pred_sec) || (gps_sec > end_sec)) {
 		LOG_ERR("prediction does not contain desired time; "
-			"start:%lld, cur:%lld, end:%lld",
-			pred_sec, gps_sec, end_sec);
+			"start:%d, cur:%d, end:%d",
+			(int32_t)pred_sec, (int32_t)gps_sec, (int32_t)end_sec);
 		err = -EINVAL;
 	}
 
@@ -365,8 +365,8 @@ static void discard_oldest_predictions(int num)
 	get_prediction_day_time(last, &index.start_sec,
 				&index.header.gps_day,
 				&index.header.gps_time_of_day);
-	LOG_DBG("updated index to gps_sec:%lld, day:%u, time:%u",
-		index.start_sec, index.header.gps_day,
+	LOG_DBG("updated index to gps_sec:%d, day:%u, time:%u",
+		(int32_t)index.start_sec, index.header.gps_day,
 		index.header.gps_time_of_day);
 }
 
@@ -461,9 +461,9 @@ static void start_expiration_timer(int pnum, int64_t cur_gps_sec)
 	 */
 	if (delta > 0) {
 		k_timer_start(&prediction_timer, K_SECONDS(delta), K_NO_WAIT);
-		LOG_INF("injecting next prediction in %lld seconds", delta);
+		LOG_INF("injecting next prediction in %d seconds", (int32_t)delta);
 	} else {
-		LOG_ERR("cannot start prediction expiration timer; delta = %lld", delta);
+		LOG_ERR("cannot start prediction expiration timer; delta = %d", (int32_t)delta);
 	}
 }
 
@@ -533,7 +533,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 	offset_sec = cur_gps_sec - start_sec;
 
 	print_time_details("First stored prediction:", start_sec, start_day, start_time);
-	LOG_INF("current offset into prediction set, sec:%lld", offset_sec);
+	LOG_INF("current offset into prediction set, sec:%d", (int32_t)offset_sec);
 
 	if (offset_sec < 0) {
 		/* current time must be unknown or very inaccurate; it
@@ -1072,13 +1072,13 @@ static int process_buffer(uint8_t *buf, size_t len)
 				if (index.start_sec > gps_sec) {
 					LOG_ERR("Received data is not within required "
 						"timeframe!  Start of predictions is "
-						"in the future by %lld seconds",
-						index.start_sec - gps_sec);
+						"in the future by %d seconds",
+						(int32_t)(index.start_sec - gps_sec));
 				} else {
 					LOG_ERR("Received data is not within required "
 						"timeframe!  End of predictions is "
-						"in the past by %lld seconds",
-						gps_sec - index.end_sec);
+						"in the past by %d seconds",
+						(int32_t)(gps_sec - index.end_sec));
 				}
 				index.stale_server_data = true;
 				memset(header, 0, sizeof(*header));
@@ -1265,8 +1265,8 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 		} else {
 			int err;
 
-			LOG_INF("Storing prediction num:%u idx:%u for gps sec:%lld",
-				pnum, index.loading_count, gps_sec);
+			LOG_INF("Storing prediction num:%u idx:%u for gps sec:%d",
+				pnum, index.loading_count, (int32_t)gps_sec);
 
 			index.loading_count++;
 			finished = (index.loading_count == index.expected_count);
