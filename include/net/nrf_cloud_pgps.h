@@ -236,6 +236,16 @@ int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
 int nrf_cloud_pgps_request_all(void);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
+/**@brief If previous request for P-GPS data failed, re-enable future retries.
+ * This is should be called by the application after it attempts to
+ * handle PGPS_EVT_REQUEST, but is unable to complete it successfully. For
+ * example, it should be called if the cloud connection being used to transmit
+ * the request is temporarily unavailable.
+ */
+void nrf_cloud_pgps_request_reset(void);
+#endif
+
 /**@brief Processes binary P-GPS data received from nRF Cloud over MQTT or REST.
  *
  * @param buf Pointer to data received from nRF Cloud.
