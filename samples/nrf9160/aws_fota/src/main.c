@@ -394,6 +394,8 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 
 static void reboot(void)
 {
+	/* Send the modem to power off mode */
+	lte_lc_power_off();
 	/* Reboot after a small delay to ensure that all logs are printed. */
 	k_sleep(K_SECONDS(1));
 	sys_reboot(SYS_REBOOT_COLD);
@@ -510,4 +512,5 @@ void main(void)
 	if (err) {
 		printk("Could not disconnect MQTT client. Error: %d\n", err);
 	}
+	lte_lc_power_off();
 }
