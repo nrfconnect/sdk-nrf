@@ -97,6 +97,8 @@ The following LwM2M objects are implemented in this sample:
    The level resource on the Buzzer object does not work properly.
    This is due to an error in Zephyr’s float handling, which will be fixed soon.
 
+.. _dtls_support:
+
 DTLS Support
 ============
 
@@ -196,7 +198,7 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Enter the following data and click :guilabel:`Add device`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*
-            * Friendly Name - *recognisable name*
+            * Friendly Name - *recognizable name*
             * Security mode - psk (Pre-Shared Key)
             * Key - 000102030405060708090a0b0c0d0e0f
 
@@ -208,18 +210,32 @@ The following instructions describe how to register your device to `Leshan Demo 
 
       .. tab:: Leshan Demo Server
 
-         1. Open the `public Leshan Bootstrap Server Demo`_.
-         #. Click on :guilabel:`Bootstrap` in the top right corner.
+         1. Open the `Leshan Boostrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_.
+         #. Click on :guilabel:`BOOTSTRAP` in the top right corner.
+         #. In the :guilabel:`BOOTSTRAP` tab, click on :guilabel:`ADD CLIENTS CONFIGURATION`.
          #. Click on :guilabel:`Add clients configuration`.
-         #. Enter the client endpoint - urn\:imei\:*your device IMEI* and click on :guilabel:`Next`.
-         #. In the :guilabel:`LwM2M Server` section, choose the desired configuration (``No security`` or ``Pre-Shared Key``).
+         #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*.
+         #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Server Configuration` section, enter the following data:
+
+            * Server URL - ``coaps://leshan.eclipseprojects.io:5684``
+            * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+            * Identity - urn\:imei\:*your device IMEI*
+            * Key - ``000102030405060708090a0b0c0d0e0f``
+         #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Bootstrap Server Configuration` section enter the following data:
+
+            * Server URL - ``coaps://leshan.eclipseprojects.io:5784``
+            * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+            * Identity - urn\:imei\:*your device IMEI*
+            * Key - ``000102030405060708090a0b0c0d0e0f``
+
+            This information is used when your client connects to the server.
             If you choose :guilabel:`Pre-shared Key`, add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Identity or Key need not match the Bootstrap Server configuration).
-            The same credentials will be provided in the :guilabel:`Leshan Demo Server Security configuration` page.
+            The same credentials will be provided in the :guilabel:`Leshan Demo Server Security configuration` page (see :ref:`dtls_support` for instructions).
             If :guilabel:`No Security` is chosen, no further configuration is needed.
             In this mode, no DTLS will be used for the communication with the LwM2M server.
 
-         #. In the :guilabel:`LwM2M Bootstrap Server` tab, similarly, fill the information for the bootstrap server. Note that this information is used when your client connects to the server.
-         #. After adding values for the fields under both the :guilabel:`LwM2M Bootstrap Server` and :guilabel:`LwM2M Server` tabs, click :guilabel:`Add`.
+         #. After adding values for the fields under both the :guilabel:`LwM2M Server Configuration` and :guilabel:`LwM2M Bootstrap Server Configuration` tabs, click :guilabel:`Add`.
+
 
 
       .. tab:: Coiote Device Management
@@ -237,6 +253,11 @@ The following instructions describe how to register your device to `Leshan Demo 
 
          #. Click :guilabel:`Add device`.
 
+.. note::
+
+   The :guilabel:`Client Configuration` page of the LWM2M Bootstrap server and the :guilabel:`Registered Clients` page of the LWM2M server display only a limited number of devices by default.
+   You can increase the number of displayed devices from the drop-down menu associated with :guilabel:`Rows per page`.
+   In both cases, the menu is displayed at the bottom-right corner of the :guilabel:`Client Configuration` pages.
 
 2. Set the server address in the client:
 
@@ -441,7 +462,7 @@ After building and running the sample, you can locate your device in the server:
 Queue Mode support
 ==================
 
-To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option.
+To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option:
 
 .. code-block:: console
 
@@ -453,7 +474,12 @@ Bootstrap support
 To successfully run the bootstrap procedure, the device must first be registered in the LwM2M bootstrap server.
 See :ref:`Registering your device to an LwM2M boot strap server <bootstrap_server_reg>` for instructions.
 
-To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option.
+To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option:
+
+.. code-block:: console
+
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-bootstrap.conf
+
 See :ref:`cmake_options` for instructions on how to add this option.
 Keep in mind that the used bootstrap port is set in the aforementioned configuration file.
 
@@ -467,7 +493,7 @@ Testing
    #. Observe that the sample starts in the terminal window.
    #. Check that the device is connected to the chosen LwM2M server.
    #. Press **Button 1** on nRF9160 DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
-   #. Check that the button press has been registered on the LwM2M server by confirming that the press count has been updated.
+   #. Check that the button press event has been registered on the LwM2M server by confirming that the press count has been updated.
    #. Retrieve sensor data from various sensors and check if values are reasonable.
    #. Test GPS module:
 
@@ -482,11 +508,11 @@ Testing
 Firmware Over-the-Air (FOTA)
 ============================
 
-You can update the firmware of the device if you are using Coiote Device Management server as the LwM2M server.
+You can update the firmware of the device if you are using Coiote Device Management server or Leshan server.
 Application firmware updates and delta modem firmware updates are supported.
 
 .. note::
-   Full modem firmware update is not supported when using Coiote Device Management server.
+   Full modem firmware update is not supported when using Coiote Device Management server or Leshan server.
 
 To update the firmware, complete the following steps:
 
