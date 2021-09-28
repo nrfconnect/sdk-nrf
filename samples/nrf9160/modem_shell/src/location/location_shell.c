@@ -14,7 +14,7 @@
 
 #include <modem/location.h>
 
-const struct shell *shell_global;
+#include "mosh_print.h"
 
 enum location_shell_command {
 	LOCATION_CMD_NONE = 0,
@@ -85,11 +85,11 @@ static void location_shell_print_usage(const struct shell *shell,
 {
 	switch (loc_cmd_args->command) {
 	case LOCATION_CMD_GET:
-		shell_print(shell, "%s", location_get_usage_str);
+		mosh_print_no_format(location_get_usage_str);
 		break;
 
 	default:
-		shell_print(shell, "%s", location_usage_str);
+		mosh_print_no_format(location_usage_str);
 		break;
 	}
 }
@@ -123,41 +123,43 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 
 	switch (event_data->id) {
 	case LOC_EVT_LOCATION:
-		shell_print(shell_global, "Location:");
-		shell_print(shell_global, "  used method: %s (%d)",
-			    location_shell_method_to_string(event_data->method, snum),
-			    event_data->method);
+		mosh_print("Location:");
+		mosh_print(
+			"  used method: %s (%d)",
+			location_shell_method_to_string(event_data->method, snum),
+			event_data->method);
 		if (event_data->method == LOC_METHOD_CELLULAR) {
-			shell_print(
-				shell_global,
+			mosh_print(
 				"  used service: %s",
 				CONFIG_MULTICELL_LOCATION_HOSTNAME);
 		}
-		shell_print(shell_global, "  latitude: %.06f", event_data->location.latitude);
-		shell_print(shell_global, "  longitude: %.06f", event_data->location.longitude);
-		shell_print(shell_global, "  accuracy: %.01f m", event_data->location.accuracy);
+		mosh_print("  latitude: %.06f", event_data->location.latitude);
+		mosh_print("  longitude: %.06f", event_data->location.longitude);
+		mosh_print("  accuracy: %.01f m", event_data->location.accuracy);
 		if (event_data->location.datetime.valid) {
-			shell_print(shell_global, "  date: %04d-%02d-%02d",
-				    event_data->location.datetime.year,
-				    event_data->location.datetime.month,
-				    event_data->location.datetime.day);
-			shell_print(shell_global, "  time: %02d:%02d:%02d.%03d UTC",
-				    event_data->location.datetime.hour,
-				    event_data->location.datetime.minute,
-				    event_data->location.datetime.second,
-				    event_data->location.datetime.ms);
+			mosh_print(
+				"  date: %04d-%02d-%02d",
+				event_data->location.datetime.year,
+				event_data->location.datetime.month,
+				event_data->location.datetime.day);
+			mosh_print(
+				"  time: %02d:%02d:%02d.%03d UTC",
+				event_data->location.datetime.hour,
+				event_data->location.datetime.minute,
+				event_data->location.datetime.second,
+				event_data->location.datetime.ms);
 		}
 		sprintf(gmaps_str, "  Google maps URL: https://maps.google.com/?q=%f,%f",
 			event_data->location.latitude, event_data->location.longitude);
-		shell_print(shell_global, "%s", gmaps_str);
+		mosh_print("%s", gmaps_str);
 		break;
 
 	case LOC_EVT_TIMEOUT:
-		shell_error(shell_global, "Timeout happened when getting a location");
+		mosh_error("Timeout happened when getting a location");
 		break;
 
 	case LOC_EVT_ERROR:
-		shell_error(shell_global, "An error happened during getting a location");
+		mosh_error("An error happened during getting a location");
 		break;
 	}
 }
@@ -168,18 +170,14 @@ void location_ctrl_init(void)
 
 	ret = location_init(location_ctrl_event_handler);
 	if (ret) {
-		shell_error(shell_global, "Initializing the Location library failed, err: %d\n",
-			    ret);
+		mosh_error("Initializing the Location library failed, err: %d\n", ret);
 	}
 }
 
 /******************************************************************************/
-#include <shell/shell_uart.h>
+
 int location_shell(const struct shell *shell, size_t argc, char **argv)
 {
-	/* TODO: Get rid of this and use mosh_print etc */
-	shell_global = shell_backend_uart_get_ptr();
-
 	struct location_shell_cmd_args loc_cmd_args = {
 		.command = LOCATION_CMD_NONE
 	};
@@ -222,7 +220,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(argv[1], "cancel") == 0) {
 		loc_cmd_args.command = LOCATION_CMD_CANCEL;
 	} else {
-		shell_error(shell, "Unsupported command=%s\n", argv[1]);
+		mosh_error("Unsupported command=%s\n", argv[1]);
 		ret = -EINVAL;
 		goto show_usage;
 	}
@@ -238,8 +236,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		case LOCATION_SHELL_OPT_GNSS_TIMEOUT:
 			gnss_timeout = atoi(optarg);
 			if (gnss_timeout == 0) {
-				shell_error(shell, "GNSS timeout (%d) must be positive integer. ",
-					    gnss_timeout);
+				mosh_error(
+					"GNSS timeout (%d) must be positive integer. ",
+					gnss_timeout);
 				return -EINVAL;
 			}
 			gnss_timeout_set = true;
@@ -248,9 +247,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		case LOCATION_SHELL_OPT_CELLULAR_TIMEOUT:
 			cellular_timeout = atoi(optarg);
 			if (cellular_timeout == 0) {
-				shell_error(shell,
-					    "Cellular timeout (%d) must be positive integer. ",
-					    cellular_timeout);
+				mosh_error(
+					"Cellular timeout (%d) must be positive integer. ",
+					cellular_timeout);
 				return -EINVAL;
 			}
 			cellular_timeout_set = true;
@@ -259,9 +258,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		case LOCATION_SHELL_OPT_WLAN_TIMEOUT:
 			wlan_timeout = atoi(optarg);
 			if (wlan_timeout == 0) {
-				shell_error(shell,
-					    "WLAN timeout (%d) must be positive integer. ",
-					    wlan_timeout);
+				mosh_error(
+					"WLAN timeout (%d) must be positive integer. ",
+					wlan_timeout);
 				return -EINVAL;
 			}
 			wlan_timeout_set = true;
@@ -275,7 +274,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (strcmp(optarg, "skyhook") == 0) {
 				wlan_service = LOC_WLAN_SERVICE_SKYHOOK;
 			} else {
-				shell_error(shell, "Unknown WLAN positioning service. See usage:");
+				mosh_error("Unknown WLAN positioning service. See usage:");
 				goto show_usage;
 			}
 			break;
@@ -292,7 +291,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (strcmp(optarg, "high") == 0) {
 				gnss_accuracy = LOC_ACCURACY_HIGH;
 			} else {
-				shell_error(shell, "Unknown GNSS accuracy. See usage:");
+				mosh_error("Unknown GNSS accuracy. See usage:");
 				goto show_usage;
 			}
 			gnss_accuracy_set = true;
@@ -303,10 +302,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case LOCATION_SHELL_OPT_METHOD:
 			if (method_count >= LOC_MAX_METHODS) {
-				shell_error(shell,
-					    "Maximum location methods (%d) exceeded. "
-					    "Location method (%s) still given.",
-					    LOC_MAX_METHODS, optarg);
+				mosh_error(
+					"Maximum location methods (%d) exceeded. "
+					"Location method (%s) still given.",
+					LOC_MAX_METHODS, optarg);
 				return -EINVAL;
 			}
 
@@ -317,7 +316,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (strcmp(optarg, "wlan") == 0) {
 				method_list[method_count] = LOC_METHOD_WLAN;
 			} else {
-				shell_error(shell, "Unknown method (%s) given. See usage:", optarg);
+				mosh_error("Unknown method (%s) given. See usage:", optarg);
 				goto show_usage;
 			}
 			method_count++;
@@ -325,7 +324,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		case '?':
 			goto show_usage;
 		default:
-			shell_error(shell, "Unknown option. See usage:");
+			mosh_error("Unknown option. See usage:");
 			goto show_usage;
 		}
 	}
@@ -335,10 +334,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	case LOCATION_CMD_CANCEL:
 		ret = location_request_cancel();
 		if (ret) {
-			shell_error(shell, "Cannot cancel location request, err: %d", ret);
+			mosh_error("Cannot cancel location request, err: %d", ret);
 			return -1;
 		}
-		shell_print(shell, "Getting of location cancelled");
+		mosh_print("Getting of location cancelled");
 		break;
 
 	case LOCATION_CMD_GET: {
@@ -384,14 +383,14 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		ret = location_request(real_config);
 		if (ret) {
-			shell_error(shell, "Requesting location failed, err: %d", ret);
+			mosh_error("Requesting location failed, err: %d", ret);
 			return -1;
 		}
-		shell_print(shell, "Started to get current location...");
+		mosh_print("Started to get current location...");
 		break;
 	}
 	default:
-		shell_error(shell, "Unknown command. See usage:");
+		mosh_error("Unknown command. See usage:");
 		goto show_usage;
 	}
 	return ret;
