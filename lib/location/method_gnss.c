@@ -25,11 +25,15 @@
 #include <net/nrf_cloud_pgps.h>
 #include <pm_config.h>
 #endif
-#if defined(CONFIG_DATE_TIME)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <date_time.h>
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+BUILD_ASSERT(IS_ENABLED(CONFIG_DATE_TIME));
+#endif
 
 #if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
@@ -581,7 +585,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	LOG_INF("GNSS started");
 }
 
-#if defined(CONFIG_DATE_TIME)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 static void method_gnss_date_time_event_handler(const struct date_time_evt *evt)
 {
 	switch (evt->type) {
@@ -622,7 +626,7 @@ int method_gnss_location_get(const struct loc_method_config *config)
 		return -err;
 	}
 
-#if defined(CONFIG_DATE_TIME)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 	date_time_update_async(method_gnss_date_time_event_handler);
 #endif
 
