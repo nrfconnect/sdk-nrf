@@ -15,6 +15,7 @@
 #include <net/rest_client.h>
 
 #include "srest_shell.h"
+#include "mosh_print.h"
 
 static const char srest_shell_cmd_usage_str[] =
 	"Simple REST shell client\n"
@@ -56,7 +57,7 @@ static struct option long_options[] = {
 
 static void srest_shell_print_usage(const struct shell *shell)
 {
-	shell_print(shell, "%s", srest_shell_cmd_usage_str);
+	mosh_print_no_format(srest_shell_cmd_usage_str);
 }
 
 /*****************************************************************************/
@@ -116,7 +117,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			} else if (strcmp(optarg, "patch") == 0) {
 				rest_ctx.http_method = HTTP_PATCH;
 			} else {
-				shell_error(shell, "Unsupported HTTP request method");
+				mosh_error("Unsupported HTTP request method");
 				return -EINVAL;
 			}
 			method_set = true;
@@ -131,21 +132,21 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		case 's':
 			rest_ctx.sec_tag = atoi(optarg);
 			if (rest_ctx.sec_tag == 0) {
-				shell_warn(shell, "sec_tag not an integer (> 0)");
+				mosh_warn("sec_tag not an integer (> 0)");
 				return -EINVAL;
 			}
 			break;
 		case 'l':
 			response_buf_len = atoi(optarg);
 			if (response_buf_len == 0) {
-				shell_warn(shell, "response buffer length not an integer (> 0)");
+				mosh_warn("response buffer length not an integer (> 0)");
 				return -EINVAL;
 			}
 			break;
 		case 't':
 			rest_ctx.timeout_ms = atoi(optarg);
 			if (rest_ctx.timeout_ms == 0) {
-				shell_warn(shell, "timeout not an integer (> 0)");
+				mosh_warn("timeout not an integer (> 0)");
 				return -EINVAL;
 			}
 			rest_ctx.timeout_ms *= 1000;
@@ -153,7 +154,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'p':
 			rest_ctx.port = atoi(optarg);
 			if (rest_ctx.port == 0) {
-				shell_warn(shell, "port not an integer (> 0)");
+				mosh_warn("port not an integer (> 0)");
 				return -EINVAL;
 			}
 			break;
@@ -163,7 +164,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			if (len > 0) {
 				rest_ctx.body = k_calloc(len + 1, 1);
 				if (rest_ctx.body == NULL) {
-					shell_error(shell, "Cannot allocate memory for given body");
+					mosh_error("Cannot allocate memory for given body");
 					return -ENOMEM;
 				}
 				strcpy(rest_ctx.body, optarg);
@@ -174,7 +175,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 
 			len = strlen(optarg);
 			if (len <= 0) {
-				shell_error(shell, "No header given");
+				mosh_error("No header given");
 				return -EINVAL;
 			}
 
@@ -187,7 +188,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 
 			if (!room_available) {
-				shell_error(shell, "There are already max number (%d) of headers",
+				mosh_error("There are already max number (%d) of headers",
 					    SREST_REQUEST_MAX_HEADERS);
 				return -EINVAL;
 			}
@@ -196,9 +197,9 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 				if (!headers[i].in_use) {
 					headers[i].header_str = k_malloc(strlen(optarg) + 1);
 					if (headers[i].header_str == NULL) {
-						shell_error(shell,
-							    "Cannot allocate memory for header %s",
-							    optarg);
+						mosh_error(
+							"Cannot allocate memory for header %s",
+							optarg);
 						break;
 					}
 					headers[i].in_use = true;
@@ -212,8 +213,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'v':
 			rest_ctx.tls_peer_verify = atoi(optarg);
 			if (rest_ctx.tls_peer_verify  < 0 || rest_ctx.tls_peer_verify  > 2) {
-				shell_error(
-					shell,
+				mosh_error(
 					"Valid values for peer verify (%d) are 0, 1 and 2.",
 					rest_ctx.tls_peer_verify);
 				return -EINVAL;
@@ -222,14 +222,14 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		case '?':
 			goto show_usage;
 		default:
-			shell_error(shell, "Unknown option. See usage:");
+			mosh_error("Unknown option. See usage:");
 			goto show_usage;
 		}
 	}
 
 	/* Check that all mandatory args were given: */
 	if (!host_set) {
-		shell_error(shell, "Please, give all mandatory options");
+		mosh_error("Please, give all mandatory options");
 		goto show_usage;
 	}
 
@@ -248,7 +248,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			if (headers_set) {
 				req_headers[i] = headers[j].header_str;
 				req_headers[i + 1] = NULL;
-				//shell_print(shell, "header %i set: %s", i, req_headers[i]);
+				//mosh_print("header %i set: %s", i, req_headers[i]);
 			}
 		}
 		rest_ctx.header_fields = (const char **)req_headers;
@@ -256,25 +256,26 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 
 	rest_ctx.resp_buff = k_calloc(response_buf_len, 1);
 	if (rest_ctx.resp_buff == NULL) {
-		shell_error(shell, "No memory available for response buffer of length %d",
-			    response_buf_len);
+		mosh_error(
+			"No memory available for response buffer of length %d",
+			response_buf_len);
 		return -ENOMEM;
 	}
 	rest_ctx.resp_buff_len = response_buf_len;
 
 	ret = rest_client_request(&rest_ctx);
 	if (ret) {
-		shell_error(shell, "Error %d from rest_lib", ret);
+		mosh_error("Error %d from rest_lib", ret);
 	} else {
-		shell_print(shell,
-			    "Response:\n"
-			    "  HTTP status: %d\n"
-			    "  Body/Total length: %d/%d\n\n"
-			    "  %s\n",
-			    rest_ctx.http_status_code,
-			    rest_ctx.response_len,
-			    rest_ctx.total_response_len,
-			    rest_ctx.response);
+		mosh_print(
+			"Response:\n"
+			"  HTTP status: %d\n"
+			"  Body/Total length: %d/%d\n\n"
+			"  %s\n",
+			rest_ctx.http_status_code,
+			rest_ctx.response_len,
+			rest_ctx.total_response_len,
+			rest_ctx.response);
 	}
 	k_free(rest_ctx.body);
 	for (i = 0; i < SREST_REQUEST_MAX_HEADERS; i++) {
