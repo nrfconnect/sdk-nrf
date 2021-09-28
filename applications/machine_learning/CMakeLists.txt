@@ -28,6 +28,14 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
   set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
 endif()
 
+# Use dedicated configuration of MCUboot bootloader only if it's provided for given board and
+# build type. For example, application uses default configuration of the bootloader for Thingy:53.
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf)
+  set(mcuboot_CONF_FILE
+    ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf
+    )
+endif()
+
 set(hci_rpmsg_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/hci_rpmsg_${CMAKE_BUILD_TYPE}.conf
   )
