@@ -72,6 +72,26 @@ Configuration
 
 |config|
 
+.. matter_door_lock_sample_configuration_file_types_start
+
+The sample uses different configuration files depending on the supported features.
+The configuration files are automatically attached to the build based on the build type suffix of the file name, such as :file:`_single_image_dfu` in the :file:`prj_single_image_dfu.conf` file.
+To modify configuration options, apply the modifications to the files with the appropriate suffix.
+See the table below for information about available configuration types:
+
++---------------------------+--------------------------------------+------------------------+------------------------------+
+| Config suffix             | Enabled feature                      | Enabling build option  | Supported boards             |
++===========================+======================================+========================+==============================+
+| none                      | none (basic build)                   | none                   | ``nrf52840dk_nrf52840``      |
+|                           |                                      |                        | ``nrf5340dk_nrf5340_cpuapp`` |
++---------------------------+--------------------------------------+------------------------+------------------------------+
+| :file:`_single_image_dfu` | Single-image Device Firmware Upgrade | ``-DBUILD_WITH_DFU=1`` | ``nrf52840dk_nrf52840``      |
++---------------------------+--------------------------------------+------------------------+------------------------------+
+| :file:`_multi_image_dfu`  | Multi-image Device Firmware Upgrade  | ``-DBUILD_WITH_DFU=1`` | ``nrf5340dk_nrf5340_cpuapp`` |
++---------------------------+--------------------------------------+------------------------+------------------------------+
+
+.. matter_door_lock_sample_configuration_file_types_end
+
 Device Firmware Upgrade support
 ===============================
 
