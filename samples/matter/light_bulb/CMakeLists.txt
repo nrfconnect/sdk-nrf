@@ -8,7 +8,12 @@ cmake_minimum_required(VERSION 3.20.0)
 
 option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" OFF)
 if(BUILD_WITH_DFU)
-    set(CONF_FILE prj_dfu.conf)
+# Use multi-image DFU for the nRF5340dk
+    if(${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
+        set(CONF_FILE prj_multi_image_dfu.conf)
+    else()
+        set(CONF_FILE prj_single_image_dfu.conf)
+    endif()
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml")
         set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
     else()

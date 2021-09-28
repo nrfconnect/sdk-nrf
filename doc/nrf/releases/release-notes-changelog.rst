@@ -95,6 +95,13 @@ nRF Desktop
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
 
+Matter
+------
+
+* Added:
+
+  * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
+
 Zigbee
 ------
 
