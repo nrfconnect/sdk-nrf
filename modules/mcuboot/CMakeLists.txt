@@ -35,11 +35,15 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # SLOT_SIZE - (required) The size of the primary partition
     # START_ADDRESS_OFFSET - (required) Offset
     # SIGNED_HEX_FILE_OUT - (required) Signed hex output image
+    # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
+    # SIGNED_HEX_TEST_FILE_OUT - (optional) Signed hex output test image including IMAGE_MAGIC
+    # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # DEPENDS - (optional) One or more dependencies for signing the hex image
 
     set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE START_ADDRESS_OFFSET SIGNED_HEX_FILE_OUT)
+    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT)
     set(multiValueArgs DEPENDS)
-    cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs};${oneValueOptionalArgs}" "${multiValueArgs}" ${ARGN})
     check_arguments_required_all(sign SIGN_ARG ${oneValueArgs})
 
     set(signed_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_signed.hex)
@@ -47,6 +51,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(to_sign_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_to_sign.bin)
     set(update_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_update.bin)
     set(test_update_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_test_update.hex)
+    if(DEFINED SIGN_ARG_SIGNED_BIN_FILE_OUT)
+      set(${SIGN_ARG_SIGNED_BIN_FILE_OUT} ${update_bin} PARENT_SCOPE)
+    endif()
+    if(DEFINED SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT)
+      set(${SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT} ${test_update_hex} PARENT_SCOPE)
+    endif()
 
     # Ensure that it is possible to move the secondary slot to the memory
     # mapped area for external flash if the secondary slot is located in
@@ -59,7 +69,16 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex
         )
 
-      set (moved_test_update_command
+      if(DEFINED SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT)
+        set(${SIGN_ARG_SIGNED_HEX_TEST_FILE_OUT}
+          ${test_update_hex} ${moved_test_update_hex} PARENT_SCOPE
+          )
+      endif()
+
+      add_custom_command(
+        OUTPUT
+        ${moved_test_update_hex} # Signed hex with IMAGE_MAGIC located at secondary slot
+
         COMMAND
         # Create version of test update which is located at the secondary slot.
         # Hence, if a programmer is given this hex file, it will flash it
@@ -72,15 +91,16 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         --gap-fill=0xff
         ${test_update_hex}
         ${moved_test_update_hex}
+
+        DEPENDS
+        ${SIGN_ARG_DEPENDS}
+        ${test_update_hex}
         )
     endif()
 
     add_custom_command(
       OUTPUT
-      ${update_bin}            # Signed binary of input hex.
       ${signed_hex}            # Signed hex of input hex.
-      ${test_update_hex}       # Signed hex with IMAGE_MAGIC
-      ${moved_test_update_hex} # Signed hex with IMAGE_MAGIC located at secondary slot
 
       COMMAND
       # Create signed hex file from input hex file.
@@ -91,6 +111,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${signed_hex}
+
+      DEPENDS
+      ${SIGN_ARG_DEPENDS}
+        )
+
+    add_custom_command(
+      OUTPUT
+      ${update_bin}            # Signed binary of input hex.
 
       COMMAND
       # Create binary version of the input hex file, this is done so that we
@@ -109,6 +137,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${to_sign_bin}
       ${update_bin}
+      DEPENDS
+      ${SIGN_ARG_DEPENDS}
+        )
+
+    add_custom_command(
+      OUTPUT
+      ${test_update_hex}       # Signed hex with IMAGE_MAGIC
 
       COMMAND
       # Create signed hex file from input hex file *with* IMAGE_MAGIC.
@@ -122,8 +157,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --pad # Adds IMAGE_MAGIC to end of slot.
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${test_update_hex}
-
-      ${moved_test_update_command}
 
       # Add Zigbee OTA header to signed application
       COMMAND
@@ -274,10 +307,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
       START_ADDRESS_OFFSET ${app_offset}
       SIGNED_HEX_FILE_OUT app_signed_hex
+      SIGNED_BIN_FILE_OUT app_signed_bin
+      SIGNED_HEX_TEST_FILE_OUT app_signed_test_hex
       DEPENDS ${app_sign_depends}
       )
 
-    add_custom_target(mcuboot_sign_target DEPENDS ${app_signed_hex})
+    add_custom_target(mcuboot_sign_target
+      DEPENDS ${app_signed_hex} ${app_signed_bin} ${app_signed_test_hex}
+      )
 
     set_property(GLOBAL PROPERTY
       mcuboot_primary_app_PM_HEX_FILE
@@ -317,12 +354,16 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         SLOT_SIZE $<TARGET_PROPERTY:partition_manager,net_app_slot_size>
         START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
+        SIGNED_BIN_FILE_OUT net_core_app_signed_bin
+        SIGNED_HEX_TEST_FILE_OUT net_core_app_signed_test_hex
         DEPENDS ${sign_depends}
         )
 
       add_custom_target(
         net_core_app_sign_target
         DEPENDS ${net_core_app_signed_hex}
+          ${net_core_app_signed_bin}
+          ${net_core_app_signed_test_hex}
         )
 
       add_dependencies(
@@ -396,6 +437,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
           SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
           START_ADDRESS_OFFSET ${slot_offset}
           SIGNED_HEX_FILE_OUT signed_hex
+          SIGNED_BIN_FILE_OUT signed_bin
+          SIGNED_HEX_TEST_FILE_OUT signed_test_hex
           DEPENDS ${${slot}_target} ${${slot}_hex}
           )
 
@@ -404,7 +447,9 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         # manager to override the implicitly assigned container hex files.
 
         # Wrapper target for the generated hex file.
-        add_custom_target(signed_${parent_slot}_target DEPENDS ${signed_hex})
+        add_custom_target(signed_${parent_slot}_target
+          DEPENDS ${signed_hex} ${signed_bin} ${signed_test_hex}
+          )
 
         # Override the container hex file.
         set_property(GLOBAL PROPERTY

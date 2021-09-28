@@ -156,6 +156,13 @@ Zigbee
 Common
 ======
 
+Build system
+------------
+
+* Bug fixes:
+
+  * NCSIDB-581: Fixed a bug where application signing and file conversion for device firmware update (DFU) could fail in SES during a build.
+
 Partition Manager
 -----------------
 
