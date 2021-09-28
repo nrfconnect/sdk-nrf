@@ -48,31 +48,23 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 	if (rest_ctx && !rest_ctx->response && rsp->body_found && rsp->body_start) {
 		rest_ctx->response = rsp->body_start;
 	}
+	rest_ctx->total_response_len += rsp->data_len;
 
-	/* HTTP client is splitting the received data according to resp_buf_len.
-	 * We are not currently supporting partial data to be received
-	 */
 	if (final_data == HTTP_DATA_MORE) {
-		LOG_WRN("Partial data received(%zd bytes)", rsp->data_len);
+		LOG_DBG("Partial data received(%zd bytes)", rsp->data_len);
 	} else if (final_data == HTTP_DATA_FINAL) {
-		LOG_DBG("HTTP: All data received (len: %d), status: %u %s",
-			rsp->content_length, 
-			rsp->http_status_code,
-			log_strdup(rsp->http_status));
-
 		if (!rest_ctx) {
 			LOG_WRN("REST context not provided");
 			return;
 		}
 		rest_ctx->http_status_code = rsp->http_status_code;
-		if (rsp->content_length > rest_ctx->resp_buff_len) {
-			LOG_ERR("All data (len: %d) did not fit into buffer len of %d",
-				rsp->content_length,
-				rest_ctx->resp_buff_len);
-			rest_ctx->response_len = rest_ctx->resp_buff_len;
-		} else {
-			rest_ctx->response_len = rsp->content_length;
-		}
+		rest_ctx->response_len = rsp->content_length;
+
+		LOG_DBG("HTTP: All data received (content/total: %d/%d), status: %u %s",
+			rsp->content_length,
+			rest_ctx->total_response_len,
+			rsp->http_status_code,
+			log_strdup(rsp->http_status));
 	}
 }
 
@@ -270,17 +262,21 @@ static int srest_client_do_api_call(struct http_request *http_req,
 
 	rest_ctx->response = NULL;
 	rest_ctx->response_len = 0;
+	rest_ctx->total_response_len = 0;
 
 	err = http_client_req(rest_ctx->connect_socket, http_req, rest_ctx->timeout_ms, rest_ctx);
 	if (err < 0) {
 		LOG_ERR("http_client_req() error: %d", err);
-		err = -EIO;
+	} else if (rest_ctx->total_response_len >= rest_ctx->resp_buff_len) {
+		/* 1 byte is reserved to NULL terminate the response */
+		LOG_ERR("Receive buffer too small, %d bytes are required",
+			rest_ctx->total_response_len + 1);
+		err = -ENOBUFS;
 	} else {
 		err = 0;
 	}
 
 	srest_client_close_connection(rest_ctx);
-
 	return err;
 }
 
@@ -302,7 +298,7 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 	__ASSERT_NO_MSG(req_resp_ctx->host != NULL);
 	__ASSERT_NO_MSG(req_resp_ctx->url != NULL);
 	__ASSERT_NO_MSG(req_resp_ctx->resp_buff != NULL);
-	__ASSERT_NO_MSG(req_resp_ctx->resp_buff_len >= 0);
+	__ASSERT_NO_MSG(req_resp_ctx->resp_buff_len > 0);
 
 	struct http_request http_req;
 	int ret;
@@ -324,18 +320,17 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 
 	ret = srest_client_do_api_call(&http_req, req_resp_ctx);
 	if (ret) {
-		ret = -EIO;
-		LOG_ERR("srest_client_do_api_call() failed");
+		LOG_ERR("srest_client_do_api_call() failed, err %d", ret);
 		goto clean_up;
 	}
 
 	if (!req_resp_ctx->response || !req_resp_ctx->response_len) {
-		//TODO: is it ok to fail due to this in this level?
-		ret = -ENODATA;
-		LOG_ERR("no data in response, http status: %d", req_resp_ctx->http_status_code);
-		goto clean_up;
+		LOG_WRN("No data in a response body");
+		/* Make it as zero length string */
+		*req_resp_ctx->resp_buff = '\0';
+		req_resp_ctx->response = req_resp_ctx->resp_buff;
+		req_resp_ctx->response_len = 0;
 	}
-
 	LOG_DBG("API call response len: http status: %d, %u bytes", req_resp_ctx->http_status_code,
 		req_resp_ctx->response_len);
 

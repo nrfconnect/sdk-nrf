@@ -79,18 +79,19 @@ struct srest_req_resp_context {
 	/** User allocated buffer for receiving API response.*/
 	char *resp_buff;
 
-	/** Size of resp_buff */
+	/** User given size of resp_buff */
 	size_t resp_buff_len;
 
-	/** Out: start of response data in resp_buff */
-	char *response;
+	/** Out: Length of HTTP headers + response body/content data */
+	size_t total_response_len;
 
-	/** Out: Length of response data */
+	/** Out: Length of response content data */
 	size_t response_len;
 
-	/** Out: Numeric HTTP status code which corresponds to the
-	 * textual description.
-	 */
+	/** Out: start of response data (i.e. the body/content) in resp_buff */
+	char *response;
+
+	/** Out: Numeric HTTP status code */
 	uint16_t http_status_code;
 };
 
