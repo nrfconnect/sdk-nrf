@@ -112,14 +112,14 @@
 
 .. thingy53_nrf5340_cpuapp
 
-| Thingy:53 | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp`` |
 
 .. thingy53_nrf5340_cpuapp_ns
 
-| Thingy:53 | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp_ns`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp_ns`` |
 
 .. thingy53_nrf5340_cpuapp_and_cpuapp_ns
 
-| Thingy:53 | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp``    |
-|           |          |                                            |                                |
-|           |          |                                            | ``thingy53_nrf5340_cpuapp_ns`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp``    |
+|                                |          |                                            |                                |
+|                                |          |                                            | ``thingy53_nrf5340_cpuapp_ns`` |
