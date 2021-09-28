@@ -386,6 +386,10 @@ static int nct_client_id_set(const char * const client_id)
 
 int nct_client_id_get(char *id, size_t id_len)
 {
+	if (!client_id_buf) {
+		return -ENODEV;
+	}
+
 	int len = strlen(client_id_buf);
 
 	if (id_len <= len) {
