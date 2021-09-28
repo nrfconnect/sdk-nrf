@@ -18,16 +18,23 @@
 
 static const char srest_shell_cmd_usage_str[] =
 	"Usage:\n"
-	"srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10] [-t sec_tag] [-v verify_level]\n"
+	"srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10]\n"
+	"              [-s sec_tag] [-v verify_level] [-t timeout_in_ms] [-l length of the response buffer]\n"
 	"\n"
-	"  -d, --host,     Destination host/domain of the URL\n"
+	"  -d, --host,         Destination host/domain of the URL\n"
 	"Optionals:\n"
-	"  -m, --method,       HTTP method (\"get\" (default) or \"post\")\n"
+	"  -m, --method,       HTTP method (one of the: \"get\" (default),\"head\",\n"
+	"                      \"post\",\"put\",\"delete\" or \"patch\")\n"
 	"  -p, --port,         Destination port (default: 80)\n"
 	"  -u, --url,          URL beyond host/domain (default: \"/index.html\")\n"
-	"  -H, --header,       Header\n"
-	"  -b, --body,         Payload body\n"
+	"  -l, --resp_len,     Length of the buffer reserved for the REST response\n"
+	"                      (default: 1024 bytes)\n"
+	"  -H, --header,       Header including CRLF, for example:\n"
+	"                      -H \"Content-Type: application/json\\x0D\\x0A\"\n"
+	"  -b, --body,         Payload body, example: -b '{\"foo\":bar}'\n"
 	"  -s, --sec_tag,      Used security tag for TLS connection\n"
+	"  -t, --timeout,      Request timeout in seconds\n"
+	"                      (default: CONFIG_SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT)\n"
 	"  -v, --peer_verify,  TLS peer verification level. None (0),\n"
 	"                      optional (1) or required (2). Default value is 2.\n";
 
@@ -37,10 +44,12 @@ static struct option long_options[] = {
 	{ "port", required_argument, 0, 'p' },
 	{ "url", required_argument, 0, 'u' },
 	{ "body", required_argument, 0, 'b' },
+	{ "resp_len", required_argument, 0, 'l' },
 	{ "header", required_argument, 0, 'H' },
 	{ "method", required_argument, 0, 'm' },
 	{ "sec_tag", required_argument, 0, 's' },
 	{ "peer_verify", required_argument, 0, 'v' },
+	{ "timeout", required_argument, 0, 't' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -50,6 +59,7 @@ static void srest_shell_print_usage(const struct shell *shell)
 }
 
 /*****************************************************************************/
+
 #define SREST_REQUEST_MAX_HEADERS 10
 #define SREST_RESPONSE_BUFF_SIZE 1024
 #define SREST_DEFAULT_DESTINATION_PORT 80
@@ -72,11 +82,10 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	bool headers_set = false;
 	bool method_set = false;
 	bool host_set = false;
-	char response_buf[SREST_RESPONSE_BUFF_SIZE];
+	int response_buf_len = SREST_RESPONSE_BUFF_SIZE;
 
 	/* Set the defaults: */
 	srest_client_request_defaults_set(&rest_ctx);
-	rest_ctx.http_method = HTTP_GET;
 	rest_ctx.url = "/index.html";
 	rest_ctx.port = SREST_DEFAULT_DESTINATION_PORT;
 	rest_ctx.body = NULL;
@@ -89,15 +98,24 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:", long_options, &long_index)) !=
+	       -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "get") == 0) {
 				rest_ctx.http_method = HTTP_GET;
+			} else if (strcmp(optarg, "head") == 0) {
+				rest_ctx.http_method = HTTP_HEAD;
 			} else if (strcmp(optarg, "post") == 0) {
 				rest_ctx.http_method = HTTP_POST;
+			} else if (strcmp(optarg, "put") == 0) {
+				rest_ctx.http_method = HTTP_PUT;
+			} else if (strcmp(optarg, "delete") == 0) {
+				rest_ctx.http_method = HTTP_DELETE;
+			} else if (strcmp(optarg, "patch") == 0) {
+				rest_ctx.http_method = HTTP_PATCH;
 			} else {
-				shell_error(shell, "Unsupported HTTP method");
+				shell_error(shell, "Unsupported HTTP request method");
 				return -EINVAL;
 			}
 			method_set = true;
@@ -116,7 +134,21 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
-
+		case 'l':
+			response_buf_len = atoi(optarg);
+			if (response_buf_len == 0) {
+				shell_warn(shell, "response buffer length not an integer (> 0)");
+				return -EINVAL;
+			}
+			break;
+		case 't':
+			rest_ctx.timeout_ms = atoi(optarg);
+			if (rest_ctx.timeout_ms == 0) {
+				shell_warn(shell, "timeout not an integer (> 0)");
+				return -EINVAL;
+			}
+			rest_ctx.timeout_ms *= 1000;
+			break;
 		case 'p':
 			rest_ctx.port = atoi(optarg);
 			if (rest_ctx.port == 0) {
@@ -128,7 +160,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			rest_ctx.body = optarg;
 			len = strlen(optarg);
 			if (len > 0) {
-				rest_ctx.body = k_malloc(len + 1);
+				rest_ctx.body = k_calloc(len + 1, 1);
 				if (rest_ctx.body == NULL) {
 					shell_error(shell, "Cannot allocate memory for given body");
 					return -ENOMEM;
@@ -139,13 +171,13 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'H': {
 			bool room_available = false;
 
-			/* Check if there are still room for additional header? */
 			len = strlen(optarg);
 			if (len <= 0) {
 				shell_error(shell, "No header given");
 				return -EINVAL;
 			}
 
+			/* Check if there are still room for additional header? */
 			for (i = 0; i < SREST_REQUEST_MAX_HEADERS; i++) {
 				if (!headers[i].in_use) {
 					room_available = true;
@@ -220,23 +252,34 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 		rest_ctx.header_fields = (const char **)req_headers;
 	}
-	rest_ctx.resp_buff = response_buf;
-	rest_ctx.resp_buff_len = SREST_RESPONSE_BUFF_SIZE;
+
+	rest_ctx.resp_buff = k_calloc(response_buf_len, 1);
+	if (rest_ctx.resp_buff == NULL) {
+		shell_error(shell, "No memory available for response buffer of length %d",
+			    response_buf_len);
+		return -ENOMEM;
+	}
+	rest_ctx.resp_buff_len = response_buf_len;
 
 	ret = srest_client_request(&rest_ctx);
 	if (ret) {
-		shell_error(shell, "Error %d from srest client", ret);
+		shell_error(shell, "Error %d from rest_lib", ret);
 	} else {
 		shell_print(shell,
 			    "Response:\n"
-			    "  HTTP status: %d\n\n"
-			    "  %s",
-			    rest_ctx.http_status_code, rest_ctx.response);
+			    "  HTTP status: %d\n"
+			    "  Body/Total length: %d/%d\n\n"
+			    "  %s\n",
+			    rest_ctx.http_status_code,
+			    rest_ctx.response_len,
+			    rest_ctx.total_response_len,
+			    rest_ctx.response);
 	}
 	k_free(rest_ctx.body);
 	for (i = 0; i < SREST_REQUEST_MAX_HEADERS; i++) {
 		k_free(headers[i].header_str);
 	}
+	k_free(rest_ctx.resp_buff);
 
 	return ret;
 
