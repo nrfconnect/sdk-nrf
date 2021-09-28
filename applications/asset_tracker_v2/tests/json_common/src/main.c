@@ -564,11 +564,12 @@ static void test_encode_agps_request_data_object(void)
 		.area = 40401,
 		.request.sv_mask_ephe = UINT32_MAX,
 		.request.sv_mask_alm = UINT32_MAX,
-		.request.utc = 1,
-		.request.klobuchar = 1,
-		.request.system_time_tow = 1,
-		.request.position = 1,
-		.request.integrity = 1,
+		.request.data_flags =
+			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST,
 		.queued = true
 	};
 
