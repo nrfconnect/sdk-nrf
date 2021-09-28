@@ -137,15 +137,19 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Disconnect from the nRF Cloud service
-* ``1`` - Connect to the nRF Cloud service
+* ``0`` - Disconnect from the nRF Cloud service.
+* ``1`` - Connect to the nRF Cloud service.
+* ``2`` - Send a message in the JSON format to the nRF Cloud service.
 
-The ``<signify>`` parameter accepts the following integer values:
+When ``<op>`` is ``2``, SLM enters ``slm_data_mode``.
 
-* ``0`` - It does not signify the location info to nRF Cloud
-* ``1`` - It does signify the location info to nRF Cloud
+The ``<signify>`` parameter is used only when the ``<op>`` value is ``1``
+It accepts the following integer values:
 
-When not specified, it does not signify the location info to nRF Cloud.
+* ``0`` - It does not signify the location info to nRF Cloud.
+* ``1`` - It does signify the location info to nRF Cloud.
+
+When the ``<signify>`` parameter is not specified, it does not signify the location info to nRF Cloud.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,6 +161,12 @@ Unsolicited notification
 * The ``<ready>`` value indicates whether the nRF Cloud connection is ready or not.
 * The ``<signify>`` value indicates whether the location info will be signified to nRF Cloud or not.
 
+::
+
+   #XNRFCLOUD: <message>
+
+* The ``<message>`` value indicates the nRF Cloud data received when A-GPS, P-GPS, and Cell_Pos are not active.
+
 Example
 ~~~~~~~
 
@@ -166,6 +176,13 @@ Example
 
   OK
   #XNRFCLOUD: 1,0
+
+  AT#XNRFCLOUD=2
+  {"msg":"Hello, nRF Cloud"}
+  OK
+
+  #XNRFCLOUD: {"msg":"Hello"}
+
   AT#XNRFCLOUD=0
 
   AT#XNRFCLOUD: 0,0
@@ -198,10 +215,12 @@ Response syntax
 
 ::
 
-   #XNRFCLOUD: <ready>,<signify>
+   #XNRFCLOUD: <ready>,<signify>,<sec_tag>,<device_id>
 
 * The ``<ready>`` value indicates whether the nRF Cloud connection is ready or not.
 * The ``<signify>`` value indicates whether the location info will be signified to nRF Cloud or not.
+* The ``<sec_tag>`` value indicates the ``sec_tag`` used for accessing nRF Cloud.
+* The ``<device_id>`` value indicates the device ID used for accessing nRF Cloud.
 
 Example
 ~~~~~~~
@@ -210,7 +229,15 @@ Example
 
   AT#XNRFCLOUD?
 
-  #XNRFCLOUD: 1,0
+  #XNRFCLOUD: 1,0,16842753,"nrf-352656106443792"
+
+  OK
+
+::
+
+  AT#XNRFCLOUD?
+
+  #XNRFCLOUD: 1,0,8888,"50503041-3633-4261-803d-1e2b8f70111a"
 
   OK
 
@@ -232,9 +259,9 @@ Example
 
 ::
 
-  AT#XNRFSIGNIFY=?
+  AT#XXNRFCLOUD=?
 
-  #XNRFCLOUD: (1,0),<signify>
+  #XNRFCLOUD: (0,1,2),<signify>
 
   OK
 

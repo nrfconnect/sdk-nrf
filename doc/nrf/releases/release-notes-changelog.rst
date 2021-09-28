@@ -66,6 +66,13 @@ nRF9160
 
     * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
 
+  * :ref:`serial_lte_modem` application:
+
+    * Added the ``#XUUID`` command to read out the device UUID from the modem.
+    * Added to the ``XNRFCLOUD`` command the following features:
+      * The possibility to send to and receive from nRF Cloud JSON messages in data mode.
+      * The ability to read out the ``sec_tag`` and the UUID of the device.
+
 nRF5
 ====
 

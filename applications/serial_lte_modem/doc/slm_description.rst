@@ -308,7 +308,17 @@ This application uses the following |NCS| libraries:
 
 * :ref:`at_cmd_parser_readme`
 * :ref:`at_monitor_readme`
+* :ref:`nrf_modem_lib_readme`
+* :ref:`lib_modem_jwt`
 * :ref:`lib_ftp_client`
+* :ref:`sms_readme`
+* :ref:`lib_fota_download`
+* :ref:`lib_download_client`
+* :ref:`cloud_api_readme`
+* :ref:`lib_nrf_cloud`
+* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_pgps`
+* :ref:`lib_nrf_cloud_cell_pos`
 
 It uses the following `sdk-nrfxlib`_ libraries:
 

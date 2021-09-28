@@ -26,6 +26,7 @@ However, the SLM data mode is applied automatically while using the following mo
 * FTP put, uput and mput
 * MQTT publish
 * HTTP request
+* GNSS nRF Cloud send message
 
 Entering data mode
 ==================
@@ -44,6 +45,7 @@ Other examples:
 * ``AT#XFTP="uput"``
 * ``AT#XFTP="mput",<file>``
 * ``AT#XMQTTPUB=<topic>,"",<qos>,<retain>``
+* ``AT#XNRFCLOUD=2``
 
 The SLM application does not send an *OK* response when it enters data mode.
 
