@@ -22,8 +22,10 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
-#include <date_time.h>
 #include <pm_config.h>
+#endif
+#if defined(CONFIG_DATE_TIME)
+#include <date_time.h>
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -234,7 +236,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	struct nrf_cloud_rest_agps_result result = {agps_data_buf, sizeof(agps_data_buf), 0};
 
 	nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
-	nrf_cloud_agps_process(result.buf, result.agps_sz, NULL);
+	nrf_cloud_agps_process(result.buf, result.agps_sz);
 }
 #endif
 
