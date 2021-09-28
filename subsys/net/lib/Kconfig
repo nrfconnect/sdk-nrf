@@ -6,7 +6,7 @@
 menu "Application protocols"
 
 rsource "nrf_cloud/Kconfig"
-rsource "srest_client_lib/Kconfig"
+rsource "rest_client/Kconfig"
 rsource "download_client/Kconfig"
 rsource "fota_download/Kconfig"
 rsource "aws_iot/Kconfig"

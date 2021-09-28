@@ -24,20 +24,20 @@
 
 #include <logging/log.h>
 
-#include <net/srest_client.h>
+#include <net/rest_client.h>
 
-LOG_MODULE_REGISTER(srest_client, CONFIG_SREST_CLIENT_LIB_LOG_LEVEL);
+LOG_MODULE_REGISTER(rest_client, CONFIG_REST_CLIENT_LOG_LEVEL);
 
 #define HTTP_PROTOCOL "HTTP/1.1"
 
-static void srest_client_http_response_cb(struct http_response *rsp,
+static void rest_client_http_response_cb(struct http_response *rsp,
 					  enum http_final_call final_data, 
 					  void *user_data)
 {
-	struct srest_req_resp_context *rest_ctx = NULL;
+	struct rest_client_req_resp_context *rest_ctx = NULL;
 
 	if (user_data) {
-		rest_ctx = (struct srest_req_resp_context *)user_data;
+		rest_ctx = (struct rest_client_req_resp_context *)user_data;
 	}
 
 	/* If the entire HTTP response is not received in a single "recv" call
@@ -68,8 +68,8 @@ static void srest_client_http_response_cb(struct http_response *rsp,
 	}
 }
 
-static int srest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
-				       const sec_tag_t sec_tag, int tls_peer_verify)
+static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
+				      const sec_tag_t sec_tag, int tls_peer_verify)
 {
 	int err;
 	int verify = TLS_PEER_VERIFY_REQUIRED;
@@ -105,14 +105,14 @@ static int srest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 	return 0;
 }
 
-static int srest_client_sckt_timeouts_set(int fd)
+static int rest_client_sckt_timeouts_set(int fd)
 {
 	int err;
 	struct timeval timeout = { 0 };
 
-	if (CONFIG_SREST_CLIENT_LIB_SEND_TIMEOUT > -1) {
+	if (CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT > -1) {
 		/* Send TO also affects TCP connect */
-		timeout.tv_sec = CONFIG_SREST_CLIENT_LIB_SEND_TIMEOUT;
+		timeout.tv_sec = CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT;
 		err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket send timeout, error: %d", errno);
@@ -120,8 +120,8 @@ static int srest_client_sckt_timeouts_set(int fd)
 		}
 	}
 
-	if (CONFIG_SREST_CLIENT_LIB_RECV_TIMEOUT > -1) {
-		timeout.tv_sec = CONFIG_SREST_CLIENT_LIB_RECV_TIMEOUT;
+	if (CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT > -1) {
+		timeout.tv_sec = CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT;
 		err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
@@ -131,7 +131,7 @@ static int srest_client_sckt_timeouts_set(int fd)
 	return 0;
 }
 
-static int srest_client_sckt_connect(int *const fd, const char *const hostname,
+static int rest_client_sckt_connect(int *const fd, const char *const hostname,
 				     const uint16_t port_num, const char *const ip_address,
 				     const sec_tag_t sec_tag,
 				     int tls_peer_verify)
@@ -165,7 +165,7 @@ static int srest_client_sckt_connect(int *const fd, const char *const hostname,
 
 	((struct sockaddr_in *)addr_info->ai_addr)->sin_port = htons(port_num);
 
-	proto = (sec_tag == SREST_CLIENT_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
+	proto = (sec_tag == REST_CLIENT_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
 	*fd = socket(AF_INET, SOCK_STREAM, proto);
 	if (*fd == -1) {
 		LOG_ERR("Failed to open socket, error: %d", errno);
@@ -174,14 +174,14 @@ static int srest_client_sckt_connect(int *const fd, const char *const hostname,
 	}
 
 	if (sec_tag >= 0) {
-		ret = srest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
+		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
 		if (ret) {
 			ret = -EACCES;
 			goto clean_up;
 		}
 	}
 
-	ret = srest_client_sckt_timeouts_set(*fd);
+	ret = rest_client_sckt_timeouts_set(*fd);
 	if (ret) {
 		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
 		ret = -EINVAL;
@@ -212,7 +212,7 @@ clean_up:
 	return ret;
 }
 
-static void srest_client_close_connection(struct srest_req_resp_context *const rest_ctx)
+static void rest_client_close_connection(struct rest_client_req_resp_context *const rest_ctx)
 {
 	int ret;
 
@@ -221,11 +221,11 @@ static void srest_client_close_connection(struct srest_req_resp_context *const r
 		if (ret) {
 			LOG_WRN("Failed to close socket, error: %d", errno);
 		}
-		rest_ctx->connect_socket = SREST_CLIENT_SCKT_CONNECT;
+		rest_ctx->connect_socket = REST_CLIENT_SCKT_CONNECT;
 	}
 }
 
-static void srest_client_init_request(struct srest_req_resp_context *const rest_ctx,
+static void rest_client_init_request(struct rest_client_req_resp_context *const rest_ctx,
 				      struct http_request *const req)
 {
 	memset(req, 0, sizeof(struct http_request));
@@ -233,17 +233,17 @@ static void srest_client_init_request(struct srest_req_resp_context *const rest_
 	req->host = rest_ctx->host;
 	req->protocol = HTTP_PROTOCOL;
 
-	req->response = srest_client_http_response_cb;
+	req->response = rest_client_http_response_cb;
 	req->method = rest_ctx->http_method;
 }
 
-static int srest_client_do_api_call(struct http_request *http_req,
-				    struct srest_req_resp_context *const rest_ctx)
+static int rest_client_do_api_call(struct http_request *http_req,
+				    struct rest_client_req_resp_context *const rest_ctx)
 {
 	int err = 0;
 
 	if (rest_ctx->connect_socket < 0) {
-		err = srest_client_sckt_connect(&rest_ctx->connect_socket, http_req->host,
+		err = rest_client_sckt_connect(&rest_ctx->connect_socket, http_req->host,
 						rest_ctx->port, NULL,
 						rest_ctx->sec_tag, rest_ctx->tls_peer_verify);
 		if (err) {
@@ -276,23 +276,23 @@ static int srest_client_do_api_call(struct http_request *http_req,
 		err = 0;
 	}
 
-	srest_client_close_connection(rest_ctx);
+	rest_client_close_connection(rest_ctx);
 	return err;
 }
 
-void srest_client_request_defaults_set(struct srest_req_resp_context *req_resp_ctx)
+void rest_client_request_defaults_set(struct rest_client_req_resp_context *req_resp_ctx)
 {
 	__ASSERT_NO_MSG(req_resp_ctx != NULL);
 
-	req_resp_ctx->connect_socket = SREST_CLIENT_SCKT_CONNECT;
+	req_resp_ctx->connect_socket = REST_CLIENT_SCKT_CONNECT;
 	req_resp_ctx->keep_alive = false;
-	req_resp_ctx->sec_tag = SREST_CLIENT_NO_SEC;
-	req_resp_ctx->tls_peer_verify = SREST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
+	req_resp_ctx->sec_tag = REST_CLIENT_NO_SEC;
+	req_resp_ctx->tls_peer_verify = REST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
 	req_resp_ctx->http_method = HTTP_GET;
-	req_resp_ctx->timeout_ms = CONFIG_SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT * 1000;
+	req_resp_ctx->timeout_ms = CONFIG_REST_CLIENT_REQUEST_TIMEOUT * 1000;
 }
 
-int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
+int rest_client_request(struct rest_client_req_resp_context *req_resp_ctx)
 {
 	__ASSERT_NO_MSG(req_resp_ctx != NULL);
 	__ASSERT_NO_MSG(req_resp_ctx->host != NULL);
@@ -303,7 +303,7 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 	struct http_request http_req;
 	int ret;
 
-	srest_client_init_request(req_resp_ctx, &http_req);
+	rest_client_init_request(req_resp_ctx, &http_req);
 
 	http_req.url = req_resp_ctx->url;
 
@@ -318,9 +318,9 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 		LOG_DBG("Payload: %s", log_strdup(http_req.payload));
 	}
 
-	ret = srest_client_do_api_call(&http_req, req_resp_ctx);
+	ret = rest_client_do_api_call(&http_req, req_resp_ctx);
 	if (ret) {
-		LOG_ERR("srest_client_do_api_call() failed, err %d", ret);
+		LOG_ERR("rest_client_do_api_call() failed, err %d", ret);
 		goto clean_up;
 	}
 
@@ -335,9 +335,9 @@ int srest_client_request(struct srest_req_resp_context *req_resp_ctx)
 		req_resp_ctx->response_len);
 
 clean_up:
-	if (req_resp_ctx->connect_socket != SREST_CLIENT_SCKT_CONNECT) {
+	if (req_resp_ctx->connect_socket != REST_CLIENT_SCKT_CONNECT) {
 		/* Socket was not closed yet: */
-		srest_client_close_connection(req_resp_ctx);
+		rest_client_close_connection(req_resp_ctx);
 	}
 	return ret;
 }

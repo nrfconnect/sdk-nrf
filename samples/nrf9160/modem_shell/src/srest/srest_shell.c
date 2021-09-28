@@ -12,11 +12,12 @@
 #include <getopt.h>
 
 #include <net/http_parser.h>
-#include <net/srest_client.h>
+#include <net/rest_client.h>
 
 #include "srest_shell.h"
 
 static const char srest_shell_cmd_usage_str[] =
+	"Simple REST shell client\n"
 	"Usage:\n"
 	"srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10]\n"
 	"              [-s sec_tag] [-v verify_level] [-t timeout_in_ms] [-l length of the response buffer]\n"
@@ -34,7 +35,7 @@ static const char srest_shell_cmd_usage_str[] =
 	"  -b, --body,         Payload body, example: -b '{\"foo\":bar}'\n"
 	"  -s, --sec_tag,      Used security tag for TLS connection\n"
 	"  -t, --timeout,      Request timeout in seconds\n"
-	"                      (default: CONFIG_SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT)\n"
+	"                      (default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT)\n"
 	"  -v, --peer_verify,  TLS peer verification level. None (0),\n"
 	"                      optional (1) or required (2). Default value is 2.\n";
 
@@ -74,7 +75,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	int opt, i, j, len;
 	int ret = 0;
 	int long_index = 0;
-	struct srest_req_resp_context rest_ctx = { 0 };
+	struct rest_client_req_resp_context rest_ctx = { 0 };
 	/* Collect headers to: */
 	struct rip_header_list_item headers[SREST_REQUEST_MAX_HEADERS] = { 0 };
 	/* Headers to actual request + 1 for NULL: */
@@ -85,7 +86,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	int response_buf_len = SREST_RESPONSE_BUFF_SIZE;
 
 	/* Set the defaults: */
-	srest_client_request_defaults_set(&rest_ctx);
+	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.url = "/index.html";
 	rest_ctx.port = SREST_DEFAULT_DESTINATION_PORT;
 	rest_ctx.body = NULL;
@@ -261,7 +262,7 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	}
 	rest_ctx.resp_buff_len = response_buf_len;
 
-	ret = srest_client_request(&rest_ctx);
+	ret = rest_client_request(&rest_ctx);
 	if (ret) {
 		shell_error(shell, "Error %d from rest_lib", ret);
 	} else {

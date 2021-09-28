@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
-#include <net/srest_client.h>
+#include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 
@@ -380,7 +380,7 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	int err;
 	/* Reserving 30 bytes for device ID */
 	char request_url[sizeof(REQUEST_URL) + 30];
-	struct srest_req_resp_context rest_ctx = { 0 };
+	struct rest_client_req_resp_context rest_ctx = { 0 };
 	char *const headers[] = {
 		HEADER_HOST,
 		HEADER_CONTENT_TYPE,
@@ -404,7 +404,7 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	LOG_DBG("Generated request body:\r\n%s", log_strdup(body));
 
 	/* Set the defaults: */
-	srest_client_request_defaults_set(&rest_ctx);
+	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = request_url;
 	rest_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG;
@@ -417,13 +417,13 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	/* Get the body/payload to request: */
 	rest_ctx.body = body;
 
-	err = srest_client_request(&rest_ctx);
+	err = rest_client_request(&rest_ctx);
 	if (err) {
-		LOG_ERR("Error from srest client lib, err: %d", err);
+		LOG_ERR("Error from rest client lib, err: %d", err);
 		return err;
 	}
 
-	if (rest_ctx.http_status_code != SREST_HTTP_STATUS_OK) {
+	if (rest_ctx.http_status_code != REST_CLIENT_HTTP_STATUS_OK) {
 		LOG_ERR("HTTP status: %d", rest_ctx.http_status_code);
 		/* Let it fail in parsing */
 	}

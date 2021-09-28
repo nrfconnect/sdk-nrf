@@ -3,36 +3,36 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig SREST_CLIENT_LIB
-	bool "Simple/Stupid REST client lib"
+menuconfig REST_CLIENT
+	bool "REST client library"
 
-if SREST_CLIENT_LIB
+if REST_CLIENT
 
-config SREST_CLIENT_LIB_REST_REQUEST_TIMEOUT
+config REST_CLIENT_REQUEST_TIMEOUT
 	int "Rest request timeout, in seconds"
 	default 65
 	help
 	  Sets the timeout duration in seconds to wait for the response data.
 
-config SREST_CLIENT_LIB_SEND_TIMEOUT
+config REST_CLIENT_SCKT_SEND_TIMEOUT
 	int "Socket send timeout, in seconds"
 	default 60
 	help
 	  Sets the timeout duration in seconds to use when sending data.
 	  To disable, set the timeout duration to -1.
 
-config SREST_CLIENT_LIB_RECV_TIMEOUT
+config REST_CLIENT_SCKT_RECV_TIMEOUT
 	int "Socket receive timeout, in seconds"
 	default 60
 	help
 	  Sets the timeout duration in seconds to use when receiving data.
 	  To disable, set the timeout duration to -1.
 
-module=SREST_CLIENT_LIB
+module=REST_CLIENT
 module-dep=LOG
-module-str=Log level for sREST client lib
-module-help=Enables sREST client lib log messages.
+module-str=Log level for REST Client lib
+module-help=Enables REST Client log messages.
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # SREST_CLIENT_LIB
+endif # REST_CLIENT
 

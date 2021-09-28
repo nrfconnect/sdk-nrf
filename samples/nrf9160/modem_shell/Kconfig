@@ -78,11 +78,11 @@ config MOSH_LOCATION
 	  Location tool for location queries via location library.
 
 config MOSH_SIMPLE_REST_CLIENT
-	bool "Simple REST"
+	bool "Simple REST client"
 	default y
-	select SREST_CLIENT_LIB
+	select REST_CLIENT
 	help
-	  Simple REST tool for using Simple REST library.
+	  Simple REST shell tool for using REST client library.
 
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"

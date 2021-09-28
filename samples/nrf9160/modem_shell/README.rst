@@ -467,19 +467,19 @@ Examples
 
      ppp uartconf --baudrate 460800
 
-Simple REST
-===========
+Simple REST client
+==================
 
 MoSh command: "srest"
 
-Simple REST tool provides commands for sending REST request and receiving its response.
+Simple REST client provides commands for sending simple REST request and receiving its response.
 
 Examples
 --------
 
 Send REST request::
 
-   srest TODOTODO
+   srest -m head -d example.com
 
 Requirements
 ************

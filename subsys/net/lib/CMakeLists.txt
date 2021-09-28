@@ -6,7 +6,7 @@
 
 add_subdirectory_ifdef(CONFIG_CLOUD_API cloud)
 add_subdirectory_ifdef(CONFIG_NRF_CLOUD nrf_cloud)
-add_subdirectory_ifdef(CONFIG_SREST_CLIENT_LIB srest_client_lib)
+add_subdirectory_ifdef(CONFIG_REST_CLIENT rest_client)
 add_subdirectory_ifdef(CONFIG_DOWNLOAD_CLIENT download_client)
 add_subdirectory_ifdef(CONFIG_FOTA_DOWNLOAD fota_download)
 add_subdirectory_ifdef(CONFIG_AWS_JOBS aws_jobs)

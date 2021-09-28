@@ -13,7 +13,7 @@
 
 #include <cJSON.h>
 
-#include <net/srest_client.h>
+#include <net/rest_client.h>
 
 #include "rest_here_wlan.h"
 
@@ -186,7 +186,7 @@ int here_rest_wlan_pos_get(
 	__ASSERT_NO_MSG(rcv_buf != NULL);
 	__ASSERT_NO_MSG(rcv_buf_len > 0);
 
-	struct srest_req_resp_context rest_ctx = { 0 };
+	struct rest_client_req_resp_context rest_ctx = { 0 };
 	char *const headers[] = {
 		HEADER_HOST,
 		HEADER_CONTENT_TYPE,
@@ -198,7 +198,7 @@ int here_rest_wlan_pos_get(
 	int ret = 0;
 
 	/* Set the defaults: */
-	srest_client_request_defaults_set(&rest_ctx);
+	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
 	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG;
@@ -219,13 +219,13 @@ int here_rest_wlan_pos_get(
 	}
 	rest_ctx.body = body;
 
-	ret = srest_client_request(&rest_ctx);
+	ret = rest_client_request(&rest_ctx);
 	if (ret) {
-		LOG_ERR("Error from srest client lib, err: %d", ret);
+		LOG_ERR("Error from rest_client lib, err: %d", ret);
 		goto clean_up;
 	}
 
-	if (rest_ctx.http_status_code != SREST_HTTP_STATUS_OK) {
+	if (rest_ctx.http_status_code != REST_CLIENT_HTTP_STATUS_OK) {
 		LOG_ERR("HTTP status: %d", rest_ctx.http_status_code);
 		/* Let it fail in parsing */
 	}
