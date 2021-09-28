@@ -429,7 +429,7 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 	if (!*topic_buf) {
 		return -ENOMEM;
 	}
-	ret = snprintf(*topic_buf, topic_sz,
+	ret = snprintk(*topic_buf, topic_sz,
 		       topic_template, client_id_buf);
 	if (ret <= 0 || ret >= topic_sz) {
 		nrf_cloud_free(*topic_buf);
