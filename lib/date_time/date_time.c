@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(CONFIG_DATE_TIME_MODEM)
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #endif
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
@@ -28,9 +28,6 @@
 LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
 #if defined(CONFIG_DATE_TIME_MODEM)
-#define AT_CMD_MODEM_DATE_TIME			"AT+CCLK?"
-#define AT_CMD_MODEM_DATE_TIME_RESPONSE_LEN	32
-
 /* The magic number 115 corresponds to the year 2015 which is the default
  * year given by the modem when the cellular network has not pushed time
  * the modem.
@@ -90,44 +87,32 @@ static void date_time_notify_event(const struct date_time_evt *evt)
 #if defined(CONFIG_DATE_TIME_MODEM)
 static int time_modem_get(void)
 {
-	int err;
-	char buf[AT_CMD_MODEM_DATE_TIME_RESPONSE_LEN + 1];
+	int rc;
 	struct tm date_time;
-
-	err = at_cmd_write(AT_CMD_MODEM_DATE_TIME, buf, sizeof(buf), NULL);
-	if (err) {
-		LOG_DBG("Could not get cellular network time, error: %d", err);
-		return err;
-	}
-	/* This line zero indexes the buffer at the desired length
-	 * This ensures clean printing of the modem response.
-	 */
-	buf[AT_CMD_MODEM_DATE_TIME_RESPONSE_LEN - 4] = '\0';
 
 	/* Example of modem time response:
 	 * "+CCLK: \"20/02/25,17:15:02+04\"\r\n\000{"
 	 */
-	LOG_DBG("Response from modem: %s", log_strdup(buf));
+	rc = nrf_modem_at_scanf("AT+CCLK?",
+		"+CCLK: \"%u/%u/%u,%u:%u:%u",
+		&date_time.tm_year,
+		&date_time.tm_mon,
+		&date_time.tm_mday,
+		&date_time.tm_hour,
+		&date_time.tm_min,
+		&date_time.tm_sec
+	);
 
-	/* Replace '/' ',' and ':' with whitespace for easier parsing by strtol.
-	 * strtol skips over whitespace.
-	 */
-	for (int i = 0; i < AT_CMD_MODEM_DATE_TIME_RESPONSE_LEN; i++) {
-		if (buf[i] == '/' || buf[i] == ',' || buf[i] == ':') {
-			buf[i] = ' ';
-		}
+	/* Want to match 6 args */
+	if (rc != 6) {
+		LOG_ERR("Could not get cellular network time, error: %d", rc);
+		return rc;
 	}
 
-	/* The year starts at index 8. */
-	char *ptr_index = &buf[8];
-	int base = 10;
-
-	date_time.tm_year = strtol(ptr_index, &ptr_index, base) + 2000 - 1900;
-	date_time.tm_mon = strtol(ptr_index, &ptr_index, base) - 1;
-	date_time.tm_mday = strtol(ptr_index, &ptr_index, base);
-	date_time.tm_hour = strtol(ptr_index, &ptr_index, base);
-	date_time.tm_min = strtol(ptr_index, &ptr_index, base);
-	date_time.tm_sec = strtol(ptr_index, &ptr_index, base);
+	/* Relative to 1900, as per POSIX */
+	date_time.tm_year = date_time.tm_year + 2000 - 1900;
+	/* Range is 0-11, as per POSIX */
+	date_time.tm_mon = date_time.tm_mon - 1;
 
 	if (date_time.tm_year == MODEM_TIME_DEFAULT) {
 		LOG_DBG("Modem time never set");
