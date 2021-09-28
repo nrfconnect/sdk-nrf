@@ -13,6 +13,7 @@
 #include <string.h>
 #include <init.h>
 #include <modem/at_cmd_parser.h>
+#include <modem/modem_jwt.h>
 #include <sys/reboot.h>
 #include "ncs_version.h"
 
@@ -181,6 +182,32 @@ static int handle_at_reset(enum at_cmd_type type)
 		slm_at_host_uninit();
 		modem_power_off();
 		sys_reboot(SYS_REBOOT_COLD);
+	}
+
+	return ret;
+}
+
+/**@brief handle AT#XUUID commands
+ *  AT#XUUID
+ *  AT#XUUID? not supported
+ *  AT#XUUID=? not supported
+ */
+static int handle_at_uuid(enum at_cmd_type type)
+{
+	int ret;
+
+	if (type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
+	}
+
+	struct nrf_device_uuid dev = {0};
+
+	ret = modem_jwt_get_uuids(&dev, NULL);
+	if (ret) {
+		LOG_ERR("Get device UUID error: %d", ret);
+	} else {
+		sprintf(rsp_buf, "\r\n#XUUID: %s\r\n", dev.str);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	return ret;
@@ -378,6 +405,7 @@ static struct slm_at_cmd {
 	{"AT#XSLMVER", handle_at_slmver},
 	{"AT#XSLEEP", handle_at_sleep},
 	{"AT#XRESET", handle_at_reset},
+	{"AT#XUUID", handle_at_uuid},
 	{"AT#XCLAC", handle_at_clac},
 	{"AT#XSLMUART", handle_at_slmuart},
 	{"AT#XDATACTRL", handle_at_datactrl},

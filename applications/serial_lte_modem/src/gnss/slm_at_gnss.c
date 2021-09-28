@@ -30,13 +30,14 @@ enum slm_gnss_operation {
 	GPS_START,
 	nRF_CLOUD_DISCONNECT = GPS_STOP,
 	nRF_CLOUD_CONNECT    = GPS_START,
+	nRF_CLOUD_SEND,
 	AGPS_STOP            = GPS_STOP,
 	AGPS_START           = GPS_START,
 	PGPS_STOP            = GPS_STOP,
 	PGPS_START           = GPS_START,
 	CELLPOS_STOP         = GPS_STOP,
 	CELLPOS_START_SCELL  = GPS_START,
-	CELLPOS_START_MCELL
+	CELLPOS_START_MCELL  = nRF_CLOUD_SEND
 };
 
 static struct k_work agps_req;
@@ -82,9 +83,6 @@ static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells
 };
 static int ncell_meas_status;
-
-/* global functions defined in different files */
-void rsp_send(const char *str, size_t len);
 
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;
@@ -506,6 +504,24 @@ static void gnss_event_handler(int event)
 	}
 }
 
+static int do_cloud_send_msg(const char *message, int len)
+{
+	int err;
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_MSG,
+		.buf = (char *)message,
+		.len = len
+	};
+
+	err = cloud_send(nrf_cloud, &msg);
+	if (err) {
+		LOG_ERR("cloud_send failed, error: %d", err);
+	}
+
+	return err;
+}
+
 static void on_cloud_evt_ready(void)
 {
 	if (location_signify) {
@@ -570,6 +586,9 @@ static void on_cloud_evt_data_received(const struct cloud_event *const evt)
 		} else {
 			LOG_ERR("Unable to process cell pos data, error: %d", err);
 		}
+	} else {
+		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", evt->data.msg.buf);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
 
@@ -636,6 +655,25 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	default:
 		break;
 	}
+}
+
+static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
+{
+	int ret = 0;
+
+	if (op == DATAMODE_SEND) {
+		ret = do_cloud_send_msg(data, len);
+		LOG_INF("datamode send: %d", ret);
+		if (ret < 0) {
+			(void)exit_datamode(DATAMODE_EXIT_ERROR);
+		} else {
+			(void)exit_datamode(DATAMODE_EXIT_OK);
+		}
+	} else if (op == DATAMODE_EXIT) {
+		LOG_DBG("datamode exit");
+	}
+
+	return ret;
 }
 
 /**@brief handle AT#XGPS commands
@@ -746,6 +784,9 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
 			}
+		} else if (op == nRF_CLOUD_SEND && nrf_cloud_ready) {
+			/* enter data mode */
+			err = enter_datamode(nrf_cloud_datamode_callback);
 		} else if (op == nRF_CLOUD_DISCONNECT && nrf_cloud_ready) {
 			err = cloud_disconnect(nrf_cloud);
 			if (err) {
@@ -755,15 +796,19 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			err = -EINVAL;
 		} break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
+	case AT_CMD_TYPE_READ_COMMAND: {
+		char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN] = {0};
+
+		(void)cloud_get_id(nrf_cloud, device_id, sizeof(device_id));
+		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
+			location_signify, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
-		break;
+	} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: (%d,%d),<signify>\r\n",
-			nRF_CLOUD_CONNECT, nRF_CLOUD_DISCONNECT);
+		sprintf(rsp_buf, "\r\n#XNRFCLOUD: (%d,%d,%d),<signify>\r\n",
+			nRF_CLOUD_DISCONNECT, nRF_CLOUD_CONNECT, nRF_CLOUD_SEND);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;

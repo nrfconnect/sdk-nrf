@@ -300,3 +300,51 @@ Example
 
    AT#XSLMUART=?
    #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000)
+
+
+Device UUID #XUUID
+==================
+
+The ``#XUUID`` command requests the device UUID.
+
+Set command
+-----------
+
+The set command returns the device UUID.
+
+Syntax
+~~~~~~
+
+::
+
+   #XUUID
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XUUID: <device-uuid>
+
+The ``<device-uuid>`` value returns a string indicating the UUID of the device.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XUUID
+
+  #XUUID: 50503041-3633-4261-803d-1e2b8f70111a
+
+  OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
