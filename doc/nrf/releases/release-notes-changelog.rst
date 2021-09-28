@@ -51,6 +51,7 @@ nRF9160
       A message published to the bulk topic is typically a combination of multiple messages.
     * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
       Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
+    * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
 
   * :ref:`asset_tracker_v2` application:
 
