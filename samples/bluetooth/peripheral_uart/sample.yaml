@@ -30,9 +30,8 @@ tests:
     extra_args: OVERLAY_CONFIG=prj_cdc.conf
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
-      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns thingy53_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
-      - thingy53_nrf5340_cpuapp
     tags: bluetooth ci_build
