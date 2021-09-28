@@ -409,12 +409,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	return 0;
 }
 
-int nrf_cloud_client_id_get(char *id_buf, int id_len)
-{
-	return nct_client_id_get(id_buf, id_len);
-}
-
-int nrf_cloud_tenant_id_get(char *id_buf, int id_len)
+int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len)
 {
 	return nct_tenant_id_get(id_buf, id_len);
 }

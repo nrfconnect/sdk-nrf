@@ -1,0 +1,124 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+#include <modem/modem_jwt.h>
+#endif
+#include <modem/at_cmd.h>
+#include <zephyr.h>
+#include <stdio.h>
+#include <logging/log.h>
+#include "nrf_cloud_client_id.h"
+#include "nrf_cloud_transport.h"
+
+LOG_MODULE_REGISTER(nrf_cloud_client_id, CONFIG_NRF_CLOUD_LOG_LEVEL);
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
+BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+	"CONFIG_NRF_CLOUD_CLIENT_ID must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
+BUILD_ASSERT(sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) > 1,
+	"CONFIG_NRF_CLOUD_CLIENT_ID must not be empty");
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+#define CGSN_RESPONSE_LENGTH 19
+#define NRF_IMEI_LEN 15
+#define IMEI_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
+BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+	"NRF_CLOUD_CLIENT_ID_PREFIX plus IMEI must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
+#endif
+
+int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
+{
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	return nct_client_id_get(id_buf, id_len);
+#else
+	return nrf_cloud_configured_client_id_get(id_buf, id_len);
+#endif
+}
+
+size_t nrf_cloud_configured_client_id_length_get(void)
+{
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+	return IMEI_CLIENT_ID_LEN;
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+	return NRF_DEVICE_UUID_STR_LEN;
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
+	return (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1);
+#else
+	return 0;
+#endif
+}
+
+int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
+{
+	if (!buf || !buf_sz) {
+		return -EINVAL;
+	}
+
+	int err;
+	int print_ret;
+
+#if (defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) || \
+	defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI))
+	/* UUID/IMEI are obtained via AT command */
+	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
+		err = at_cmd_init();
+		if (err) {
+			LOG_ERR("at_cmd failed to initialize, error: %d", err);
+			return err;
+		}
+	}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+
+	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	if (err) {
+		LOG_ERR("Failed to obtain IMEI, error: %d", err);
+		return err;
+	}
+
+	imei_buf[NRF_IMEI_LEN] = 0;
+
+	print_ret = snprintf(buf, buf_sz, "%s%.*s",
+			     CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
+			     NRF_IMEI_LEN, imei_buf);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+	struct nrf_device_uuid dev_id;
+
+	err = modem_jwt_get_uuids(&dev_id, NULL);
+	if (err) {
+		LOG_ERR("Failed to get device UUID: %d", err);
+		return err;
+	}
+
+	print_ret = snprintf(buf, buf_sz, "%s", dev_id.str);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
+	ARG_UNUSED(err);
+	print_ret = snprintf(buf, buf_sz, "%s", CONFIG_NRF_CLOUD_CLIENT_ID);
+#else
+	ARG_UNUSED(err);
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
+		LOG_WRN("Configured for runtime client ID");
+	} else {
+		LOG_WRN("Unhandled client ID configuration");
+	}
+	return -ENODEV;
+#endif
+
+	if (print_ret <= 0) {
+		return -EIO;
+	} else if (print_ret >= buf_sz) {
+		return -EMSGSIZE;
+	}
+
+	return 0;
+}

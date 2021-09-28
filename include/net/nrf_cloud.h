@@ -528,7 +528,7 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const m
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_client_id_get(char *id_buf, int id_len);
+int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
 
 /**
  * @brief Function to retrieve the current customer tenant ID.
@@ -539,7 +539,7 @@ int nrf_cloud_client_id_get(char *id_buf, int id_len);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_tenant_id_get(char *id_buf, int id_len);
+int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len);
 
 /** @} */
 
