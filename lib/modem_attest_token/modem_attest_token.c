@@ -8,8 +8,8 @@
 #include <zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/at_cmd.h>
 #include <sys/base64.h>
 #include <tinycbor/cbor.h>
 #include <tinycbor/cbor_buf_reader.h>
@@ -35,51 +35,17 @@
 #define UUID_HYPHEN_POS_3 (16 / 2)
 #define UUID_HYPHEN_POS_4 (20 / 2)
 
-#define ATTEST_TOKEN_RESP_LEN 200
-BUILD_ASSERT(
-	ATTEST_TOKEN_RESP_LEN <= CONFIG_AT_CMD_RESPONSE_MAX_LEN,
-	"Max AT cmd response length is too small for attestation token response");
-
-static int parse_resp(char *const resp, char **attest, char **cose)
-{
-	if (!resp || !attest || !cose) {
-		return -EINVAL;
-	}
-
-	char *cose_end = NULL;
-	char *attest_end = NULL;
-
-	*cose = NULL;
-
-	*attest = strchr(resp, '"');
-	if (!(*attest)) {
-		return -EBADMSG;
-	}
-	/* Move beyond first quotation mark */
-	*attest = *attest + 1;
-
-	attest_end = strchr(*attest, '.');
-	if (!(*attest_end)) {
-		return -EBADMSG;
-	}
-
-	/* Replace . with a NULL */
-	*attest_end = '\0';
-
-	*cose = attest_end + 1;
-	cose_end = strchr(*cose, '"');
-	if (!cose_end) {
-		return -EBADMSG;
-	}
-
-	/* Replace " with a NULL */
-	*cose_end = '\0';
-
-	return 0;
-}
-
 int modem_attest_token_get(struct nrf_attestation_token *const token)
 {
+
+	int ret = 0;
+	size_t attest_sz;
+	size_t cose_sz;
+	bool attest_alloc = false;
+	/* Maximum response length is 200 bytes */
+	char attest[128] = {0};
+	char cose[128] = {0};
+
 	if (!token) {
 		return -EINVAL;
 	} else if ((token->attest && !token->attest_sz) ||
@@ -87,36 +53,14 @@ int modem_attest_token_get(struct nrf_attestation_token *const token)
 		return -EBADF;
 	}
 
-	int ret = 0;
-	enum at_cmd_state state;
-	char *cmd_resp = NULL;
-	char *attest = NULL;
-	char *cose = NULL;
-	size_t attest_sz;
-	size_t cose_sz;
-	bool attest_alloc = false;
-
-	/* Allocate response buffer and send cmd */
-	cmd_resp = k_calloc(ATTEST_TOKEN_RESP_LEN, 1);
-	if (!cmd_resp) {
-		ret = -ENOMEM;
-		goto cleanup;
-	}
-
 	/* Execute AT command to get attestation token */
-	ret = at_cmd_write(AT_ATTEST_CMD, cmd_resp, ATTEST_TOKEN_RESP_LEN,
-			   &state);
-	if (ret) {
-		ret = -EBADMSG;
-		goto cleanup;
+	ret = nrf_modem_at_scanf(AT_ATTEST_CMD,
+		"%%ATTESTTOKEN: \"%127[^.].%127[^\"]\"", &attest, &cose);
+	if (ret != 2) {
+		return -EBADMSG;
 	}
 
-	/* Parse response to get attestation token and COSE strings */
-	ret = parse_resp(cmd_resp, &attest, &cose);
-	if (ret) {
-		ret = -ENOMSG;
-		goto cleanup;
-	}
+	ret = 0;
 
 	attest_sz = strlen(attest) + 1;
 	cose_sz = strlen(cose) + 1;
@@ -124,8 +68,7 @@ int modem_attest_token_get(struct nrf_attestation_token *const token)
 	/* Ensure provided buffers are large enough */
 	if (((token->attest) && (token->attest_sz < attest_sz)) ||
 	    ((token->cose) && (token->cose_sz < cose_sz))) {
-		ret = -EMSGSIZE;
-		goto cleanup;
+		return -EMSGSIZE;
 	}
 
 	/* Allocate if not provided */
@@ -152,11 +95,6 @@ int modem_attest_token_get(struct nrf_attestation_token *const token)
 	memcpy(token->cose, cose, cose_sz);
 
 cleanup:
-
-	if (cmd_resp) {
-		k_free(cmd_resp);
-	}
-
 	if (ret && attest_alloc) {
 		k_free(token->attest);
 		token->attest = NULL;
