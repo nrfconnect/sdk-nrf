@@ -752,8 +752,9 @@ int json_common_agps_request_data_add(cJSON *parent,
 		return -ENOMEM;
 	}
 
-	if (data->request.utc) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_UTC_PARAMETERS);
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_UTC_PARAMETERS);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
@@ -761,7 +762,8 @@ int json_common_agps_request_data_add(cJSON *parent,
 	}
 
 	if (data->request.sv_mask_ephe) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_EPHEMERIDES);
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_EPHEMERIDES);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
@@ -769,45 +771,51 @@ int json_common_agps_request_data_add(cJSON *parent,
 	}
 
 	if (data->request.sv_mask_alm) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_ALMANAC);
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_ALMANAC);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 	}
 
-	if (data->request.klobuchar) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_KLOBUCHAR_CORRECTION);
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_KLOBUCHAR_CORRECTION);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 	}
 
-	if (data->request.system_time_tow) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_GPS_TOWS);
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_GPS_TOWS);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number_to_array(agps_types, GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
-		if (err) {
-			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-			goto exit;
-		}
-	}
-
-	if (data->request.position) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_LOCATION);
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_GPS_SYSTEM_CLOCK_AND_TOWS);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 	}
 
-	if (data->request.integrity) {
-		err = json_add_number_to_array(agps_types, GPS_AGPS_INTEGRITY);
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_LOCATION);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+	}
+
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+		err = json_add_number_to_array(agps_types,
+					       DATA_AGPS_REQUEST_TYPE_INTEGRITY);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;

@@ -15,7 +15,7 @@
 #include <cJSON_os.h>
 #include <net/net_ip.h>
 #include <modem/lte_lc.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 
 /**@file
  *
@@ -211,7 +211,7 @@ struct cloud_data_agps_request {
 	/** Area Code */
 	uint32_t area;
 	/** AGPS request types */
-	struct gps_agps_request request;
+	struct nrf_modem_gnss_agps_data_frame request;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };

@@ -661,27 +661,6 @@ static int get_modem_info(struct modem_param_info *const modem_info)
 	return 0;
 }
 
-/* Converts the A-GPS data request from GNSS API to GPS driver format. */
-static void agps_request_convert(
-	struct gps_agps_request *dest,
-	const struct nrf_modem_gnss_agps_data_frame *src)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-	dest->utc = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0;
-	dest->klobuchar = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0;
-	dest->nequick = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0;
-	dest->system_time_tow = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0;
-	dest->position = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0;
-	dest->integrity = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0;
-}
-
 /**
  * @brief Combine and encode modem network parameters together with the incoming A-GPS data request
  *	  types to form the A-GPS request.
@@ -696,7 +675,6 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	int err;
 	struct cloud_codec_data codec = {0};
 	static struct modem_param_info modem_info = {0};
-	struct gps_agps_request agps_request;
 	static struct cloud_data_agps_request cloud_agps_request = {0};
 
 	err = get_modem_info(&modem_info);
@@ -708,12 +686,8 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	cloud_agps_request.mnc = modem_info.network.mnc.value;
 	cloud_agps_request.cell = modem_info.network.cellid_dec;
 	cloud_agps_request.area = modem_info.network.area_code.value;
+	cloud_agps_request.request = *incoming_request;
 	cloud_agps_request.queued = true;
-
-	agps_request_convert(&agps_request, incoming_request);
-
-	BUILD_ASSERT(sizeof(cloud_agps_request.request) == sizeof(agps_request));
-	memcpy(&cloud_agps_request.request, &agps_request, sizeof(cloud_agps_request.request));
 
 	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
 	switch (err) {
