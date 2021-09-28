@@ -35,6 +35,7 @@ menuconfig LWM2M_CARRIER
 	depends on (AT_CMD_RESPONSE_MAX_LEN >= 2600)
 	depends on AT_CMD_PARSER
 	depends on AT_NOTIF
+	depends on AT_MONITOR
 	# reboot functionality
 	depends on REBOOT
 	help
