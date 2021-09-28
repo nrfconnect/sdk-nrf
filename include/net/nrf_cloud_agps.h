@@ -12,7 +12,7 @@
  */
 
 #include <zephyr.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 #include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
@@ -30,7 +30,7 @@ extern "C" {
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
-int nrf_cloud_agps_request(const struct gps_agps_request request);
+int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request);
 
 /**@brief Requests all available A-GPS data from nRF Cloud via MQTT.
  *
@@ -53,7 +53,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len);
  * @param received_elements return copy of requested elements received
  * since agps request made
  */
-void nrf_cloud_agps_processed(struct gps_agps_request *received_elements);
+void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_elements);
 
 /**@brief Query whether A-GPS data has been requested from cloud
  *

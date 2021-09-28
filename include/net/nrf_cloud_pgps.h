@@ -12,7 +12,7 @@
  */
 
 #include <zephyr.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 #include "nrf_cloud_agps_schema_v1.h"
 
 #ifdef __cplusplus
@@ -254,7 +254,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct gps_agps_request *request);
+			  const struct nrf_modem_gnss_agps_data_frame *request);
 
 /**@brief Find out if P-GPS update is in progress
  *

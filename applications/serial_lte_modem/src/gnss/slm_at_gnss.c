@@ -89,27 +89,16 @@ extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
-static int read_agps_req(struct gps_agps_request *req)
+static int read_agps_req(struct nrf_modem_gnss_agps_data_frame *req)
 {
 	int err;
-	struct nrf_modem_gnss_agps_data_frame agps_data;
 
-	err = nrf_modem_gnss_read((void *)&agps_data, sizeof(agps_data),
+	err = nrf_modem_gnss_read((void *)req, sizeof(*req),
 					NRF_MODEM_GNSS_DATA_AGPS_REQ);
 	if (err) {
 		LOG_ERR("Failed to read GNSS AGPS req, error %d", err);
 		return -EAGAIN;
 	}
-
-	req->sv_mask_ephe = agps_data.sv_mask_ephe,
-	req->sv_mask_alm  = agps_data.sv_mask_alm,
-	req->utc          = (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) ? 1 : 0,
-	req->klobuchar    = (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) ? 1 : 0,
-	req->nequick      = (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) ? 1 : 0,
-	req->system_time_tow =
-	      (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) ? 1 : 0,
-	req->position     = (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) ? 1 : 0,
-	req->integrity    = (agps_data.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) ? 1 : 0;
 
 	return 0;
 }
@@ -117,7 +106,7 @@ static int read_agps_req(struct gps_agps_request *req)
 static void agps_req_wk(struct k_work *work)
 {
 	int err;
-	struct gps_agps_request req;
+	struct nrf_modem_gnss_agps_data_frame req;
 
 	ARG_UNUSED(work);
 
@@ -126,7 +115,7 @@ static void agps_req_wk(struct k_work *work)
 		return;
 	}
 
-	err = nrf_cloud_agps_request(req);
+	err = nrf_cloud_agps_request(&req);
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data: %d", err);
 	}
@@ -345,7 +334,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	/* A P-GPS prediction is available now for the current date and time. */
 	case PGPS_EVT_AVAILABLE: {
-		struct gps_agps_request req;
+		struct nrf_modem_gnss_agps_data_frame req;
 
 		LOG_INF("PGPS_EVT_AVAILABLE");
 		/* read out previous NRF_MODEM_GNSS_EVT_AGPS_REQ */

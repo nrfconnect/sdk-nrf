@@ -9,7 +9,6 @@
 #include <logging/log.h>
 #include <net/socket.h>
 #include <nrf_modem_gnss.h>
-#include <drivers/gps.h>
 
 #if defined(CONFIG_AGPS_SRC_SUPL)
 #include <supl_session.h>
@@ -257,25 +256,7 @@ int agps_request_send(struct nrf_modem_gnss_agps_data_frame request)
 	}
 
 #elif defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_MQTT)
-	/* Convert GNSS API A-GPS request to GPS driver A-GPS request. */
-	struct gps_agps_request agps_request;
-
-	agps_request.sv_mask_ephe = request.sv_mask_ephe;
-	agps_request.sv_mask_alm = request.sv_mask_alm;
-	agps_request.utc =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0;
-	agps_request.klobuchar =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0;
-	agps_request.nequick =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0;
-	agps_request.system_time_tow =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0;
-	agps_request.position =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0;
-	agps_request.integrity =
-		request.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0;
-
-	err = nrf_cloud_agps_request(agps_request);
+	err = nrf_cloud_agps_request(&request);
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return err;

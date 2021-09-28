@@ -11,8 +11,12 @@
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
+#endif
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
+#endif
 #include <net/nrf_cloud_cell_pos.h>
 #include "cJSON.h"
 #include "nrf_cloud_fsm.h"
@@ -117,9 +121,11 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job);
 int nrf_cloud_rest_fota_execution_parse(const char *const response,
 					struct nrf_cloud_fota_job_info *const job);
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Parses the PGPS response (REST and MQTT) from nRF Cloud */
 int nrf_cloud_parse_pgps_response(const char *const response,
 				  struct nrf_cloud_pgps_result *const result);
+#endif
 
 /** @brief Adds common [network] modem info to the provided cJSON object */
 int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
