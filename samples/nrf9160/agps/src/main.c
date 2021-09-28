@@ -33,10 +33,10 @@ static uint64_t start_search_timestamp;
 static uint64_t fix_timestamp;
 static struct k_work gps_start_work;
 static struct k_work_delayable reboot_work;
+static struct nrf_modem_gnss_agps_data_frame agps_request;
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct k_work manage_pgps_work;
 static struct k_work notify_pgps_work;
-static struct gps_agps_request agps_request;
 #endif
 
 static void gps_start_work_fn(struct k_work *work);
@@ -145,45 +145,10 @@ static void gps_start_work_fn(struct k_work *work)
 		gps_cfg.interval, gps_cfg.timeout);
 }
 
-#if defined(CONFIG_AGPS)
-/* Converts the A-GPS data request from GPS driver to GNSS API format. */
-static void agps_request_convert(
-	struct nrf_modem_gnss_agps_data_frame *dest,
-	const struct gps_agps_request *src)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-	dest->data_flags = 0;
-	if (src->utc) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
-	}
-	if (src->klobuchar) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
-	}
-	if (src->nequick) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
-	}
-	if (src->system_time_tow) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
-	}
-	if (src->position) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
-	}
-	if (src->integrity) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
-	}
-}
-#endif
-
-static void on_agps_needed(struct gps_agps_request request)
+static void on_agps_needed(void)
 {
 #if defined(CONFIG_AGPS)
-	struct nrf_modem_gnss_agps_data_frame agps_request;
-
-	agps_request_convert(&agps_request, &request);
-
 	int err = agps_request_send(agps_request);
-
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data, error: %d", err);
 		return;
@@ -414,6 +379,34 @@ static void send_nmea(char *nmea)
 	LOG_INF("GPS position sent to cloud");
 }
 
+/* Converts the A-GPS data request from GPS driver to GNSS API format. */
+static void agps_request_convert(
+	struct nrf_modem_gnss_agps_data_frame *dest,
+	const struct gps_agps_request *src)
+{
+	dest->sv_mask_ephe = src->sv_mask_ephe;
+	dest->sv_mask_alm = src->sv_mask_alm;
+	dest->data_flags = 0;
+	if (src->utc) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
+	}
+	if (src->klobuchar) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+	if (src->nequick) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+	}
+	if (src->system_time_tow) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+	if (src->position) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+	}
+	if (src->integrity) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	}
+}
+
 static void gps_handler(const struct device *dev, struct gps_event *evt)
 {
 	ARG_UNUSED(dev);
@@ -444,9 +437,9 @@ static void gps_handler(const struct device *dev, struct gps_event *evt)
 			evt->agps_request.utc, evt->agps_request.klobuchar,
 			evt->agps_request.nequick, evt->agps_request.system_time_tow,
 			evt->agps_request.position, evt->agps_request.integrity);
-		memcpy(&agps_request, &evt->agps_request, sizeof(agps_request));
 #endif
-		on_agps_needed(evt->agps_request);
+		agps_request_convert(&agps_request, &evt->agps_request);
+		on_agps_needed();
 		break;
 	case GPS_EVT_PVT:
 		print_satellite_stats(&evt->pvt);

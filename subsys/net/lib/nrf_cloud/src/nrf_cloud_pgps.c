@@ -7,7 +7,6 @@
 #include <zephyr.h>
 #include <nrfx_nvmc.h>
 #include <device.h>
-#include <drivers/gps.h>
 #include <storage/stream_flash.h>
 
 #include <cJSON.h>
@@ -787,12 +786,12 @@ int nrf_cloud_pgps_preemptive_updates(void)
 }
 
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct gps_agps_request *request)
+			  const struct nrf_modem_gnss_agps_data_frame *request)
 {
 	int err;
 	int ret = 0;
-	struct gps_agps_request remainder;
-	struct gps_agps_request processed;
+	struct nrf_modem_gnss_agps_data_frame remainder;
+	struct nrf_modem_gnss_agps_data_frame processed;
 
 	if (state == PGPS_NONE) {
 		LOG_ERR("P-GPS subsystem is not initialized.");
@@ -809,22 +808,28 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 	nrf_cloud_agps_processed(&processed);
 	LOG_DBG("A-GPS has processed emask:0x%08X amask:0x%08X utc:%u "
 		"klo:%u neq:%u tow:%u pos:%u int:%u",
-		processed.sv_mask_ephe, processed.sv_mask_alm,
-		processed.utc, processed.klobuchar,
-		processed.nequick, processed.system_time_tow,
-		processed.position, processed.integrity);
+		processed.sv_mask_ephe,
+		processed.sv_mask_alm,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0);
 
 	/* we will get more accurate data from AGPS for these */
-	if (processed.position && remainder.position) {
+	if (processed.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST &&
+	    remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
 		LOG_DBG("A-GPS already received position; skipping");
-		remainder.position = 0;
+		remainder.data_flags &= ~NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
 	}
-	if (processed.system_time_tow && remainder.system_time_tow) {
+	if (processed.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST &&
+	    remainder.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		LOG_DBG("A-GPS already received time; skipping");
-		remainder.system_time_tow = 0;
+		remainder.data_flags &= ~NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
 	}
 
-	if (remainder.system_time_tow) {
+	if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		struct pgps_sys_time sys_time;
 		uint16_t day;
 		uint32_t sec;
@@ -862,7 +867,8 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 
 	const struct gps_location *saved_location = npgps_get_saved_location();
 
-	if (remainder.position && saved_location->gps_sec) {
+	if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST &&
+	    saved_location->gps_sec) {
 		struct pgps_location location;
 
 		location.schema_version = NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION;
@@ -889,7 +895,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 				err);
 			ret = err;
 		}
-	} else if (remainder.position) {
+	} else if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
 		LOG_WRN("GPS unit needs location, but it is unknown!");
 	} else {
 		LOG_INF("GPS unit does not need location assistance.");

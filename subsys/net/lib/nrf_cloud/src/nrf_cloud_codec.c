@@ -1135,6 +1135,7 @@ err_cleanup:
 	return ret;
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_parse_pgps_response(const char *const response,
 	struct nrf_cloud_pgps_result *const result)
 {
@@ -1193,6 +1194,7 @@ cleanup:
 	}
 	return err;
 }
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 int get_string_from_array(const cJSON *const array, const int index,
 			  char **string_out)

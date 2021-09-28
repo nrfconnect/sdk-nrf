@@ -5,7 +5,6 @@
  */
 
 #include <zephyr.h>
-#include <drivers/gps.h>
 #include <net/socket.h>
 #include <nrf_modem_gnss.h>
 #include <cJSON.h>
@@ -31,7 +30,7 @@ extern void agps_print(enum nrf_cloud_agps_type type, void *data);
 static K_SEM_DEFINE(agps_injection_active, 1, 1);
 
 static bool agps_print_enabled;
-static struct gps_agps_request processed;
+static struct nrf_modem_gnss_agps_data_frame processed;
 static atomic_t request_in_progress;
 
 void agps_print_enable(bool enable)
@@ -45,7 +44,7 @@ bool nrf_cloud_agps_request_in_progress(void)
 }
 
 #if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
-static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
+static int json_add_types_array(cJSON * const obj, enum nrf_cloud_agps_type *types,
 				const size_t type_count)
 {
 	__ASSERT_NO_MSG(obj != NULL);
@@ -75,11 +74,11 @@ static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 }
 #endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
-int nrf_cloud_agps_request(const struct gps_agps_request request)
+int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 {
 #if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 	int err;
-	enum gps_agps_type types[9];
+	enum nrf_cloud_agps_type types[9];
 	size_t type_count = 0;
 	cJSON *data_obj;
 	cJSON *agps_req_obj;
@@ -87,39 +86,39 @@ int nrf_cloud_agps_request(const struct gps_agps_request request)
 	atomic_set(&request_in_progress, 0);
 	memset(&processed, 0, sizeof(processed));
 
-	if (request.utc) {
-		types[type_count++] = GPS_AGPS_UTC_PARAMETERS;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
 	}
 
 #if !defined(CONFIG_NRF_CLOUD_PGPS)
-	if (request.sv_mask_ephe) {
-		types[type_count++] = GPS_AGPS_EPHEMERIDES;
+	if (request->sv_mask_ephe) {
+		types[type_count++] = NRF_CLOUD_AGPS_EPHEMERIDES;
 	}
 
-	if (request.sv_mask_alm) {
-		types[type_count++] = GPS_AGPS_ALMANAC;
+	if (request->sv_mask_alm) {
+		types[type_count++] = NRF_CLOUD_AGPS_ALMANAC;
 	}
 #endif
 
-	if (request.klobuchar) {
-		types[type_count++] = GPS_AGPS_KLOBUCHAR_CORRECTION;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
 	}
 
-	if (request.nequick) {
-		types[type_count++] = GPS_AGPS_NEQUICK_CORRECTION;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_NEQUICK_CORRECTION;
 	}
 
-	if (request.system_time_tow) {
-		types[type_count++] = GPS_AGPS_GPS_TOWS;
-		types[type_count++] = GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_GPS_TOWS;
+		types[type_count++] = NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK;
 	}
 
-	if (request.position) {
-		types[type_count++] = GPS_AGPS_LOCATION;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_LOCATION;
 	}
 
-	if (request.integrity) {
-		types[type_count++] = GPS_AGPS_INTEGRITY;
+	if (request->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+		types[type_count++] = NRF_CLOUD_AGPS_INTEGRITY;
 	}
 
 	if (type_count == 0) {
@@ -168,17 +167,18 @@ cleanup:
 
 int nrf_cloud_agps_request_all(void)
 {
-	struct gps_agps_request request = {
+	struct nrf_modem_gnss_agps_data_frame request = {
 		.sv_mask_ephe = 0xFFFFFFFF,
 		.sv_mask_alm = 0xFFFFFFFF,
-		.utc = 1,
-		.klobuchar = 1,
-		.system_time_tow = 1,
-		.position = 1,
-		.integrity = 1,
+		.data_flags =
+			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST
 	};
 
-	return nrf_cloud_agps_request(request);
+	return nrf_cloud_agps_request(&request);
 }
 
 static int send_to_modem(void *data, size_t data_len, uint16_t type)
@@ -344,7 +344,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 	case NRF_CLOUD_AGPS_UTC_PARAMETERS: {
 		struct nrf_modem_gnss_agps_data_utc utc;
 
-		processed.utc = true;
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
 		copy_utc(&utc, agps_data);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		nrf_cloud_pgps_set_leap_seconds(utc.delta_tls);
@@ -387,7 +387,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 	case NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION: {
 		struct nrf_modem_gnss_agps_data_klobuchar klobuchar;
 
-		processed.klobuchar = true;
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
 		copy_klobuchar(&klobuchar, agps_data);
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION");
 
@@ -397,7 +397,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK: {
 		struct nrf_modem_gnss_agps_data_system_time_and_sv_tow time_and_tow;
 
-		processed.system_time_tow = true;
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
 		copy_time_and_tow(&time_and_tow, agps_data);
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK");
 
@@ -407,7 +407,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 	case NRF_CLOUD_AGPS_LOCATION: {
 		struct nrf_modem_gnss_agps_data_location location = {0};
 
-		processed.position = true;
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
 		copy_location(&location, agps_data);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		nrf_cloud_pgps_set_location_normalized(location.latitude,
@@ -421,7 +421,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 	case NRF_CLOUD_AGPS_INTEGRITY:
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_INTEGRITY");
 
-		processed.integrity = true;
+		processed.data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
 		return send_to_modem(agps_data->integrity,
 				     sizeof(agps_data->integrity),
 				     NRF_MODEM_GNSS_AGPS_INTEGRITY);
@@ -577,9 +577,9 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 	return err;
 }
 
-void nrf_cloud_agps_processed(struct gps_agps_request *received_elements)
+void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_elements)
 {
 	if (received_elements) {
-		memcpy(received_elements, &processed, sizeof(struct gps_agps_request));
+		memcpy(received_elements, &processed, sizeof(*received_elements));
 	}
 }

@@ -92,7 +92,7 @@ const k_tid_t cloud_module_thread;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /* Local copy of the last requested AGPS request from the modem. */
-static struct gps_agps_request agps_request;
+static struct nrf_modem_gnss_agps_data_frame agps_request;
 #endif
 
 /* Cloud module message queue. */
@@ -582,27 +582,6 @@ static void disconnect_cloud(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-/* Converts the A-GPS data request from GNSS API to GPS driver format. */
-static void agps_request_convert(
-	struct gps_agps_request *dest,
-	const struct nrf_modem_gnss_agps_data_frame *src)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-	dest->utc = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0;
-	dest->klobuchar = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0;
-	dest->nequick = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0;
-	dest->system_time_tow = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0;
-	dest->position = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0;
-	dest->integrity = src->data_flags &
-		NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0;
-}
-
 void pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	int err;
@@ -860,7 +839,7 @@ static void on_all_states(struct cloud_msg_data *msg)
 		/* Keep a local copy of the incoming request. Used when injecting
 		 * P-GPS data into the modem.
 		 */
-		agps_request_convert(&agps_request, &msg->module.gps.data.agps_request);
+		memcpy(&agps_request, &msg->module.gps.data.agps_request, sizeof(agps_request));
 	}
 #endif
 }
