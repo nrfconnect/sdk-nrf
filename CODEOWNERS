@@ -43,6 +43,7 @@ Kconfig*                                  @tejlmand
 /doc/CMakeLists.txt                       @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
+/doc/nrf/images/                          @Avalei
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/nrfxlib/                             @gmarull
