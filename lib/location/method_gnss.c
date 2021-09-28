@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <pm_config.h>
@@ -59,13 +60,14 @@ static struct k_work method_gnss_timeout_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
+static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
+static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct k_work method_gnss_pgps_request_work;
 static struct k_work method_gnss_manage_pgps_work;
 static struct k_work method_gnss_notify_pgps_work;
-
 static struct nrf_cloud_pgps_prediction *prediction;
 #endif
 
@@ -77,8 +79,6 @@ static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
-static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
 static struct gps_agps_request agps_request;
 #endif
 
