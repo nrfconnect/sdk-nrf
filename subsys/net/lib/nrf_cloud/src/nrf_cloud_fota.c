@@ -367,7 +367,7 @@ static int build_topic(const char *const client_id,
 		return ret;
 	}
 
-	ret = snprintf(buf, size, "%s%s%s",
+	ret = snprintk(buf, size, "%s%s%s",
 		       endpoint->utf8, client_id, topic_str);
 
 	if (ret <= 0 || ret >= size) {

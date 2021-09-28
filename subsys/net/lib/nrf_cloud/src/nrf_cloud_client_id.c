@@ -86,7 +86,7 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 
 	imei_buf[NRF_IMEI_LEN] = 0;
 
-	print_ret = snprintf(buf, buf_sz, "%s%.*s",
+	print_ret = snprintk(buf, buf_sz, "%s%.*s",
 			     CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
 			     NRF_IMEI_LEN, imei_buf);
 
@@ -99,11 +99,11 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 		return err;
 	}
 
-	print_ret = snprintf(buf, buf_sz, "%s", dev_id.str);
+	print_ret = snprintk(buf, buf_sz, "%s", dev_id.str);
 
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
 	ARG_UNUSED(err);
-	print_ret = snprintf(buf, buf_sz, "%s", CONFIG_NRF_CLOUD_CLIENT_ID);
+	print_ret = snprintk(buf, buf_sz, "%s", CONFIG_NRF_CLOUD_CLIENT_ID);
 #else
 	ARG_UNUSED(err);
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
