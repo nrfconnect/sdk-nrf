@@ -5,7 +5,8 @@
 #
 zephyr_library()
 zephyr_library_sources(
-	src/nrf_cloud_codec.c)
+	src/nrf_cloud_codec.c
+	src/nrf_cloud_client_id.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_MQTT
 	src/nrf_cloud.c

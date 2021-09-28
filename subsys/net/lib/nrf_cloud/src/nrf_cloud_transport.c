@@ -6,6 +6,7 @@
 
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_client_id.h"
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 #include "nrf_cloud_fota.h"
 #endif
@@ -19,12 +20,8 @@
 #include <logging/log.h>
 #include <sys/util.h>
 #include <settings/settings.h>
-#include <modem/at_cmd.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
-#endif
-#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
-#include "modem/modem_jwt.h"
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -297,108 +294,74 @@ static bool control_channel_topic_match(uint32_t list_id,
 	return false;
 }
 
-static int allocate_and_copy_client_id(const char * const id)
+/* Function to set/generate the MQTT client ID */
+static int nct_client_id_set(const char * const client_id)
 {
-	__ASSERT_NO_MSG(id != NULL);
+	int ret;
+	size_t len;
 
-	size_t len = strlen(id);
-
-	if (len > NRF_CLOUD_CLIENT_ID_MAX_LEN) {
-		return -ENAMETOOLONG;
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
+		if (client_id) {
+			len = strlen(client_id);
+		} else {
+			return -EINVAL;
+		}
+	} else {
+		if (client_id) {
+			LOG_WRN("Not configured to for runtime client ID, ignoring");
+		}
+		len = nrf_cloud_configured_client_id_length_get();
 	}
 
-	client_id_buf = nrf_cloud_calloc(len + 1, 1);
+	if (!len) {
+		LOG_WRN("Could not determine size of client ID");
+		return -ENOMSG;
+	}
+
+	if (client_id_buf) {
+		nrf_cloud_free(client_id_buf);
+		client_id_buf = NULL;
+	}
+
+	/* Add one for NULL terminator */
+	++len;
+
+	client_id_buf = nrf_cloud_calloc(len, 1);
 	if (!client_id_buf) {
 		return -ENOMEM;
 	}
 
-	memcpy(client_id_buf, id, len);
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
+		strncpy(client_id_buf, client_id, len);
+	} else {
+		ret = nrf_cloud_configured_client_id_get(client_id_buf, len);
+		if (ret) {
+			LOG_ERR("Could not obtain configured client ID, error: %d", ret);
+			return ret;
+		}
+	}
 
 	LOG_DBG("client_id = %s", log_strdup(client_id_buf));
 
 	return 0;
 }
 
-/* Function to set/generate an MQTT client ID */
-static int nct_client_id_set(const char * const client_id)
-{
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME) &&
-	    client_id) {
-		LOG_WRN("Not configured to for runtime client ID, ignoring");
-	}
-
-#if (defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) || \
-	defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI))
-	/* UUID/IMEI are obtained via AT command */
-	int err;
-
-	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
-		err = at_cmd_init();
-		if (err) {
-			LOG_ERR("at_cmd failed to initialize, error: %d", err);
-			return err;
-		}
-	}
-#endif
-
-#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)
-	if (client_id) {
-		return allocate_and_copy_client_id(client_id);
-	} else {
-		return -EINVAL;
-	}
-
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
-	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
-	char id_buf[IMEI_CLIENT_ID_LEN + 1];
-
-	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
-	if (err) {
-		LOG_ERR("Failed to obtain IMEI, error: %d", err);
-		return err;
-	}
-
-	imei_buf[NRF_IMEI_LEN] = 0;
-
-	snprintf(id_buf, sizeof(id_buf), "%s%.*s",
-		 CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
-		 NRF_IMEI_LEN, imei_buf);
-
-	return allocate_and_copy_client_id(id_buf);
-
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
-	struct nrf_device_uuid dev_id;
-
-	err = modem_jwt_get_uuids(&dev_id, NULL);
-	if (err) {
-		LOG_ERR("Failed to get device UUID: %d", err);
-		return err;
-	}
-
-	return allocate_and_copy_client_id(dev_id.str);
-
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
-	return allocate_and_copy_client_id(CONFIG_NRF_CLOUD_CLIENT_ID);
-#endif
-
-	return -ENOTRECOVERABLE;
-}
-
 int nct_client_id_get(char *id, size_t id_len)
 {
 	if (!client_id_buf) {
 		return -ENODEV;
+	} else if (!id || !id_len) {
+		return -EINVAL;
 	}
 
-	int len = strlen(client_id_buf);
+	size_t len = strlen(client_id_buf);
 
 	if (id_len <= len) {
 		return -EMSGSIZE;
-	} else if (client_id_buf && (id != NULL) && len) {
-		strncpy(id, client_id_buf, id_len);
-		return 0;
 	}
-	return -EINVAL;
+
+	strncpy(id, client_id_buf, id_len);
+	return 0;
 }
 
 int nct_stage_get(char *cur_stage, const int cur_stage_len)

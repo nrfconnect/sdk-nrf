@@ -29,6 +29,8 @@ rsource "Kconfig.nrf_cloud_rest"
 
 rsource "Kconfig.nrf_cloud_cell_pos"
 
+rsource "Kconfig.nrf_cloud_client_id"
+
 if NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
 
 module = NRF_CLOUD_GPS
