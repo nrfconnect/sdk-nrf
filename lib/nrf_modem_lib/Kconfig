@@ -179,33 +179,3 @@ module-str = Modem library
 source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_MODEM_LIB
-
-# Leave a set of deprecated entries to smooth transition to NRF_MODEM_LIB
-
-menu "BSD library (deprecated)"
-comment "All the configs below are deprecated, please use NRF_MODEM_LIB equivalents instead"
-
-config BSD_LIBRARY
-	bool "Enable BSD Library"
-	select NRF_MODEM_LIB
-	help
-	  This setting is deprecated.
-	  Use NRF_MODEM_LIB instead.
-
-if BSD_LIBRARY
-config BSD_LIBRARY_SYS_INIT
-	bool "Initialize during SYS_INIT"
-	select NRF_MODEM_LIB_SYS_INIT
-	help
-	  This setting is deprecated.
-	  Use NRF_MODEM_LIB_SYS_INIT instead.
-
-config BSD_LIBRARY_TRACE_ENABLED
-	bool "Enable proprietary traces over UART"
-	select NRF_MODEM_LIB_TRACE_ENABLED
-	help
-	  This setting is deprecated.
-	  Use NRF_MODEM_LIB_TRACE_ENABLED instead.
-endif
-
-endmenu
