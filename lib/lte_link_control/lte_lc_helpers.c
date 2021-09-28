@@ -327,7 +327,7 @@ int parse_psm(struct at_param_list *at_params,
 	/* Lookup table for T3324 timer used for PSM active time in seconds.
 	 * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
 	 */
-	static const uint32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
+	static const uint32_t t3324_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
 
 	/* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
 	 * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
