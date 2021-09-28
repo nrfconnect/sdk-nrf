@@ -56,7 +56,6 @@ void test_parse_cereg(void)
 	enum lte_lc_nw_reg_status status;
 	enum lte_lc_lte_mode mode;
 	struct lte_lc_cell cell;
-	struct lte_lc_psm_cfg psm_cfg;
 	char *at_response_0 = "+CEREG: 5,0,,,9,0,0,,";
 	char *at_response_1 = "+CEREG: 5,1,\"0A0B\",\"01020304\",9,0,0,\"00100110\",\"01011111\"";
 	char *at_response_2 = "+CEREG: 5,2,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
@@ -79,73 +78,68 @@ void test_parse_cereg(void)
 	/* For CEREG reads, we only check the network status, as that's the only
 	 * functionality that is exposed.
 	 */
-	err = parse_cereg(at_response_0, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_0, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_NOT_REGISTERED,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_1, false, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_response_1, false, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_HOME,
 		      "Wrong network registation status: %d", status);
 	zassert_equal(cell.id, 0x01020304, "Wrong cell ID (0x%08x)", cell.id);
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
-	zassert_equal(psm_cfg.tau, 1116000, "Wrong PSM TAU");
-	zassert_equal(psm_cfg.active_time, 360, "Wrong PSM active time");
 
-	err = parse_cereg(at_response_2, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_2, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_SEARCHING,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_3, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_3, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTRATION_DENIED,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_4, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_4, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_UNKNOWN,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_5, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_5, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_ROAMING,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_8, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_8, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_EMERGENCY,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_90, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_90, false, &status, NULL, NULL);
 	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_UICC_FAIL,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL);
 	zassert_not_equal(0, err, "parse_cereg should have failed");
 
 	/* For CEREG notifications, we test the parser function, which
 	 * implicitly also tests parse_nw_reg_status() for notifications.
 	 */
-	err = parse_cereg(at_notif_0, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_0, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_NOT_REGISTERED,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_notif_1, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_1, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_HOME,
 		      "Wrong network registation status");
 	zassert_equal(cell.id, 0x01020304, "Wrong cell ID (0x%08x)", cell.id);
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
-	zassert_equal(psm_cfg.tau, 1116000, "Wrong PSM TAU");
-	zassert_equal(psm_cfg.active_time, 360, "Wrong PSM active time");
 
-	err = parse_cereg(at_notif_2, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_2, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_SEARCHING,
 		      "Wrong network registation status");
@@ -153,7 +147,7 @@ void test_parse_cereg(void)
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
 
-	err = parse_cereg(at_notif_3, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_3, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTRATION_DENIED,
 		      "Wrong network registation status");
@@ -161,7 +155,7 @@ void test_parse_cereg(void)
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
 
-	err = parse_cereg(at_notif_4, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_4, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_UNKNOWN,
 		      "Wrong network registation status");
@@ -169,18 +163,15 @@ void test_parse_cereg(void)
 	zassert_equal(cell.tac, 0xFFFF, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
 
-	err = parse_cereg(at_notif_5, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_5, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_ROAMING,
 		      "Wrong network registation status");
 	zassert_equal(cell.id, 0x01020304, "Wrong cell ID");
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
-	zassert_equal(psm_cfg.tau, 18600, "Wrong PSM TAU: %d", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, -1, "Wrong PSM active time: %d",
-		      psm_cfg.active_time);
 
-	err = parse_cereg(at_notif_8, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_8, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_EMERGENCY,
 		      "Wrong network registation status");
@@ -188,12 +179,12 @@ void test_parse_cereg(void)
 	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
 	zassert_equal(mode, 9, "Wrong LTE mode");
 
-	err = parse_cereg(at_notif_90, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_90, true, &status, &cell, &mode);
 	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
 	zassert_equal(status, LTE_LC_NW_REG_UICC_FAIL,
 		      "Wrong network registation status");
 
-	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode, &psm_cfg);
+	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode);
 	zassert_not_equal(0, err, "parse_cereg should have true, failed");
 }
 
@@ -272,71 +263,6 @@ void test_parse_xmodemsleep(void)
 
 	err = parse_xmodemsleep(at_response_0, NULL);
 	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
-}
-
-void test_parse_coneval(void)
-{
-	int err;
-	struct lte_lc_conn_eval_params params = {0};
-
-	const char *at_response = "%CONEVAL: 0,1,8,41,19,31,\"02026616\",\"24202\","
-				  "397,6300,20,0,0,21,1,1,117";
-	const char *at_response_no_cell = "%CONEVAL: 1";
-	const char *at_response_uicc_unavail = "%CONEVAL: 2";
-	const char *at_response_barred_cells = "%CONEVAL: 3";
-	const char *at_response_radio_busy = "%CONEVAL: 4";
-	const char *at_response_higher_prio = "%CONEVAL: 5";
-	const char *at_response_unregistered = "%CONEVAL: 6";
-	const char *at_response_unspecified = "%CONEVAL: 7";
-	const char *at_response_empty = "";
-
-	err = parse_coneval(at_response, &params);
-	zassert_equal(0, err, "parse_coneval failed, error: %d", err);
-	zassert_equal(params.rrc_state, LTE_LC_RRC_MODE_CONNECTED, "Wrong RRC state");
-	zassert_equal(params.energy_estimate, LTE_LC_ENERGY_CONSUMPTION_REDUCED,
-		      "Wrong energy estimate parameter");
-	zassert_equal(params.rsrp, 41, "Wrong RSRP");
-	zassert_equal(params.rsrq, 19, "Wrong RSRQ");
-	zassert_equal(params.snr, 31, "Wrong SNR");
-	zassert_equal(params.cell_id, 33711638, "Wrong cell ID");
-	zassert_equal(params.mnc, 2, "Wrong MNC");
-	zassert_equal(params.mcc, 242, "Wrong MNC");
-	zassert_equal(params.phy_cid, 397, "Wrong physical cell ID");
-	zassert_equal(params.earfcn, 6300, "Wrong EARFCN");
-	zassert_equal(params.band, 20, "Wrong Band");
-	zassert_equal(params.tau_trig, 0, "Wrong TAU triggered parameter");
-	zassert_equal(params.ce_level, 0, "wrong CE level");
-	zassert_equal(params.tx_power, 21, "Wrong TX power");
-	zassert_equal(params.tx_rep, 1, "Wrong TX repetition");
-	zassert_equal(params.rx_rep, 1, "Wrong RX repetition");
-	zassert_equal(params.dl_pathloss, 117, "Wrong download pathloss parameter");
-
-	err = parse_coneval(at_response_no_cell, &params);
-	zassert_equal(1, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_uicc_unavail, &params);
-	zassert_equal(2, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_barred_cells, &params);
-	zassert_equal(3, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_radio_busy, &params);
-	zassert_equal(4, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_higher_prio, &params);
-	zassert_equal(5, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_unregistered, &params);
-	zassert_equal(6, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_unspecified, &params);
-	zassert_equal(7, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(at_response_empty, NULL);
-	zassert_equal(-EINVAL, err, "Wrong parse_coneval return value, returns: %d", err);
-
-	err = parse_coneval(NULL, &params);
-	zassert_equal(-EINVAL, err, "Wrong parse_coneval return value, returns: %d", err);
 }
 
 static void test_parse_rrc_mode(void)
@@ -547,7 +473,6 @@ void test_main(void)
 		ztest_unit_test(test_response_is_valid),
 		ztest_unit_test(test_parse_ncellmeas),
 		ztest_unit_test(test_neighborcell_count_get),
-		ztest_unit_test(test_parse_coneval),
 		ztest_unit_test(test_parse_mdmev)
 	);
 

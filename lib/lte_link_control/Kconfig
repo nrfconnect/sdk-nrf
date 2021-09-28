@@ -6,10 +6,8 @@
 
 menuconfig LTE_LINK_CONTROL
 	bool "nRF91 LTE Link control library"
-	select AT_CMD
 	select AT_CMD_PARSER
-	select AT_NOTIF
-	default n
+	select AT_MONITOR
 
 if LTE_LINK_CONTROL
 
@@ -23,7 +21,6 @@ config LTE_AUTO_INIT_AND_CONNECT
 
 config LTE_LOCK_BANDS
 	bool "Enable LTE bands lock"
-	default n
 	help
 		Enable LTE band locks. Bands not enabled in LTE_LOCK_BAND_MASK
 		cannot be used when this setting is enabled.
