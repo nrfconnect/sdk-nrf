@@ -425,6 +425,7 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_0_NO_REPETITION		= 0,
 	LTE_LC_CE_LEVEL_1_LOW_REPETITION	= 1,
 	LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION	= 2,
+	LTE_LC_CE_LEVEL_3_LARGE_REPETITION	= 3,
 	LTE_LC_CE_LEVEL_UNKNOWN			= UINT8_MAX,
 };
 
@@ -669,7 +670,9 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
  *	 made to establish an LTE connection. The module can be initialized
  *	 only once, and subsequent calls will return -EALREADY.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -EALREADY if the library has already been initialized.
  */
 int lte_lc_init(void);
 
@@ -681,8 +684,11 @@ int lte_lc_init(void);
  * @note After initialization, the system mode will be set to the default mode
  *	 selected with Kconfig and LTE preference set to automatic selection.
  *
- * @return Zero on success, -EPERM if the module has not been initialized,
- *	   otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EPERM if the link controller was not initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -ETIMEDOUT if a connection attempt timed out before the device was
+ *	   registered to a network.
  */
 int lte_lc_connect(void);
 
@@ -694,7 +700,11 @@ int lte_lc_connect(void);
  *	 return -EALREADY. lte_lc_connect_async() should be used on subsequent
  *	 calls.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EALREADY if the library has already been initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -ETIMEDOUT if a connection attempt timed out before the device was
+ *	   registered to a network.
  */
 int lte_lc_init_and_connect(void);
 
@@ -705,8 +715,9 @@ int lte_lc_init_and_connect(void);
  * @param handler Event handler for receiving LTE events. The parameter can be
  *	          NULL if an event handler is already registered.
  *
- * @return Zero on success, -EINVAL if no handler is provided and not already
- *	   registered, otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EINVAL if no event handler was registered.
+ * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
@@ -719,32 +730,38 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  * @param handler Event handler for receiving LTE events. The parameter can be
  *		  NULL if an event handler is already registered.
  *
- * @return Zero on success, -EINVAL if no handler is provided and not already
- *	   registered, otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EALREADY if the library has already been initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -EINVAL if no event handler was registered.
  */
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
 /** @brief Deinitialize the LTE module, powers of the modem.
  *
- * @return Zero on success, -EIO if it fails.
+ * @retval 0 if successful.
+ * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_deinit(void);
 
 /** @brief Function for sending the modem to offline mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_offline(void);
 
 /** @brief Function for sending the modem to power off mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_power_off(void);
 
 /** @brief Function for sending the modem to normal mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_normal(void);
 
@@ -757,7 +774,9 @@ int lte_lc_normal(void);
  *              Set NULL to use manufacturer-specific default value.
  * @param rat Requested active time as null-terminated string.
  *            Set NULL to use manufacturer-specific default value.
- * @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
 
@@ -765,7 +784,8 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
  *         power saving mode (PSM) using default Kconfig value or as set using
  *         `lte_lc_psm_param_set`.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_psm_req(bool enable);
 
@@ -778,7 +798,10 @@ int lte_lc_psm_req(bool enable);
  * @param active_time Pointer to the variable for parsed active time in seconds.
  *	              Positive integer, or -1 if timer is deactivated.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if no active time and/or TAU value was received.
  */
 int lte_lc_psm_get(int *tau, int *active_time);
 
@@ -795,7 +818,8 @@ int lte_lc_psm_get(int *tau, int *active_time);
  * @param ptw Paging Time Window value as null-terminated string.
  *            Set NULL to use manufacturer-specific default value.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
@@ -807,7 +831,8 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
  * @param edrx eDRX value as null-terminated string.
  *             Set NULL to use manufacturer-specific default.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
@@ -818,10 +843,10 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  *
  * @param enable Boolean value enabling or disabling the use of eDRX.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_edrx_req(bool enable);
-
 
 /** @brief Function for setting modem RAI value to be used when
  *         RAI is subsequently enabled using `lte_lc_rai_req`.
@@ -829,7 +854,8 @@ int lte_lc_edrx_req(bool enable);
  *
  * @param value RAI value.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_rai_param_set(const char *value);
 
@@ -839,7 +865,9 @@ int lte_lc_rai_param_set(const char *value);
  *
  * @param enable Boolean value enabling or disabling the use of RAI.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if RAI is not supported in the current system mode.
  */
 int lte_lc_rai_req(bool enable);
 
@@ -847,7 +875,9 @@ int lte_lc_rai_req(bool enable);
  *
  * @param status Pointer for network registration status.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the network registration could not be retrieved from the modem.
  */
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 
@@ -856,7 +886,9 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
  * @param mode System mode to set.
  * @param preference System mode preference.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the network registration could not be retrieved from the modem.
  */
 int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference preference);
@@ -866,7 +898,9 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  * @param mode Pointer to system mode variable.
  * @param preference Pointer to system mode preference variable. Can be NULL.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the system mode could not be retrieved from the modem.
  */
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
@@ -875,7 +909,9 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  *
  * @param mode Functional mode to set.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the functional mode could not be retrieved from the modem.
  */
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 
@@ -883,7 +919,9 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
  *
  * @param mode Pointer to functional mode variable.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the functional mode could not be retrieved from the modem.
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 
@@ -891,7 +929,10 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  *
  * @param mode Pointer to LTE mode variable.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the current LTE mode could not be retrieved.
+ * @retval -EBADMSG if the LTE mode was not recognized.
  */
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
@@ -916,7 +957,9 @@ int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type);
 
 /** @brief Cancel an ongoing neighbor cell measurement.
  *
- * @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if neighbor cell measurement was cancelled.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_neighbor_cell_measurement_cancel(void);
 
@@ -938,6 +981,10 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * @retval 5 Evaluation failed, aborted due to higher priority operation.
  * @retval 6 Evaluation failed, UE not registered to network.
  * @retval 7 Evaluation failed, Unspecified.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if connection evaluation is not available in the current functional mode.
+ * @retval -EBADMSG if parsing of the AT command response failed.
  */
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 
@@ -950,13 +997,16 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  *
  *  @note An event handler must be registered in order to receive events.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_modem_events_enable(void);
 
 /** @brief Disable modem domain events.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_modem_events_disable(void);
 

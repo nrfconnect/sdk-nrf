@@ -78,7 +78,8 @@
 
 /* NCELLMEAS notification parameters */
 #define AT_NCELLMEAS_RESPONSE_PREFIX		"%NCELLMEAS"
-#define AT_NCELLMEAS_STOP			"AT%NCELLMEASSTOP"
+#define AT_NCELLMEAS_START			"AT%%NCELLMEAS"
+#define AT_NCELLMEAS_STOP			"AT%%NCELLMEASSTOP"
 #define AT_NCELLMEAS_STATUS_INDEX		1
 #define AT_NCELLMEAS_STATUS_VALUE_SUCCESS	0
 #define AT_NCELLMEAS_STATUS_VALUE_FAIL		1
@@ -138,8 +139,8 @@
 #define AT_CONEVAL_DL_PATHLOSS_INDEX		17
 
 /* MDMEV command parameters */
-#define AT_MDMEV_ENABLE				"AT%MDMEV=1"
-#define AT_MDMEV_DISABLE			"AT%MDMEV=0"
+#define AT_MDMEV_ENABLE				"AT%%MDMEV=1"
+#define AT_MDMEV_DISABLE			"AT%%MDMEV=0"
 #define AT_MDMEV_RESPONSE_PREFIX		"%MDMEV: "
 #define AT_MDMEV_OVERHEATED			"ME OVERHEATED\r\n"
 #define AT_MDMEV_BATTERY_LOW			"ME BATTERY LOW\r\n"
@@ -183,18 +184,20 @@ int parse_rrc_mode(const char *at_response,
  */
 int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg);
 
-/* @brief Parses an AT+CEREG response parameter list and extracts the PSM
- *	  configuration.
+/* @brief Parses PSM configuration from periodic TAU timer and active time strings.
  *
- * @param at_params Pointer to AT parameter list.
- * @param is_notif Indicates if the AT list is for a notification.
- * @param psm_cfg Pointer to where the PSM configuration is stored.
+ * @param active_time_str Pointer to active time string.
+ * @param tau_ext_str Pointer to TAU (T3412 extended) string.
+ * @param tau_legacy_str Pointer to TAU (T3412) string. Can be NULL.
+ * @param psm_cfg Pointer to PSM configuraion struct where the parsed values
+ *		  are stored.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if PSM configuration was successfully parsed.
+ * @retval -EINVAL if parsing failed.
  */
-int parse_psm(struct at_param_list *at_params,
-		  bool is_notif,
-		  struct lte_lc_psm_cfg *psm_cfg);
+int parse_psm(const char *active_time_str, const char *tau_ext_str,
+	      const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg);
+
 
 /* @brief Parses an CEREG response and returns network registration status,
  *	  cell information, LTE mode and pSM configuration.
@@ -205,7 +208,6 @@ int parse_psm(struct at_param_list *at_params,
  *		     Can be NULL.
  * @param cell Pointer to cell information struct. Can be NULL.
  * @param lte_mode Pointer to LTE mode struct. Can be NULL.
- * @param psm_cfg Pointer to PSM configuration struct. Can be NULL.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -213,8 +215,7 @@ int parse_cereg(const char *at_response,
 		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
-		enum lte_lc_lte_mode *lte_mode,
-		struct lte_lc_psm_cfg *psm_cfg);
+		enum lte_lc_lte_mode *lte_mode);
 
 /* @brief Parses an XT3412 response and extracts the time until next TAU.
  *
@@ -318,3 +319,14 @@ void event_handler_list_dispatch(const struct lte_lc_evt *const evt);
  * @return a boolean, true if it's empty, false otherwise
  */
 bool event_handler_list_is_empty(void);
+
+/* @brief Convert string to integer with a chosen base.
+ *
+ * @param str_buf Pointer to null-terminated string.
+ * @param base The base to use when converting the string.
+ * @param output Pointer to an integer where the result is stored.
+ *
+ * @retval 0 if conversion was successful.
+ * @retval -ENODATA if conversion failed.
+ */
+int string_to_int(const char *str_buf, int base, int *output);

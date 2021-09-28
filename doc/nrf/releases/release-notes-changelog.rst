@@ -206,6 +206,7 @@ Modem libraries
   * Added support for multiple LTE event handlers. Thus, deregistration is not possible by using lte_lc_register_handler(NULL) anymore and it is done by the :c:func:`lte_lc_deregister_handler` function in the API.
   * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
   * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
+  * Updated the library to use the :ref:`nrfxlib:nrf_modem_at` API and the :ref:`at_monitor_readme` library for AT commands.
 
 * :ref:`nrf_modem_lib_readme` library:
 
