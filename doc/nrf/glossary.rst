@@ -53,6 +53,9 @@ Glossary
    Cat-NB1
       Narrowband Internet of Things (NB-IoT) User Equipment (UE) category with 200 kHz UE bandwidth and a single RX antenna, specified in 3GPP Release 13.
 
+   Certificate-Authenticated Session Establishment (CASE)
+      A method of establishing a secure session between two network nodes, using the operational credentials obtained by the nodes during their commissioning into the network.
+
    Chain of Trust
       A sequence of properties identifying the trustworthiness of each layer in the system, all the way back to a property in the system referred to as *root of trust* (RoT).
       A secure system depends on building and maintaining a chain of trust through all the layers in the system.
@@ -60,6 +63,11 @@ Glossary
 
    Clone
       A local copy of a remote Git repository obtained using the command ``git clone``.
+
+   Cluster
+      In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, a cluster is a representation of a single functionality within the network.
+      Each cluster contains attributes that are stored in the device’s memory and commands that can be used to modify or read the state of the device, including the cluster attributes.
+      Clusters appropriate for a single device type such as a sensor or a light bulb are organized into an addressable container that is called an endpoint.
 
    Commissioning
       In a thread mesh network, the process of authenticating and joining new devices to the network.
@@ -114,6 +122,9 @@ Glossary
    Downstream fork
       A repository located downstream, relative to another repository, in the flow of information.
       See :ref:`dm_repo_types`.
+
+   Endpoint
+      In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, an addressable container that contains *clusters* appropriate for a single device type such as a sensor or a light bulb.
 
    Firmware Over-the-Air (FOTA) update
       A firmware update performed remotely over-the-air (OTA).
@@ -242,6 +253,14 @@ Glossary
    Mass Storage Device (MSD)
       Any storage device that makes it possible to store and port large amounts of data in a permanent and machine-readable fashion.
 
+   Matter controller
+      A role of a Matter node meant to initiate communication and control other nodes in a Matter network.
+
+   Matter device
+      In :ref:`ug_matter`, a physical equipment with appropriate firmware that allows to create a single or several Matter *network nodes*.
+      A Matter device can operate in an IPv6 network, such as :ref:`ug_thread`.
+      Also referred to as *Matter accessory device*.
+
    Maximum Transmission Unit (MTU)
       The largest packet or frame that can be sent in a single network-layer transaction.
 
@@ -283,6 +302,13 @@ Glossary
    Network Co-Processor (NCP)
       A co-processor offloading network functions from the host processor.
       In the |NCS| context, it is typically used in OpenThread and Zigbee platform designs.
+
+   Network node
+      An element of a mesh network that has a unique network address, a role, and a type.
+      Such nodes are proper of :ref:`Thread <ug_thread>` or :ref:`Bluetooth mesh <ug_bt_mesh>` networks.
+
+      In the context of :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` networks, a network node also has a unique ID and operational credentials.
+      After being commissioned into the respective network, it can be controlled remotely using *clusters*.
 
    Network Time Protocol (NTP)
       A networking protocol for clock synchronization between computer systems over packet-switched, variable-latency data networks.
@@ -333,6 +359,9 @@ Glossary
 
    Packet Traffic Arbitration (PTA)
       A collaborative coexistence mechanism for colocated wireless protocols.
+
+   Password-Authenticated Session Establishment (PASE)
+      A method of establishing a secure session between two network nodes, using a pre-shared secret.
 
    Patch
       A method to describe changes in one or more source code files.
@@ -388,7 +417,7 @@ Glossary
    Repository
       The entire set of files and folders of which a project is composed, together with the revision history of each file.
       It is often composed of multiple branches.
-      It is also known as *Git repository* or *Git project*.
+      It is also known as *Git repository* or *Git project*, and is similar to a *Git submodule*.
 
    Root of Trust (RoT)
       The property or component in a secure system that provides the foundation of a Chain of Trust.
@@ -429,6 +458,10 @@ Glossary
 
    Spinel
       A general management protocol for enabling a host device to communicate with and manage co-processors, like a network co-processor (NCP) or a radio co-processor (RCP).
+
+   Submodule
+      A child of another Git repository, managed using the ``git submodule`` command family.
+      Also referred to as *Git submodule*.
 
    Supervisor Call (SVC)
       It generates a software exception in which access to system resources or privileged operations can be provided.

@@ -302,3 +302,4 @@ In addition to documentation related to the changes listed above, the following 
 * Updated pages:
 
   * :ref:`ncs_introduction` - Added a section describing how licenses work in |NCS|.
+  * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
