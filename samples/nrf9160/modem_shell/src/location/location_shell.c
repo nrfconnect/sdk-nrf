@@ -14,7 +14,7 @@
 
 #include <modem/location.h>
 
-extern const struct shell *shell_global;
+const struct shell *shell_global;
 
 enum location_shell_command {
 	LOCATION_CMD_NONE = 0,
@@ -174,9 +174,12 @@ void location_ctrl_init(void)
 }
 
 /******************************************************************************/
-
+#include <shell/shell_uart.h>
 int location_shell(const struct shell *shell, size_t argc, char **argv)
 {
+	/* TODO: Get rid of this and use mosh_print etc */
+	shell_global = shell_backend_uart_get_ptr();
+
 	struct location_shell_cmd_args loc_cmd_args = {
 		.command = LOCATION_CMD_NONE
 	};
