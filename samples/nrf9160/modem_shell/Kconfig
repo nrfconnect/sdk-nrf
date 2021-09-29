@@ -82,7 +82,7 @@ config MOSH_SIMPLE_REST_CLIENT
 	default y
 	select REST_CLIENT
 	help
-	  Simple REST shell tool for using REST client library.
+	  REST client for sending and receiving simple REST requests/responses.
 
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
