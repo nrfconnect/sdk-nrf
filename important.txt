@@ -1,0 +1,6 @@
+Dear Codeowners,
+You are addressed in this PR because you are listed as maintainers for at least one of the tests or apps in sdk-nrf/tests/ and sdk-nrf/applications.
+We were successfully able to start executing CI tests in sdk-nrf in the "integration" mode for sdk-nrf/samples. Now is the time to address tests and applications. Explanation on why we need such mode is given in the comment below (copied from #4444)
+Action required: Please check if tests defined in sample/testcase.yaml in your test's/app's directory contain "integration_platform" list. If not, please create a patch updating the yaml with such entry, defining on which platforms your test/app will be built in the CI. The easiest is to copy platforms from "platform_allow" entry (if it exists). Please provide such a PR before 06.10
+Cheers,
+Maciej
