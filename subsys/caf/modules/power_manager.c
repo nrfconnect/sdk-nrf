@@ -128,6 +128,7 @@ static void system_off(void)
 {
 	if (!IS_ENABLED(CONFIG_CAF_POWER_MANAGER_STAY_ON) &&
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF)) {
+		profiler_term();
 		set_power_state(POWER_STATE_OFF);
 		LOG_WRN("System turned off");
 		LOG_PANIC();
@@ -273,8 +274,6 @@ static bool event_handler(const struct event_header *eh)
 
 		case POWER_STATE_SUSPENDING:
 			LOG_INF("Power down the board");
-			profiler_term();
-
 			set_power_state(POWER_STATE_SUSPENDED);
 
 			system_off();
