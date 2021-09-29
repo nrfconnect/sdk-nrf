@@ -95,7 +95,7 @@ static void pwr_set(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
 
 	l_ctx->target = set->power_lvl;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -433,7 +433,7 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 
 	l_ctx->target = set->lvl;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -541,7 +541,7 @@ static void light_temp_set(struct bt_mesh_light_temp_srv *srv,
 	l_ctx->target.delta_uv = set->params.delta_uv;
 	if (set->transition) {
 		l_ctx->remaining =
-			set->transition->time + set->transition->delay;
+			set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -632,7 +632,7 @@ static void light_ctl_lightness_set(struct bt_mesh_lightness_srv *srv,
 	l_ctx->target = set->lvl;
 	if (set->transition) {
 		l_ctx->remaining =
-			set->transition->time + set->transition->delay;
+			set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -794,7 +794,7 @@ static void hue_set(struct bt_mesh_light_hue_srv *srv,
 
 	l_ctx->target = set->lvl;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -893,7 +893,7 @@ static void light_sat_set(struct bt_mesh_light_sat_srv *srv,
 
 	l_ctx->target = set->lvl;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -1012,7 +1012,7 @@ static void light_xy_set(struct bt_mesh_light_xyl_srv *srv,
 	l_ctx->target.x = set->params.x;
 	l_ctx->target.y = set->params.y;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
@@ -1098,7 +1098,7 @@ static void light_xyl_hsl_lightness_set(struct bt_mesh_lightness_srv *srv,
 
 	l_ctx->target = set->lvl;
 	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
+		l_ctx->remaining = set->transition->time;
 	} else {
 		l_ctx->remaining = 0;
 	}
