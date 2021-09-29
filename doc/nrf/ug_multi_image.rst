@@ -193,7 +193,7 @@ The listing below describes how to leverage this functionality, where ``ACI_NAME
 .. literalinclude:: ../../cmake/multi_image.cmake
     :language: c
     :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
-    :end-before: set(ACI_CONF_DIR ${APPLICATION_SOURCE_DIR}/child_image)
+    :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
 
 Variables in child images
 -------------------------

@@ -709,7 +709,7 @@ Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path a
 Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
 
 The current partition configuration for a build can be found in :file:`${BUILD_DIR}/partitions.yml`.
-To apply the current configuration as a static configuration, copy this file to :file:`${APPLICATION_SOURCE_DIR}/pm_static.yml`.
+To apply the current configuration as a static configuration, copy this file to :file:`${APPLICATION_CONFIG_DIR}/pm_static.yml`.
 
 It is also possible to build a :file:`pm_static.yml` from scratch by following the description in :ref:`ug_pm_static_add`
 
