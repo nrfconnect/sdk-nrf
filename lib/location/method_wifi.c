@@ -19,57 +19,57 @@
 #include "loc_core.h"
 #include "loc_utils.h"
 
-#include "rest/rest_services_wlan.h"
+#include "rest/rest_services_wifi.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK),
-	"At least one WLAN positioning service must be enabled");
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK),
+	"At least one WiFi positioning service must be enabled");
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
 
 struct k_work_args {
 	struct k_work work_item;
-	struct loc_wlan_config wlan_config;
+	struct loc_wifi_config wifi_config;
 };
 
-static struct net_if *wlan_iface;
+static struct net_if *wifi_iface;
 
-static struct k_work_args method_wlan_start_work;
+static struct k_work_args method_wifi_start_work;
 
 static bool running;
 
 static uint32_t current_scan_result_count;
 static uint32_t latest_scan_result_count;
-struct method_wlan_scan_result {
+struct method_wifi_scan_result {
 	char mac_addr_str[WIFI_MAC_MAX_LEN + 1];
 	char ssid_str[WIFI_SSID_MAX_LEN + 1];
 	uint8_t channel;
 	int8_t rssi;
 };
 
-static struct method_wlan_scan_result
-	latest_scan_results[CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT];
-static K_SEM_DEFINE(wlan_scanning_ready, 0, 1);
+static struct method_wifi_scan_result
+	latest_scan_results[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];
+static K_SEM_DEFINE(wifi_scanning_ready, 0, 1);
 
 /******************************************************************************/
 
-static int method_wlan_scanning_start(void)
+static int method_wifi_scanning_start(void)
 {
 	int ret;
 
-	LOG_DBG("Triggering start of WLAN scanning");
-	assert(wlan_iface != NULL);
+	LOG_DBG("Triggering start of WiFi scanning");
+	assert(wifi_iface != NULL);
 
 	latest_scan_result_count = 0;
 	current_scan_result_count = 0;
 
-	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wlan_iface, NULL, 0);
+	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
 	if (ret) {
-		LOG_ERR("Failed to initiate WLAN scanning: %d", ret);
+		LOG_ERR("Failed to initiate WiFi scanning: %d", ret);
 		return ret;
 	}
 	return 0;
@@ -77,15 +77,15 @@ static int method_wlan_scanning_start(void)
 
 /******************************************************************************/
 
-static void method_wlan_handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
+static void method_wifi_handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_scan_result *entry = (const struct wifi_scan_result *)cb->info;
-	struct method_wlan_scan_result *current; 
+	struct method_wifi_scan_result *current;
 
 	current_scan_result_count++;
 	current = &latest_scan_results[current_scan_result_count - 1];
 
-	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT) {
+	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT) {
 		/* TODO: this seems to count that mac and ssid entries are null terminated */
 		sprintf(current->mac_addr_str, "%s", entry->mac);
 		sprintf(current->ssid_str, "%s", entry->ssid);
@@ -94,10 +94,8 @@ static void method_wlan_handle_wifi_scan_result(struct net_mgmt_event_callback *
 
 		LOG_DBG("scan result #%d stored: ssid %s, mac address: %s, channel %d,",
 			current_scan_result_count,
-			log_strdup(
-				current->ssid_str),
-			log_strdup(
-				current->mac_addr_str),
+			log_strdup(current->ssid_str),
+			log_strdup(current->mac_addr_str),
 			current->channel);
 	} else {
 		LOG_WRN("Scanning result (mac %s) did not fit to result buffer - dropping it",
@@ -105,36 +103,36 @@ static void method_wlan_handle_wifi_scan_result(struct net_mgmt_event_callback *
 	}
 }
 
-static void method_wlan_handle_wifi_scan_done(struct net_mgmt_event_callback *cb)
+static void method_wifi_handle_wifi_scan_done(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status = (const struct wifi_status *)cb->info;
 
 	if (status->status) {
-		LOG_WRN("WLAN scan request failed (%d).", status->status);
+		LOG_WRN("WiFi scan request failed (%d).", status->status);
 	} else {
 		LOG_INF("Scan request done.");
 	}
-	k_sem_give(&wlan_scanning_ready);
+	k_sem_give(&wifi_scanning_ready);
 
 	latest_scan_result_count =
-		(current_scan_result_count > CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT) ?
-			CONFIG_LOCATION_METHOD_WLAN_SCANNING_RESULTS_MAX_CNT :
+		(current_scan_result_count > CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT) ?
+			CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT :
 			current_scan_result_count;
 	current_scan_result_count = 0;
 }
 
-static struct net_mgmt_event_callback method_wlan_net_mgmt_cb;
+static struct net_mgmt_event_callback method_wifi_net_mgmt_cb;
 
-void method_wlan_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+void method_wifi_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
 					struct net_if *iface)
 {
 	if (running) {
 		switch (mgmt_event) {
 		case NET_EVENT_WIFI_SCAN_RESULT:
-			method_wlan_handle_wifi_scan_result(cb);
+			method_wifi_handle_wifi_scan_result(cb);
 			break;
 		case NET_EVENT_WIFI_SCAN_DONE:
-			method_wlan_handle_wifi_scan_done(cb);
+			method_wifi_handle_wifi_scan_done(cb);
 			break;
 		default:
 			break;
@@ -144,25 +142,25 @@ void method_wlan_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint
 
 /******************************************************************************/
 
-static void method_wlan_positioning_work_fn(struct k_work *work)
+static void method_wifi_positioning_work_fn(struct k_work *work)
 {
 	struct loc_location location_result = { 0 };
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
-	const struct loc_wlan_config wlan_config = work_data->wlan_config;
+	const struct loc_wifi_config wifi_config = work_data->wifi_config;
 	int err;
 
-	loc_core_timer_start(wlan_config.timeout);
+	loc_core_timer_start(wifi_config.timeout);
 
-	err = method_wlan_scanning_start();
+	err = method_wifi_scanning_start();
 	if (err) {
-		LOG_WRN("Cannot start WLAN scanning, err %d", err);
+		LOG_WRN("Cannot start WiFi scanning, err %d", err);
 		goto return_error;
 	}
 
-	k_sem_take(&wlan_scanning_ready, K_FOREVER);
+	k_sem_take(&wifi_scanning_ready, K_FOREVER);
 	if (running) {
-		struct rest_wlan_pos_request request;
-		struct rest_wlan_pos_result result;
+		struct rest_wifi_pos_request request;
+		struct rest_wifi_pos_result result;
 
 		if (!loc_utils_is_default_pdn_active()) {
 			/* No worth to start trying to fetch with the REST api over cellular.
@@ -175,7 +173,7 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 
 		if (latest_scan_result_count > 1) {
 			/* Fill scanning results: */
-			request.wlan_scanning_result_count = latest_scan_result_count;
+			request.wifi_scanning_result_count = latest_scan_result_count;
 
 			for (int i = 0; i < latest_scan_result_count; i++) {
 				strcpy(request.scanning_results[i].mac_addr_str,
@@ -188,10 +186,12 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 					latest_scan_results[i].rssi;
 			}
 
-			err = rest_services_wlan_location_get(wlan_config.service, &request, &result);
+			err = rest_services_wifi_location_get(wifi_config.service, &request,
+							      &result);
 			if (err) {
-				LOG_ERR("Failed to acquire a location from WLAN positioning service REST api, error: %d",
-					err);
+				LOG_ERR("Failed to acquire a location by using "
+					"WiFi positioning, err: %d",
+						err);
 				err = -1;
 			} else {
 				location_result.latitude = result.latitude;
@@ -208,9 +208,10 @@ static void method_wlan_positioning_work_fn(struct k_work *work)
 				 * (400: bad request) and also with Skyhook (404: not found).
 				 * Thus, fail faster in this case and safe the data transfer costs.
 				 */
-				LOG_WRN("Retrieving a location based on a single WLAN access point is not possible");
+				LOG_WRN("Retrieving a location based on a single WiFi access point "
+					"is not possible");
 			} else {
-				LOG_WRN("No WLAN scanning results");
+				LOG_WRN("No WiFi scanning results");
 			}
 			err = -1;
 		}
@@ -224,17 +225,17 @@ return_error:
 
 /******************************************************************************/
 
-int method_wlan_cancel(void)
+int method_wifi_cancel(void)
 {
 	running = false;
 
-	(void)k_work_cancel(&method_wlan_start_work.work_item);
+	(void)k_work_cancel(&method_wifi_start_work.work_item);
 	return 0;
 }
 
-int method_wlan_location_get(const struct loc_method_config *config)
+int method_wifi_location_get(const struct loc_method_config *config)
 {
-	const struct loc_wlan_config wlan_config = config->wlan;
+	const struct loc_wifi_config wifi_config = config->wifi;
 	bool service_ok = false;
 
 	if (running) {
@@ -243,47 +244,47 @@ int method_wlan_location_get(const struct loc_method_config *config)
 	}
 
 	/* Validate requested service: */
-#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE)
-	if (wlan_config.service == LOC_WLAN_SERVICE_HERE) {
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
+	if (wifi_config.service == LOC_WIFI_SERVICE_HERE) {
 		service_ok = true;
 	}
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK)
-	if (wlan_config.service == LOC_WLAN_SERVICE_SKYHOOK) {
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK)
+	if (wifi_config.service == LOC_WIFI_SERVICE_SKYHOOK) {
 		service_ok = true;
 	}
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD)
-	if (wlan_config.service == LOC_WLAN_SERVICE_NRF_CLOUD) {
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD)
+	if (wifi_config.service == LOC_WIFI_SERVICE_NRF_CLOUD) {
 		service_ok = true;
 	}
 #endif
 	if (!service_ok) {
-		LOG_ERR("Requested WLAN positioning service not configured on.");
+		LOG_ERR("Requested WiFi positioning service not configured on.");
 		return -EINVAL;
 	}
 
-	k_work_init(&method_wlan_start_work.work_item, method_wlan_positioning_work_fn);
-	method_wlan_start_work.wlan_config = wlan_config;
-	k_work_submit_to_queue(loc_core_work_queue_get(), &method_wlan_start_work.work_item);
+	k_work_init(&method_wifi_start_work.work_item, method_wifi_positioning_work_fn);
+	method_wifi_start_work.wifi_config = wifi_config;
+	k_work_submit_to_queue(loc_core_work_queue_get(), &method_wifi_start_work.work_item);
 
 	running = true;
 
 	return 0;
 }
 
-int method_wlan_init(void)
+int method_wifi_init(void)
 {
-	wlan_iface = net_if_get_default();
-	if (wlan_iface == NULL) {
+	wifi_iface = net_if_get_default();
+	if (wifi_iface == NULL) {
 		LOG_ERR("Could not get the default interface");
 		return -1;
 	}
 
-	/* No possibility to check if this is really a wlan iface, thus doing
+	/* No possibility to check if this is really a wifi iface, thus doing
 	 * some extra checking:
 	 */
-	if (!net_if_is_ip_offloaded(wlan_iface)) {
+	if (!net_if_is_ip_offloaded(wifi_iface)) {
 		LOG_ERR("Given interface not overloaded");
 		return -1;
 	}
@@ -292,9 +293,9 @@ int method_wlan_init(void)
 	current_scan_result_count = 0;
 	latest_scan_result_count = 0;
 
-	net_mgmt_init_event_callback(&method_wlan_net_mgmt_cb, method_wlan_net_mgmt_event_handler,
+	net_mgmt_init_event_callback(&method_wifi_net_mgmt_cb, method_wifi_net_mgmt_event_handler,
 				     (NET_EVENT_WIFI_SCAN_RESULT | NET_EVENT_WIFI_SCAN_DONE));
 
-	net_mgmt_add_event_callback(&method_wlan_net_mgmt_cb);
+	net_mgmt_add_event_callback(&method_wifi_net_mgmt_cb);
 	return 0;
 }

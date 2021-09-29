@@ -15,26 +15,26 @@
 
 #include <net/rest_client.h>
 
-#include "rest_here_wlan.h"
+#include "rest_here_wifi.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_HOSTNAME
+#define HOSTNAME	CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 BUILD_ASSERT(
-	sizeof(CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY) > 1, "API key must be configured");
-#define AUTHENTICATION	"apiKey="CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
+	sizeof(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY) > 1, "API key must be configured");
+#define AUTHENTICATION	"apiKey="CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
 
 #define API_LOCATE_PATH		"/v2/locate"
-#define API_KEY_PARAM		"apiKey="CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_API_KEY
+#define API_KEY_PARAM		"apiKey="CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
 #define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 #define HEADER_HOST            "Host: "HOSTNAME"\r\n"
 #define HEADER_CONNECTION      "Connection: close\r\n"
 
-#define HERE_WLAN_POS_JSON_KEY_WLAN "wlan"
+#define HERE_WIFI_POS_JSON_KEY_WLAN "wlan"
 #define HTTPS_PORT 443
 
 /******************************************************************************/
@@ -42,62 +42,63 @@ BUILD_ASSERT(
  * https://developer.here.com/documentation/positioning-api/dev_guide/topics/construct-locate-request.html
  */
 
-static int here_wlan_rest_pos_req_json_format(
-	const struct wlan_scanning_result_info scanning_results[],
-	uint8_t wlan_scanning_result_count,
+static int here_wifi_rest_pos_req_json_format(
+	const struct wifi_scanning_result_info scanning_results[],
+	uint8_t wifi_scanning_result_count,
 	cJSON * const req_obj_out)
 {
-	cJSON *wlan_array = NULL;
-	cJSON *wlan_info_obj = NULL;
+	cJSON *wifi_array = NULL;
+	cJSON *wifi_info_obj = NULL;
 
-	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
-	wlan_array = cJSON_AddArrayToObjectCS(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
-	if (!wlan_array) {
+	wifi_array = cJSON_AddArrayToObjectCS(req_obj_out, HERE_WIFI_POS_JSON_KEY_WLAN);
+	if (!wifi_array) {
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < wlan_scanning_result_count; ++i) {
-		const struct wlan_scanning_result_info current_result = scanning_results[i];
+	for (size_t i = 0; i < wifi_scanning_result_count; ++i) {
+		const struct wifi_scanning_result_info current_result = scanning_results[i];
 
-		wlan_info_obj = cJSON_CreateObject();
+		wifi_info_obj = cJSON_CreateObject();
 
-		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "mac", current_result.mac_addr_str)) {
+		if (!cJSON_AddStringToObjectCS(wifi_info_obj, "mac", current_result.mac_addr_str)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "rss", current_result.rssi)) {
+		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "rss", current_result.rssi)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddItemToArray(wlan_array, wlan_info_obj)) {
-			cJSON_Delete(wlan_info_obj);
+		if (!cJSON_AddItemToArray(wifi_array, wifi_info_obj)) {
+			cJSON_Delete(wifi_info_obj);
 			goto cleanup;
 		}
 	}
 	return 0;
 
 cleanup:
-	/* Only need to delete the wlan_array since all items (if any) were added to it */
-	cJSON_DeleteItemFromObject(req_obj_out, HERE_WLAN_POS_JSON_KEY_WLAN);
-	LOG_ERR("Failed to format Here wlan location request, out of memory");
+	/* Only need to delete the wifi_array since all items (if any) were added to it */
+	cJSON_DeleteItemFromObject(req_obj_out, HERE_WIFI_POS_JSON_KEY_WLAN);
+	LOG_ERR("Failed to format Here wifi location request, out of memory");
 	return -ENOMEM;
 }
 
-static int here_rest_format_wlan_pos_req_body(
-	const struct wlan_scanning_result_info scanning_results[],
-	uint8_t wlan_scanning_result_count,
+static int here_rest_format_wifi_pos_req_body(
+	const struct wifi_scanning_result_info scanning_results[],
+	uint8_t wifi_scanning_result_count,
 	char **json_str_out)
 {
-	if (!scanning_results || !wlan_scanning_result_count || !json_str_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !json_str_out) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = here_wlan_rest_pos_req_json_format(scanning_results, wlan_scanning_result_count, req_obj);
+	err = here_wifi_rest_pos_req_json_format(scanning_results, wifi_scanning_result_count,
+						 req_obj);
 	if (err) {
 		goto cleanup;
 	}
@@ -113,8 +114,8 @@ cleanup:
 	return err;
 }
 
-static int here_wlan_rest_pos_response_parse(const char *const buf,
-					     struct rest_wlan_pos_result *result)
+static int here_wifi_rest_pos_response_parse(const char *const buf,
+					     struct rest_wifi_pos_result *result)
 {
 	int ret = 0;
 	struct cJSON *root_obj, *location_obj, *lat_obj, *lng_obj, *accuracy_obj;
@@ -125,7 +126,7 @@ static int here_wlan_rest_pos_response_parse(const char *const buf,
 
 	root_obj = cJSON_Parse(buf);
 	if (!root_obj) {
-		LOG_ERR("No JSON found for here wlan positioning response");
+		LOG_ERR("No JSON found for here wifi positioning response");
 		ret = -ENOMSG;
 		goto cleanup;
 	}
@@ -175,11 +176,11 @@ cleanup:
 
 /******************************************************************************/
 
-int here_rest_wlan_pos_get(
+int here_rest_wifi_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
-	const struct rest_wlan_pos_request *request,
-	struct rest_wlan_pos_result *result)
+	const struct rest_wifi_pos_request *request,
+	struct rest_wifi_pos_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
@@ -201,7 +202,7 @@ int here_rest_wlan_pos_get(
 	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
-	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_HERE_TLS_SEC_TAG;
+	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG;
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
@@ -209,12 +210,12 @@ int here_rest_wlan_pos_get(
 	rest_ctx.resp_buff_len = rcv_buf_len;
 
 	/* Get the body/payload to request: */
-	ret = here_rest_format_wlan_pos_req_body(
+	ret = here_rest_format_wifi_pos_req_body(
 		request->scanning_results,
-		request->wlan_scanning_result_count,
+		request->wifi_scanning_result_count,
 		&body);
 	if (ret) {
-		LOG_ERR("Failed to generate wlan positioning request, err: %d", ret);
+		LOG_ERR("Failed to generate wifi positioning request, err: %d", ret);
 		goto clean_up;
 	}
 	rest_ctx.body = body;
@@ -230,7 +231,7 @@ int here_rest_wlan_pos_get(
 		/* Let it fail in parsing */
 	}
 
-	ret = here_wlan_rest_pos_response_parse(rest_ctx.response, result);
+	ret = here_wifi_rest_pos_response_parse(rest_ctx.response, result);
 	if (ret) {
 		LOG_ERR("Here rest response parsing failed, err: %d", ret);
 		ret = -EBADMSG;

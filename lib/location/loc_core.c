@@ -17,8 +17,8 @@
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include "method_cellular.h"
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN)
-#include "method_wlan.h"
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#include "method_wifi.h"
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -90,15 +90,15 @@ static const struct loc_method_api method_cellular_api = {
 	.cancel           = method_cellular_cancel,
 };
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN)
-/** @brief WLAN location method configuration. */
-static const struct loc_method_api method_wlan_api = {
-	.method           = LOC_METHOD_WLAN,
-	.method_string    = "WLAN",
-	.init             = method_wlan_init,
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+/** @brief WiFi location method configuration. */
+static const struct loc_method_api method_wifi_api = {
+	.method           = LOC_METHOD_WIFI,
+	.method_string    = "WiFi",
+	.init             = method_wifi_init,
 	.validate_params  = NULL,
-	.location_get     = method_wlan_location_get,
-	.cancel           = method_wlan_cancel,
+	.location_get     = method_wifi_location_get,
+	.cancel           = method_wifi_cancel,
 };
 #endif
 
@@ -114,8 +114,8 @@ static const struct loc_method_api *methods_supported[] = {
 #else
 	NULL,
 #endif
-#if defined(CONFIG_LOCATION_METHOD_WLAN)
-	&method_wlan_api,
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	&method_wifi_api,
 #else
 	NULL,
 #endif
@@ -300,8 +300,8 @@ void loc_core_config_log(const struct loc_config *config)
 				config->methods[i].gnss.num_consecutive_fixes);
 		} else if (type == LOC_METHOD_CELLULAR) {
 			LOG_DBG("      Timeout: %d", config->methods[i].cellular.timeout);
-		} else if (type == LOC_METHOD_WLAN) {
-			LOG_DBG("      Timeout: %d", config->methods[i].wlan.timeout);
+		} else if (type == LOC_METHOD_WIFI) {
+			LOG_DBG("      Timeout: %d", config->methods[i].wifi.timeout);
 		}
 	}
 }

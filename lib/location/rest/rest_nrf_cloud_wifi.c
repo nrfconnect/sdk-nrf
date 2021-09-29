@@ -16,11 +16,11 @@
 
 #include <net/rest_client.h>
 
-#include "rest_nrf_cloud_wlan.h"
+#include "rest_nrf_cloud_wifi.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_HOSTNAME
+#define HOSTNAME CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_HOSTNAME
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 
@@ -32,79 +32,79 @@ BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 
 #define HTTPS_PORT 443
 
-#define NRF_CLOUD_WLAN_POS_JSON_KEY_WLAN "accessPoints"
+#define NRF_CLOUD_WIFI_POS_JSON_KEY_AP "accessPoints"
 
 /******************************************************************************/
 
 static int
-nrf_cloud_wlan_rest_pos_req_json_format(const struct wlan_scanning_result_info scanning_results[],
-					uint8_t wlan_scanning_result_count,
+nrf_cloud_wifi_rest_pos_req_json_format(const struct wifi_scanning_result_info scanning_results[],
+					uint8_t wifi_scanning_result_count,
 					cJSON *const req_obj_out)
 {
-	cJSON *wlan_info_array = NULL;
-	cJSON *wlan_info_obj = NULL;
+	cJSON *wifi_info_array = NULL;
+	cJSON *wifi_info_obj = NULL;
 
-	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
 	/* Request payload format example:
 	 * {"accessPoints":[{"macAddress": "24-5a-4c-6b-9e-11" },{"macAddress": "6c:55:e8:9b:84:6d"}]}
 	 */
 
-	wlan_info_array = cJSON_AddArrayToObjectCS(req_obj_out, NRF_CLOUD_WLAN_POS_JSON_KEY_WLAN);
-	if (!wlan_info_array) {
+	wifi_info_array = cJSON_AddArrayToObjectCS(req_obj_out, NRF_CLOUD_WIFI_POS_JSON_KEY_AP);
+	if (!wifi_info_array) {
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < wlan_scanning_result_count; ++i) {
-		const struct wlan_scanning_result_info scan_result = scanning_results[i];
+	for (size_t i = 0; i < wifi_scanning_result_count; ++i) {
+		const struct wifi_scanning_result_info scan_result = scanning_results[i];
 
-		wlan_info_obj = cJSON_CreateObject();
+		wifi_info_obj = cJSON_CreateObject();
 
-		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "macAddress",
+		if (!cJSON_AddStringToObjectCS(wifi_info_obj, "macAddress",
 					       scan_result.mac_addr_str)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "ssid", scan_result.ssid_str)) {
+		if (!cJSON_AddStringToObjectCS(wifi_info_obj, "ssid", scan_result.ssid_str)) {
 			goto cleanup;
 		}
 
 		//TODO: is rssi the same as signalStrength?
-		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "signalStrength", scan_result.rssi)) {
+		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "signalStrength", scan_result.rssi)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "channel", scan_result.channel)) {
+		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "channel", scan_result.channel)) {
 			goto cleanup;
 		}
 		//TODO: frequency
 
-		if (!cJSON_AddItemToArray(wlan_info_array, wlan_info_obj)) {
+		if (!cJSON_AddItemToArray(wifi_info_array, wifi_info_obj)) {
 			goto cleanup;
 		}
 	}
 	return 0;
 
 cleanup:
-	cJSON_Delete(wlan_info_obj);
-	cJSON_DeleteItemFromObject(req_obj_out, NRF_CLOUD_WLAN_POS_JSON_KEY_WLAN);
-	LOG_ERR("Failed to format nRF Cloud wlan location request, out of memory");
+	cJSON_Delete(wifi_info_obj);
+	cJSON_DeleteItemFromObject(req_obj_out, NRF_CLOUD_WIFI_POS_JSON_KEY_AP);
+	LOG_ERR("Failed to format nRF Cloud wifi location request, out of memory");
 	return -ENOMEM;
 }
 
 static int
-nrf_cloud_rest_format_wlan_pos_req_body(const struct wlan_scanning_result_info scanning_results[],
-					uint8_t wlan_scanning_result_count, char **json_str_out)
+nrf_cloud_rest_format_wifi_pos_req_body(const struct wifi_scanning_result_info scanning_results[],
+					uint8_t wifi_scanning_result_count, char **json_str_out)
 {
-	if (!scanning_results || !wlan_scanning_result_count || !json_str_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !json_str_out) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = nrf_cloud_wlan_rest_pos_req_json_format(scanning_results, wlan_scanning_result_count,
+	err = nrf_cloud_wifi_rest_pos_req_json_format(scanning_results, wifi_scanning_result_count,
 						      req_obj);
 	if (err) {
 		goto cleanup;
@@ -121,8 +121,8 @@ cleanup:
 	return err;
 }
 
-static int nrf_cloud_wlan_rest_pos_response_parse(const char *const buf,
-						  struct rest_wlan_pos_result *result)
+static int nrf_cloud_wifi_rest_pos_response_parse(const char *const buf,
+						  struct rest_wifi_pos_result *result)
 {
 	int ret = 0;
 	struct cJSON *root_obj, *lat_obj, *lon_obj, *uncertainty_obj;
@@ -136,7 +136,7 @@ static int nrf_cloud_wlan_rest_pos_response_parse(const char *const buf,
 
 	root_obj = cJSON_Parse(buf);
 	if (!root_obj) {
-		LOG_ERR("No JSON found for skyhook wlan positioning response");
+		LOG_ERR("No JSON found for skyhook wifi positioning response");
 		ret = -ENOMSG;
 		goto cleanup;
 	}
@@ -178,7 +178,7 @@ cleanup:
 /******************************************************************************/
 #define AUTH_HDR_BEARER_TEMPLATE "Authorization: Bearer %s\r\n"
 
-static int nrf_cloud_rest_wlan_generate_auth_header(const char *const tok, char **auth_hdr_out)
+static int nrf_cloud_rest_wifi_generate_auth_header(const char *const tok, char **auth_hdr_out)
 {
 	if (!tok || !auth_hdr_out) {
 		return -EINVAL;
@@ -203,9 +203,9 @@ static int nrf_cloud_rest_wlan_generate_auth_header(const char *const tok, char 
 
 /******************************************************************************/
 
-int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
-				const struct rest_wlan_pos_request *request,
-				struct rest_wlan_pos_result *result)
+int nrf_cloud_rest_wifi_pos_get(char *rcv_buf, size_t rcv_buf_len,
+				const struct rest_wifi_pos_request *request,
+				struct rest_wifi_pos_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
@@ -217,12 +217,12 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	char *auth_hdr = NULL;
 	char *jwt_str = NULL;
 	int ret = 0;
-#ifdef CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
+#ifdef CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
 	struct jwt_data jwt = {
 		.subject = ((strlen(CONFIG_LOCATION_DEVICE_ID)) ? CONFIG_LOCATION_DEVICE_ID : NULL),
 		.audience = NULL,
 		.exp_delta_s = (5 * 60),
-		.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_SEC_TAG,
+		.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_SEC_TAG,
 		.key = JWT_KEY_TYPE_CLIENT_PRIV,
 		.alg = JWT_ALG_TYPE_ES256,
 		/* Set to NULL so a properly sized buffer is allocated */
@@ -237,11 +237,11 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	jwt_str = jwt.jwt_buf;
 #else
 	/* TODO: this option shall be removed */
-	jwt_str = CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_STRING;
+	jwt_str = CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_STRING;
 #endif
 
 	/* Format auth header */
-	ret = nrf_cloud_rest_wlan_generate_auth_header(jwt_str, &auth_hdr);
+	ret = nrf_cloud_rest_wifi_generate_auth_header(jwt_str, &auth_hdr);
 	if (ret) {
 		LOG_ERR("Could not format HTTP auth header, err: %d", ret);
 		goto clean_up;
@@ -255,7 +255,7 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
-	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_SEC_TAG;
+	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_SEC_TAG;
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
@@ -263,8 +263,8 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	rest_ctx.resp_buff_len = rcv_buf_len;
 
 	/* Get the body/payload to request: */
-	ret = nrf_cloud_rest_format_wlan_pos_req_body(request->scanning_results,
-						      request->wlan_scanning_result_count, &body);
+	ret = nrf_cloud_rest_format_wifi_pos_req_body(request->scanning_results,
+						      request->wifi_scanning_result_count, &body);
 	if (ret) {
 		LOG_ERR("Failed to generate nrf cloud positioning request, err: %d", ret);
 		goto clean_up;
@@ -282,7 +282,7 @@ int nrf_cloud_rest_wlan_pos_get(char *rcv_buf, size_t rcv_buf_len,
 		/* Let it fail in parsing */
 	}
 
-	ret = nrf_cloud_wlan_rest_pos_response_parse(rest_ctx.response, result);
+	ret = nrf_cloud_wifi_rest_pos_response_parse(rest_ctx.response, result);
 	if (ret) {
 		LOG_ERR("nRF Cloud rest response parsing failed, err: %d", ret);
 		ret = -EBADMSG;
@@ -291,7 +291,7 @@ clean_up:
 	if (body) {
 		cJSON_free(body);
 	}
-#ifdef CONFIG_LOCATION_METHOD_WLAN_SERVICE_NRF_CLOUD_JWT_GENERATED
+#ifdef CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
 	modem_jwt_free(jwt.jwt_buf);
 	jwt.jwt_buf = NULL;
 #endif

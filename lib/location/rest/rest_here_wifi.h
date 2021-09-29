@@ -5,18 +5,18 @@
  */
 
 /**
- * @file rest_here_wlan.h
+ * @file rest_here_wifi.h
  *
- * @brief Here REST API for WLAN positioning.
+ * @brief Here REST API for WiFi positioning.
  */
 
-#ifndef REST_HERE_WLAN_H
-#define REST_HERE_WLAN_H
+#ifndef REST_HERE_WIFI_H
+#define REST_HERE_WIFI_H
 
-#include "rest_services_wlan.h"
+#include "rest_services_wifi.h"
 
 /**
- * @brief Here wlan positioning request.
+ * @brief Here WiFi positioning request.
  *
  * @param[in]     rcv_buf     Buffer for storing the REST service response.
  * @param[in]     rcv_buf_len Length of the provided buffer.
@@ -26,10 +26,10 @@
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int here_rest_wlan_pos_get(
+int here_rest_wifi_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
-	const struct rest_wlan_pos_request *request,
-	struct rest_wlan_pos_result *result);
+	const struct rest_wifi_pos_request *request,
+	struct rest_wifi_pos_result *result);
 
-#endif /* REST_HERE_WLAN_H */
+#endif /* REST_HERE_WIFI_H */

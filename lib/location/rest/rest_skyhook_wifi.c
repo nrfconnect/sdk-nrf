@@ -15,18 +15,18 @@
 
 #include <net/rest_client.h>
 
-#include "rest_skyhook_wlan.h"
+#include "rest_skyhook_wifi.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_HOSTNAME
+#define HOSTNAME	CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
-BUILD_ASSERT(
-	sizeof(CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY) > 1, "API key must be configured");
+BUILD_ASSERT(sizeof(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY) > 1,
+	     "API key must be configured");
 
 #define API_LOCATE_PATH		"/wps2/json/location"
-#define API_KEY_PARAM		"key="CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY
+#define API_KEY_PARAM		"key="CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY
 
 /* TODO: get imei runtime instead CONFIG_LOCATION_DEVICE_ID*/
 #define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user="CONFIG_LOCATION_DEVICE_ID
@@ -37,22 +37,22 @@ BUILD_ASSERT(
 
 #define HTTPS_PORT 443
 
-#define SKYHOOK_WLAN_POS_JSON_KEY_WLAN "wifiAccessPoints"
+#define SKYHOOK_WIFI_POS_JSON_KEY_WIFI_AP "wifiAccessPoints"
 
 /******************************************************************************/
 /* Based on Skyhook JSON Location API v2.31:
  * https://resources.skyhook.com/wiki/type/documentation/precision-location/api-documentation---json-location-api-v2-31/218036682
  */
 
-static int skyhook_wlan_rest_pos_req_json_format(
-	const struct wlan_scanning_result_info scanning_results[],
-	uint8_t wlan_scanning_result_count,
+static int skyhook_wifi_rest_pos_req_json_format(
+	const struct wifi_scanning_result_info scanning_results[],
+	uint8_t wifi_scanning_result_count,
 	cJSON * const req_obj_out)
 {
-	cJSON *wlan_info_array = NULL;
-	cJSON *wlan_info_obj = NULL;
+	cJSON *wifi_info_array = NULL;
+	cJSON *wifi_info_obj = NULL;
 
-	if (!scanning_results || !wlan_scanning_result_count || !req_obj_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !req_obj_out) {
 		return -EINVAL;
 	}
 	/* Request payload format example:
@@ -62,58 +62,59 @@ static int skyhook_wlan_rest_pos_req_json_format(
 		goto cleanup;
 	}
 
-	wlan_info_array = cJSON_AddArrayToObjectCS(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
-	if (!wlan_info_array) {
+	wifi_info_array = cJSON_AddArrayToObjectCS(req_obj_out, SKYHOOK_WIFI_POS_JSON_KEY_WIFI_AP);
+	if (!wifi_info_array) {
 		goto cleanup;
 	}
 
-	for (size_t i = 0; i < wlan_scanning_result_count; ++i) {
-		const struct wlan_scanning_result_info scan_result = scanning_results[i];
+	for (size_t i = 0; i < wifi_scanning_result_count; ++i) {
+		const struct wifi_scanning_result_info scan_result = scanning_results[i];
 
-		wlan_info_obj = cJSON_CreateObject();
+		wifi_info_obj = cJSON_CreateObject();
 
-		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "macAddress",scan_result.mac_addr_str)) {
+		if (!cJSON_AddStringToObjectCS(wifi_info_obj, "macAddress",
+					       scan_result.mac_addr_str)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddStringToObjectCS(wlan_info_obj, "ssid", scan_result.ssid_str)) {
+		if (!cJSON_AddStringToObjectCS(wifi_info_obj, "ssid", scan_result.ssid_str)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "channel", scan_result.channel)) {
+		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "channel", scan_result.channel)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddNumberToObjectCS(wlan_info_obj, "rssi", scan_result.rssi)) {
+		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "rssi", scan_result.rssi)) {
 			goto cleanup;
 		}
 
-		if (!cJSON_AddItemToArray(wlan_info_array, wlan_info_obj)) {
+		if (!cJSON_AddItemToArray(wifi_info_array, wifi_info_obj)) {
 			goto cleanup;
 		}
 	}
 	return 0;
 
 cleanup:
-	cJSON_Delete(wlan_info_obj);
-	cJSON_DeleteItemFromObject(req_obj_out, SKYHOOK_WLAN_POS_JSON_KEY_WLAN);
-	LOG_ERR("Failed to format Skyhook wlan location request, out of memory");
+	cJSON_Delete(wifi_info_obj);
+	cJSON_DeleteItemFromObject(req_obj_out, SKYHOOK_WIFI_POS_JSON_KEY_WIFI_AP);
+	LOG_ERR("Failed to format Skyhook wifi location request, out of memory");
 	return -ENOMEM;
 }
 
-static int skyhook_rest_format_wlan_pos_req_body(
-	const struct wlan_scanning_result_info scanning_results[],
-	uint8_t wlan_scanning_result_count,
+static int skyhook_rest_format_wifi_pos_req_body(
+	const struct wifi_scanning_result_info scanning_results[],
+	uint8_t wifi_scanning_result_count,
 	char **json_str_out)
 {
-	if (!scanning_results || !wlan_scanning_result_count || !json_str_out) {
+	if (!scanning_results || !wifi_scanning_result_count || !json_str_out) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 	cJSON *req_obj = cJSON_CreateObject();
 
-	err = skyhook_wlan_rest_pos_req_json_format(scanning_results, wlan_scanning_result_count,
+	err = skyhook_wifi_rest_pos_req_json_format(scanning_results, wifi_scanning_result_count,
 						    req_obj);
 	if (err) {
 		goto cleanup;
@@ -130,8 +131,8 @@ cleanup:
 	return err;
 }
 
-static int skyhook_wlan_rest_pos_response_parse(const char *const buf,
-						struct rest_wlan_pos_result *result)
+static int skyhook_wifi_rest_pos_response_parse(const char *const buf,
+						struct rest_wifi_pos_result *result)
 {
 	int ret = 0;
 	struct cJSON *root_obj, *location_obj, *lat_obj, *lng_obj, *accuracy_obj;
@@ -145,7 +146,7 @@ static int skyhook_wlan_rest_pos_response_parse(const char *const buf,
 
 	root_obj = cJSON_Parse(buf);
 	if (!root_obj) {
-		LOG_ERR("No JSON found for skyhook wlan positioning response");
+		LOG_ERR("No JSON found for skyhook wifi positioning response");
 		ret = -ENOMSG;
 		goto cleanup;
 	}
@@ -195,11 +196,11 @@ cleanup:
 
 /******************************************************************************/
 
-int skyhook_rest_wlan_pos_get(
+int skyhook_rest_wifi_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
-	const struct rest_wlan_pos_request *request,
-	struct rest_wlan_pos_result *result)
+	const struct rest_wifi_pos_request *request,
+	struct rest_wifi_pos_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
@@ -221,7 +222,7 @@ int skyhook_rest_wlan_pos_get(
 	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = REQUEST_URL;
-	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_TLS_SEC_TAG;
+	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG;
 	rest_ctx.port = HTTPS_PORT;
 	rest_ctx.host = HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
@@ -229,9 +230,9 @@ int skyhook_rest_wlan_pos_get(
 	rest_ctx.resp_buff_len = rcv_buf_len;
 
 	/* Get the body/payload to request: */
-	ret = skyhook_rest_format_wlan_pos_req_body(
+	ret = skyhook_rest_format_wifi_pos_req_body(
 		request->scanning_results,
-		request->wlan_scanning_result_count,
+		request->wifi_scanning_result_count,
 		&body);
 	if (ret) {
 		LOG_ERR("Failed to generate skyhook positioning request, err: %d", ret);
@@ -250,7 +251,7 @@ int skyhook_rest_wlan_pos_get(
 		/* Let it fail in parsing */
 	}
 
-	ret = skyhook_wlan_rest_pos_response_parse(rest_ctx.response, result);
+	ret = skyhook_wifi_rest_pos_response_parse(rest_ctx.response, result);
 	if (ret) {
 		LOG_ERR("Skyhook rest response parsing failed, err: %d", ret);
 		ret = -EBADMSG;

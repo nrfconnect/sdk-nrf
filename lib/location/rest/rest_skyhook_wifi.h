@@ -5,18 +5,18 @@
  */
 
 /**
- * @file rest_nrf_cloud_wlan.h
+ * @file rest_skyhook_wifi.h
  *
- * @brief nRF Cloud REST API for WLAN positioning.
+ * @brief Skyhook REST API for WiFi positioning.
  */
 
-#ifndef REST_NRF_CLOUD_WLAN_H
-#define REST_NRF_CLOUD_WLAN_H
+#ifndef REST_SKYHOOK_WIFI_H
+#define REST_SKYHOOK_WIFI_H
 
-#include "rest_services_wlan.h"
+#include "rest_services_wifi.h"
 
 /**
- * @brief nRF Cloud wlan positioning request.
+ * @brief Skyhook wifi positioning request.
  *
  * @param[in]     rcv_buf     Buffer for storing the REST service response.
  * @param[in]     rcv_buf_len Length of the provided buffer.
@@ -26,10 +26,10 @@
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_rest_wlan_pos_get(
+int skyhook_rest_wifi_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
-	const struct rest_wlan_pos_request *request,
-	struct rest_wlan_pos_result *result);
+	const struct rest_wifi_pos_request *request,
+	struct rest_wifi_pos_result *result);
 
-#endif /* REST_NRF_CLOUD_WLAN_H */
+#endif /* REST_SKYHOOK_WIFI_H */

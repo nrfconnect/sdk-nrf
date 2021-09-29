@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS) ||
 	IS_ENABLED(CONFIG_LOCATION_METHOD_CELLULAR) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WLAN),
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI),
 	"At least one location method must be enabled");
 
 /** @brief Semaphore protecting the use of location requests. */
@@ -121,7 +121,7 @@ void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_m
 		method->gnss.num_consecutive_fixes = 2;
 	} else if (method_type == LOC_METHOD_CELLULAR) {
 		method->cellular.timeout = 30;
-	} else if (method_type == LOC_METHOD_WLAN) {
-		method->wlan.timeout = 30;
+	} else if (method_type == LOC_METHOD_WIFI) {
+		method->wifi.timeout = 30;
 	}
 }

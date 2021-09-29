@@ -30,8 +30,8 @@ enum loc_method {
 	LOC_METHOD_CELLULAR = 1,
 	/** Global Navigation Satellite System (GNSS). */
 	LOC_METHOD_GNSS,
-	/** WLAN positioning. */
-	LOC_METHOD_WLAN,
+	/** WiFi positioning. */
+	LOC_METHOD_WIFI,
 };
 
 /** Event IDs. */
@@ -54,14 +54,14 @@ enum loc_accuracy {
 	LOC_ACCURACY_HIGH
 };
 
-/** WLAN positioning service. */
-enum loc_wlan_service {
+/** WiFi positioning service. */
+enum loc_wifi_service {
 	/** nRF Cloud location service. */
-	LOC_WLAN_SERVICE_NRF_CLOUD,
+	LOC_WIFI_SERVICE_NRF_CLOUD,
 	/**Here location service. */
-	LOC_WLAN_SERVICE_HERE,
+	LOC_WIFI_SERVICE_HERE,
 	/**Skyhook location service. */
-	LOC_WLAN_SERVICE_SKYHOOK
+	LOC_WIFI_SERVICE_SKYHOOK
 };
 
 /** Date and time (UTC). */
@@ -152,13 +152,13 @@ struct loc_gnss_config {
 	uint8_t num_consecutive_fixes;
 };
 
-/** WLAN positioning configuration. */
-struct loc_wlan_config {
-	/** Timeout (in seconds) on how long WLAN positioning procedure can take. */
+/** WiFi positioning configuration. */
+struct loc_wifi_config {
+	/** Timeout (in seconds) on how long WiFi positioning procedure can take. */
 	uint16_t timeout;
 
-	/** Used WLAN positioning service. */
-	enum loc_wlan_service service;
+	/** Used WiFi positioning service. */
+	enum loc_wifi_service service;
 
 };
 
@@ -172,7 +172,7 @@ struct loc_method_config {
 		/** Configuration for LOC_METHOD_GNSS. */
 		struct loc_gnss_config gnss;
 		/** Configuration for LOC_METHOD_WIFI. */
-		struct loc_wlan_config wlan;
+		struct loc_wifi_config wifi;
 	};
 };
 
