@@ -54,7 +54,13 @@ The application can be in the following power states:
 * `Error`_
 
 The |power_manager| takes control of the overall operating system power state.
-See the following section for more details about how the application states converts to the system power state.
+
+.. figure:: images/caf_power_manager_states.svg
+   :alt: Power manager state handling in CAF
+
+   Power manager state handling in CAF
+
+See the following section for more details about how the application state converts to the system power state.
 
 Idle
 ----

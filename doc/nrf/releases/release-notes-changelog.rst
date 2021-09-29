@@ -175,6 +175,7 @@ Added:
 
 Updated:
 
+* :ref:`caf_power_manager` documentation page with the state transition diagram.
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 
 Hardware unique key
