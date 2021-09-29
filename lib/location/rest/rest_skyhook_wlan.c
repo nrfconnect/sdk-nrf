@@ -27,7 +27,9 @@ BUILD_ASSERT(
 
 #define API_LOCATE_PATH		"/wps2/json/location"
 #define API_KEY_PARAM		"key="CONFIG_LOCATION_METHOD_WLAN_SERVICE_SKYHOOK_API_KEY
-#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user=foo" //TODO: fetch imei
+
+/* TODO: get imei runtime instead CONFIG_LOCATION_DEVICE_ID*/
+#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user="CONFIG_LOCATION_DEVICE_ID
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 #define HEADER_HOST            "Host: "HOSTNAME"\r\n"
