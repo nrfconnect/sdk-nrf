@@ -564,6 +564,14 @@ nRF Desktop
 
 .. rst-class:: v1-7-0
 
+NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
+  The HID keyboard LEDs, indicating among others state of Caps Lock and Num Lock, may not be updated after host disconnection.
+  The problem replicates only if there is no other connected host.
+
+  **Workaround**: Do not use HID keyboard LEDs.
+
+.. rst-class:: v1-7-0
+
 NCSDK-11378: Empty HID boot report forwarding issue
   An empty HID boot report is not forwarded to the host computer by the nRF Desktop dongle upon peripheral disconnection.
   The host computer may not receive information that key that was previously reported as pressed was released.

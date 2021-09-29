@@ -93,6 +93,7 @@ nRF Desktop
   * Updated documentation for :ref:`nrf_desktop_usb_state`.
   * Updated documentation with information about forwarding boot reports.
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
+  * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
 
 Zigbee
 ------
