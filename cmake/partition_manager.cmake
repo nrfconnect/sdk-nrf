@@ -637,25 +637,6 @@ to the external flash")
 
 endif()
 
-# Ensure that the size of the second slot matches the primary slot when
-# external flash is used. This check must be here since the size of
-# the primary slot is not known during the configure stage of the mcuboot
-# child image.
-if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
-  if (NOT ${PM_MCUBOOT_SECONDARY_SIZE} EQUAL ${PM_MCUBOOT_PRIMARY_SIZE})
-    if (DEFINED static_configuration)
-      set(last_part "If the size of 'mcuboot_secondary' is set in your static \
-configuration you need to update the value there. Otherwise, this is done by \
-setting CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY")
-    else()
-      set(last_part "This is done by setting CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY")
-    endif()
-    message(WARNING "\
-The size of the 'mcuboot_secondary' partition is incorrect (${PM_MCUBOOT_SECONDARY_SIZE}).
-Its size must be ${PM_MCUBOOT_PRIMARY_SIZE} to match the  primary partition. ${last_part}")
-  endif()
-endif()
-
 # We need to tell the flash runner use the merged hex file instead of
 # 'zephyr.hex'This is typically done by setting the 'hex_file' property of the
 # 'runners_yaml_props_target' target. However, since the CMakeLists.txt file

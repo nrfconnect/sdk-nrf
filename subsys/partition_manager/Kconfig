@@ -169,14 +169,6 @@ config PM_EXTERNAL_FLASH_BASE
 	hex "External flash base address"
 	default 0
 
-config PM_PARTITION_SIZE_MCUBOOT_SECONDARY
-	hex "Size of MCUboot secondary partition"
-	default 0
-	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	depends on BOOTLOADER_MCUBOOT || MCUBOOT
-	help
-	  Must be set to the same size as the 'MCUBOOT_PRIMARY' partition.
-
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	bool "Place MCUboot secondary in external flash"
 	depends on BOOTLOADER_MCUBOOT || MCUBOOT
