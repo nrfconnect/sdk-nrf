@@ -1077,10 +1077,6 @@ static void broadcast_keyboard_leds(void)
 	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS == 1);
 
 	const struct subscriber *sub = get_linked_subscriber(REPORT_ID_KEYBOARD_KEYS);
-	if (!sub) {
-		LOG_WRN("No linked subscriber to REPORT_ID_KEYBOARD_KEYS");
-		return;
-	}
 	size_t idx = get_output_report_idx(REPORT_ID_KEYBOARD_LEDS);
 
 	static uint8_t displayed_leds_state;
