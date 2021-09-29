@@ -1177,6 +1177,13 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+DRGN-15903: :kconfig:`BT_CTLR_TX_PWR` is ignored by the SoftDevice Controller
+  Using :kconfig:`BT_CTLR_TX_PWR` does not set TX power.
+
+  **Workaround:** Use the HCI command Zephyr Write Tx Power Level to dynamically set TX power.
+
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-16079: LLPM mode assertion
