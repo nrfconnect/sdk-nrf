@@ -24,16 +24,13 @@ static void event_processor_fn(struct k_work *work);
 
 
 #if CONFIG_EVENT_MANAGER_PROFILER_ENABLED
+
 #define IDS_COUNT CONFIG_EVENT_MANAGER_MAX_EVENT_CNT
 #else
 #define IDS_COUNT 0
 #endif
 
-#ifdef CONFIG_SHELL
-extern uint32_t event_manager_displayed_events;
-#else
-static uint32_t event_manager_displayed_events;
-#endif
+struct event_manager_event_display_bm _event_manager_event_display_bm;
 
 static uint16_t profiler_event_ids[IDS_COUNT];
 static K_WORK_DEFINE(event_processor, event_processor_fn);
@@ -43,8 +40,7 @@ static struct k_spinlock lock;
 
 static bool log_is_event_displayed(const struct event_type *et)
 {
-	uint32_t event_mask = BIT(et - __start_event_types);
-	return event_manager_displayed_events & event_mask;
+	return atomic_test_bit(_event_manager_event_display_bm.flags, et - __start_event_types);
 }
 
 static void log_event(const struct event_header *eh)
@@ -113,8 +109,8 @@ static void log_event_init(void)
 	     (et != NULL) && (et != __stop_event_types);
 	     et++) {
 		if (et->init_log_enable) {
-			uint32_t event_mask = BIT(et - __start_event_types);
-			event_manager_displayed_events |= event_mask;
+			atomic_set_bit(_event_manager_event_display_bm.flags,
+					et - __start_event_types);
 		}
 	}
 }
@@ -309,6 +305,18 @@ void _event_submit(struct event_header *eh)
 
 int event_manager_init(void)
 {
+	__ASSERT_NO_MSG(__stop_event_types - __start_event_types <=
+			CONFIG_EVENT_MANAGER_MAX_EVENT_CNT);
+
+#if CONFIG_EVENT_MANAGER_PROFILER_ENABLED
+	/* Every Event Manager event registers a single profiler event.
+	 * Apart from that 2 additional profiler events are used to indicate processing
+	 * start and end of an Event Manager event.
+	 */
+	__ASSERT_NO_MSG(__stop_event_types - __start_event_types + 2 <=
+			CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS);
+#endif /*CONFIG_EVENT_MANAGER_PROFILER_ENABLED*/
+
 	log_event_init();
 
 	return trace_event_init();

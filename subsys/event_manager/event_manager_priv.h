@@ -251,6 +251,15 @@ extern "C" {
 	}
 
 
+/**
+ * @brief Bitmask indicating event is displayed.
+ */
+struct event_manager_event_display_bm {
+	ATOMIC_DEFINE(flags, CONFIG_EVENT_MANAGER_MAX_EVENT_CNT);
+};
+
+extern struct event_manager_event_display_bm _event_manager_event_display_bm;
+
 #ifdef __cplusplus
 }
 #endif

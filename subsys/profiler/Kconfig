@@ -9,10 +9,12 @@ menuconfig PROFILER
 
 if PROFILER
 
-config PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS
-	int "Maximum number of stored custom event types"
+config PROFILER_MAX_NUMBER_OF_EVENTS
+	int "Maximum number of stored event types"
 	default 32
-	range 0 32
+	range 0 255
+	help
+	  Maximum number of stored event types.
 
 config PROFILER_CUSTOM_EVENT_BUF_LEN
 	int "Length of data buffer for custom event data (in bytes)"

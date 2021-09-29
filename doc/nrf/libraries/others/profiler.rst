@@ -11,10 +11,6 @@ The Profiler provides an interface for logging and visualizing data for performa
 You can use the module to profile :ref:`event_manager` events or custom events.
 The output is provided via RTT and can be visualized in a custom Python backend.
 
-.. note::
-
-	Currently, you can register and profile up to 32 event types.
-
 See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
 
 Configuration

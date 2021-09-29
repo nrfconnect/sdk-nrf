@@ -8,7 +8,6 @@
 #include <shell/shell.h>
 #include <event_manager.h>
 
-uint32_t event_manager_displayed_events;
 
 static int show_events(const struct shell *shell, size_t argc,
 		char **argv)
@@ -24,7 +23,7 @@ static int show_events(const struct shell *shell, size_t argc,
 		shell_fprintf(shell,
 			      SHELL_NORMAL,
 			      "%c %d:\t%s\n",
-			      (event_manager_displayed_events & BIT(ev_id)) ?
+			      (atomic_test_bit(_event_manager_event_display_bm.flags, ev_id)) ?
 				'E' : 'D',
 			      ev_id,
 			      et->name);
@@ -92,8 +91,6 @@ static int show_subscribers(const struct shell *shell, size_t argc,
 static void set_event_displaying(const struct shell *shell, size_t argc,
 				 char **argv, bool enable)
 {
-	uint32_t evt_mask = 0;
-
 	/* If no IDs specified, all registered events are affected */
 	if (argc == 1) {
 		for (const struct event_type *et = __start_event_types;
@@ -102,7 +99,7 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 
 			size_t ev_id = et - __start_event_types;
 
-			evt_mask |= BIT(ev_id);
+			atomic_set_bit_to(_event_manager_event_display_bm.flags, ev_id, enable);
 		}
 
 		shell_fprintf(shell,
@@ -128,7 +125,8 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 		}
 
 		for (size_t i = 0; i < ARRAY_SIZE(event_indexes); i++) {
-			evt_mask |= BIT(event_indexes[i]);
+			atomic_set_bit_to(_event_manager_event_display_bm.flags, event_indexes[i],
+					  enable);
 			const struct event_type *et =
 				__start_event_types + event_indexes[i];
 			const char *event_name = et->name;
@@ -139,11 +137,6 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 				      event_name,
 				      enable ? "en":"dis");
 		}
-	}
-	if (enable) {
-		event_manager_displayed_events |= evt_mask;
-	} else {
-		event_manager_displayed_events &= ~evt_mask;
 	}
 }
 
@@ -170,10 +163,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_event_manager,
 	SHELL_CMD_ARG(show_events, NULL, "Show events", show_events, 0, 0),
 	SHELL_CMD_ARG(disable, NULL, "Disable displaying event with given ID",
 		      disable_event_displaying, 0,
-		      sizeof(event_manager_displayed_events) * 8 - 1),
+		      sizeof(_event_manager_event_display_bm) * 8 - 1),
 	SHELL_CMD_ARG(enable, NULL, "Enable displaying event with given ID",
 		      enable_event_displaying, 0,
-		      sizeof(event_manager_displayed_events) * 8 - 1),
+		      sizeof(_event_manager_event_display_bm) * 8 - 1),
 	SHELL_SUBCMD_SET_END
 );
 
