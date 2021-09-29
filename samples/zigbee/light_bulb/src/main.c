@@ -490,16 +490,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void error(void)
-{
-	dk_set_leds_state(DK_ALL_LEDS_MSK, DK_NO_LEDS_MSK);
-
-	while (true) {
-		/* Spin forever */
-		k_sleep(K_MSEC(1000));
-	}
-}
-
 void main(void)
 {
 	int blink_status = 0;
