@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <kernel_structs.h>
-#include <sys/printk.h>
 #include <sys/util.h>
 #include <sys/byteorder.h>
 #include <zephyr.h>
@@ -184,6 +183,11 @@ int profiler_init(void)
 
 void profiler_term(void)
 {
+	/* Already terminated. */
+	if (!protocol_running) {
+		return;
+	}
+
 	sending_events = false;
 	protocol_running = false;
 	k_wakeup(protocol_thread_id);
