@@ -21,6 +21,14 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
+/* Data types that are supported in batch messages. */
+enum batch_data_type {
+	GPS,
+	ENVIRONMENTALS,
+	BUTTON,
+	RSRP
+};
+
 /* Function that checks the version number of the incoming message and determines if it has already
  * been handled. Receiving duplicate messages can often occur upon retransmissions from the AWS IoT
  * broker due to unACKed MQTT QoS 1 messages and unACKed TCP packets. Messages from AWS IoT
@@ -104,12 +112,118 @@ static int add_data(cJSON *parent, const char *app_id, const char *str_val,
 		goto exit;
 	}
 
-	json_add_obj(parent, object_name, data_obj);
+	if (object_name == NULL) {
+		json_add_obj_array(parent, data_obj);
+	} else {
+		json_add_obj(parent, object_name, data_obj);
+	}
+
 	return 0;
 
 exit:
 	cJSON_Delete(data_obj);
 	return err;
+}
+
+static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, size_t buf_count)
+{
+	for (int i = 0; i < buf_count; i++) {
+		switch (type) {
+		case GPS: {
+			int err;
+			struct cloud_data_gps *data = (struct cloud_data_gps *)buf;
+
+			err =  add_data(array, APP_ID_GPS, data[i].nmea,
+					&data[i].gps_ts, data[i].queued, NULL);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			data[i].queued = false;
+			break;
+		}
+		case ENVIRONMENTALS: {
+			int err, len;
+			char humidity[7];
+			char temperature[7];
+			struct cloud_data_sensors *data = (struct cloud_data_sensors *)buf;
+			int64_t ts_temp = data[i].env_ts;
+
+			len = snprintk(humidity, sizeof(humidity), "%.2f", data[i].hum);
+			if ((len < 0) || (len >= sizeof(humidity))) {
+				LOG_ERR("Cannot convert humidity to string, buffer to small");
+				return -ENOMEM;
+			}
+
+			len = snprintk(temperature, sizeof(temperature), "%.2f", data[i].temp);
+			if ((len < 0) || (len >= sizeof(temperature))) {
+				LOG_ERR("Cannot convert temperature to string, buffer to small");
+				return -ENOMEM;
+			}
+
+			err = add_data(array, APP_ID_HUMIDITY, humidity,
+				       &data[i].env_ts, data[i].queued, NULL);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			err =  add_data(array, APP_ID_TEMPERATURE, temperature,
+					&ts_temp, data[i].queued, NULL);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			data[i].queued = false;
+			break;
+		}
+		case BUTTON: {
+			int err, len;
+			char button[2];
+			struct cloud_data_ui *data = (struct cloud_data_ui *)buf;
+
+			len = snprintk(button, sizeof(button), "%d", data[i].btn);
+			if ((len < 0) || (len >= sizeof(button))) {
+				LOG_ERR("Cannot convert button number to string, buffer to small");
+				return -ENOMEM;
+			}
+
+			err =  add_data(array, APP_ID_BUTTON, button,
+					&data[i].btn_ts, data[i].queued, NULL);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			data[i].queued = false;
+			break;
+		}
+		case RSRP: {
+			int err, len;
+			char rsrp[5];
+			struct cloud_data_modem_dynamic *data =
+						(struct cloud_data_modem_dynamic *)buf;
+
+			len = snprintk(rsrp, sizeof(rsrp), "%d", data[i].rsrp);
+			if ((len < 0) || (len >= sizeof(rsrp))) {
+				LOG_ERR("Cannot convert RSRP value to string, buffer to small");
+				return -ENOMEM;
+			}
+
+			err =  add_data(array, APP_ID_RSRP, rsrp,
+					&data[i].ts, data[i].queued, NULL);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			data[i].queued = false;
+			break;
+		}
+		default:
+			LOG_ERR("Unknown batch data type");
+			return -EINVAL;
+		}
+	}
+
+	return 0;
 }
 
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
@@ -542,69 +656,38 @@ int cloud_codec_encode_batch_data(
 {
 	int err;
 	char *buffer;
-	bool object_added = false;
 
-	cJSON *root_obj = cJSON_CreateObject();
+	cJSON *root_array = cJSON_CreateArray();
 
-	if (root_obj == NULL) {
+	if (root_array == NULL) {
 		return -ENOMEM;
 	}
 
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_MODEM_DYNAMIC,
-					 modem_dyn_buf, modem_dyn_buf_count,
-					 DATA_MODEM_DYNAMIC);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
+	err = add_batch_data(root_array, GPS, gps_buf, gps_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding GPS data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_GPS,
-					 gps_buf, gps_buf_count,
-					 DATA_GPS);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
+	err = add_batch_data(root_array, ENVIRONMENTALS, sensor_buf, sensor_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding environmental data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_SENSOR,
-					 sensor_buf, sensor_buf_count,
-					 DATA_ENVIRONMENTALS);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
+	err = add_batch_data(root_array, BUTTON, ui_buf, ui_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding button data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_UI,
-					 ui_buf, ui_buf_count,
-					 DATA_BUTTON);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
+	err = add_batch_data(root_array, RSRP, modem_dyn_buf, modem_dyn_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding RSRP data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_BATTERY,
-					 bat_buf, bat_buf_count,
-					 DATA_BATTERY);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto exit;
-	}
-
-	err = json_common_batch_data_add(root_obj, JSON_COMMON_ACCELEROMETER,
-					 accel_buf, accel_buf_count,
-					 DATA_MOVEMENT);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto exit;
-	}
-
-	if (!object_added) {
+	if (cJSON_GetArraySize(root_array) == 0) {
 		err = -ENODATA;
 		LOG_DBG("No data to encode, JSON string empty...");
 		goto exit;
@@ -615,7 +698,7 @@ int cloud_codec_encode_batch_data(
 		err = 0;
 	}
 
-	buffer = cJSON_PrintUnformatted(root_obj);
+	buffer = cJSON_PrintUnformatted(root_array);
 	if (buffer == NULL) {
 		LOG_ERR("Failed to allocate memory for JSON string");
 
@@ -624,13 +707,16 @@ int cloud_codec_encode_batch_data(
 	}
 
 	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
-		json_print_obj("Encoded batch message:\n", root_obj);
+		json_print_obj("Encoded batch message:\n", root_array);
 	}
 
 	output->buf = buffer;
 	output->len = strlen(buffer);
 
 exit:
-	cJSON_Delete(root_obj);
+	/* Clear buffers that are not handled by this function. */
+	memset(bat_buf, 0, bat_buf_count * sizeof(struct cloud_data_battery));
+	memset(accel_buf, 0, accel_buf_count * sizeof(struct cloud_data_accelerometer));
+	cJSON_Delete(root_array);
 	return err;
 }
