@@ -211,10 +211,16 @@ Updated:
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 * The :ref:`caf_power_manager` now has a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
 
+Event Manager
+-------------
+
+* Increased number of supported Event Manager events.
+
 Profiler
 --------
 
 * Updated Python scripts to use multiple processes that communicate over sockets.
+* Increase number of supported profiler events.
 
 Hardware unique key
 -------------------

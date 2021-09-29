@@ -30,9 +30,6 @@ As part of this communication, listeners can process events differently based on
 The Event Manager provides API for defining, creating, and subscribing events.
 See `Implementing an event type`_ for details about how to create custom event types.
 
-.. note::
-   Currently, up to 32 event types can be used in an application.
-
 Modules
 *******
 

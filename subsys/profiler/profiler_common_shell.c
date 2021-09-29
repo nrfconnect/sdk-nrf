@@ -10,15 +10,9 @@
 #include <shell/shell_rtt.h>
 #include <profiler.h>
 
-uint32_t profiler_enabled_events;
-
 static int display_registered_events(const struct shell *shell, size_t argc,
 				char **argv)
 {
-	/* Check if flags for enabling/disabling custom event fit on uint32_t */
-	BUILD_ASSERT(CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS <=
-			 sizeof(profiler_enabled_events) * 8,
-			 "Max 32 profiler events may be used");
 	shell_fprintf(shell, SHELL_NORMAL, "EVENTS REGISTERED IN PROFILER:\n");
 	for (size_t i = 0; i < profiler_num_events; i++) {
 		const char *event_name = profiler_get_event_descr(i);
@@ -28,7 +22,7 @@ static int display_registered_events(const struct shell *shell, size_t argc,
 		shell_fprintf(shell,
 			      SHELL_NORMAL,
 			      "%c %d:\t%.*s\n",
-			      (profiler_enabled_events & BIT(i)) ? 'E' : 'D',
+			      (atomic_test_bit(_profiler_event_enabled_bm.flags, i)) ? 'E' : 'D',
 			      i,
 			      event_name_end - event_name,
 			      event_name);
@@ -40,12 +34,10 @@ static int display_registered_events(const struct shell *shell, size_t argc,
 static void set_event_profiling(const struct shell *shell, size_t argc,
 				char **argv, bool enable)
 {
-	uint32_t evt_mask = 0;
-
 	/* If no IDs specified, all registered events are affected */
 	if (argc == 1) {
 		for (int i = 0; i < profiler_num_events; i++) {
-			evt_mask |= BIT(i);
+			atomic_set_bit_to(_profiler_event_enabled_bm.flags, i, enable);
 		}
 
 		shell_fprintf(shell,
@@ -71,7 +63,8 @@ static void set_event_profiling(const struct shell *shell, size_t argc,
 		}
 
 		for (size_t i = 0; i < index_cnt; i++) {
-			evt_mask |= BIT(event_indexes[i]);
+			atomic_set_bit_to(_profiler_event_enabled_bm.flags,
+					  event_indexes[i], enable);
 			const char *event_name = profiler_get_event_descr(
 							event_indexes[i]);
 			/* Looking for event name delimiter (',') */
@@ -84,11 +77,6 @@ static void set_event_profiling(const struct shell *shell, size_t argc,
 				      event_name,
 				      enable ? "en":"dis");
 		}
-	}
-	if (enable) {
-		profiler_enabled_events |= evt_mask;
-	} else {
-		profiler_enabled_events &= ~evt_mask;
 	}
 }
 
@@ -111,10 +99,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_profiler,
 			display_registered_events, 0, 0),
 	SHELL_CMD_ARG(enable, NULL, "Enable profiling of event with given ID",
 			enable_event_profiling, 1,
-			sizeof(profiler_enabled_events) * 8),
+			sizeof(_profiler_event_enabled_bm) * 8),
 	SHELL_CMD_ARG(disable, NULL, "Disable profiling of event with given ID",
 			disable_event_profiling, 1,
-			sizeof(profiler_enabled_events) * 8),
+			sizeof(_profiler_event_enabled_bm) * 8),
 	SHELL_SUBCMD_SET_END
 );
 SHELL_CMD_REGISTER(profiler, &sub_profiler, "Profiler commands", NULL);

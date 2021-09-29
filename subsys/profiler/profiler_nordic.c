@@ -23,9 +23,7 @@ enum state {
 };
 
 /* By default, when there is no shell, all events are profiled. */
-#ifndef CONFIG_SHELL
-uint32_t profiler_enabled_events = 0xffffffff;
-#endif
+struct profiler_event_enabled_bm _profiler_event_enabled_bm;
 
 static K_SEM_DEFINE(profiler_sem, 0, 1);
 static atomic_t profiler_state;
@@ -36,7 +34,7 @@ enum nordic_command {
 	NORDIC_COMMAND_INFO	= 3
 };
 
-char descr[CONFIG_PROFILER_MAX_NUMBER_OF_CUSTOM_EVENTS]
+char descr[CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS]
 	  [CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
 static char *arg_types_encodings[] = {
 					"u8",  /* uint8_t */
@@ -152,6 +150,12 @@ int profiler_init(void)
 	if (!atomic_cas(&profiler_state, STATE_DISABLED, STATE_INACTIVE)) {
 		k_sched_unlock();
 		return 0;
+	}
+
+	if (!IS_ENABLED(CONFIG_SHELL)) {
+		for (size_t i = 0; i < CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS; i++) {
+			atomic_set_bit(_profiler_event_enabled_bm.flags, i);
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START)) {
