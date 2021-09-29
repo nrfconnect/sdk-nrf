@@ -11,6 +11,7 @@
 
 #include <zephyr.h>
 #include <posix/time.h>
+#include <sys/cbprintf.h>
 #include <shell/shell.h>
 #include <shell/shell_uart.h>
 
@@ -92,8 +93,12 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 		}
 	}
 
-	/* Add requested printf-like string */
-	chars += vsnprintf(mosh_print_buf + chars, sizeof(mosh_print_buf) - chars, fmt, args);
+	/* Add requested printf-like string.
+	 * We need to use vsnprintfcb, which is Zephyr specific version to save memory,
+	 * to make more specifiers available. Normal vsnprintf() had issues with %lld specifier.
+	 * It printed wrong number and at least next %s specifier was corrupted.
+	 */
+	chars += vsnprintfcb(mosh_print_buf + chars, sizeof(mosh_print_buf) - chars, fmt, args);
 	if (chars >= sizeof(mosh_print_buf)) {
 		shell_error(mosh_shell, "Cutting too long string while printing...");
 	} else if (chars < 0) {
