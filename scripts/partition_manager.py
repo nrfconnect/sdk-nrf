@@ -364,7 +364,12 @@ def set_shared_size(all_reqs, total_size, dp, system_reqs):
     dynamic_size_sharers = get_dependent_partitions(all_reqs, dp, system_reqs)
     static_size_sharers = [k for k, v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
     for req in static_size_sharers:
-        all_reqs[req]['size'] = shared_size(system_reqs, system_reqs[req]['share_size'][0], total_size, dp)
+        share_with_name = system_reqs[req]['share_size'][0]
+        share_with = system_reqs[share_with_name]
+        if share_with['region'] == all_reqs[req]['region']:
+            all_reqs[req]['size'] = shared_size(system_reqs, share_with_name, total_size, dp)
+        else:
+            all_reqs[req]['size'] = share_with['size']
     for req in dynamic_size_sharers:
         new_sizes[req] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size, dp)
     # Update all sizes after-the-fact or else the calculation will be messed up.
@@ -702,7 +707,8 @@ def get_region_config(pm_config, region_config, static_conf=None, system_reqs=No
         else 'app'
 
     if placement_strategy in [END_TO_START, START_TO_END]:
-        solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
+        solve_simple_region(pm_config, start, size, placement_strategy, region_name, device,
+                            static_conf, system_reqs)
     else:
         if dp != 'app':
             # All configurations use 'app' to denote the dynamic partition.
@@ -722,7 +728,12 @@ def get_region_config(pm_config, region_config, static_conf=None, system_reqs=No
     calculate_end_address(pm_config)
 
 
-def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
+def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf,
+                        system_reqs):
+    if system_reqs is None:
+        system_reqs = pm_config
+
+    set_shared_size(pm_config, size, None, system_reqs)
     reserved = 0
     if static_conf:
         verify_static_conf_simple(size, start, placement_strategy, static_conf)

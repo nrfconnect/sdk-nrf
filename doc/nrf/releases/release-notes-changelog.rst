@@ -206,7 +206,7 @@ The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules
 
 The following list summarizes the most important changes inherited from upstream MCUboot:
 
-* No changes yet
+* The value of the :kconfig:`CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY` Kconfig option does not have to be specified manually as it automatically shares the value with the primary partition.
 
 Mcumgr
 ======
