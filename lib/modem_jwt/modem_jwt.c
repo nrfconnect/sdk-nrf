@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <modem/modem_jwt.h>
 #include <sys/base64.h>
 
@@ -17,13 +17,6 @@
 #define MAX_INT_PRINT_SZ 11
 #define JWT_CMD_PRINT_INT_SZ (MAX_INT_PRINT_SZ * 4)
 #define GET_BASE64_DECODED_LEN(n) (3 * n / 4)
-
-/* Minimum JWT response is ~420 bytes.
- * With very long (128 bytes) values for sub and aud claims
- * response is ~820.
- */
-BUILD_ASSERT(CONFIG_MODEM_JWT_MAX_LEN <= CONFIG_AT_CMD_RESPONSE_MAX_LEN,
-	     "Max JWT length exceeds max AT cmd response length");
 
 static int parse_jwt_at_cmd_resp(char *const jwt_resp)
 {
@@ -93,27 +86,19 @@ int modem_jwt_generate(struct jwt_data *const jwt)
 		return -EMSGSIZE;
 	}
 
-	int ret = 0;
-	enum at_cmd_state state;
-	char *cmd;
-	char *cmd_resp = NULL;
-	size_t cmd_sz = sizeof(JWT_CMD_TEMPLATE_SEC_TAG) + JWT_CMD_PRINT_INT_SZ +
-			(jwt->subject ? strlen(jwt->subject) : 0) +
-			(jwt->audience ? strlen(jwt->audience) : 0);
+	int ret;
+	char *cmd_resp;
 
-	ret = at_cmd_init();
-	if (ret) {
-		return -EPIPE;
-	}
 
-	/* Allocate and format the JWT request cmd */
-	cmd = k_calloc(cmd_sz, 1);
-	if (!cmd) {
+	/* Allocate response buffer */
+	cmd_resp = k_calloc(CONFIG_MODEM_JWT_MAX_LEN, 1);
+	if (!cmd_resp) {
 		return -ENOMEM;
 	}
 
 	if (jwt->sec_tag) {
-		ret = snprintf(cmd, cmd_sz, JWT_CMD_TEMPLATE_SEC_TAG,
+		ret = nrf_modem_at_cmd(cmd_resp, CONFIG_MODEM_JWT_MAX_LEN,
+			JWT_CMD_TEMPLATE_SEC_TAG,
 			jwt->alg,
 			jwt->exp_delta_s,
 			jwt->subject ? jwt->subject : "",
@@ -121,43 +106,25 @@ int modem_jwt_generate(struct jwt_data *const jwt)
 			jwt->sec_tag,
 			jwt->key);
 	} else {
-		ret = snprintf(cmd, cmd_sz, JWT_CMD_TEMPLATE,
+		ret = nrf_modem_at_cmd(cmd_resp, CONFIG_MODEM_JWT_MAX_LEN,
+			JWT_CMD_TEMPLATE,
 			jwt->alg,
 			jwt->exp_delta_s,
 			jwt->subject ? jwt->subject : "",
 			jwt->audience ? jwt->audience : "");
 	}
 
-	if ((ret < 0) || (ret >= cmd_sz)) {
-		ret = -EIO;
-		goto cleanup;
-	}
-
-	/* Allocate response buffer and send cmd */
-	cmd_resp = k_calloc(CONFIG_MODEM_JWT_MAX_LEN, 1);
-	if (!cmd_resp) {
-		ret = -ENOMEM;
-		goto cleanup;
-	}
-
-	ret = at_cmd_write(cmd, cmd_resp, CONFIG_MODEM_JWT_MAX_LEN, &state);
 	if (ret) {
-		ret = -EBADMSG;
+		/* when positive, the response was different from "OK" */
+		if (ret > 0) {
+			ret = -ENOEXEC;
+		}
 		goto cleanup;
 	}
 
 	ret = parse_jwt_at_cmd_resp(cmd_resp);
-	if (ret) {
-		ret = -ENOMSG;
-		goto cleanup;
-	}
 
 cleanup:
-
-	if (cmd) {
-		k_free(cmd);
-	}
-
 	if (ret == 0) {
 		size_t jwt_sz = strlen(cmd_resp) + 1;
 

@@ -14,7 +14,7 @@ test_runner_generate(src/jwt_test.c)
 
 target_include_directories(app PRIVATE src)
 
-cmock_handle(../../../include/modem/at_cmd.h)
+cmock_handle(../../../../nrfxlib/nrf_modem/include/nrf_modem_at.h)
 
 # add test file
 target_sources(app PRIVATE src/jwt_test.c)
