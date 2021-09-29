@@ -14,5 +14,5 @@ manifest:
       import:
         name-blocklist: [sdk-nrf]
       userdata:
-        downstream: always
+        run_downstream: always
 
