@@ -17,7 +17,7 @@ config MODEM_JWT_MAX_LEN
 	int "Buffer size to allocate for JWT"
 	default 850
 	help
-	  This value should not be greater than AT_CMD_RESPONSE_MAX_LEN.
+	  Minimum JWT response is ~420 bytes.
 
 module=MODEM_JWT
 module-str=Modem JWT
