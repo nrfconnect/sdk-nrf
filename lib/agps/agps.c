@@ -101,7 +101,7 @@ static int open_supl_socket(void)
 			  (void *)&((struct sockaddr_in *)sa)->sin_addr,
 			  ip,
 			  INET6_ADDRSTRLEN);
-		LOG_DBG("Connecting to %s port %d", ip, CONFIG_AGPS_SUPL_PORT);
+		LOG_DBG("Connecting to %s port %d", log_strdup(ip), CONFIG_AGPS_SUPL_PORT);
 
 		err = connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
