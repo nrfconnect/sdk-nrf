@@ -17,9 +17,11 @@
 #include <net/wifi.h>
 #include <modem/location.h>
 
+#define WIFI_MAC_ADDR_STR_LEN 17
+
 /** @brief Item for passing a WiFi scanning result */
 struct wifi_scanning_result_info {
-	char mac_addr_str[WIFI_MAC_MAX_LEN + 1];
+	char mac_addr_str[WIFI_MAC_ADDR_STR_LEN + 1];
 	char ssid_str[WIFI_SSID_MAX_LEN + 1];
 	uint8_t channel;
 	int8_t rssi;

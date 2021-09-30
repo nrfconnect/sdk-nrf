@@ -44,8 +44,9 @@ static bool running;
 
 static uint32_t current_scan_result_count;
 static uint32_t latest_scan_result_count;
+
 struct method_wifi_scan_result {
-	char mac_addr_str[WIFI_MAC_MAX_LEN + 1];
+	char mac_addr_str[WIFI_MAC_ADDR_STR_LEN + 1];
 	char ssid_str[WIFI_SSID_MAX_LEN + 1];
 	uint8_t channel;
 	int8_t rssi;
@@ -86,9 +87,12 @@ static void method_wifi_handle_wifi_scan_result(struct net_mgmt_event_callback *
 	current = &latest_scan_results[current_scan_result_count - 1];
 
 	if (current_scan_result_count <= CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT) {
-		/* TODO: this seems to count that mac and ssid entries are null terminated */
-		sprintf(current->mac_addr_str, "%s", entry->mac);
-		sprintf(current->ssid_str, "%s", entry->ssid);
+		sprintf(current->mac_addr_str,
+			"%02x:%02x:%02x:%02x:%02x:%02x",
+			entry->mac[0], entry->mac[1], entry->mac[2],
+			entry->mac[3], entry->mac[4], entry->mac[5]);
+		snprintf(current->ssid_str, entry->ssid_length + 1, "%s", entry->ssid);
+
 		current->channel = entry->channel;
 		current->rssi = entry->rssi;
 
@@ -98,8 +102,10 @@ static void method_wifi_handle_wifi_scan_result(struct net_mgmt_event_callback *
 			log_strdup(current->mac_addr_str),
 			current->channel);
 	} else {
-		LOG_WRN("Scanning result (mac %s) did not fit to result buffer - dropping it",
-			log_strdup(entry->mac));
+		LOG_WRN("Scanning result (mac %02x:%02x:%02x:%02x:%02x:%02x) "
+			"did not fit to result buffer - dropping it",
+				entry->mac[0], entry->mac[1], entry->mac[2],
+				entry->mac[3], entry->mac[4], entry->mac[5]);
 	}
 }
 
