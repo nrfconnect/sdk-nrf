@@ -312,7 +312,7 @@ static void new_date_time_get(void)
 	}
 }
 
-K_THREAD_DEFINE(time_thread, CONFIG_DATE_TIME_THREAD_SIZE,
+K_THREAD_DEFINE(time_thread, CONFIG_DATE_TIME_THREAD_STACK_SIZE,
 		new_date_time_get, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
