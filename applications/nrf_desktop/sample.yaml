@@ -49,15 +49,6 @@ tests:
       - nrf52840dk_nrf52840
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZDebugMCUBootSMP"
-  applications.nrf_desktop.zdebug_splitll:
-    build_only: true
-    platform_allow: nrf52kbd_nrf52832 nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840
-    integration_platforms:
-      - nrf52kbd_nrf52832
-      - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
-    tags: bluetooth ci_build
-    extra_args: "CMAKE_BUILD_TYPE=ZDebugSplitLL"
   applications.nrf_desktop.zdebugwithshell:
     build_only: true
     platform_allow: nrf52kbd_nrf52832 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840
@@ -133,15 +124,6 @@ tests:
       - nrf52833dongle_nrf52833
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZReleaseMCUBoot"
-  applications.nrf_desktop.zrelease_splitll:
-    build_only: true
-    platform_allow: nrf52kbd_nrf52832 nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840
-    integration_platforms:
-      - nrf52kbd_nrf52832
-      - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
-    tags: bluetooth ci_build
-    extra_args: "CMAKE_BUILD_TYPE=ZReleaseSplitLL"
   applications.nrf_desktop.zrelease_4llpmconn:
     build_only: true
     platform_allow: nrf52840dongle_nrf52840
