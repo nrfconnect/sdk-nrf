@@ -391,11 +391,9 @@ The following build types are available for various boards in the nRF Desktop:
 * ``ZRelease`` -- Release version of the application with no debugging features.
 * ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZReleaseSplitLL`` -- ``ZRelease`` build type that selects Zephyr's Bluetooth Link Layer (see :ref:`zephyr:bluetooth-arch`).
 * ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
 * ``ZDebugB0`` -- ``ZDebug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZDebugSplitLL`` -- ``ZDebug`` build type that selects Zephyr's Bluetooth Link Layer (see :ref:`zephyr:bluetooth-arch`).
 * ``ZDebugWithShell`` -- ``ZDebug`` build type with the shell enabled.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
