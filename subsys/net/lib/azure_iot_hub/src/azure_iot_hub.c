@@ -497,6 +497,7 @@ static void on_publish(struct mqtt_client *const client,
 	switch (topic_data.type) {
 	case TOPIC_TYPE_DEVICEBOUND:
 		evt.topic.prop_bag_count = topic_data.prop_bag_count;
+		evt.topic.type = AZURE_IOT_HUB_TOPIC_DEVICEBOUND;
 		if (evt.topic.prop_bag_count == 0) {
 			break;
 		}
