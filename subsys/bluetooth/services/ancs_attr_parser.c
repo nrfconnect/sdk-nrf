@@ -63,6 +63,7 @@ static enum bt_ancs_parse_state command_id_parse(struct bt_ancs_client *ancs_c,
 		ancs_c->attr_response.command_id = BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES;
 		ancs_c->parse_info.attr_list = ancs_c->ancs_app_attr_list;
 		ancs_c->parse_info.attr_count = BT_ANCS_APP_ATTR_COUNT;
+		ancs_c->parse_info.current_app_id_index = 0;
 		parse_state = BT_ANCS_PARSE_STATE_APP_ID;
 		break;
 
@@ -88,6 +89,11 @@ static enum bt_ancs_parse_state app_id_parse(struct bt_ancs_client *ancs_c,
 					     const uint8_t *data_src,
 					     uint32_t *index)
 {
+	if (ancs_c->parse_info.current_app_id_index >= sizeof(ancs_c->attr_response.app_id)) {
+		LOG_WRN("App ID cannot be stored in response buffer.");
+		return BT_ANCS_PARSE_STATE_DONE;
+	}
+
 	ancs_c->attr_response.app_id[ancs_c->parse_info.current_app_id_index] =
 		data_src[(*index)++];
 
