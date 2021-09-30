@@ -2,3 +2,4 @@ tests:
   unity.modem_jwt:
     platform_allow: qemu_cortex_m3 native_posix
     tags: jwt
+    integration_platforms: native_posix
