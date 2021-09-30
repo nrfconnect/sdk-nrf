@@ -50,12 +50,13 @@ User interface
 Button 1:
   Changes the LED effect displayed on the LED to the next defined LED effect:
 
-  * The first default LED effect toggles the blinking of the LED, with the period set to 200 ms.
+  * The first default LED effect toggles the blinking of the LED, with the period set to 400 ms.
   * The second default LED effect toggles the breathing of the LED, with the period set to 400 ms.
-  * The third default LED effect toggles a looped effect where blinks with the period set to 200 ms and then turns off for 1000 ms.
+  * The third default LED effect toggles a looped effect where LED blinks three times with 400 ms period and then turns off for 1000 ms.
 
 Button 2:
-   Switches the active LED: turns off the currently active LED and turns on the next available LED.
+   Switches the active LED: Switches the active LED to the next available LED.
+   The previously active LED keeps its LED effect, and the new active LED turns on.
 
 LEDs 1-4:
    Depending on the button presses:
@@ -108,15 +109,14 @@ After programming the sample to your development kit, you can test it by perform
 #. Press **Button 1** on the development kit to toggle the next LED effect of the **LED 1**.
    The LED color starts blinking.
 #. Press **Button 2** to switch to the next LED.
-   The **LED 1** turns off and the **LED 2** turns on.
+   The **LED 1** keeps blinking and the **LED 2** turns on.
 #. Press **Button 1**.
    The **LED 2** starts blinking similarly to **LED 1**.
 #. Press **Button 1** again and see the **LED 2** starts breathing with a 400-ms period.
 #. Press **Button 1** again and see the LED clock effect.
-   The **LED 2** blinks three times with a 200-ms period.
+   The **LED 2** blinks three times with a 400-ms period.
    It then turns off for 1000 ms.
-
-The last LED effect is looped forever.
+   The effect is looped forever.
 
 Dependencies
 ************
