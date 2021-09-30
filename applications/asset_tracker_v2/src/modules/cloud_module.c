@@ -325,8 +325,6 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 	}
 	case CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED");
-
-		/* A-GPS data is received with this event when configuring for AWS IoT. */
 		agps_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_FOTA_START: {
