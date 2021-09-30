@@ -258,13 +258,16 @@ Currently, the application supports the following services and technologies in t
 |                          |   :ref:`lib_nrf_cloud_agps`     |
 |                          +---------------------------------+
 |                          |   :ref:`lib_nrf_cloud_pgps`     |
-|                          |   :ref:`FOTA <nrf9160_fota>`    |
 +--------------------------+---------------------------------+
 | `Azure IoT Hub`_         |   `MQTT`_                       |
 |                          +---------------------------------+
 |                          |   `TLS`_                        |
 |                          +---------------------------------+
 |                          |   :ref:`FOTA <nrf9160_fota>`    |
++                          +---------------------------------+
+|                          |   :ref:`lib_nrf_cloud_agps`     |
+|                          +---------------------------------+
+|                          |   :ref:`lib_nrf_cloud_pgps`     |
 +--------------------------+---------------------------------+
 | `nRF Cloud`_             |   `MQTT`_                       |
 |                          +---------------------------------+
@@ -277,8 +280,8 @@ Currently, the application supports the following services and technologies in t
 |                          |   :ref:`lib_nrf_cloud_pgps`     |
 +--------------------------+---------------------------------+
 
-When the application is configured to communicate with `AWS IoT Core`_, it supports processing of received A-GPS and P-GPS data through the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
-This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 DK using the pre-established MQTT connection.
+When the application is configured to communicate with `AWS IoT Core`_ or `Azure IoT Hub`_, it supports processing of received A-GPS and P-GPS data through the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
+This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 SiP using the pre-established MQTT connection.
 This approach saves data and energy costs related to maintaining multiple connections.
 
 .. note::

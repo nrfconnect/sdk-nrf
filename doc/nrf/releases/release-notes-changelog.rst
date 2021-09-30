@@ -56,6 +56,7 @@ nRF9160: Asset Tracker v2
 * Updated the application to use nRF Cloud A-GPS directly without the A-GPS library. SUPL is no longer supported.
 * Updated the application to start sending neighbor cell measurement data to nRF Cloud.
 * Added content-type and encoding properties to outgoing Azure MQTT messages.
+* Added support for A-GPS and P-GPS in Azure IoT Hub integration.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
