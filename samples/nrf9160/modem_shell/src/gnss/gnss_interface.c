@@ -600,48 +600,44 @@ static void handle_timeout_work_fn(struct k_work *item)
 
 static void gnss_api_init(void)
 {
-	int err;
 	static bool gnss_api_initialized;
 
 	if (gnss_api_initialized) {
+		/* Reset event handler in case some other handler was set in the meantime */
+		nrf_modem_gnss_event_handler_set(gnss_event_handler);
 		return;
 	}
 
 	/* Activate GNSS API v2 */
 	nrf_modem_gnss_init();
+	nrf_modem_gnss_event_handler_set(gnss_event_handler);
 
-	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
+	gnss_api_initialized = true;
 
-	if (!err) {
-		gnss_api_initialized = true;
+	k_work_queue_start(
+		&gnss_work_q,
+		gnss_workq_stack_area,
+		K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
+		GNSS_WORKQ_THREAD_PRIORITY,
+		NULL);
 
-		k_work_queue_start(
-			&gnss_work_q,
-			gnss_workq_stack_area,
-			K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
-			GNSS_WORKQ_THREAD_PRIORITY,
-			NULL);
-
-		k_work_init(&gnss_stop_work, stop_gnss_work_fn);
-		k_work_init_delayable(&gnss_start_work, start_gnss_work_fn);
-		k_work_init_delayable(&gnss_timeout_work, handle_timeout_work_fn);
+	k_work_init(&gnss_stop_work, stop_gnss_work_fn);
+	k_work_init_delayable(&gnss_start_work, start_gnss_work_fn);
+	k_work_init_delayable(&gnss_timeout_work, handle_timeout_work_fn);
 
 #if defined(CONFIG_SUPL_CLIENT_LIB)
-		k_work_init(&get_agps_data_work, get_agps_data);
+	k_work_init(&get_agps_data_work, get_agps_data);
 
-		static struct supl_api supl_api = {
-			.read = supl_read,
-			.write = supl_write,
-			.handler = inject_agps_data,
-			.logger = NULL, /* set to "supl_logger" to enable logging */
-			.counter_ms = k_uptime_get
-		};
+	static struct supl_api supl_api = {
+		.read = supl_read,
+		.write = supl_write,
+		.handler = inject_agps_data,
+		.logger = NULL, /* set to "supl_logger" to enable logging */
+		.counter_ms = k_uptime_get
+	};
 
-		(void)supl_init(&supl_api);
+	(void)supl_init(&supl_api);
 #endif
-	} else {
-		mosh_error("GNSS: Failed to initialize GNSS API");
-	}
 }
 
 int gnss_start(void)
