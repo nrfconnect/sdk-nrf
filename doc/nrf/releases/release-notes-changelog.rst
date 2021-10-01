@@ -99,6 +99,11 @@ nRF Desktop
   * Added documentation for :ref:`nrf_desktop_usb_state_pm`.
   * Added :ref:`nrf_desktop_ble_state_pm`.
 
+* Removed:
+
+  * Removed configuration files used for building the application with :kconfig:`CONFIG_BT_LL_SW_SPLIT` for various boards.
+    The configuration files for boards that do not have room for the SoftDevice LL in flash or SRAM remain untouched.
+
 * Updated:
 
   * Updated information about custom build types.
