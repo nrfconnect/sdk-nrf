@@ -89,6 +89,10 @@ nRF9160
 
     * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
 
+  * :ref:`nrf_modem_lib_readme` library:
+
+    * Added a possibility to create native sockets when nRF91 socket offloading is enabled.
+
 nRF5
 ====
 

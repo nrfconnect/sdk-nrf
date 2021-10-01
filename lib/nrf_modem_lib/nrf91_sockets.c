@@ -50,6 +50,11 @@ static K_MUTEX_DEFINE(ctx_lock);
 
 static const struct socket_op_vtable nrf91_socket_fd_op_vtable;
 
+/* Offloading disabled in general. */
+static bool offload_disabled;
+/* TLS offloading disabled only. */
+static bool tls_offload_disabled;
+
 static struct nrf_sock_ctx *allocate_ctx(int nrf_fd)
 {
 	struct nrf_sock_ctx *ctx = NULL;
@@ -1313,32 +1318,55 @@ static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
 	.setsockopt = nrf91_socket_offload_setsockopt,
 };
 
+static inline bool proto_is_secure(int proto)
+{
+	return (proto >= IPPROTO_TLS_1_0 && proto <= IPPROTO_TLS_1_2) ||
+	       (proto >= IPPROTO_DTLS_1_0 && proto <= IPPROTO_DTLS_1_2);
+}
+
 static bool nrf91_socket_is_supported(int family, int type, int proto)
 {
-	if (IS_ENABLED(CONFIG_NET_SOCKETS_PACKET) &&
-		family == AF_PACKET && type == SOCK_RAW && proto == IPPROTO_RAW) {
-		/* This kind of socket combo is handled by zephyr packet socket: */
+	if (offload_disabled) {
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_TLS)) {
-		return true;
-	}
-
-	if ((proto >= IPPROTO_TLS_1_0 && proto <= IPPROTO_TLS_1_2) ||
-	    (proto >= IPPROTO_DTLS_1_0 && proto <= IPPROTO_DTLS_1_2)) {
+	if (tls_offload_disabled && proto_is_secure(proto)) {
 		return false;
 	}
 
 	return true;
 }
 
+static int native_socket(int family, int type, int proto, bool *offload_lock)
+{
+	int sock;
+
+	type = type & ~(SOCK_NATIVE | SOCK_NATIVE_TLS);
+
+	/* Lock the scheduler for the time of a socket creation to prevent
+	 * race condition when offloading is disabled.
+	 */
+	k_sched_lock();
+	*offload_lock = true;
+	sock = zsock_socket(family, type, proto);
+	*offload_lock = false;
+	k_sched_unlock();
+
+	return sock;
+}
+
 static int nrf91_socket_create(int family, int type, int proto)
 {
-	int fd = z_reserve_fd();
-	int sd;
+	int fd, sd;
 	struct nrf_sock_ctx *ctx;
 
+	if (type & SOCK_NATIVE) {
+		return native_socket(family, type, proto, &offload_disabled);
+	} else if (type & SOCK_NATIVE_TLS) {
+		return native_socket(family, type, proto, &tls_offload_disabled);
+	}
+
+	fd = z_reserve_fd();
 	if (fd < 0) {
 		return -1;
 	}
@@ -1363,8 +1391,13 @@ static int nrf91_socket_create(int family, int type, int proto)
 	return fd;
 }
 
-NET_SOCKET_REGISTER(nrf91_socket, AF_UNSPEC, nrf91_socket_is_supported,
-		    nrf91_socket_create);
+#define NRF91_SOCKET_PRIORITY 40
+
+BUILD_ASSERT(NRF91_SOCKET_PRIORITY < CONFIG_NET_SOCKETS_TLS_PRIORITY,
+	     "NRF91_SOCKET_PRIORITY have to be smaller than NET_SOCKETS_TLS_PRIORITY");
+
+NET_SOCKET_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
+		    nrf91_socket_is_supported, nrf91_socket_create);
 
 /* Create a network interface for nRF91 */
 
