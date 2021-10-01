@@ -22,5 +22,4 @@ target_sources(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/json_helpers.c)
 
 target_compile_options(app PRIVATE
-  	-DCONFIG_CLOUD_CODEC_LOG_LEVEL=0
   	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20)
