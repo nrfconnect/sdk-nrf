@@ -49,6 +49,8 @@ nRF9160
     * Removed GNSS socket API support from A-GPS and P-GPS.
     * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
       A message published to the bulk topic is typically a combination of multiple messages.
+    * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
+      Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
 
   * :ref:`asset_tracker_v2` application:
 

@@ -115,7 +115,7 @@ struct nrf_cloud_rest_cell_pos_request {
 struct nrf_cloud_rest_agps_request {
 	enum nrf_cloud_rest_agps_req_type type;
 	/** Required for custom request type */
-	struct gps_agps_request *agps_req;
+	struct nrf_modem_gnss_agps_data_frame *agps_req;
 	/** Optional; provide network info or set to NULL. The cloud cannot
 	 * provide location assistance data if network info is NULL.
 	 */
