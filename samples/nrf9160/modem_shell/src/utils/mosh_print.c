@@ -51,7 +51,9 @@ static const char *create_timestamp_string(void)
 	mins = ltm.tm_min;
 	hours = ltm.tm_hour;
 	day = ltm.tm_mday;
-	month = ltm.tm_mon;
+	/* Range is 0-11, as per POSIX */
+	month = ltm.tm_mon + 1;
+	/* Relative to 1900, as per POSIX */
 	year = 1900 + ltm.tm_year;
 
 	sprintf(timestamp_str,
