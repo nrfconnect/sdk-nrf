@@ -128,58 +128,6 @@ static void link_api_get_pdn_activation_status(
 
 /* ****************************************************************************/
 
-static void link_registered_work(struct k_work *unused)
-{
-	struct pdn_activation_status_info
-		pdn_act_status_arr[CONFIG_PDN_CONTEXTS_MAX];
-
-	ARG_UNUSED(unused);
-
-	memset(pdn_act_status_arr, 0,
-	       CONFIG_PDN_CONTEXTS_MAX *
-		       sizeof(struct pdn_activation_status_info));
-
-	/* Get PDN activation status for each: */
-	link_api_get_pdn_activation_status(pdn_act_status_arr,
-					   CONFIG_PDN_CONTEXTS_MAX);
-
-	/* Activate the deactive ones that have been connected by us: */
-	link_api_activate_mosh_contexts(pdn_act_status_arr,
-					CONFIG_PDN_CONTEXTS_MAX);
-
-	/* Seems that 1st info read fails without this. Thus, let modem have some time: */
-	k_sleep(K_MSEC(1500));
-
-	link_api_modem_info_get_for_shell(true);
-}
-
-/******************************************************************************/
-
-static void link_rsrp_signal_handler(char rsrp_value)
-{
-	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
-	k_work_submit(&modem_info_signal_work);
-}
-
-/******************************************************************************/
-
-#define MOSH_RSRP_UPDATE_INTERVAL_IN_SECS 5
-static void link_rsrp_signal_update(struct k_work *work)
-{
-	static uint32_t timestamp_prev;
-
-	if ((timestamp_prev != 0) &&
-	    (k_uptime_get_32() - timestamp_prev <
-	     MOSH_RSRP_UPDATE_INTERVAL_IN_SECS * MSEC_PER_SEC)) {
-		return;
-	}
-
-	if (link_subscribe_for_rsrp) {
-		mosh_print("RSRP: %d", modem_rsrp);
-	}
-	timestamp_prev = k_uptime_get_32();
-}
-
 static void link_date_time_evt_handler(const struct date_time_evt *evt)
 {
 	struct timespec tp = { 0 };
@@ -210,6 +158,61 @@ static void link_date_time_evt_handler(const struct date_time_evt *evt)
 		evt->type == DATE_TIME_OBTAINED_NTP ?
 		"NTP" :
 		"external source");
+}
+
+/* ****************************************************************************/
+
+static void link_registered_work(struct k_work *unused)
+{
+	struct pdn_activation_status_info pdn_act_status_arr[CONFIG_PDN_CONTEXTS_MAX];
+
+	ARG_UNUSED(unused);
+
+	memset(pdn_act_status_arr, 0,
+	       CONFIG_PDN_CONTEXTS_MAX * sizeof(struct pdn_activation_status_info));
+
+	/* Get PDN activation status for each */
+	link_api_get_pdn_activation_status(pdn_act_status_arr, CONFIG_PDN_CONTEXTS_MAX);
+
+	/* Activate the deactive ones that have been connected by us */
+	link_api_activate_mosh_contexts(pdn_act_status_arr, CONFIG_PDN_CONTEXTS_MAX);
+
+	/* Seems that 1st info read fails without this. Thus, let modem have some time */
+	k_sleep(K_MSEC(1500));
+
+	link_api_modem_info_get_for_shell(true);
+
+	/* Request time update if not already received. Modem needs some time before this. */
+	if (!date_time_received) {
+		date_time_update_async(link_date_time_evt_handler);
+	}
+}
+
+/******************************************************************************/
+
+static void link_rsrp_signal_handler(char rsrp_value)
+{
+	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
+	k_work_submit(&modem_info_signal_work);
+}
+
+/******************************************************************************/
+
+#define MOSH_RSRP_UPDATE_INTERVAL_IN_SECS 5
+static void link_rsrp_signal_update(struct k_work *work)
+{
+	static uint32_t timestamp_prev;
+
+	if ((timestamp_prev != 0) &&
+	    (k_uptime_get_32() - timestamp_prev <
+	     MOSH_RSRP_UPDATE_INTERVAL_IN_SECS * MSEC_PER_SEC)) {
+		return;
+	}
+
+	if (link_subscribe_for_rsrp) {
+		mosh_print("RSRP: %d", modem_rsrp);
+	}
+	timestamp_prev = k_uptime_get_32();
 }
 
 /******************************************************************************/
@@ -329,11 +332,6 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 			k_work_submit(&registered_work);
-
-			/* Request time update if not already received. */
-			if (!date_time_received) {
-				date_time_update_async(link_date_time_evt_handler);
-			}
 		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
