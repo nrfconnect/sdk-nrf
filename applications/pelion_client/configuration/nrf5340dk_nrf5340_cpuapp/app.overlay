@@ -4,6 +4,12 @@
  */
 
 / {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+/ {
 	pwmleds1 {
 		compatible = "pwm-leds";
 		status = "okay";
