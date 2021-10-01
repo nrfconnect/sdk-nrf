@@ -1177,6 +1177,14 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-7-0
+
+DRGN-16317: The SoftDevice Controller can discard LE Extended Advertising Reports
+  If there is insufficient memory available or the Host is not able to process HCI events in time, the SoftDevice Controller can discard LE Extended Advertising Reports.
+  If advertising data is split across multiple reports and any of these are discarded, the Host will not be able to reassemble the data.
+
+  **Workaround:** Increase :kconfig:`CONFIG_BT_BUF_EVT_RX_COUNT` until events are no longer discarded.
+
 .. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15903: :kconfig:`BT_CTLR_TX_PWR` is ignored by the SoftDevice Controller
