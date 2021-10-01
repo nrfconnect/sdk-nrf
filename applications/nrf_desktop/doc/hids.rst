@@ -3,10 +3,6 @@
 HID Service module
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Use the HID Service module to handle the GATT Human Interface Device Service.
 The GATT Service is used to exchange HID data with the peer connected over Bluetooth®.
 For this reason, it is mandatory for every nRF Desktop peripheral.

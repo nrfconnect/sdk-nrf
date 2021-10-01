@@ -3,10 +3,6 @@
 Matter: Template
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer.
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network.
 

@@ -3,10 +3,6 @@
 Extending the application
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can extend the serial LTE modem application by adding your own AT commands and custom error handling.
 
 Adding AT commands

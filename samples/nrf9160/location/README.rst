@@ -3,10 +3,6 @@
 nRF9160: Location
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Location sample demonstrates how you can retrieve the location of a device using GNSS, cellular or Wi-Fi positioning method.
 This sample uses the :ref:`lib_location` library.
 

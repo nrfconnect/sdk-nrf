@@ -3,10 +3,6 @@
 Bluetooth: Mesh light switch
 ############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The :ref:`ug_bt_mesh` light switch sample can be used to change the state of light sources on other devices within the same mesh network.
 It also demonstrates how to use Bluetooth® mesh models by using the Generic OnOff Client model in an application.
 

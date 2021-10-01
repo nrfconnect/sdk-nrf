@@ -3,10 +3,6 @@
 Application Event Manager
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Application Event Manager sample demonstrates the functionality of the :ref:`app_event_manager` subsystem.
 It uses an event-driven architecture, where different modules communicate through sending and processing events.
 

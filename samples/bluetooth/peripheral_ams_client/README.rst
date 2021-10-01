@@ -3,10 +3,6 @@
 Bluetooth: Peripheral AMS client
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Peripheral AMS client sample demonstrates how to use the :ref:`ams_client_readme`.
 
 Requirements

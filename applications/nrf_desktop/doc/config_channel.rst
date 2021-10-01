@@ -3,10 +3,6 @@
 Configuration channel
 #####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The configuration channel lets you exchange data between the host computer and an nRF Desktop's HID device.
 On the logical level, it creates a bridge between the application modules and the corresponding part of the host script.
 If there are more compatible devices connected to the host, you can select which device will receive data.

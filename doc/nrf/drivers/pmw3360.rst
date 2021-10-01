@@ -3,10 +3,6 @@
 PMW3360 driver
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The PMW3360 driver implements a PMW3360 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
 
 The sensor driver supports the following features:

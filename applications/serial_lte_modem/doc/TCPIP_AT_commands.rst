@@ -3,10 +3,6 @@
 TCP and UDP AT commands
 ***********************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains TCP-related and UDP-related AT commands.
 When native TLS is used, you must store the credentials using the ``AT#XCMNG`` AT command.
 

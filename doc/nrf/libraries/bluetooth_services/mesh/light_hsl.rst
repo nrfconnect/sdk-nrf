@@ -3,10 +3,6 @@
 Light HSL models
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Hue Saturation Lightness (HSL) models allow remote control of colored lights.
 While the :ref:`CTL <bt_mesh_light_ctl_readme>` and xyL models operate in color spaces designed specifically for illumination, the HSL color space is most commonly used in computer imagery and television broadcasts.
 While easy to visualize and explain to end users, the HSL does not map well to common illumination properties such as color temperature, and does not take variation in the human perception of color into account.

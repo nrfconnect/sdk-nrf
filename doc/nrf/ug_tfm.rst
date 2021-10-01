@@ -3,10 +3,6 @@
 Running applications with Trusted Firmware-M
 ############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 On nRF5340 and nRF9160, you can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
 
 Overview

@@ -3,10 +3,6 @@
 Light Saturation Server
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Light Saturation Server controls the saturation of the light color.
 It should be instantiated in the light fixture node.
 

@@ -3,10 +3,6 @@
 Adding Wi-Fi Coexistence support to short-range radio applications
 ##################################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This guide describes how to add Wi-Fi Coexistence (CX) support to your short-range radio application in |NCS|.
 
 Short-range RF technologies (here referred to as SR), such as Bluetooth LE or 802.15.4, use different radios than Wi-Fi.

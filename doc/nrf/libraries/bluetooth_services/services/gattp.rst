@@ -3,10 +3,6 @@
 Generic Attribute (GATT) Profile
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The GATT Profile module can be used to receive service changed indications from a connected peer.
 It is used in the :ref:`peripheral_ancs_client` sample.
 

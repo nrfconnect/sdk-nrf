@@ -3,10 +3,6 @@
 Application Event Manager
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Application Event Manager is a piece of software that supports development of consistent, modular, event-based applications.
 In an event-based application, parts of the application functionality are separated into isolated modules that communicate with each other using events.
 Events are submitted by modules and other modules can subscribe and react to them.

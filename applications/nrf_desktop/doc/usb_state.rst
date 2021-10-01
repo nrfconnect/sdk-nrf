@@ -3,10 +3,6 @@
 USB state module
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |usb_state| is responsible for tracking the USB connection.
 It is also responsible for transmitting data through USB on the application's device.
 

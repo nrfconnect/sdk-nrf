@@ -3,10 +3,6 @@
 GNSS module
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The GNSS module controls the GNSS functionality of the nRF9160.
 It can be used to acquire the location of the device, either in the form of events containing a position, velocity and time (PVT) structure or NMEA sentences.
 

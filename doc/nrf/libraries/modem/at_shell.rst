@@ -3,10 +3,6 @@
 AT shell
 ########
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can use this library to add an AT shell command to a shell.
 This enables you to send AT commands to the modem and receive responses.
 

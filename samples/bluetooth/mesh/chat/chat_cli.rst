@@ -3,10 +3,6 @@
 Chat Client model
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Chat Client model is a vendor model that allows communication with other such models, by sending text messages and providing the presence of the model instance.
 It demonstrates basics of a vendor model implementation.
 The model doesn't have a limitation on per-node instantiations of the model, and therefore can be instantiated on each element of the node.

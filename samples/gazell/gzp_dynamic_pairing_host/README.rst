@@ -7,10 +7,6 @@ This sample shows the Host role for the functionality of the :ref:`gzp` subsyste
 As a single sample, the Host receives packets from the Device and transmits acknowledgements with the payload.
 Follow the instructions and use the files from this page, and the :ref:`gzp_dynamic_pairing_device` sample.
 
-.. contents::
-   :local:
-   :depth: 2
-
 Requirements
 ************
 

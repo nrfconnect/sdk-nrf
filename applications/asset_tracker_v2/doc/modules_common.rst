@@ -3,10 +3,6 @@
 Modules common API
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Modules common API provides the functionality to administer mechanisms in the application architecture, and consist of functions that are shared between modules.
 The API supports the following functionalities:
 

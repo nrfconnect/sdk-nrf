@@ -3,10 +3,6 @@
 Battery charger module
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The battery charger module is responsible for battery charging control.
 
 Module events

@@ -3,10 +3,6 @@
 CAF: Bluetooth LE bond module
 #############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |ble_bond| of the :ref:`lib_caf` (CAF) allows to introduce Bluetooth LE bonding to the application.
 The module also allows to delete bonds for the default Bluetooth local identity.
 

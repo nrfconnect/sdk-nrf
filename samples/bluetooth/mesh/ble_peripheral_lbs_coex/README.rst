@@ -3,10 +3,6 @@
 Bluetooth: Mesh and peripheral coexistence
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to combine Bluetooth® mesh and Bluetooth Low Energy features in a single application.
 
 Requirements

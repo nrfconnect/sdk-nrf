@@ -3,10 +3,6 @@
 nRF9160: nRF Cloud REST Device Message
 ######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The REST Device Message sample demonstrates how to use the `nRF Cloud REST API`_ to send `Device Messages <nRF Cloud Device Messages_>`_ using the ``SendDeviceMessage`` REST endpoint.
 
 Requirements

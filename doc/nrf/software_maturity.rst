@@ -3,10 +3,6 @@
 Software maturity levels
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Following are the different software maturity levels shown for the different features:
 
 * Supported - Features that are maintained and are suitable for product development.

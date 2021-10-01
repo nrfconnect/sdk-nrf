@@ -3,10 +3,6 @@
 Thingy:53: Zigbee weather station
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Zigbee weather station is an out of the box application for the Nordic Thingy:53 based on the Zigbee protocol.
 It allows you to build a weather station that remotely gathers different kinds of data using Thingy:53 sensors, such as temperature, air pressure, and relative humidity.
 The device works as a Zigbee device, meaning it can be paired and controlled remotely over a Zigbee network.

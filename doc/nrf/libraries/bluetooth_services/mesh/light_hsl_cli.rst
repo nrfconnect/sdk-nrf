@@ -3,10 +3,6 @@
 Light HSL Client
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Light HSL Client model remotely controls the state of the :ref:`bt_mesh_light_hsl_srv_readme`, :ref:`bt_mesh_light_hue_srv_readme` and :ref:`bt_mesh_light_sat_srv_readme` models.
 
 Unlike the Light HSL Server model, the Client only creates a single model instance in the mesh composition data.

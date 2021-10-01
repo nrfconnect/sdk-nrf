@@ -3,10 +3,6 @@
 GATT Battery Service (BAS) Client
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Battery Service Client can be used to retrieve information about the battery level from a device that provides a Battery Service Server.
 
 The client supports a simple `Battery Service <Battery Service Specification_>`_ with one characteristic.

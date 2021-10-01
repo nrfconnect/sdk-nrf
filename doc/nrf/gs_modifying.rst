@@ -3,10 +3,6 @@
 Modifying an application
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 |application_sample_definition|
 
 After programming and testing an application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.

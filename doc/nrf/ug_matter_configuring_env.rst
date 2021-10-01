@@ -3,10 +3,6 @@
 Configuring Matter development environment
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Setting up Matter development environment is all about setting up the Matter network and commissioning your device into it.
 In Matter, the commissioning procedure takes place over Bluetooth LE between a Matter accessory device and the Matter controller, where the controller has the commissioner role.
 When the procedure has completed, the device should be equipped with all information needed to securely operate in the Matter network.

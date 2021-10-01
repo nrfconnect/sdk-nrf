@@ -3,10 +3,6 @@
 Working with RF front-end modules
 #################################
 
-.. contents::
-   :local:
-   :depth: 4
-
 An RF front-end module (FEM) is a device that amplifies the RF signal, and therefore, increases the range distance and the strength of a link's connection.
 In addition to extending the range, an RF FEM also increases the robustness of the link connection.
 A more robust link leads to less packet loss, meaning less retransmissions.

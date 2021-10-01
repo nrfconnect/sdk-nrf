@@ -3,10 +3,6 @@
 GATT Heart Rate Service (HRS) Client
 ####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can use the Heart Rate Service Client to retrieve information about heart rate measurements, such as the sensor location from a device that provides a Heart Rate Service.
 The client can also configure the Heart Rate Service on a remote device by writing specific values to the Heart Rate Control Point characteristic.
 

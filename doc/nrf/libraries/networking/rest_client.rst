@@ -3,10 +3,6 @@
 REST client
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The REST client library provides means for performing REST requests.
 
 Overview

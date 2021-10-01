@@ -3,10 +3,6 @@
 Modem attestation token
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Modem attestation token library is used to obtain an attestation token from an nRF9160-based device.
 
 Attestation tokens are used to verify the authenticity of the device.

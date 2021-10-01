@@ -3,10 +3,6 @@
 Utility module
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The utility module provides the functionality to administer and monitor mechanisms in the application architecture.
 
 Features

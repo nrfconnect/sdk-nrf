@@ -3,10 +3,6 @@
 Zigbee quick start guide
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This guide demonstrates some of the basic concepts of the Zigbee network using the |NCS| and the |VSC| extension.
 It guides you through the installation of the required tools and programming of the required samples.
 

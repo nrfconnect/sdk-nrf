@@ -3,10 +3,6 @@
 Silvair EnOcean Proxy Server
 ############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Silvair EnOcean Proxy Server model integrates an EnOcean switch together with :ref:`bt_mesh_onoff_srv_readme` and :ref:`bt_mesh_lvl_srv_readme` models, enabling dimming and on/off light control.
 It implements the `Silvair EnOcean Switch Mesh Proxy Server`_ specification.
 

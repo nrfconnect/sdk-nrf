@@ -3,10 +3,6 @@
 Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
 ###############################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Distance Measurement sample demonstrates the functionality of the Distance Measurement (DM) subsystem.
 It shows how to use DM to measure the distance between devices.
 The Bluetooth® Direction and Distance Finding Service is running simultaneously.

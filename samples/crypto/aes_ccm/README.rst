@@ -3,10 +3,6 @@
 Crypto: AES CCM
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AES CCM sample shows how to perform authenticated encryption and decryption operations using the CCM algorithm and a 128-bit key.
 The sample uses additional data and a random nonce.
 

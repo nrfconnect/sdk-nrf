@@ -3,10 +3,6 @@
 Working with Thingy:53
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Nordic Thingy:53 is a battery-operated prototyping platform for IoT Systems.
 
 .. note::

@@ -3,10 +3,6 @@
 CAF: Power manager keep alive module for buttons
 ################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |buttons_pm_keep_alive| of the :ref:`lib_caf` (CAF) is responsible for generating :c:struct:`keep_alive_event` on any configured button press.
 The :c:struct:`keep_alive_event` is used by the :ref:`CAF power manager module <caf_power_manager>` to reset the power-down counter when it is managing the overall operating system power state.
 

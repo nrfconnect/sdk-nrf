@@ -3,10 +3,6 @@
 TF-M secure peripheral partition
 #######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a Trusted Firmware-M (TF-M) partition.
 
 Requirements

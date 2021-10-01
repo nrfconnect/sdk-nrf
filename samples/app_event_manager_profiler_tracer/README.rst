@@ -3,10 +3,6 @@
 Application Event Manager profiling tracer
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
 
 Requirements

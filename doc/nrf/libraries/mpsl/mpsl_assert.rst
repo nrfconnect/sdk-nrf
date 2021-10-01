@@ -3,10 +3,6 @@
 Multiprotocol Service Layer assert
 ##################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Multiprotocol Service Layer assert library makes it possible to add a custom assert handler to the :ref:`nrfxlib:mpsl` library.
 You can then use this assert handler to print custom error messages or log assert information.
 

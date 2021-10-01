@@ -3,10 +3,6 @@
 Hardware unique key
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The hardware unique key library manages symmetric root keys on devices with the Arm CryptoCell security subsystem.
 
 Functionality

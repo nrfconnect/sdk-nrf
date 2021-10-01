@@ -3,10 +3,6 @@
 Generic OnOff Server
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Generic OnOff Server contains a single controllable On/Off state.
 
 States

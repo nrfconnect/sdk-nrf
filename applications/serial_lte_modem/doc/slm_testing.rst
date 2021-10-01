@@ -3,10 +3,6 @@
 Testing scenarios
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following testing scenarios give detailed instructions for testing specific use cases.
 They list the required AT commands and the expected responses.
 

@@ -3,10 +3,6 @@
 Zigbee ZBOSS OSIF
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Zigbee ZBOSS OSIF layer subsystem acts as the linking layer between the :ref:`nrfxlib:zboss` and the |NCS|.
 
 .. _zigbee_osif_configuration:

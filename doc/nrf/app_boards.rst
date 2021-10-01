@@ -3,10 +3,6 @@
 Board support
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| provides board definitions for all Nordic Semiconductor devices.
 In addition, you can define custom boards.
 

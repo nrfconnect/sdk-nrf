@@ -3,10 +3,6 @@
 Secure bootloader chain
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The architecture behind the secure bootloader solutions provided by |NCS| is based on the *chain of trust* concept.
 
 By using this secure bootloader chain, you can ensure that all code being executed has been authorized and that your application is protected against running altered code.

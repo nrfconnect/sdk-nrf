@@ -3,10 +3,6 @@
 nRF5340 Audio
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 or SBC codec compression and decompression, as per `Bluetooth LE Audio specifications`_.
 It is developed for use with the :ref:`octave_dk`.
 

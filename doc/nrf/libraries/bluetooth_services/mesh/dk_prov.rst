@@ -3,10 +3,6 @@
 Bluetooth mesh provisioning handler for Nordic DKs
 ##################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This application-side module is a basic implementation of the provisioning process handling for Development Kits from Nordic Semiconductor.
 It supports four types of out-of-band (OOB) authentication methods and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 For more information about provisioning in Bluetooth® mesh, see the :ref:`zephyr:bluetooth_mesh_provisioning` page in Zephyr.

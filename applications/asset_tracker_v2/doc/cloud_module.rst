@@ -3,10 +3,6 @@
 Cloud module
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The cloud module establishes and maintains the connection to a supported cloud service.
 Use the :ref:`Cloud wrapper API <api_cloud_wrapper>` to integrate and handle the client libraries present in the |NCS|.
 

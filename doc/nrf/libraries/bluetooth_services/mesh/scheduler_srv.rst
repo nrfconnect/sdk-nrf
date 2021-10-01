@@ -3,10 +3,6 @@
 Scheduler Server
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Scheduler Server model holds the current state of the Scheduler Register, and performs scheduling of the configured actions.
 The model notifies appropriate :ref:`bt_mesh_scene_srv_readme` and :ref:`bt_mesh_onoff_srv_readme` instances about actions in progress.
 

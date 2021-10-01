@@ -3,10 +3,6 @@
 CAF: Network state module
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |net_state| of the :ref:`lib_caf` (CAF) is responsible for broadcasting the events about current network state.
 The module provides different backends for available networks (like LTE or OpenThread).
 

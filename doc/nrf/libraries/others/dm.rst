@@ -3,10 +3,6 @@
 Distance Measurement
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Distance Measurement module provides an integration of :ref:`nrfxlib:nrf_dm` into |NCS|.
 
 Overview

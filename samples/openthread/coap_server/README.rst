@@ -3,10 +3,6 @@
 Thread: CoAP Server
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The :ref:`Thread <ug_thread>` CoAP Server sample demonstrates controlling light resources within an OpenThread network.
 This sample exposes resources in the network.
 To access them, you need another sample that is compatible with the OpenThread network.

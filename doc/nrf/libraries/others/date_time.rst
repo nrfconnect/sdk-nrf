@@ -3,10 +3,6 @@
 Date-Time
 #########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The date-time library retrieves the date-time information and stores it as Zephyr time and modem time.
 
 

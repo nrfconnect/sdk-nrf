@@ -3,10 +3,6 @@
 Bluetooth: Central and Peripheral HRS
 #####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Central and Peripheral HRS sample demonstrates how to use Bluetooth® with Central and Peripheral roles concurrently.
 It also demonstrates how to use the :ref:`lib_hrs_client_readme` library.
 It uses the HRS Client to retrieve heart rate measurement data from a remote device that provides a Heart Rate service.

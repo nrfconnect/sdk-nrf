@@ -4,10 +4,6 @@
 Documentation structure
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. doc_structure_start
 
 The documentation consists of several inter-linked documentation sets, one for each repository.

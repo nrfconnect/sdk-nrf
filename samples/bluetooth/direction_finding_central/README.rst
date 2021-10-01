@@ -3,10 +3,6 @@
 Bluetooth: Direction finding central
 ####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The direction finding central sample application demonstrates Bluetooth® LE direction finding in a response received from a connected peripheral device.
 
 Requirements

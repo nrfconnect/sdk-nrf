@@ -3,10 +3,6 @@
 Matter architecture and integration
 ###################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Matter defines an application layer on top of the IPv6-based transport protocols.
 This allows for routing messages regardless of the underlying physical and link layers.
 

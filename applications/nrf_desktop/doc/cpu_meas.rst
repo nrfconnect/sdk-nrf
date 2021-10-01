@@ -3,10 +3,6 @@
 CPU measurement module
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Use the CPU measurement module to monitor CPU load.
 
 Module events

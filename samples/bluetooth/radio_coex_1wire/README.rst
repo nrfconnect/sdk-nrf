@@ -3,10 +3,6 @@
 Bluetooth: External radio coexistence using 1-wire interface
 ############################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to use the 1-wire coexistence feature described in :ref:`Bluetooth® external radio coexistence <nrfxlib:bluetooth_coex>`.
 
 Requirements

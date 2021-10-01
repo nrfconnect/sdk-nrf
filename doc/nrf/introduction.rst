@@ -3,10 +3,6 @@
 About the |NCS|
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
 It is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
 

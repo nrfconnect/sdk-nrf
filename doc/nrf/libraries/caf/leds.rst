@@ -3,10 +3,6 @@
 CAF: LEDs module
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The LEDs module of the :ref:`lib_caf` (CAF) is responsible for controlling LEDs in response to LED effect set by a ``led_event``.
 The source of such events could be any other module in |NCS|.
 

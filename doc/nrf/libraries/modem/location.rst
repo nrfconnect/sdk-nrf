@@ -3,10 +3,6 @@
 Location
 ########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The location library provides functionality for retrieving the location of a device using different positioning methods such as:
 
 * GNSS satellite positioning including Assisted GPS (A-GPS) and Predicted GPS (P-GPS) data.

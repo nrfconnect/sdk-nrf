@@ -3,10 +3,6 @@
 Bluetooth: Direct Test Mode
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification_>`_: Version 5.2, Vol. 6, Part F.
 
 Overview

@@ -3,10 +3,6 @@
 Socket AT commands
 ******************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains socket-related AT commands.
 The application can open up to 8 sockets and select the active one among them.
 

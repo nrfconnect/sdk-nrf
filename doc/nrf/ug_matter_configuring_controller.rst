@@ -3,10 +3,6 @@
 Configuring Matter controller
 #############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. matter_controller_start
 
 The Matter controller is a role within the :ref:`Matter development environment <ug_matter_configuring>`.

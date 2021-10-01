@@ -3,10 +3,6 @@
 User Interface module
 #####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The User Interface module controls and monitors the UI elements on the nRF9160 DK and Thingy:91.
 
 Features

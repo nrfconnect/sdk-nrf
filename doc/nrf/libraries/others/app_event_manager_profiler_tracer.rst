@@ -3,10 +3,6 @@
 Application Event Manager profiler tracer
 #########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Application Event Manager profiler tracer is a library that enables profiling Application Event Manager events.
 It serves as a linking layer between :ref:`app_event_manager` and the :ref:`profiler` and allows to profile Application Event Manager event submissions and processings as the Profiler events.
 The Profiler allows you to observe the propagation of an profiler event in the system, view the data connected with the event, or create statistics.

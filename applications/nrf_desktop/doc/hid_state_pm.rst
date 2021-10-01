@@ -3,10 +3,6 @@
 HID state power manager module
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |hid_state_pm| is a minor module that prevents suspending the device when HID reports are exchanged with the host.
 
 Module events

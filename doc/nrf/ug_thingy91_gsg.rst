@@ -3,10 +3,6 @@
 Getting started with Thingy:91
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 
 This guide helps you get started with Thingy:91.
 It tells you how to update the Thingy:91 application and modem firmware and connect the Thingy:91 to `nRF Cloud`_.
@@ -457,10 +453,6 @@ Next, you need to activate the SIM card for the Thingy:91.
 
 Activating the iBasis SIM card
 ******************************
-
-.. contents::
-   :local:
-   :depth: 2
 
 
 If you are using the iBasis Subscriber Identity Module (SIM) card that comes shipped with the Thingy:91, you need to activate it in nRF Cloud.

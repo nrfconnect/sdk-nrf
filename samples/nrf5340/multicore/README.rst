@@ -3,10 +3,6 @@
 nRF5340: Multicore application
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can use this sample to see how to build an application on the network core as a child image from the sample source files.
 
 Requirements

@@ -3,10 +3,6 @@
 Building and programming an application
 #######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 |application_sample_definition|
 
 For additional information, check the user guide for the hardware platform that you are using.

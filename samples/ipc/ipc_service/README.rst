@@ -3,10 +3,6 @@
 IPC service
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The IPC service sample demonstrates the functionality of the IPC service.
 
 Overview

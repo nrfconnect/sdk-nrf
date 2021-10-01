@@ -3,10 +3,6 @@
 Simulated sensor driver
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The simulated sensor driver implements a simulated sensor that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
 The sensor provides readouts for predefined set of sensor channels and supports sensor triggers.
 

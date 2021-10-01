@@ -3,10 +3,6 @@
 Matter tools
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 Use tools listed on this page to test :ref:`matter_samples` and develop Matter applications in the |NCS|.
 
 GN tool

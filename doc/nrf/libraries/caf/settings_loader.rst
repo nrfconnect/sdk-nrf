@@ -3,10 +3,6 @@
 CAF: Settings loader module
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |settings_loader| of the :ref:`lib_caf` (CAF) is a simple, stateless module responsible for calling the :c:func:`settings_load` function.
 If any of the application modules relies on settings, this module ensures that the data stored in non-volatile memory is read after completing all necessary initialization.
 

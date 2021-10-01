@@ -3,10 +3,6 @@
 nRF Machine Learning
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Machine Learning application is an out of the box reference design of an `embedded machine learning`_ using `Edge Impulse`_.
 The application gathers data from sensors, forwards data to the Edge Impulse platform, and runs the machine learning model.
 It also displays results of the machine learning model on LEDs.

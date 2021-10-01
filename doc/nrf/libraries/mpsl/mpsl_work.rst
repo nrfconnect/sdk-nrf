@@ -3,10 +3,6 @@
 Multiprotocol Service Layer workqueue
 #####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Multiprotocol Service Layer (MPSL) workqueue library allows submitting tasks to the :ref:`nrfxlib:mpsl` workqueue for processing.
 The MPSL workqueue is a workqueue running with a higher priority than the system workqueue.
 

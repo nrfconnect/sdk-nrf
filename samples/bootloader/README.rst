@@ -3,10 +3,6 @@
 |NSIB|
 ######
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NSIB| (NSIB), previously also known as *B0* or ``b0``, is a secure bootloader built and maintained by Nordic Semiconductor.
 It is specifically tailored for the :ref:`immutable bootloader architecture <immutable_bootloader>` of a secure boot chain.
 It can verify and boot a second-stage bootloader or application while providing a persistent and reliable *Root of Trust* (RoT).

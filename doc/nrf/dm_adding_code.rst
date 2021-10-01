@@ -3,10 +3,6 @@
 Adding your own code
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 To maintain an application that uses the |NCS|, you should use the same tools that Nordic Semiconductor employs to develop it.
 This section describes suggested user workflows to develop and maintain an application based on the |NCS|.
 

@@ -3,10 +3,6 @@
 TNEP for tag device
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This library provides an implementation of the Tag NDEF Exchange Protocol (TNEP) for an NFC tag device.
 
 It is used in the :ref:`nfc_tnep_tag` sample.

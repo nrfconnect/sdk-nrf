@@ -3,10 +3,6 @@
 Development model
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| follows a development model that gives users access to both stable releases and new features that are still under development.
 
 The |NCS| is an SDK that is openly developed and maintained by Nordic Semiconductor.

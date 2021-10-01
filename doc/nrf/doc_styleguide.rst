@@ -5,10 +5,6 @@
 Documentation |gl|
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| documentation is written in two formats:
 
 * reStructuredText (RST) for conceptual documentation
@@ -32,14 +28,6 @@ Title and headings
   You can see this by clicking the :guilabel:`View page source` in the top-right corner of the page.
 
 * Do not repeat the section name in the titles of subpages, such as *sample* when adding a sample.
-
-Table of contents
-=================
-
-If your page uses sections, add the ``.. contents::`` directive just under the page title.
-This will add a linked table of contents at the top of the page.
-
-For easy navigation, do not include a table of contents if the page has a list of subpages.
 
 Subpages
 ========

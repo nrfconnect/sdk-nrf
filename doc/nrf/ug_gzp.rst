@@ -3,10 +3,6 @@
 Gazell Pairing
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Gazell Pairing library for the nRF52 Series enables applications to use the Gazell Link Layer to provide a secure wireless link between Gazell nodes.
 The library is customized for pairing a Device (for example, a mouse, keyboard, or remote control) with a Host (typically a USB dongle) using Gazell.
 

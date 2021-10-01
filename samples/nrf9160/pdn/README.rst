@@ -3,10 +3,6 @@
 nRF9160: PDN
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The PDN sample demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
 
 Requirements

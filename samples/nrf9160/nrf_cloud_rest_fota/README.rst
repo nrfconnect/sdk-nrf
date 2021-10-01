@@ -3,10 +3,6 @@
 nRF9160: nRF Cloud REST FOTA
 #############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The REST FOTA sample demonstrates how to use the `nRF Cloud REST API`_ to perform Firmware Over-the-Air (FOTA) updates on your device.
 
 Requirements

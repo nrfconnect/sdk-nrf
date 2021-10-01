@@ -4,10 +4,6 @@
 CAF: Sensor manager module
 ##########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |sensor_manager| of the :ref:`lib_caf` (CAF) generates the following types of events in relation with the sensor defined in the module configuration:
 
 * :c:struct:`sensor_event` when the sensor is sampled.

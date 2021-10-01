@@ -3,10 +3,6 @@
 Getting started with nRF9160 DK
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This section will get you started with your nRF9160 DK.
 You will update the firmware (both the application firmware and the modem firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
 

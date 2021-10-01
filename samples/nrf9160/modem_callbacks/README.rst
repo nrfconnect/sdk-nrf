@@ -3,10 +3,6 @@
 nRF9160: Modem callbacks
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Modem callbacks sample demonstrates how to set up callbacks for Modem library initialization and shutdown calls, using the :ref:`nrf_modem_lib_readme` and how to set up a callback for changes to the modem functional mode using the :ref:`lte_lc_readme` library.
 
 Requirements

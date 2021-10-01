@@ -3,10 +3,6 @@
 Mcumgr based full modem update
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The full modem update management library allows performing an update over UART using the SMP protocol, providing an API that exposes functions to register command hooks into the MCU manager (mcumgr) management protocol.
 
 It is used by the :ref:`fmfu_smp_svr_sample` sample to provide the following functionalities:

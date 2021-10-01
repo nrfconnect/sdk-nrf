@@ -3,10 +3,6 @@
 Configuring ZBOSS traces in |NCS|
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The :ref:`nrfxlib:zboss` (ZBOSS stack) comes included in the |NCS| in a set of precompiled libraries, which can complicate the debugging process.
 To help with that, the ZBOSS stack can be configured to print trace logs that allow you to trace the stack behavior.
 This page describes how to enable and configure ZBOSS trace logs.

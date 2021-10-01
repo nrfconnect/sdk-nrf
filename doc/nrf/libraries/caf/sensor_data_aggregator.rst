@@ -3,10 +3,6 @@
 CAF: Sensor data aggregator module
 ##################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |sensor_data_aggregator| of the :ref:`lib_caf` (CAF) is a simple module responsible for aggregating sensor data in form of ``sensor_event`` and passing them further in packages.
 It can be used in both single-core and multi-core SoCs.
 

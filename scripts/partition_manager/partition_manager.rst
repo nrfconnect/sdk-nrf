@@ -3,10 +3,6 @@
 Partition Manager
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Partition Manager is a Python script that sets the start address and size of all the flash and RAM partitions in a multi-image build context.
 When creating an application that requires child images, like a bootloader, you can configure the Partition Manager to control where each image should be placed in memory, and how the RAM should be shared.
 

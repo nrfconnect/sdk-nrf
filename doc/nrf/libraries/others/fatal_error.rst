@@ -3,10 +3,6 @@
 Fatal error handler
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| provides an implementation of the fatal error handler that overrides Zephyr's default fatal error handling implementation.
 
 Overview

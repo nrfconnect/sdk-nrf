@@ -5,10 +5,6 @@
 nRF9160: GNSS
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to use the :ref:`nrfxlib:gnss_interface` to control the `GNSS`_ module.
 It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agps` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
 Assistance data is downloaded from nRF Cloud using `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.

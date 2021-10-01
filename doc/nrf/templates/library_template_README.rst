@@ -3,10 +3,6 @@
 Template: Library
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. note::
    Use this template to create pages that describe the libraries included in the |NCS|, following these instructions:
 

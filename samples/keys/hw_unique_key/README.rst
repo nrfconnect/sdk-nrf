@@ -3,10 +3,6 @@
 Hardware unique key
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample shows how to use a hardware unique key (HUK) to derive an encryption key through psa_crypto APIs.
 
 Requirements

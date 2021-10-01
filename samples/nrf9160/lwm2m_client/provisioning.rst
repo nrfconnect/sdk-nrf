@@ -3,10 +3,6 @@
 Preparing for production
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 To use the :ref:`lwm2m_client` sample in production, you must prepare the sample for production by completing the following steps:
 
 1. Program the :ref:`at_client_sample` sample to the device.

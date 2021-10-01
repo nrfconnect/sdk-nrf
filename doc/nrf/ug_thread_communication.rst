@@ -3,10 +3,6 @@
 OpenThread co-processor communication
 #####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The network co-processor (NCP) and radio co-processor (RCP) transport architectures include a transmit (TX) buffer that stores all the data that are to be received by the host using the `Spinel protocol`_.
 
 See :ref:`thread_architectures_designs_cp` for more information on the architectures.

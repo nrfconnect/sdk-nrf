@@ -3,10 +3,6 @@
 Using Bluetooth external radio coexistence
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This guide describes how to add support for Bluetooth® coexistence to your application in |NCS|.
 
 The coexistence feature can be used to reduce radio interference when multiple devices are located close to each other.

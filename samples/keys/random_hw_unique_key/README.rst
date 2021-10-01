@@ -3,10 +3,6 @@
 Random hardware unique key
 ##########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample writes random hardware unique keys (HUKs) to the Key Management Unit (KMU), when available, or to the relevant flash memory page, when the KMU is not present.
 
 Requirements

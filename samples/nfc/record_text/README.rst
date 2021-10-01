@@ -3,10 +3,6 @@
 NFC: Text record
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The NFC Text record sample shows how to use the NFC tag to expose a text record to NFC polling devices.
 It uses the :ref:`lib_nfc_ndef`.
 

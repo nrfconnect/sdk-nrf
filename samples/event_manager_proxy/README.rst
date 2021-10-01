@@ -3,10 +3,6 @@
 Event Manager Proxy
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Event Manager Proxy sample demonstrates how to use :ref:`event_manager_proxy` to transport events between remote and host cores.
 The sample also demonstrates the proposed application structure where common events declarations and definitions are available for both cores.
 

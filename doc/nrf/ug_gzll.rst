@@ -3,10 +3,6 @@
 Gazell Link Layer
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Gazell Link Layer minimizes the power consumption of the power-sensitive peripheral devices.
 Gazell uses the central hub (Host side) with its more relaxed power constraints to keep the link open while the peripheral devices can sleep and save on power consumption.
 A typical example of this is a wireless mouse communicating with a USB dongle that is inserted into a computer.

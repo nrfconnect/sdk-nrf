@@ -3,10 +3,6 @@
 Edge Impulse wrapper
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The `Edge Impulse`_ wrapper provides an implementation for running an `embedded machine learning`_ model on a device in |NCS|.
 For more information about support for Edge Impulse in |NCS|, see :ref:`ug_edge_impulse`.
 

@@ -3,10 +3,6 @@
 Bluetooth: Direction finding peripheral
 #######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The direction finding peripheral sample demonstrates Bluetooth® LE direction finding transmission as a response to a request received from a connected central device.
 
 Requirements

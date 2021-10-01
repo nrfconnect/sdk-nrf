@@ -3,10 +3,6 @@
 nRF9160: nRF Cloud REST cellular positioning
 ############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to use the `nRF Cloud REST API`_ for nRF Cloud's cellular positioning location service on your device.
 
 Requirements

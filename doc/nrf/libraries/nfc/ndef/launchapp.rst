@@ -3,10 +3,6 @@
 Launch App message and records
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Launch App library provides a way to create NFC messages capable of launching Android or iOS applications.
 
 Overview

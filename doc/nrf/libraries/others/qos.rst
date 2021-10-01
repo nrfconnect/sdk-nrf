@@ -3,10 +3,6 @@
 Quality of Service
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Quality of Service (QoS) library provides APIs to store and handle acknowledgment of multiple in-flight messages.
 The library is transport agnostic, which means that it does not enforce any transport-related functionality to the caller.
 

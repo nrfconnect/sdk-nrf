@@ -3,10 +3,6 @@
 Power optimization
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Nordic System-on-Chip (SoC) designs are aimed at ease of use and ultra-low power consumption.
 A power-optimized development ecosystem typically consists of the following developer tools:
 

@@ -3,10 +3,6 @@
 Scheduler models
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Scheduler models provide the ability to autonomically change the state of a device.
 The states are changed based on the notion of the UTC time and the ISO 8601 calendar.
 The UTC time is provided from the referenced :ref:`bt_mesh_time_srv_readme` model.

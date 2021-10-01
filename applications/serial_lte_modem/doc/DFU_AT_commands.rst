@@ -3,10 +3,6 @@
 DFU AT commands
 ****************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains AT commands related to DFU requests.
 
 The SLM application supports the following types of cloud-to-device Device Firmware Update (DFU) for the nRF52 Series of MCUs:

@@ -3,10 +3,6 @@
 Zigbee: Light switch
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can use the :ref:`Zigbee <ug_zigbee>` Light switch sample to change the state of light sources on other devices within the same Zigbee network.
 
 You can use it together with the :ref:`Zigbee Network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee Light bulb <zigbee_light_bulb_sample>` samples to set up a basic Zigbee network.

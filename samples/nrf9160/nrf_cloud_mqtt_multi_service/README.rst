@@ -3,10 +3,6 @@
 nRF9160: nRF Cloud MQTT multi-service
 #####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample is a minimal, error tolerant, integrated demonstration of the :ref:`nrf_cloud <lib_nrf_cloud>`, :ref:`location <lib_location>`, and :ref:`AT Host <lib_at_host>` libraries.
 It demonstrates how you can use these libraries together to support Firmware-Over-The-Air (FOTA), location services, modem AT commands over UART, and periodic sensor samples in your `nRF Cloud`_-enabled application.
 It also demonstrates how to implement error tolerance in your cellular applications without relying on reboot loops.

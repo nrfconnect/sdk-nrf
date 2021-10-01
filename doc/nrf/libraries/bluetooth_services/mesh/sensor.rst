@@ -3,10 +3,6 @@
 Bluetooth mesh sensors
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Bluetooth® mesh specification provides a common scheme for representing all sensors.
 A single Bluetooth mesh sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
 Sensors represent their measurements as a list of sensor channels, as described by the sensor's assigned type.

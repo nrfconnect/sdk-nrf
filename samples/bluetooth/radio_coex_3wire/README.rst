@@ -3,10 +3,6 @@
 Bluetooth: External radio coexistence using 3-wire interface
 ############################################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to use :ref:`Bluetooth® external radio coexistence <nrfxlib:bluetooth_coex>`.
 
 Requirements

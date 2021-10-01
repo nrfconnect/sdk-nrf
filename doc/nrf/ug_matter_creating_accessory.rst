@@ -3,10 +3,6 @@
 Creating Matter device
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 As part of this guide, you will modify the :ref:`Matter template <matter_template_sample>` sample to create a Matter sensor device that measures temperature and can be turned on and off.
 The sensor will periodically generate the simulated temperature sensor value and update the corresponding cluster attributes.
 This application will form a Matter device within a Matter network.

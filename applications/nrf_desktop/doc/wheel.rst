@@ -3,10 +3,6 @@
 Wheel module
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The wheel module is responsible for generating events related to the rotation of the mouse wheel.
 
 Module events

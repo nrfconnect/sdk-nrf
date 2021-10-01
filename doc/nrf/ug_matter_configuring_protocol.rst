@@ -3,10 +3,6 @@
 Configuring Matter in |NCS|
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This page describes what is needed to start working with Matter in the |NCS|.
 
 .. _ug_matter_configuring_mandatory:

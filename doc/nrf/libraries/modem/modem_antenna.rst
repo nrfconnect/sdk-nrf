@@ -3,10 +3,6 @@
 Modem antenna
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can use this library to set the antenna configuration on an nRF9160 DK or a Thingy:91.
 
 Overview

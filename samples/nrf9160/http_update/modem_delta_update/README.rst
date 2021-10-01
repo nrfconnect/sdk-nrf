@@ -3,10 +3,6 @@
 nRF9160: HTTP modem delta update
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The HTTP modem delta update sample demonstrates how to do a delta update of the modem firmware.
 A delta update is an update that contains only the code that has changed, not the entire firmware.
 

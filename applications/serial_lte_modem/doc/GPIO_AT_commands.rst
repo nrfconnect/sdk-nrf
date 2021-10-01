@@ -3,10 +3,6 @@
 GPIO AT commands
 ****************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains AT commands related to the General Purpose Input/Output (GPIO).
 
 Configure GPIO pins function #XGPIOCFG

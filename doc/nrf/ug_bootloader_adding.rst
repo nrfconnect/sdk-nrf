@@ -3,10 +3,6 @@
 Adding a bootloader chain
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can add bootloader chains to an application in the following ways:
 
 * Permanently:

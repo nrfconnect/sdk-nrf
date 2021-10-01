@@ -3,10 +3,6 @@
 CAF: Click detector module
 ##########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |click_detector| of the :ref:`lib_caf` (CAF) is responsible for generating a ``click_event`` when one of the known `Click types`_ is recorded for the button defined in the module configuration.
 
 Configuration

@@ -3,10 +3,6 @@
 Sensor module
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The sensor module interacts with external sensors present on the `Thingy:91 <Thingy:91 product page>`_.
 It collects environmental data and detects motion over a set threshold value.
 

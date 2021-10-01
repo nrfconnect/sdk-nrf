@@ -3,10 +3,6 @@
 Gazell Link Layer glue
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Gazell Link Layer glue module provides the necessary hardware resources to the Gazell glue layer in :ref:`nrfxlib:gzll`.
 
 This module is used in the :ref:`gazell_samples`.
