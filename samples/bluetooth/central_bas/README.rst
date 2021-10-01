@@ -3,10 +3,6 @@
 Bluetooth: Central BAS
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Central BAS sample demonstrates how do use the :ref:`bas_client_readme`.
 It uses the BAS Client to receive battery level information from a compatible device.
 

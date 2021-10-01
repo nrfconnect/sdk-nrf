@@ -3,10 +3,6 @@
 Light Hue Server
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Light Hue Server controls the hue of the light color.
 It should be instantiated in the light fixture node.
 

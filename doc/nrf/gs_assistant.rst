@@ -3,10 +3,6 @@
 Installing automatically
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 `nRF Connect for Desktop`_, a cross-platform tool available for Windows, Linux, and macOS, provides different apps that simplify installing the |NCS|.
 
 .. note::

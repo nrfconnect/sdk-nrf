@@ -5,10 +5,6 @@
 Documentation |gl|
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| documentation is written in two formats:
 
 * reStructuredText (RST) for conceptual documentation

@@ -3,10 +3,6 @@
 Updating tools and repositories
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 After you install the |NCS|, regularly check for updates to tools and repositories.
 The west tool is updated regularly, like any other :ref:`required Python dependency package <gs_recommended_versions>`.
 

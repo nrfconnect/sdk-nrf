@@ -3,10 +3,6 @@
 Crypto: ECDH
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The ECDH sample shows how to perform an Elliptic-curve Diffie–Hellman key exchange to allow two parties to obtain a shared secret.
 
 Overview

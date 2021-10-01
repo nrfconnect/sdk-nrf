@@ -3,10 +3,6 @@
 Buttons module
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The buttons module is responsible for generating events related to key presses.
 The source of events are changes to GPIO pins.
 

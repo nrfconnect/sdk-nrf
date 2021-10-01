@@ -3,10 +3,6 @@
 Modem JWT
 #########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Modem JWT library provides access to the modem's `JSON Web Token (JWT)`_ generation feature, which is available in modem firmware v1.3.0 or higher.
 
 To use the library to request a JWT, complete the following steps:

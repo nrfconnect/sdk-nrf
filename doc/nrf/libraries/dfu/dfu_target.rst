@@ -3,10 +3,6 @@
 DFU target
 ##########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The DFU target library provides a common API for the following types of firmware upgrades:
 
 * An MCUboot style upgrade

@@ -3,10 +3,6 @@
 GNSS AT commands
 ****************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains GNSS-related AT commands.
 
 Run GPS

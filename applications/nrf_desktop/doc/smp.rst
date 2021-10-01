@@ -4,10 +4,6 @@
 Simple Management Protocol module
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |smp| is responsible for performing a Device Firmware Upgrade (DFU) over Bluetooth® LE.
 
 You can perform the DFU using for example the `nRF Connect for Mobile`_ application.

@@ -3,10 +3,6 @@
 HTTP client AT commands
 ***********************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains the HTTP client AT commands.
 
 HTTP client connection #XHTTPCCON

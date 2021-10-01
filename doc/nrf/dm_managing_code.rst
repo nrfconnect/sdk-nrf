@@ -3,10 +3,6 @@
 Managing the code base
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 
 To obtain and manage the |NCS| code base, you must use a combination of `Git`_ and :ref:`west<zephyr:west>`.
 

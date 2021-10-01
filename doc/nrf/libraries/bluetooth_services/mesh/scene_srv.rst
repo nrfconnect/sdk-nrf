@@ -3,10 +3,6 @@
 Scene Server
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Scene Server model holds a list of scenes, and exposes functionality for storing and recalling the state of these scenes.
 
 The Scene Server model must be instantiated in every node in the network that participates in scenes.

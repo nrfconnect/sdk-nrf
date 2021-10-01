@@ -3,10 +3,6 @@
 Crypto: HKDF
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The HMAC Key Derivation Function (HKDF) sample shows how to derive keys with the HKDF algorithm, using a sample key, salt, and additional data.
 
 Overview

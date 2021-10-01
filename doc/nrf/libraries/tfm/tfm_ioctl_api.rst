@@ -3,10 +3,6 @@
 TF-M input/output control (IOCTL)
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The TF-M IOTCL library provides an API for platform-specific TF-M services.
 These services are added by the ``platform`` partition.
 The APIs are available for non-secure applications.

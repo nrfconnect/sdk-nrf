@@ -3,10 +3,6 @@
 Multicell location
 ##################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Multicell location library provides a way to acquire the location of the device based on LTE cell measurements.
 The library uses HTTP requests to get the location from a configurable location service.
 

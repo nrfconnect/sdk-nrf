@@ -3,10 +3,6 @@
 Firmware updates
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This user guide provides an overview of firmware updates with |NCS|.
 
 .. _ug_fw_update_keys:

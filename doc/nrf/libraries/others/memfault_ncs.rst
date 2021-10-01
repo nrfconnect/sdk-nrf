@@ -3,10 +3,6 @@
 Memfault
 ########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Memfault module provides an integration of `Memfault SDK`_ into |NCS| and expands the functionality of the SDK with some options that are specific to |NCS|.
 
 

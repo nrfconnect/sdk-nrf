@@ -3,10 +3,6 @@
 AT command interface
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. note::
 
    The AT command interface is deprecated. Use the :ref:`nrfxlib:nrf_modem_at` API instead.

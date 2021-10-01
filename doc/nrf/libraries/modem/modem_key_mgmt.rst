@@ -3,10 +3,6 @@
 Modem key management
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The modem key management library provides functions to manage the credentials stored in the nRF9160 LTE modem.
 The library uses AT commands (`Credential storage management %CMNG`_) to add, update, and delete credentials.
 

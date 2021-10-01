@@ -3,10 +3,6 @@
 MQTT AT commands
 ****************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains the AT commands used to operate the MQTT client.
 
 MQTT connect #XMQTTCON

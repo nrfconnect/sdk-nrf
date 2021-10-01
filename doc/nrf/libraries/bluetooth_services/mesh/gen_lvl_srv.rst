@@ -3,10 +3,6 @@
 Generic Level Server
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Generic Level Server model contains a single Generic Level state.
 
 States

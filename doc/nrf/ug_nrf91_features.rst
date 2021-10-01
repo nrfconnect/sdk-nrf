@@ -3,10 +3,6 @@
 Features of nRF91 Series
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Introduction
 ************
 

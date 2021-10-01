@@ -3,10 +3,6 @@
 Modem library integration layer
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 
 The Modem library integration layer handles the integration of the Modem library into |NCS|.
 The integration layer is constituted by the library wrapper and functionalities like socket offloading, OS abstraction, memory reservation by the Partition manager, and diagnostics.

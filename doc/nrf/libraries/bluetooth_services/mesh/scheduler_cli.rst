@@ -3,10 +3,6 @@
 Scheduler Client
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Scheduler Client model remotely controls the state of a :ref:`bt_mesh_scheduler_srv_readme` model.
 
 Unlike the Scheduler Server model, the Scheduler Client only creates a single model instance in the mesh composition data.

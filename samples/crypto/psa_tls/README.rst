@@ -3,10 +3,6 @@
 Crypto: PSA TLS
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The PSA TLS sample shows how to perform a TLS handshake and send encrypted messages in both a secure and a non-secure domain with :ref:`Trusted Firmware-M<ug_tfm>`.
 
 .. note::

@@ -3,10 +3,6 @@
 nRF9160: Modem Shell
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Modem Shell (MoSh) sample application enables you to test various device connectivity features, including data throughput.
 
 Overview

@@ -3,10 +3,6 @@
 Bootloaders and Device Firmware Updates
 #######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 There are two types of bootloaders used by the |NCS|:
 
 * :ref:`Immutable first-stage bootloaders <immutable_bootloader>`.

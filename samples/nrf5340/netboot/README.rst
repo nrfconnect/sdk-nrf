@@ -3,10 +3,6 @@
 nRF5340: Network core bootloader
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The network core bootloader sample, also called B0n, is an immutable first-stage bootloader that can update the application firmware on the network core of the nRF5340 System on Chip (SoC).
 
 Overview

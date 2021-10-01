@@ -3,10 +3,6 @@
 Click detector module
 #####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The click detector module is responsible for sending a ``click_event`` when a known type of click is recorded for the button defined in the module configuration.
 
 Module events

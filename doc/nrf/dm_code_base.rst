@@ -3,10 +3,6 @@
 nRF Connect SDK code base
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The source code, libraries, and tools that compose the |NCS| are entirely hosted in a set of `Git`_ repositories.
 Basic familiarity with Git is required to understand the architecture of the repository set and to work with the |NCS|.
 

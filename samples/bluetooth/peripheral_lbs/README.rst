@@ -3,10 +3,6 @@
 Bluetooth: Peripheral LBS
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The peripheral LBS sample demonstrates how to use the :ref:`lbs_readme`.
 
 Overview

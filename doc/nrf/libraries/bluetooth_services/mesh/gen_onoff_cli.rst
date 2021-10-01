@@ -3,10 +3,6 @@
 Generic OnOff Client
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Generic OnOff Client model remotely controls the state of a :ref:`bt_mesh_onoff_srv_readme` model.
 
 Extended models

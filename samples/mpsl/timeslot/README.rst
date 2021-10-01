@@ -3,10 +3,6 @@
 MPSL timeslot
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample demonstrates how to use :ref:`nrfxlib:mpsl` and basic MPSL Timeslot functionality.
 
 Overview

@@ -3,10 +3,6 @@
 CoAP utils
 ##########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The CoAP utils library is a simple module that enables communication with devices that support the CoAP protocol.
 It allows sending and receiving non-confirmable CoAP requests.
 

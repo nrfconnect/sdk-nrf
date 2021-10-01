@@ -3,10 +3,6 @@
 Testing an application
 ############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 |application_sample_definition|
 
 Follow the instructions in the testing section of the application's documentation to make sure that the application runs as expected.

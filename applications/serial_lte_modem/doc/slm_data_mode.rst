@@ -3,10 +3,6 @@
 Running in data mode
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Serial LTE Modem (SLM) application can run in the two operation modes defined by the AT command set: AT-command mode and data mode.
 
 When running in data mode, the application does the following:

@@ -3,10 +3,6 @@
 CAF: Sensor sampler module
 ##########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |sensor_sampler| of the :ref:`lib_caf` (CAF) generates the following types of events in relation with the sensor defined in the module configuration:
 
 * ``sensor_event`` when the sensor is sampled.

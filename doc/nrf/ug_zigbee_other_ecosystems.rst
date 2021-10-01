@@ -3,10 +3,6 @@
 Configuring Zigbee samples for other ecosystems
 ###############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 You can configure :ref:`zigbee_samples` in |NCS| that you program onto Nordic Semiconductor's hardware platforms to make them work within Zigbee networks of other ecosystems, such as Amazon Alexa, IKEA TRÅDFRI, or Philips Hue.
 This is only possible for Zigbee networks of other ecosystems that include the Trust Center.
 

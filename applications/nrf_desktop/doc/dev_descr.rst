@@ -3,10 +3,6 @@
 Device description module
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The device description module defines custom GATT Service, which contains:
 
 * Information about whether the peripheral supports the Low Latency Packet Mode (LLPM)

@@ -3,10 +3,6 @@
 Crypto: AES CTR
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AES CTR sample shows how to perform AES encryption and decryption operations using the CTR block cipher mode without padding and a 128-bit AES key.
 
 Overview

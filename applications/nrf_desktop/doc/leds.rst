@@ -3,10 +3,6 @@
 LEDs module
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The LEDs module is responsible for controlling LEDs in response to LED effect set by a ``led_event``.
 The source of events could be any other module.
 

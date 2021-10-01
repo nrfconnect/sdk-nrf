@@ -3,10 +3,6 @@
 Thread: Co-processor
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The :ref:`Thread <ug_thread>` Co-processor sample demonstrates how to implement OpenThread's :ref:`thread_architectures_designs_cp` inside the Zephyr environment.
 Depending on the configuration, the sample uses the :ref:`thread_architectures_designs_cp_ncp` architecture or :ref:`thread_architectures_designs_cp_rcp` architecture.
 

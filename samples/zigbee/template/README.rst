@@ -3,10 +3,6 @@
 Zigbee: Template
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This :ref:`Zigbee <ug_zigbee>` sample is a minimal implementation of the Zigbee Router role.
 
 You can use this sample as the starting point for developing your own Zigbee device.

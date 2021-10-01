@@ -3,10 +3,6 @@
 Using Pelion with the |NCS|
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Pelion is an IoT cloud platform that offers services in the fields of connectivity, device management, and edge computing.
 It allows you to remotely manage and update your IoT devices.
 The |NCS| provides Pelion's ``mbed-cloud-client`` library (the Pelion Device Management library) as one of the external submodule repositories managed with :ref:`zephyr:west`.

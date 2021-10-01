@@ -3,10 +3,6 @@
 nRF9160: Memfault
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
 The sample connects to an LTE network and sends the collected data to Memfault's cloud using HTTPS.
 

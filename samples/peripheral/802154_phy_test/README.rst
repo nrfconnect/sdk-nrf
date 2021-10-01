@@ -3,10 +3,6 @@
 IEEE 802.15.4 PHY Test Tool
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The IEEE 802.15.4 PHY Test Tool provides a solution for performing Zigbee RF Performance and PHY Certification tests, as well as a general evaluation of the integrated radio with IEEE 802.15.4 standard.
 
 Overview

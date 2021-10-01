@@ -3,10 +3,6 @@
 Memory footprint optimization
 #############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 When developing an application, ROM and RAM footprint are important factors, especially when the firmware runs on the most resource-constrained devices like nRF52810 or nRF52811.
 
 To reduce the memory footprint, ensure that your application uses the minimum required resources and tune the |NCS| configuration parameters.

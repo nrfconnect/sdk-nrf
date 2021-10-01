@@ -3,10 +3,6 @@
 nRF Cloud REST
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Cloud REST library enables applications to use `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 

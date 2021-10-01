@@ -3,10 +3,6 @@
 CAF: Buttons module
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The buttons module of the :ref:`lib_caf` (CAF) is responsible for generating events related to key presses.
 The source of events are changes to GPIO pins.
 The module can handle both matrix keyboard and buttons directly connected to GPIO pins.

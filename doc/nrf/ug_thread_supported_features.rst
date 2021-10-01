@@ -3,10 +3,6 @@
 Supported Thread features
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.1.1 Specification:
 
 * All Thread networking layers:

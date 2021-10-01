@@ -3,10 +3,6 @@
 nRF9160: Multicell location
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Multicell location sample demonstrates how to use :ref:`lib_multicell_location` library to get a device's position based on LTE cell measurements.
 
 

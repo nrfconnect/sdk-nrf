@@ -3,10 +3,6 @@
 Crypto: HMAC
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The HMAC sample shows how to generate a message authentication code using the HMAC algorithm and then verify it.
 The HMAC algorithm in this sample uses SHA-256.
 

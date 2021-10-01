@@ -5,10 +5,6 @@
 Working with nRF53 Series
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 DK (PCA10095).
 
 See the `nRF5340 DK User Guide`_ for detailed information about the nRF5340 DK hardware.

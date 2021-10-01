@@ -3,10 +3,6 @@
 Crypto: AES GCM
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AES GCM sample shows how to perform authenticated encryption and decryption operations using the GCM algorithm and a 128-bit key.
 
 Overview

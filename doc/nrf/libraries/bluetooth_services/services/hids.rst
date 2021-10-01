@@ -3,10 +3,6 @@
 GATT Human Interface Device (HID) Service
 #########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This module implements the Human Interface Device Service with the corresponding
 set of characteristics. When initialized, it adds the HID Service and a set of
 characteristics, according to the HID Service specification and to the user

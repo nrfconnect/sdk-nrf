@@ -3,10 +3,6 @@
 Crypto: RNG
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The RNG sample shows how to produce random numbers.
 
 Overview

@@ -3,10 +3,6 @@
 Creating Matter accessory device
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Matter accessory device is a basic node of the `Matter`_ network.
 The accessory is formed by the development kit and the application that is running the Matter stack and that is programmed on the development kit.
 

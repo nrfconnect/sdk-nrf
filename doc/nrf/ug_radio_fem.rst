@@ -3,10 +3,6 @@
 Radio front-end module (FEM) support
 ####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
 |NCS| allows you to extend the radio range of your development kit with an implementation of the front-end modules.

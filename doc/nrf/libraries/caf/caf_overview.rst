@@ -3,10 +3,6 @@
 Common Application Framework overview
 #####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`event_manager`.
 Using CAF allows you to have a consistent event-based architecture in your application.
 

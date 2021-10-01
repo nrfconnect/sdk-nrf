@@ -3,10 +3,6 @@
 nRF9160: HTTP full modem update
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The HTTP full modem update sample shows how to perform a full firmware update of the modem.
 The sample downloads a modem firmware signed by Nordic Semiconductor and then performs the firmware update of the modem.
 

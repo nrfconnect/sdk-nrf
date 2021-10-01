@@ -3,10 +3,6 @@
 Function key module
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Function key module applies the Fn key modifier to activate special functions assigned to dual-purpose keys.
 
 Module events

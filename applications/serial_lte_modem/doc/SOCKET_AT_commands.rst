@@ -3,10 +3,6 @@
 Socket AT commands
 ******************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains socket-related AT commands.
 
 For more information on the networking services, visit the `BSD Networking Services Spec Reference`_.

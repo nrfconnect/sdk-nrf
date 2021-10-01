@@ -3,10 +3,6 @@
 Changelog for |NCS| v1.7.99
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest official release, are tracked in this file.
 
 .. note::

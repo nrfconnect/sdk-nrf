@@ -3,10 +3,6 @@
 Bluetooth Low Energy Remote Procedure Call
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| supports Bluetooth® Low Energy (LE) stack serialization.
 The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using :ref:`nrfxlib:nrf_rpc`.
 

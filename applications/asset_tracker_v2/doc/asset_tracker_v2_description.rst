@@ -3,10 +3,6 @@
 Application description
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Asset Tracker v2 application introduces a set of new features, which are not present in the :ref:`asset_tracker` application:
 
 * Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.

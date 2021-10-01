@@ -3,10 +3,6 @@
 Low Power UART
 ##############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Low Power UART sample demonstrates the capabilities of the :ref:`uart_nrf_sw_lpuart` module.
 
 Overview

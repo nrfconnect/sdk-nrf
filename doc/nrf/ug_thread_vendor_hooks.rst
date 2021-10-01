@@ -6,10 +6,6 @@
 Vendor hooks
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 Vendor hooks are a software mechanism that allows adding custom Spinel commands.
 Such vendor-specific commands can be used to add support for enhanced application features.
 For example, they allow you to add radio or crypto functionalities, whose settings are managed from the host device.

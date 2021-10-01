@@ -3,10 +3,6 @@
 Crypto: SHA-256
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The SHA-256 sample shows how to calculate and verify hashes.
 
 Overview

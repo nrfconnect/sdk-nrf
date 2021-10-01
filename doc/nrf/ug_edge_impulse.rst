@@ -3,10 +3,6 @@
 Using Edge Impulse with the |NCS|
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 `Edge Impulse`_ is a development platform that can be used to enable `embedded machine learning`_ on |NCS| devices.
 You can use this platform to collect data from sensors, train machine learning model, and then deploy it to your Nordic Semiconductor's device.
 

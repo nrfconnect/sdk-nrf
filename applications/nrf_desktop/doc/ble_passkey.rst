@@ -3,10 +3,6 @@
 Bluetooth LE passkey module
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Use the Bluetooth LE passkey module to enable pairing based on passkey for increased security.
 
 Module events

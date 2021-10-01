@@ -3,10 +3,6 @@
 Requirements
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| supports Microsoft Windows, Linux, and macOS for development.
 However, there are some Zephyr features that are currently only available on Linux, including:
 

@@ -3,10 +3,6 @@
 Installing manually
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The recommended way to get started with the |NCS| is to use nRF Connect for Desktop.
 See the :ref:`gs_assistant` page for information about how to install automatically.
 

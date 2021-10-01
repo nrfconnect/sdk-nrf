@@ -3,10 +3,6 @@
 Configuring Thread in |NCS|
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This page describes what is needed to start working with Thread in |NCS|.
 
 See :ref:`configure_application` for instructions on how to update the configuration for your application, permanently or temporarily.

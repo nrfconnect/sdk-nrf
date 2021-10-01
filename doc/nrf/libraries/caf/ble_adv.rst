@@ -3,10 +3,6 @@
 CAF: Bluetooth LE advertising module
 ####################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 When enabled for an application, the |ble_adv| is responsible for controlling the Bluetooth LE advertising for Bluetooth LE Peripheral device.
 
 This module can only work together with the :ref:`CAF Bluetooth LE state module <caf_ble_state>`.

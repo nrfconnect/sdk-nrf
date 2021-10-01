@@ -3,10 +3,6 @@
 Configuring Matter development environment
 ##########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 When you program any of the available Matter samples to the supported development kits, you automatically build the Matter stack for the nRF Connect platform.
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
 

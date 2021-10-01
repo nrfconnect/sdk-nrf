@@ -3,10 +3,6 @@
 Crypto: Chacha20-Poly1305 example
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Chacha20-Poly1305 sample shows how to perform authenticated encryption and decryption operations.
 The sample uses additional data and a random nonce.
 

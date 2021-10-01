@@ -3,10 +3,6 @@
 Light HSL Server
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Light HSL Server represents a single colored light.
 It should be instantiated in the light fixture node.
 

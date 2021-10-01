@@ -3,10 +3,6 @@
 nRF5340: Empty firmware for application core
 ############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This sample can be used to run an application on the network core of the nRF5340 when there is no need for the working application core.
 
 Overview

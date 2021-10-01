@@ -3,10 +3,6 @@
 AT monitor
 ##########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AT monitor library is used to define AT monitors, which consist of a handler function that receives AT notifications from the :ref:`nrfxlib:nrf_modem`, based on a filter.
 The handler is executed from the system workqueue.
 

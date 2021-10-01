@@ -3,10 +3,6 @@
 Nordic UART Service (NUS) shell transport
 #########################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Bluetooth® LE GATT Nordic UART Service shell transport allows you to receive shell commands remotely over *Bluetooth*.
 It uses the :ref:`nus_service_readme`.
 

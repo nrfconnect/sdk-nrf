@@ -3,10 +3,6 @@
 LTE link controller
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The LTE link controller library provides functionality to control the LTE link on an nRF9160 SiP.
 
 The LTE link can be controlled through library configurations and API calls to enable a range of features such as specifying the Access Point Name (APN), switching between LTE network modes (NB-IoT or LTE-M), enabling GPS support and power saving features such as Power Saving Mode (PSM) and enhanced Discontinuous Reception (eDRX).

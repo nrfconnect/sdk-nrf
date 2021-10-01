@@ -3,10 +3,6 @@
 Crypto: ECDSA
 #############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The ECDSA sample shows how to sign and verify messages using SHA-256 as the hashing algorithm and the secp256r1 curve.
 
 Overview

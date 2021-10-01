@@ -3,10 +3,6 @@
 Download client
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The download client library can be used to download files from an HTTP or a CoAP server.
 The download is carried out in a separate thread, and the application receives events such as :c:enumerator:`DOWNLOAD_CLIENT_EVT_FRAGMENT` that contain the data fragments as the download progresses.
 The fragment size can be configured independently for HTTP and CoAP (block-wise transfer) using the :kconfig:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` and the :kconfig:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` options, respectively.

@@ -3,10 +3,6 @@
 nRF Cloud cellular positioning
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Cloud cellular positioning library enables applications to request cellular positioning data from `nRF Cloud`_ to be used with the nRF9160 SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 

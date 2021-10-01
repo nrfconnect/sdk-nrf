@@ -3,10 +3,6 @@
 SMS AT commands
 ****************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains SMS-related AT commands.
 
 SMS support #XSMS

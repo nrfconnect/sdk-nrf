@@ -3,10 +3,6 @@
 Thingy:53: Matter weather station
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This Matter weather station application demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a weather station device.
 Such a device lets you remotely gather different kinds of data using the device sensors, such as temperature, air pressure, and relative humidity.
 The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.

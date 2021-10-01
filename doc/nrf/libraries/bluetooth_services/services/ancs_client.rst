@@ -3,10 +3,6 @@
 Apple Notification Center Service (ANCS) Client
 ###############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. note::
 
    Disclaimer: Nordic Semiconductor ASA can change this client implementation of the Apple Notification Center Service at any time.

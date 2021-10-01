@@ -3,10 +3,6 @@
 Quality of Service module
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Quality of Service (QoS) module provides the QoS information through the Bluetooth® GATT service.
 The module can be used only by nRF Desktop peripheral with the SoftDevice Link Layer (:kconfig:`CONFIG_BT_LL_SOFTDEVICE`).
 

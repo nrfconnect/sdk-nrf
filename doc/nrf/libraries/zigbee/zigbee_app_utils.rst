@@ -3,10 +3,6 @@
 Zigbee application utilities
 ############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Zigbee application utilities library provides a set of components that are ready for use in Zigbee applications:
 
 * :ref:`lib_zigbee_signal_handler` for handling common ZBOSS stack signals.

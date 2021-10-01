@@ -3,10 +3,6 @@
 Configuring Zigbee in |NCS|
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This page describes what is needed to start working with Zigbee in the |NCS|.
 
 .. _zigbee_ug_libs:

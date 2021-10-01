@@ -3,10 +3,6 @@
 Generic AT commands
 *******************
 
-.. contents::
-   :local:
-   :depth: 2
-
 The following commands list contains generic AT commands.
 
 SLM version #XSLMVER

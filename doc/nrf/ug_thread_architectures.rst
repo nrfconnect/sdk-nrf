@@ -3,10 +3,6 @@
 OpenThread architectures
 ########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 This page describes the OpenThread stack architecture and platform designs that are possible with the OpenThread network stack on Nordic Semiconductor devices in |NCS|.
 
 The designs are described from the least complex to the most complex, starting with System-on-Chip designs.

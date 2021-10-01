@@ -3,10 +3,6 @@
 Light CTL models
 ################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Color-Tunable Light (CTL) models allow remote control and configuration of CTLs on a mesh device.
 
 The Light CTL models can represent the lightness states on a linear or preceptually uniform lightness scale.

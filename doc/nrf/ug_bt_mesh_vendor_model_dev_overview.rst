@@ -3,10 +3,6 @@
 Vendor model development overview
 #################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 To implement a new Bluetooth® mesh model, apply the steps described in this step-by-step model development process overview.
 
 Defining a model identifier

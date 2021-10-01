@@ -3,10 +3,6 @@
 Using nRF Cloud with the |NCS|
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 `nRF Cloud`_ is `Nordic Semiconductor's IoT cloud platform`_ that offers services in the fields of connectivity, device management, and location services.
 
 Overview

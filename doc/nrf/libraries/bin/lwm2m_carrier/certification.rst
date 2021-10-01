@@ -3,10 +3,6 @@
 Certification and version dependencies
 ######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Every released version of the LwM2M carrier library is considered for certification with applicable carriers.
 The LwM2M carrier library is certified together with specific versions of the modem firmware and the |NCS|.
 

@@ -3,10 +3,6 @@
 Bluetooth mesh sensor types
 ###########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 All sensor types are collected in :file:`include/bluetooth/mesh/sensor_types.h`, and are divided into the categories listed in the page index.
 
 To keep the total flash usage down, the sensor types are only instantiated if they're referenced by the application.

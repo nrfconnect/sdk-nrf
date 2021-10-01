@@ -3,10 +3,6 @@
 USB state power manager module
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |usb_state_pm| is minor, stateless module that imposes an application power level restriction related to the USB state.
 The application power level is managed by the :ref:`power manager module <caf_power_manager>`.
 

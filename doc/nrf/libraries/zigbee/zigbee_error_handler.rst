@@ -3,10 +3,6 @@
 Zigbee error handler
 ####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Zigbee error handler library provides a set of macros that can be used to assert on nrfxlib's :ref:`nrfxlib:zboss` API return codes.
 The assertion is implemented by a call to the :c:func:`k_fatal_halt` function.
 Additionally, you can enable the library to log the error code name before the assertion.

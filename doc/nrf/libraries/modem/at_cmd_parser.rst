@@ -3,10 +3,6 @@
 AT command parser
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AT command parser is a library which parses any of the following:
 
 * A string response returned after issuing an AT command

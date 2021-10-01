@@ -3,10 +3,6 @@
 Generic Property models
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Generic Property models allow remote access to the Device Properties of a mesh node.
 Read more about Device Properties in :ref:`bt_mesh_properties_readme`.
 

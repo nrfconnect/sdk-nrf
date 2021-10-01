@@ -3,10 +3,6 @@
 Crypto: Persistent key storage
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The persistent key sample shows how to generate a persistent key using the Platform Security Architecture (PSA) APIs.
 Persistent keys are stored in the Internal Trusted Storage (ITS) of the device and retain their value between resets.
 A persistent key becomes unusable when the ``psa_destroy_key`` function is called.

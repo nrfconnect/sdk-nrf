@@ -3,10 +3,6 @@
 Secure Partition Manager (SPM)
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 SiP and the nRF5340 SoC.
 
 Overview

@@ -3,10 +3,6 @@
 nRF9160: SMS
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The SMS sample demonstrates how you can send and receive SMS messages with your nRF9160-based device.
 
 

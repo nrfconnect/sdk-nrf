@@ -3,10 +3,6 @@
 CAF: Power manager module
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |power_manager| of the :ref:`lib_caf` (CAF) is responsible for reducing the energy consumption of battery-powered devices.
 The module achieves this reduction by switching to low power modes when the device is not used for a longer period of time.
 

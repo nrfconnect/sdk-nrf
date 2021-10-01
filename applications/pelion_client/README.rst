@@ -3,10 +3,6 @@
 nRF Pelion Client
 #################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Pelion Client application demonstrates the integration of the Pelion Device Management library within the |NCS|.
 The application constructs Open Mobile Alliance (OMA) objects, connects to the Pelion Device Management platform, and sends data to the web server over either LTE or OpenThread.
 

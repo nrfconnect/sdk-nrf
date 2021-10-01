@@ -3,10 +3,6 @@
 nRF9160: AT monitor
 ###################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The AT monitor sample demonstrates how to use the :ref:`at_monitor_readme` library and define AT monitors to receive AT notifications from the :ref:`nrfxlib:nrf_modem`.
 
 Requirements

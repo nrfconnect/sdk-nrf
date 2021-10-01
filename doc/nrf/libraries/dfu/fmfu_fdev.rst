@@ -3,10 +3,6 @@
 Full modem firmware update from flash device
 ############################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The fmfu_fdev library provides an API for applying a full modem firmware update from a flash device.
 
 Functionality

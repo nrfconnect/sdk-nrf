@@ -3,10 +3,6 @@
 CAF: Simple Management Protocol module
 ######################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |smp| of the :ref:`lib_caf` (CAF) allows to perform the device firmware upgrade (DFU) over Bluetooth® LE.
 
 Configuration

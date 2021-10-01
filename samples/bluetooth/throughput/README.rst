@@ -3,10 +3,6 @@
 Bluetooth: Throughput
 #####################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. note::
    The implementation and usage of this sample has changed considerably with |NCS| v1.5.0.
 

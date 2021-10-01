@@ -3,10 +3,6 @@
 PDN
 ###
 
-.. contents::
-   :local:
-   :depth: 2
-
 The PDN library can be used to manage Packet Data Protocol (PDP) contexts and PDN connections.
 It provides an API for the following purposes:
 

@@ -3,10 +3,6 @@
 Crypto: RSA
 ###########
 
-.. contents::
-   :local:
-   :depth: 2
-
 The RSA sample shows how to perform singing and verification of a sample plaintext using a 1024-bit key.
 
 Overview

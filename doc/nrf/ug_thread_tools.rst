@@ -3,10 +3,6 @@
 Thread tools
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The tools listed on this page can be helpful when developing your Thread application with the |NCS|.
 
 .. _ug_thread_tools_sniffer:

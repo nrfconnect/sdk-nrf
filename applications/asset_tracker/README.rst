@@ -3,10 +3,6 @@
 nRF9160: Asset Tracker
 ######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. note::
    The Asset Tracker application is deprecated and succeeded by the :ref:`asset_tracker_v2` application.
 

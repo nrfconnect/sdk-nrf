@@ -3,10 +3,6 @@
 Scene Client
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Scene Client model remotely controls the state of a :ref:`bt_mesh_scene_srv_readme` model.
 
 Unlike the Scene Server model, the Scene Client only creates a single model instance in the mesh composition data.

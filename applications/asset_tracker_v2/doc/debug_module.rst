@@ -3,10 +3,6 @@
 Debug module
 ############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The debug module intends to improve the overall debugging experience in the application.
 By default, it subscribes to all the events in the system and implements support for `Memfault`_ through the :ref:`mod_memfault` module integrated in |NCS|.
 

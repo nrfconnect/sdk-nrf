@@ -3,10 +3,6 @@
 nRF9160: Asset Tracker v2
 #########################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The Asset Tracker v2 is a real-time configurable ultra-low power capable application firmware for the nRF9160 :term:`System in Package (SiP)`.
 It is a complete rework of the :ref:`asset_tracker` application.
 

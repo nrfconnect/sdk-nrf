@@ -3,10 +3,6 @@
 Build and configuration system
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The |NCS| build and configuration system is based on the one from Zephyr, with some additions.
 
 Zephyr's build and configuration system

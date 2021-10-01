@@ -3,10 +3,6 @@
 Changelog
 #########
 
-.. contents::
-   :local:
-   :depth: 2
-
 All notable changes to this project are documented in this file.
 
 liblwm2m_carrier 0.20.1

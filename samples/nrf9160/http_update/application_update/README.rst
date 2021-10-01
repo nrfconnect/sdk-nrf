@@ -3,10 +3,6 @@
 nRF9160: HTTP application update
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
-
 The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
 It uses the :ref:`lib_fota_download` library to download a file from a remote server and write it to flash.
 

@@ -3,10 +3,6 @@
 nRF Cloud P-GPS
 ###############
 
-.. contents::
-   :local:
-   :depth: 2
-
 The nRF Cloud P-GPS library enables applications to request and process predicted GPS data from `nRF Cloud`_ to be used with the nRF9160 SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 It can be used with or without Assisted GPS (`A-GPS`_) data from nRF Cloud.
