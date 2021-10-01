@@ -16,7 +16,7 @@
 #include <logging/log.h>
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud_agps.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 #include <modem/agps.h>
 
 #if defined(CONFIG_REST_ID_SRC_COMPILE_TIME)
@@ -49,19 +49,10 @@ static K_SEM_DEFINE(do_agps_request_sem, 0, 1);
 static struct modem_param_info modem_info;
 static struct lte_lc_cell current_cell;
 
-static const struct device *gps_dev;
-static struct gps_config gps_cfg = {
-	.nav_mode = GPS_NAV_MODE_PERIODIC,
-	.power_mode = GPS_POWER_MODE_DISABLED,
-	.timeout = 120,
-	.interval = 240,
-	.priority = true,
-};
-static struct gps_agps_request agps_request;
-
-#if defined(CONFIG_REST_DO_JITP)
+static struct nrf_modem_gnss_agps_data_frame agps_request;
+static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static struct nrf_modem_gnss_nmea_data_frame last_nmea;
 static bool jitp_requested;
-#endif
 
 static bool disconnected = true;
 
@@ -115,7 +106,7 @@ static int set_device_id(void)
 	return -ENOTRECOVERABLE;
 }
 
-static void print_pvt_data(struct gps_pvt *pvt_data)
+static void print_pvt_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	char buf[300];
 	size_t len;
@@ -140,7 +131,7 @@ static void print_pvt_data(struct gps_pvt *pvt_data)
 	}
 }
 
-static void print_satellite_stats(struct gps_pvt *pvt_data)
+static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	uint8_t tracked = 0;
 	uint32_t tracked_sats = 0;
@@ -148,7 +139,7 @@ static void print_satellite_stats(struct gps_pvt *pvt_data)
 	char print_buf[100];
 	size_t print_buf_len;
 
-	for (int i = 0; i < GPS_PVT_MAX_SV_COUNT; ++i) {
+	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; ++i) {
 		if ((pvt_data->sv[i].sv > 0) &&
 		    (pvt_data->sv[i].sv < 33)) {
 			tracked++;
@@ -184,40 +175,56 @@ static void print_satellite_stats(struct gps_pvt *pvt_data)
 	LOG_INF("%s", log_strdup(print_buf));
 }
 
-static void gps_handler(const struct device *dev, struct gps_event *evt)
+static void gnss_event_handler(int event)
 {
-	ARG_UNUSED(dev);
+	int ret;
 
-	switch (evt->type) {
-	case GPS_EVT_SEARCH_STARTED:
-		LOG_INF("GPS_EVT_SEARCH_STARTED");
+	switch (event) {
+	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
+		LOG_INF("GNSS_EVT_PERIODIC_WAKEUP");
 		break;
-	case GPS_EVT_SEARCH_STOPPED:
-		LOG_INF("GPS_EVT_SEARCH_STOPPED");
+	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
+		LOG_INF("GNSS_EVT_SLEEP_AFTER_FIX");
 		break;
-	case GPS_EVT_SEARCH_TIMEOUT:
-		LOG_INF("GPS_EVT_SEARCH_TIMEOUT");
+	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
+		LOG_INF("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
 		break;
-	case GPS_EVT_OPERATION_BLOCKED:
-		LOG_INF("GPS_EVT_OPERATION_BLOCKED");
+	case NRF_MODEM_GNSS_EVT_BLOCKED:
+		LOG_INF("GNSS_EVT_BLOCKED");
 		break;
-	case GPS_EVT_OPERATION_UNBLOCKED:
-		LOG_INF("GPS_EVT_OPERATION_UNBLOCKED");
+	case NRF_MODEM_GNSS_EVT_UNBLOCKED:
+		LOG_INF("GNSS_EVT_UNBLOCKED");
 		break;
-	case GPS_EVT_AGPS_DATA_NEEDED:
-		LOG_INF("GPS_EVT_AGPS_DATA_NEEDED");
-		memcpy(&agps_request, &evt->agps_request, sizeof(agps_request));
+	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+		LOG_INF("GNSS_EVT_AGPS_REQ");
+		ret = nrf_modem_gnss_read(&agps_request, sizeof(agps_request),
+					  NRF_MODEM_GNSS_DATA_AGPS_REQ);
+		if (ret) {
+			break;
+		}
 		k_sem_give(&do_agps_request_sem);
 		break;
-	case GPS_EVT_PVT:
-		print_satellite_stats(&evt->pvt);
+	case NRF_MODEM_GNSS_EVT_PVT:
+		ret = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
+		if (!ret) {
+			print_satellite_stats(&last_pvt);
+		}
 		break;
-	case GPS_EVT_PVT_FIX:
-		LOG_INF("GPS_EVT_PVT_FIX");
-		print_pvt_data(&evt->pvt);
+	case NRF_MODEM_GNSS_EVT_FIX:
+		LOG_INF("GNSS_EVT_FIX");
+		ret = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
+		if (!ret) {
+			print_pvt_data(&last_pvt);
+		}
 		break;
-	case GPS_EVT_NMEA_FIX:
-		LOG_INF("GPS_EVT_NMEA_FIX");
+	case NRF_MODEM_GNSS_EVT_NMEA:
+		if (IS_ENABLED(CONFIG_REST_NMEA)) {
+			ret = nrf_modem_gnss_read(&last_nmea, sizeof(last_nmea),
+						     NRF_MODEM_GNSS_DATA_NMEA);
+			if (!ret) {
+				LOG_INF("NMEA: %s", log_strdup(last_nmea.nmea_str));
+			}
+		}
 		break;
 	default:
 		break;
@@ -226,30 +233,28 @@ static void gps_handler(const struct device *dev, struct gps_event *evt)
 
 static int set_led(const int state)
 {
-#if defined(CONFIG_REST_ENABLE_LED)
-	int err = dk_set_led(LED_NUM, state);
+	if (IS_ENABLED(CONFIG_REST_ENABLE_LED)) {
+		int err = dk_set_led(LED_NUM, state);
 
-	if (err) {
-		LOG_ERR("Failed to set LED, error: %d", err);
-		return err;
+		if (err) {
+			LOG_ERR("Failed to set LED, error: %d", err);
+			return err;
+		}
 	}
-#else
-	ARG_UNUSED(state);
-#endif
 	return 0;
 }
 
 static int init_led(void)
 {
-#if defined(CONFIG_REST_ENABLE_LED)
-	int err = dk_leds_init();
+	if (IS_ENABLED(CONFIG_REST_ENABLE_LED)) {
+		int err = dk_leds_init();
 
-	if (err) {
-		LOG_ERR("LED init failed, error: %d", err);
-		return err;
+		if (err) {
+			LOG_ERR("LED init failed, error: %d", err);
+			return err;
+		}
+		(void)set_led(0);
 	}
-	(void)set_led(0);
-#endif
 	return 0;
 }
 
@@ -264,9 +269,11 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 
 static int request_jitp(void)
 {
+	if (!IS_ENABLED(CONFIG_REST_DO_JITP)) {
+		return 0;
+	}
 	int ret = 0;
 
-#if defined(CONFIG_REST_DO_JITP)
 	jitp_requested = false;
 
 	(void)k_sem_take(&button_press_sem, K_NO_WAIT);
@@ -285,15 +292,16 @@ static int request_jitp(void)
 		LOG_INF("JITP will be performed after network connection is obtained");
 		ret = 0;
 	}
-#endif
 	return ret;
 }
 
 static int do_jitp(void)
 {
+	if (!IS_ENABLED(CONFIG_REST_DO_JITP)) {
+		return 0;
+	}
 	int ret = 0;
 
-#if defined(CONFIG_REST_DO_JITP)
 	if (!jitp_requested) {
 		return 0;
 	}
@@ -313,7 +321,6 @@ static int do_jitp(void)
 	} else {
 		LOG_ERR("Device provisioning failed");
 	}
-#endif
 	return ret;
 }
 
@@ -343,6 +350,62 @@ static int get_modem_info(struct modem_param_info *const modem_info)
 	return 0;
 }
 
+static int init_gnss(void)
+{
+	int err;
+
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
+	if (err) {
+		LOG_ERR("Unable to activate GPS mode: %d", err);
+		return err;
+	}
+
+	/* Initialize and configure GNSS */
+	err = nrf_modem_gnss_init();
+	if (err) {
+		LOG_ERR("Failed to initialize GNSS interface: %d", err);
+		return err;
+	}
+
+	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
+	if (err) {
+		LOG_ERR("Failed to set GNSS event handler: %d", err);
+		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_REST_NMEA)) {
+		err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_RMC_MASK |
+						  NRF_MODEM_GNSS_NMEA_GGA_MASK |
+						  NRF_MODEM_GNSS_NMEA_GLL_MASK |
+						  NRF_MODEM_GNSS_NMEA_GSA_MASK |
+						  NRF_MODEM_GNSS_NMEA_GSV_MASK);
+		if (err) {
+			LOG_ERR("Failed to set GNSS NMEA mask: %d", err);
+			return err;
+		}
+	}
+
+	err = nrf_modem_gnss_fix_retry_set(120);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix retry: %d", err);
+		return err;
+	}
+
+	err = nrf_modem_gnss_fix_interval_set(240);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix interval: %d", err);
+		return err;
+	}
+
+	err = nrf_modem_gnss_start();
+	if (err) {
+		LOG_ERR("Failed to start GNSS: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 static int init(void)
 {
 	int err;
@@ -366,13 +429,11 @@ static int init(void)
 		return err;
 	}
 
-	gps_dev = device_get_binding("NRF9160_GPS");
-	if (gps_dev != NULL) {
-		err = gps_init(gps_dev, gps_handler);
-		if (!err) {
-			LOG_INF("GPS INITD");
-		}
+	err = init_gnss();
+	if (err) {
+		return err;
 	}
+	LOG_INF("GPS started");
 
 	err = set_device_id();
 	if (err) {
@@ -516,11 +577,6 @@ void main(void)
 	}
 
 	agps_print_enable(false);
-
-	err = gps_start(gps_dev, &gps_cfg);
-	if (!err) {
-		LOG_INF("GPS STARTED!");
-	}
 
 	(void)do_jitp();
 
