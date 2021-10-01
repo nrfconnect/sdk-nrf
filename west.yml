@@ -170,7 +170,7 @@ manifest:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 4a126e0465056539d20b0351bb9bf6e684f15ff4
+      revision: 4488adb531668d84de3b9d348823495282698abc
       groups:
       - find-my
     - name: memfault-firmware-sdk
