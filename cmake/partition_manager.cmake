@@ -496,7 +496,7 @@ else()
   endforeach()
 
   if (CONFIG_BOOTLOADER_MCUBOOT)
-    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY AND CONFIG_HAS_HW_NRF_QSPI)
       # First we see if an ext flash dev has been chosen, if not, then we look
       # up the 'qspi' node and assume that this has the required address.
       if (DEFINED ext_flash_dev)
