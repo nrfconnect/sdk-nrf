@@ -603,12 +603,12 @@ See :ref:`cmake_options` for more instructions on how to add these options.
 PPP support
 ===========
 
-To build the MoSh sample with PPP/dial up support for Windows, use the ``-DOVERLAY_CONFIG=overlay-ppp.conf`` option.
+To build the MoSh sample with PPP/dial up support, use the ``-DDTC_OVERLAY_FILE=ppp.overlay`` and ``-DOVERLAY_CONFIG=overlay-ppp.conf`` options.
 For example:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-ppp.conf
+   west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=ppp.overlay -DOVERLAY_CONFIG=overlay-ppp.conf
 
 Application FOTA support
 ========================
