@@ -67,7 +67,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define AGPS_CUSTOM_TYPE_CNT		9
 /* Custom type format is a comma separated list of
- * @ref enum gps_agps_type digits
+ * @ref enum nrf_cloud_agps_type digits
  * digits.
  */
 #define AGPS_CUSTOM_TYPE_STR_SZ		(AGPS_CUSTOM_TYPE_CNT * 2)
@@ -681,15 +681,15 @@ clean_up:
 /* AGPS_TYPE_PRINT macro assumes single digit values, check for the rare case that the
  * enum is modified.
  */
-BUILD_ASSERT((GPS_AGPS_UTC_PARAMETERS <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_EPHEMERIDES <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_ALMANAC <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_KLOBUCHAR_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_NEQUICK_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_INTEGRITY <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_LOCATION <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS <= AGPS_CUSTOM_TYPE_CNT) &&
-	     (GPS_AGPS_GPS_TOWS <= AGPS_CUSTOM_TYPE_CNT),
+BUILD_ASSERT((NRF_CLOUD_AGPS_UTC_PARAMETERS <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_EPHEMERIDES <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_ALMANAC <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_NEQUICK_CORRECTION <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_INTEGRITY <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_LOCATION <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK <= AGPS_CUSTOM_TYPE_CNT) &&
+	     (NRF_CLOUD_AGPS_GPS_TOWS <= AGPS_CUSTOM_TYPE_CNT),
 	     "A-GPS enumeration values have changed, update format_agps_custom_types_str()");
 
 /* Macro to print the comma separated list of custom types */
@@ -699,7 +699,7 @@ BUILD_ASSERT((GPS_AGPS_UTC_PARAMETERS <= AGPS_CUSTOM_TYPE_CNT) &&
 	}					\
 	buf[pos++] = (char)('0' + type)
 
-static int format_agps_custom_types_str(struct gps_agps_request const *const req,
+static int format_agps_custom_types_str(struct nrf_modem_gnss_agps_data_frame const *const req,
 	char *const types_buf)
 {
 	__ASSERT_NO_MSG(req != NULL);
@@ -707,30 +707,30 @@ static int format_agps_custom_types_str(struct gps_agps_request const *const req
 
 	int pos = 0;
 
-	if (req->utc) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_UTC_PARAMETERS);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_UTC_PARAMETERS);
 	}
 	if (req->sv_mask_ephe) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_EPHEMERIDES);
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_EPHEMERIDES);
 	}
 	if (req->sv_mask_alm) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_ALMANAC);
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_ALMANAC);
 	}
-	if (req->klobuchar) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_KLOBUCHAR_CORRECTION);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION);
 	}
-	if (req->nequick) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_NEQUICK_CORRECTION);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_NEQUICK_CORRECTION);
 	}
-	if (req->system_time_tow) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_GPS_TOWS);
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_GPS_TOWS);
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK);
 	}
-	if (req->position) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_LOCATION);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_LOCATION);
 	}
-	if (req->integrity) {
-		AGPS_TYPE_PRINT(types_buf, GPS_AGPS_INTEGRITY);
+	if (req->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+		AGPS_TYPE_PRINT(types_buf, NRF_CLOUD_AGPS_INTEGRITY);
 	}
 
 	types_buf[pos] = '\0';
