@@ -13,7 +13,7 @@
 
 /* Doc link boxes on the start page */
 
-.rst-content blockquote.doc-link {
+blockquote.doc-link {
  padding: 0 10px;
  display: block;
  width: 450px;

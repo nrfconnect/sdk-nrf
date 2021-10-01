@@ -68,13 +68,22 @@ rst_epilog = """
 
 # Options for HTML output ------------------------------------------------------
 
-html_theme = "sphinx_ncs_theme"
+html_theme = "sphinx_book_theme"
 html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_logo = str(NRF_BASE / "doc" / "_static" / "images" / "ncs-logo.webp")
+html_title = project
 
-html_theme_options = {"docsets": utils.get_docsets("nrf")}
+html_theme_options = {
+    "github_url": "https://github.com/nrfconnect/sdk-nrf/",
+    "repository_url": "https://github.com/nrfconnect/sdk-nrf/",
+    "use_edit_page_button": True,
+    "repository_branch": "master",
+    "path_to_docs": "doc",
+    "extra_navbar": "",
+}
 
 # Options for intersphinx ------------------------------------------------------
 
