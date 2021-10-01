@@ -201,10 +201,14 @@ static void leds_start(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
 #ifdef CONFIG_PM_DEVICE
-		int err = pm_device_state_set(leds[i].dev,
-					      PM_DEVICE_STATE_ACTIVE);
-		if (err) {
-			LOG_ERR("PWM enable failed");
+		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_ACTIVE);
+
+		if (IS_ENABLED(CONFIG_CAF_LEDS_GPIO) && (err == -ENOSYS)) {
+			/* Zephyr power management API is not implemented for GPIO LEDs.
+			 * LEDs are turned off by CAF LEDs module.
+			 */
+		} else if (err) {
+			LOG_ERR("Failed to set LED driver into active state (err: %d)", err);
 		}
 #endif
 		led_update(&leds[i]);
@@ -219,10 +223,14 @@ static void leds_stop(void)
 		set_off(&leds[i]);
 
 #ifdef CONFIG_PM_DEVICE
-		int err = pm_device_state_set(leds[i].dev,
-					      PM_DEVICE_STATE_SUSPEND);
-		if (err) {
-			LOG_ERR("PWM disable failed");
+		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_SUSPEND);
+
+		if (IS_ENABLED(CONFIG_CAF_LEDS_GPIO) && (err == -ENOSYS)) {
+			/* Zephyr power management API is not implemented for GPIO LEDs.
+			 * LEDs are turned off by CAF LEDs module.
+			 */
+		} else if (err) {
+			LOG_ERR("Failed to set LED driver into suspend state (err: %d)", err);
 		}
 #endif
 	}
