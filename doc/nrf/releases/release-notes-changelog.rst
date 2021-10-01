@@ -229,6 +229,11 @@ nRF9160 samples
   * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
   * Added support for nRF Cloud A-GPS and P-GPS.
     A-GPS support is enabled by default.
+  * PPP updates:
+    * IPv6 support
+    * LTE link MTU to be informed to PC
+    * Improved autostart of PPP
+    * Changes for better performance
 
 * :ref:`gnss_sample` sample:
 
