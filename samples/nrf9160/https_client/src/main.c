@@ -212,7 +212,11 @@ void main(void)
 
 	((struct sockaddr_in *)res->ai_addr)->sin_port = htons(HTTPS_PORT);
 
-	fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
+		fd = socket(AF_INET, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+	} else {
+		fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+	}
 	if (fd == -1) {
 		printk("Failed to open socket!\n");
 		goto clean_up;
