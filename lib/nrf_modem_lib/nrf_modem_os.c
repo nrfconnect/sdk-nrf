@@ -452,7 +452,7 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 	return 1; /* We should check if scheduling decision should be made */
 }
 
-#ifdef NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 {
 	/*
@@ -647,7 +647,7 @@ void nrf_modem_os_init(void)
 	trace_rtt_init();
 #endif
 
-#ifdef NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 	trace_task_create();
 #endif
 
