@@ -555,11 +555,11 @@ static int configure_memory_usage(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE_EXT;
-		} else {
-			cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
-		}
+#if defined(CONFIG_BT_CTLR_ADV_EXT)
+		cfg.adv_buffer_cfg.max_adv_data = CONFIG_BT_CTLR_ADV_DATA_LEN_MAX;
+#else
+		cfg.adv_buffer_cfg.max_adv_data = SDC_DEFAULT_ADV_BUF_SIZE;
+#endif
 
 		required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
