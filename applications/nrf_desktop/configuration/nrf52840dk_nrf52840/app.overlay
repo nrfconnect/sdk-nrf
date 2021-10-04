@@ -1,5 +1,11 @@
 / {
 	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+/ {
+	chosen {
 		/*
 		 * In some default configurations within the nRF Connect SDK,
 		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
