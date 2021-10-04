@@ -409,7 +409,24 @@ static int fem_simple_gpio_configure(void)
 		}
 	};
 
-	err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));
+	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
+		   (err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));));
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
+		   (err = ppi_channel_alloc(cfg.dppi_channels, ARRAY_SIZE(cfg.dppi_channels));));
+	if (err) {
+		return err;
+	}
+
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
+		   (err = egu_instance_alloc(&cfg.egu_instance_no);));
+	if (err) {
+		return err;
+	}
+
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
+		   (err = egu_channel_alloc(cfg.egu_channels,
+					    ARRAY_SIZE(cfg.egu_channels),
+					    cfg.egu_instance_no);))
 	if (err) {
 		return err;
 	}
