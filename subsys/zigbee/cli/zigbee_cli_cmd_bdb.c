@@ -20,7 +20,7 @@
 	("Set Trust Center install code policy.\n" \
 	"Usage: policy <enable|disable>")
 
-#define IC_SET_POLICY \
+#define IC_SET_POLICY_HELP \
 	("Add install code for device with given eui64.\n" \
 	"Usage: add <h:install_code> <h:eui64>")
 
@@ -46,7 +46,7 @@
 	"Usage: panid [<h:id>]")
 
 struct ic_cmd_ctx {
-	bool taken;
+	volatile bool taken;
 	zb_ieee_addr_t addr;
 	zb_uint8_t ic[ZB_CCM_KEY_SIZE + 2];
 	const struct shell *shell;
@@ -59,6 +59,19 @@ static zb_nwk_device_type_t default_role = ZB_NWK_DEVICE_TYPE_ROUTER;
 #else
 static zb_nwk_device_type_t default_role = ZB_NWK_DEVICE_TYPE_ED;
 #endif
+
+/**@brief Get Zigbee role set for the device.
+ *
+ * @return Zigbee role already set or role planned to set if stack is not yet started.
+ */
+static zb_nwk_device_type_t zb_cli_get_network_role(void)
+{
+	if (zigbee_is_stack_started()) {
+		return zb_get_network_role();
+	} else {
+		return default_role;
+	}
+}
 
 /**@brief Get Zigbee role of the device.
  *
@@ -83,14 +96,14 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 			shell,
 			"Zigbee stack has been configured in the past.\r\n"
 			"Please start the Zigbee stack to check the configured role.");
+
+		zb_cli_print_error(shell,
+				   "Can't get role before stack is started - NVRAM not empty",
+				   ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	if (zigbee_is_stack_started()) {
-		role = zb_get_network_role();
-	} else {
-		role = default_role;
-	}
+	role = zb_cli_get_network_role();
 
 	if (role == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 		shell_print(shell, "zc");
@@ -336,6 +349,10 @@ static int cmd_zb_extpanid(const struct shell *shell, size_t argc, char **argv)
 				shell,
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the Extended PAN ID.");
+
+			zb_cli_print_error(shell,
+					   "Can't change extpanid - NVRAM not empty",
+					   ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -371,7 +388,7 @@ static int cmd_zb_panid(const struct shell *shell, size_t argc, char **argv)
 	zb_uint16_t pan_id;
 
 	if (argc == 1) {
-		shell_print(shell, "%0x", ZB_PIBCACHE_PAN_ID());
+		shell_print(shell, "%0X", ZB_PIBCACHE_PAN_ID());
 		zb_cli_print_done(shell, ZB_FALSE);
 	} else if (argc == 2) {
 		if (zigbee_is_stack_started()) {
@@ -389,6 +406,10 @@ static int cmd_zb_panid(const struct shell *shell, size_t argc, char **argv)
 				shell,
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the PAN ID.");
+
+			zb_cli_print_error(shell,
+					   "Can't change PAN ID - NVRAM not empty",
+					   ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -446,6 +467,36 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 		chan[0] = zb_get_bdb_primary_channel_set();
 		chan[1] = zb_get_bdb_secondary_channel_set();
 
+		/* Chech for case in which channel mask can not be read. */
+		if (zigbee_is_nvram_initialised() && !zigbee_is_stack_started()
+#ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
+		    && zb_cli_nvram_enabled()
+#endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
+		   ) {
+			shell_warn(
+				shell,
+				"Zigbee stack has been configured in the past.\r\n"
+				"Please start the Zigbee stack to check the configured channels.");
+
+			zb_cli_print_error(shell,
+					   "Can't get channel mask - NVRAM not empty",
+					   ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		/* If channel lists are empty, the default channel will be used.
+		 * Set it to correct value so it can be printed correctly.
+		 */
+		if (chan[0] == 0) {
+#if defined CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
+			chan[0] = (1U << CONFIG_ZIGBEE_CHANNEL);
+			chan[1] = (1U << CONFIG_ZIGBEE_CHANNEL);
+#elif defined CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI
+			chan[0] = CONFIG_ZIGBEE_CHANNEL_MASK;
+			chan[1] = CONFIG_ZIGBEE_CHANNEL_MASK;
+#endif
+		}
+
 		/* Print for both channels. */
 		for (c = 0; c < 2; c++) {
 			shell_fprintf(shell, SHELL_NORMAL, "%s channel(s):",
@@ -477,6 +528,10 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 				shell,
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the channel mask.");
+
+			zb_cli_print_error(shell,
+					   "Can't change channel mask - NVRAM not empty",
+					   ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -543,15 +598,13 @@ void zb_install_code_add(zb_uint8_t param)
 
 	if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 		zb_cli_print_error(ic_add_ctx.shell,
-			"Failed to add IC. Device must be a coordinator",
-			ZB_FALSE);
+				   "Failed to add IC. Device must be a coordinator",
+				   ZB_FALSE);
 		return;
 	}
 
 #ifndef ZB_ED_ROLE
 	zb_secur_ic_add(ic_add_ctx.addr, ZB_IC_TYPE_128, ic_add_ctx.ic, zb_secur_ic_add_cb);
-	zb_cli_print_done(ic_add_ctx.shell, ZB_FALSE);
-
 #endif /* ZB_ED_ROLE */
 }
 
@@ -564,8 +617,7 @@ void zb_install_code_add(zb_uint8_t param)
  * bdb ic policy <enable|disable>
  * @endcode
  *
- * @pre Setting and defining policy only before @ref start "bdb start".
- * Adding only after @ref start "bdb start".
+ * @pre Adding install codes only after @ref start "bdb start".
  *
  * <tt>bdb ic set</tt> must only be used on a joining device.
  *
@@ -595,7 +647,7 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 	zb_uint8_t ic[ZB_CCM_KEY_SIZE + 2];
 
 	if ((argc == 2) && (strcmp(argv[0], "set") == 0)) {
-		if (zb_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+		if (zb_cli_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 			zb_cli_print_error(shell, "Device can't be a coordinator",
 					   ZB_FALSE);
 			return -ENOEXEC;
@@ -622,9 +674,9 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 		/* Check if stack is initialized as Install Code can not
 		 * be added until production config is initialised.
 		 */
-		if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 			zb_cli_print_error(shell, "Device must be a coordinator",
-				    ZB_FALSE);
+					   ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -633,6 +685,8 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 					   ZB_FALSE);
 			return -ENOEXEC;
 		}
+
+		ic_add_ctx.shell = shell;
 
 		if (ic_add_ctx.taken == true) {
 			err_msg = "Can not get ctx to store install code";
@@ -663,14 +717,8 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 		return 0;
 
 	} else if ((argc == 2) && (strcmp(argv[0], "policy") == 0)) {
-		if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 			zb_cli_print_error(shell, "Device must be a coordinator",
-					   ZB_FALSE);
-			return -ENOEXEC;
-		}
-
-		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack already started",
 					   ZB_FALSE);
 			return -ENOEXEC;
 		}
@@ -713,7 +761,7 @@ exit:
  */
 static int cmd_zb_legacy(const struct shell *shell, size_t argc, char **argv)
 {
-	if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+	if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 		zb_cli_print_error(shell, "Device must be a coordinator",
 				   ZB_FALSE);
 		return -ENOEXEC;
@@ -844,6 +892,10 @@ static int cmd_zb_nwkkey(const struct shell *shell, size_t argc, char **argv)
 			shell,
 			"Zigbee stack has been configured in the past.\r\n"
 			"Please disable NVRAM to change the preconfigured network key.");
+
+		zb_cli_print_error(shell,
+				   "Can't change NWK key - NVRAM not empty",
+				   ZB_FALSE);
 		return -ENOEXEC;
 	}
 
@@ -932,7 +984,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_ic,
 	SHELL_CMD_ARG(add, NULL, IC_ADD_HELP, cmd_zb_install_code, 3, 0),
 #ifndef ZB_ED_ROLE
 	SHELL_CMD_ARG(policy, NULL, IC_POLICY_HELP, cmd_zb_install_code, 2, 0),
-	SHELL_CMD_ARG(set, NULL, IC_SET_POLICY, cmd_zb_install_code, 2, 0),
+	SHELL_CMD_ARG(set, NULL, IC_SET_POLICY_HELP, cmd_zb_install_code, 2, 0),
 #endif
 	SHELL_SUBCMD_SET_END);
 
