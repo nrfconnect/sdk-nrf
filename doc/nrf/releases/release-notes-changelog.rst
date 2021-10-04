@@ -336,6 +336,7 @@ In addition to documentation related to the changes listed above, the following 
 * Added:
 
   * :ref:`lib_fatal_error` documentation.
+  * :ref:`library_template` - added a template for documenting libraries.
 
 * Updated pages:
 
