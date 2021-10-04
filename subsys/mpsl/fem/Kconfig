@@ -19,8 +19,7 @@ config MPSL_FEM
 	bool "Radio front-end module (FEM) support"
 	# MPSL_FEM_GENERIC_TWO_CTRL_PINS is not supported on nRF53 yet
 	depends on MPSL
-	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT || \
-		(MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT && !SOC_SERIES_NRF53X)
+	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	default y
 	help
 	  Controls if front-end module (FEM) is to be configured and enabled
