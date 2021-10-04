@@ -9,6 +9,8 @@ import argparse
 import numpy as np
 
 
+INTERP_OUT_OF_RANGE_VAL = -1
+
 def sync_peripheral_ts(ts_peripheral, sync_ts_peripheral, sync_ts_central):
     MSE_THRESH = 1e-9
     # Predict using linear regression only if the Mean Squared Error is low.
@@ -26,7 +28,8 @@ def sync_peripheral_ts(ts_peripheral, sync_ts_peripheral, sync_ts_central):
         print('Use piecewise linear interpolation')
         return np.interp(np.array(ts_peripheral[list(list(elem is not None for elem in row) for row in ts_peripheral)],
                                   dtype='float64'),
-                         sync_ts_peripheral, sync_ts_central, left=-1, right=-1)
+                         sync_ts_peripheral, sync_ts_central,
+                         left=INTERP_OUT_OF_RANGE_VAL, right=INTERP_OUT_OF_RANGE_VAL)
 
 
 def main():
@@ -121,6 +124,11 @@ def main():
         x.submit.timestamp >= start_time and (x.proc_end_time <= end_time if x.proc_end_time is not None \
             else x.submit.timestamp <= end_time),
         evt_central.tracked_events))
+
+    # Filter out events that were out of interpolation range
+    evt_peripheral.tracked_events = list(filter(lambda x:
+        INTERP_OUT_OF_RANGE_VAL not in (x.submit.timestamp, x.proc_start_time, x.proc_end_time),
+        evt_peripheral.tracked_events))
 
     all_registered_events_types = evt_peripheral.registered_events_types.copy()
     all_registered_events_types.update(evt_central.registered_events_types)
