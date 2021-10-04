@@ -132,7 +132,7 @@ manifest:
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
-      revision: 50bddddf7fb45e4ce87bc3619df06db55d181856
+      revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
