@@ -1056,7 +1056,6 @@ Disable Zigbee NVRAM.
 
 .. |precondition2| replace:: Setting only before :ref:`bdb_start`.
 
-.. |precondition3| replace:: Setting and defining policy only before :ref:`bdb_start`.
-   Adding only after :ref:`bdb_start`.
+.. |precondition3| replace:: Adding install codes only after :ref:`bdb_start`.
 
 .. |precondition4| replace:: Use only after :ref:`bdb_start`.
