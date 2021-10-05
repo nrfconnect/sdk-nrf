@@ -136,7 +136,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 6e2ab99d68f5cd4c6ad5d728b7c7baadfcd22429
+      revision: de387884c80094df8e310353c3a487c13c0c056b
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
