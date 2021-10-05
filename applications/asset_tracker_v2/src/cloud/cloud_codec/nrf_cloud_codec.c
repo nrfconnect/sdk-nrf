@@ -370,7 +370,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_battery *bat_buf)
 {
-	int err;
+	int err, len;
 	char *buffer;
 	bool msg_obj_added = false;
 	bool state_obj_added = false;
@@ -412,11 +412,22 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 	/* Humidity and Temperateure */
 
 	/* Convert to humidity and temperateure to string format. */
-	char humidity[10];
-	char temperature[10];
+	char humidity[7];
+	char temperature[7];
 
-	snprintf(humidity, sizeof(humidity), "%f", sensor_buf->hum);
-	snprintf(temperature, sizeof(temperature), "%f", sensor_buf->temp);
+	len = snprintk(humidity, sizeof(humidity), "%.2f", sensor_buf->hum);
+	if ((len < 0) || (len >= sizeof(humidity))) {
+		LOG_ERR("Cannot convert humidity to string, buffer to small");
+		err = -ENOMEM;
+		goto add_object;
+	}
+
+	len = snprintk(temperature, sizeof(temperature), "%.2f", sensor_buf->temp);
+	if ((len < 0) || (len >= sizeof(temperature))) {
+		LOG_ERR("Cannot convert temperature to string, buffer to small");
+		err = -ENOMEM;
+		goto add_object;
+	}
 
 	/* Make a copy of the sensor timestamp. Timestamps are converted before encoding add
 	 * humidity and temperature share the same timestamp.
@@ -444,14 +455,19 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 	 * message.
 	 */
 	if (modem_dyn_buf->queued && modem_dyn_buf->rsrp_fresh) {
-		char rsrp[7];
+		char rsrp[5];
 
 		/* Make a copy of the timestamp to avoid error when converting the relative
 		 * timestamp twice with date_time_uptime_to_unix_time_ms().
 		 */
 		int64_t rsrp_ts = modem_dyn_buf->ts;
 
-		snprintf(rsrp, sizeof(rsrp), "%d", modem_dyn_buf->rsrp);
+		len = snprintk(rsrp, sizeof(rsrp), "%d", modem_dyn_buf->rsrp);
+		if ((len < 0) || (len >= sizeof(rsrp))) {
+			LOG_ERR("Cannot convert RSRP value to string, buffer to small");
+			err = -ENOMEM;
+			goto add_object;
+		}
 
 		err = add_data(root_obj, APP_ID_RSRP, rsrp, &rsrp_ts, true, OBJECT_MSG_RSRP);
 		if (err == 0) {
@@ -586,7 +602,7 @@ exit:
 int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 			       struct cloud_data_ui *ui_buf)
 {
-	int err;
+	int err, len;
 	char *buffer;
 	cJSON *root_obj = NULL;
 
@@ -603,7 +619,12 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 	/* Convert to string format. */
 	char button[2];
 
-	snprintk(button, sizeof(button), "%d", ui_buf->btn);
+	len = snprintk(button, sizeof(button), "%d", ui_buf->btn);
+	if ((len < 0) || (len >= sizeof(button))) {
+		LOG_ERR("Cannot convert button number to string, buffer to small");
+		err = -ENOMEM;
+		goto exit;
+	}
 
 	err = json_add_str(root_obj, DATA_TYPE, button);
 	if (err) {

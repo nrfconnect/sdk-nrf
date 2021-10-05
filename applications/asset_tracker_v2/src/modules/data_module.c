@@ -505,7 +505,7 @@ static void config_print_all(void)
 	LOG_DBG("Movement resolution: %d", current_cfg.movement_resolution);
 	LOG_DBG("Movement timeout: %d", current_cfg.movement_timeout);
 	LOG_DBG("GPS timeout: %d", current_cfg.gps_timeout);
-	LOG_DBG("Accelerometer threshold: %f", current_cfg.accelerometer_threshold);
+	LOG_DBG("Accelerometer threshold: %.2f", current_cfg.accelerometer_threshold);
 
 	if (!current_cfg.no_data.neighbor_cell) {
 		LOG_DBG("Requesting of neighbor cell data is enabled");
@@ -917,13 +917,13 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		if (current_cfg.accelerometer_threshold != new_config->accelerometer_threshold) {
 			current_cfg.accelerometer_threshold = new_config->accelerometer_threshold;
 
-			LOG_WRN("New Accelerometer threshold: %f",
+			LOG_WRN("New Accelerometer threshold: %.2f",
 				current_cfg.accelerometer_threshold);
 
 			config_change = true;
 		}
 	} else {
-		LOG_ERR("New Accelerometer threshold out of range: %f",
+		LOG_ERR("New Accelerometer threshold out of range: %.2f",
 			new_config->accelerometer_threshold);
 		return;
 	}
