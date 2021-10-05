@@ -7,7 +7,7 @@ nRF9160: nRF Cloud REST A-GPS
    :local:
    :depth: 2
 
-The REST A-GPS sample demonstrates how the `nRF Cloud`_ Assisted GPS (`A-GPS`_) feature can be used to implement A-GPS in your application.
+The REST A-GPS sample demonstrates how you can use the `nRF Cloud`_ Assisted GPS (`A-GPS`_) feature to implement A-GPS in your application.
 
 Requirements
 ************
@@ -72,10 +72,11 @@ You can enable or disable these features by using the :kconfig:`CONFIG_LTE_POWER
 User interface
 **************
 
-If :kconfig:`CONFIG_REST_DO_JITP` is enabled, pressing button 1 will request just in time provisioning with nRF Cloud.
-This is useful when initially provisioning and associating a device on nRF Cloud.  This only needs to be done once.
+If :kconfig:`CONFIG_REST_DO_JITP` is enabled, pressing button 1 will request just-in-time provisioning with nRF Cloud.
+This is useful when initially provisioning and associating a device on nRF Cloud.
+You only need to do this once.
 
-If :kconfig:`CONFIG_REST_ENABLE_LED` is enabled, LED1 will indicate the state of the connection to nRF Cloud.
+If :kconfig:`CONFIG_REST_ENABLE_LED` is enabled, LED1 indicates the state of the connection to nRF Cloud.
 
 Configuration
 *************
@@ -86,9 +87,10 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_LTE_POWER_SAVING_MODE - LTE Power Saving Mode
+.. kconfig:: CONFIG_LTE_POWER_SAVING_MODE
 
-This configuration option enables or disables the LTE Power Saving Mode.
+CONFIG_LTE_POWER_SAVING_MODE - LTE Power Saving Mode
+   This configuration option enables or disables the LTE Power Saving Mode.
 
 Additional configuration
 ========================
@@ -116,14 +118,14 @@ Testing
 #. Place the nRF9160-based device in a location with direct line of sight to a large portion of the sky.
    This is to achieve sufficient satellite coverage to get a position fix.
 #. Optionally, connect the nRF9160-based device to a PC with a USB cable. The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. Optionally, connect to the kit with a terminal emulator (for example, PuTTY) to see log output. See How to connect with PuTTY for the required settings.
+#. Optionally, connect to the kit with a terminal emulator (for example, PuTTY) to see log output. See :ref:`How to connect with PuTTY  <putty>` for the required settings.
 #. Log into your nRF Cloud account and select your device.
 #. Power on the nRF9160-based device.
 
    .. note::
       The sample outputs shown in the subsequent steps correspond to the scenario when nRF Cloud is used as the A-GPS source.
 
-#. The device connects to the LTE network and nRF Cloud as shown below:
+#. The device connects to the LTE network and nRF Cloud as follows:
 
    .. code-block:: console
 
@@ -141,10 +143,10 @@ Testing
       This happens due to the configuring of the device on the cloud by `AWS IoT Just-in-time-provisioning`_ and the subsequent termination of the connection.
       In general, the devices reconnect automatically.
       However, for the simplicity of the sample, reconnection is not implemented.
-      Hence you must reset the device manually.
+      Hence, you must reset the device manually.
 
-#. Make sure that GPS has started by confirming that the device requests GPS assistance data and receives a response.
-   You can do this by checking the logs.
+#. To make sure that GPS has started, confirm that the device requests GPS assistance data and receives a response.
+   Check the response in the logs.
 
 
    .. code-block:: console
@@ -230,7 +232,7 @@ Testing
 	  D: GPS mode is enabled
 	  D: GPS operational
 
-#. Observe that the GPS starts to track the position based on the satellite data received as shown below:
+#. Observe that the GPS starts to track the position based on the satellite data received as follows:
 
    .. code-block:: console
 
@@ -311,7 +313,7 @@ Testing
 	  D: Stopping GPS
 
 #. Observe that the current position of the device shows up on the GPS position map in nRF Cloud, after acquiring the GPS position fix.
-   The position details are also displayed on the terminal as shown below:
+   The position details are also displayed on the terminal as follows:
 
    .. code-block:: console
 

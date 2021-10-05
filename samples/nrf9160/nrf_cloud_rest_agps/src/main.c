@@ -6,104 +6,152 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <modem/nrf_modem_lib.h>
+#include <stdlib.h>
 #include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <modem/modem_info.h>
+#include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <modem/modem_jwt.h>
 #include <power/reboot.h>
 #include <logging/log.h>
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud_agps.h>
 #include <nrf_modem_gnss.h>
-#include <modem/agps.h>
-
-#if defined(CONFIG_REST_ID_SRC_COMPILE_TIME)
-BUILD_ASSERT(sizeof(CONFIG_REST_DEVICE_ID) > 1, "Device ID must be specified");
-#elif defined(CONFIG_REST_ID_SRC_IMEI)
-#define CGSN_RSP_LEN 19
-#define IMEI_LEN 15
-#define IMEI_CLIENT_ID_LEN (sizeof(CONFIG_REST_ID_PREFIX) \
-			    - 1 + IMEI_LEN)
-BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
-	"REST_ID_PREFIX plus IMEI must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
-#endif
 
 LOG_MODULE_REGISTER(rest_agps_sample, CONFIG_NRF_CLOUD_REST_AGPS_SAMPLE_LOG_LEVEL);
 
 #define REST_RX_BUF_SZ 2100
+#define JWT_BUF_SZ 900
+#define JWT_DURATION_S (60*5)
 #define BUTTON_EVENT_BTN_NUM CONFIG_REST_BUTTON_EVT_NUM
 #define LED_NUM CONFIG_REST_LED_NUM
 #define JITP_REQ_WAIT_SEC 10
-#define NCELL_MEAS_CNT 17
 #define FAILURE_LIMIT 10
+#define AGPS_WORKQ_THREAD_STACK_SIZE 2048
+#define AGPS_WORKQ_THREAD_PRIORITY   5
 
-static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-
+static K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
+#if defined(CONFIG_REST_NMEA)
+K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
+#endif
 static K_SEM_DEFINE(button_press_sem, 0, 1);
 static K_SEM_DEFINE(lte_connected, 0, 1);
-static K_SEM_DEFINE(cell_data_ready, 0, 1);
-static K_SEM_DEFINE(do_agps_request_sem, 0, 1);
+static K_SEM_DEFINE(pvt_data_sem, 0, 1);
 
-static struct modem_param_info modem_info;
+static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 static struct lte_lc_cell current_cell;
+static char rx_buf[REST_RX_BUF_SZ];
+static char jwt[JWT_BUF_SZ];
 
-static struct nrf_modem_gnss_agps_data_frame agps_request;
-static struct nrf_modem_gnss_pvt_data_frame last_pvt;
-static struct nrf_modem_gnss_nmea_data_frame last_nmea;
 static bool jitp_requested;
-
 static bool disconnected = true;
 
-void agps_print_enable(bool enable);
+static struct lte_lc_cells_info net_info = {
+	.ncells_count = 0,
+	.neighbor_cells = NULL
+};
 
-static int set_device_id(void)
-{
-	int err = 0;
+static struct nrf_modem_gnss_agps_data_frame agps_request;
+static struct nrf_cloud_rest_agps_request agps_req = {
+	.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
+	.agps_req = &agps_request,
+	.net_info = &net_info
+};
+static struct nrf_cloud_rest_agps_result agps_result = {
+	.buf_sz = 0,
+	.buf = NULL
+};
+static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static volatile bool gnss_blocked;
+static volatile int failure_count;
+static struct k_work_q agps_work_q;
+static struct k_work get_agps_data_work;
 
-#if defined(CONFIG_REST_ID_SRC_COMPILE_TIME)
-
-	memcpy(device_id, CONFIG_REST_DEVICE_ID, strlen(CONFIG_REST_DEVICE_ID));
-	return 0;
-
-#elif defined(CONFIG_REST_ID_SRC_IMEI)
-
-	char imei_buf[CGSN_RSP_LEN + 1];
-
-	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
-	if (err) {
-		LOG_ERR("Failed to obtain IMEI, error: %d", err);
-		return err;
-	}
-
-	imei_buf[IMEI_LEN] = 0;
-
-	err = snprintk(device_id, sizeof(device_id), "%s%.*s",
-		       CONFIG_REST_ID_PREFIX,
-		       IMEI_LEN, imei_buf);
-	if (err < 0 || err >= sizeof(device_id)) {
-		return -EIO;
-	}
-
-	return 0;
-
-#elif defined(CONFIG_REST_ID_SRC_INTERNAL_UUID)
-
-	struct nrf_device_uuid dev_id;
-
-	err = modem_jwt_get_uuids(&dev_id, NULL);
-	if (err) {
-		LOG_ERR("Failed to get device UUID: %d", err);
-		return err;
-	}
-	memcpy(device_id, dev_id.str, sizeof(dev_id.str));
-
-	return 0;
-
+struct k_poll_event events[] = {
+	K_POLL_EVENT_STATIC_INITIALIZER(K_POLL_TYPE_SEM_AVAILABLE,
+					K_POLL_MODE_NOTIFY_ONLY,
+					&pvt_data_sem, 0),
+#if defined(CONFIG_REST_NMEA)
+	K_POLL_EVENT_STATIC_INITIALIZER(K_POLL_TYPE_MSGQ_DATA_AVAILABLE,
+					K_POLL_MODE_NOTIFY_ONLY,
+					&nmea_queue, 0),
 #endif
+};
+#define NUM_EVENTS ARRAY_SIZE(events)
 
-	return -ENOTRECOVERABLE;
+void agps_print_enable(bool enable);
+static int wait_connected(void);
+static int get_mobile_network_info(int *mcc_num, int *mnc_num);
+
+static void cls_home(void)
+{
+#if defined(CONFIG_REST_TERM_CONTROL)
+	LOG_INF("\033[1;1H\033[2J");
+#endif
+}
+
+static void get_agps_data(struct k_work *item)
+{
+	ARG_UNUSED(item);
+	int err;
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = true,
+		.timeout_ms = 30000,
+		.rx_buf = rx_buf,
+		.rx_buf_len = sizeof(rx_buf),
+		.fragment_size = 0
+	};
+
+	if (disconnected) {
+		err = wait_connected();
+		if (err) {
+			failure_count++;
+			goto cleanup;
+		}
+	}
+
+	cls_home();
+	LOG_INF("New A-GPS data requested, contacting nRF Cloud, flags 0x%04X\n",
+		agps_request.data_flags);
+
+	err = nrf_cloud_jwt_generate(JWT_DURATION_S, jwt, sizeof(jwt));
+	if (err) {
+		LOG_ERR("Failed to generate JWT, err %d", err);
+		failure_count++;
+		goto cleanup;
+	}
+	LOG_DBG("JWT:\n%s", log_strdup(jwt));
+	rest_ctx.auth = jwt;
+
+	err = get_mobile_network_info(&current_cell.mcc, &current_cell.mnc);
+	if (err) {
+		LOG_ERR("Failed to read network info: %d", err);
+		failure_count++;
+		goto cleanup;
+	}
+
+	/* update with latest cell tower info */
+	net_info.current_cell = current_cell;
+
+	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &agps_req, &agps_result);
+	if (err) {
+		LOG_ERR("Failed to get A-GPS data: %d", err);
+		failure_count++;
+	} else {
+		LOG_INF("Successfully received A-GPS data");
+		failure_count = 0;
+		err = nrf_cloud_agps_process(agps_result.buf, agps_result.agps_sz);
+		if (err) {
+			LOG_ERR("Failed to process A-GPS data: %d", err);
+		}
+	}
+
+cleanup:
+	if (agps_result.buf) {
+		k_free(agps_result.buf);
+		agps_result.buf = NULL;
+	}
+	(void)nrf_cloud_rest_disconnect(&rest_ctx);
 }
 
 static void print_pvt_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
@@ -111,16 +159,19 @@ static void print_pvt_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 	char buf[300];
 	size_t len;
 
-	len = snprintf(buf, sizeof(buf),
-		      "\r\n\tLongitude:  %f\r\n\t"
-		      "Latitude:   %f\r\n\t"
-		      "Altitude:   %f\r\n\t"
-		      "Speed:      %f\r\n\t"
-		      "Heading:    %f\r\n\t"
-		      "Date:       %02u-%02u-%02u\r\n\t"
-		      "Time (UTC): %02u:%02u:%02u\r\n",
-		      pvt_data->longitude, pvt_data->latitude,
-		      pvt_data->altitude, pvt_data->speed, pvt_data->heading,
+	len = snprintf(buf, sizeof(buf), "\r\n\t"
+		      "Latitude:       %.06f\r\n\t"
+		      "Longitude:      %.06f\r\n\t"
+		      "Altitude:       %.01f m\r\n\t"
+		      "Accuracy:       %.01f m\r\n\t"
+		      "Speed:          %.01f m/s\r\n\t"
+		      "Speed accuracy: %.01f m/s\r\n\t"
+		      "Heading:        %.01f deg\r\n\t"
+		      "Date:           %04u-%02u-%02u\r\n\t"
+		      "Time (UTC):     %02u:%02u:%02u\r\n",
+		      pvt_data->latitude, pvt_data->longitude, pvt_data->accuracy,
+		      pvt_data->altitude, pvt_data->speed, pvt_data->speed_accuracy,
+		      pvt_data->heading,
 		      pvt_data->datetime.year, pvt_data->datetime.month,
 		      pvt_data->datetime.day, pvt_data->datetime.hour,
 		      pvt_data->datetime.minute, pvt_data->datetime.seconds);
@@ -139,6 +190,7 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 	char print_buf[100];
 	size_t print_buf_len;
 
+	cls_home();
 	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; ++i) {
 		if ((pvt_data->sv[i].sv > 0) &&
 		    (pvt_data->sv[i].sv < 33)) {
@@ -178,57 +230,57 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 static void gnss_event_handler(int event)
 {
 	int ret;
+#if defined(CONFIG_REST_NMEA)
+	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
+#endif
 
 	switch (event) {
-	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
-		LOG_INF("GNSS_EVT_PERIODIC_WAKEUP");
-		break;
-	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
-		LOG_INF("GNSS_EVT_SLEEP_AFTER_FIX");
-		break;
-	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
-		LOG_INF("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
-		break;
 	case NRF_MODEM_GNSS_EVT_BLOCKED:
-		LOG_INF("GNSS_EVT_BLOCKED");
+		gnss_blocked = true;
 		break;
 	case NRF_MODEM_GNSS_EVT_UNBLOCKED:
-		LOG_INF("GNSS_EVT_UNBLOCKED");
+		gnss_blocked = false;
 		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
-		LOG_INF("GNSS_EVT_AGPS_REQ");
 		ret = nrf_modem_gnss_read(&agps_request, sizeof(agps_request),
 					  NRF_MODEM_GNSS_DATA_AGPS_REQ);
-		if (ret) {
-			break;
+		if (!ret) {
+			k_work_submit_to_queue(&agps_work_q, &get_agps_data_work);
 		}
-		k_sem_give(&do_agps_request_sem);
 		break;
 	case NRF_MODEM_GNSS_EVT_PVT:
 		ret = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
 		if (!ret) {
-			print_satellite_stats(&last_pvt);
-		}
-		break;
-	case NRF_MODEM_GNSS_EVT_FIX:
-		LOG_INF("GNSS_EVT_FIX");
-		ret = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
-		if (!ret) {
-			print_pvt_data(&last_pvt);
+			k_sem_give(&pvt_data_sem);
 		}
 		break;
 	case NRF_MODEM_GNSS_EVT_NMEA:
-		if (IS_ENABLED(CONFIG_REST_NMEA)) {
-			ret = nrf_modem_gnss_read(&last_nmea, sizeof(last_nmea),
-						     NRF_MODEM_GNSS_DATA_NMEA);
-			if (!ret) {
-				LOG_INF("NMEA: %s", log_strdup(last_nmea.nmea_str));
-			}
+#if defined(CONFIG_REST_NMEA)
+		nmea_data = k_malloc(sizeof(struct nrf_modem_gnss_nmea_data_frame));
+		if (nmea_data == NULL) {
+			printk("Failed to allocate memory for NMEA\n");
+			break;
 		}
+
+		ret = nrf_modem_gnss_read(nmea_data,
+					  sizeof(struct nrf_modem_gnss_nmea_data_frame),
+					  NRF_MODEM_GNSS_DATA_NMEA);
+		if (!ret) {
+			ret = k_msgq_put(&nmea_queue, &nmea_data, K_NO_WAIT);
+		}
+		if (ret) {
+			k_free(nmea_data);
+		}
+#endif
 		break;
 	default:
 		break;
 	}
+}
+
+static bool agps_data_download_ongoing(void)
+{
+	return k_work_is_pending(&get_agps_data_work);
 }
 
 static int set_led(const int state)
@@ -276,7 +328,7 @@ static int request_jitp(void)
 
 	jitp_requested = false;
 
-	(void)k_sem_take(&button_press_sem, K_NO_WAIT);
+	(void)k_sem_reset(&button_press_sem);
 
 	LOG_INF("Press button %d to request just-in-time provisioning", BUTTON_EVENT_BTN_NUM);
 	LOG_INF("Waiting %d seconds..", JITP_REQ_WAIT_SEC);
@@ -306,6 +358,11 @@ static int do_jitp(void)
 		return 0;
 	}
 
+	ret = wait_connected();
+	if (ret) {
+		return ret;
+	}
+
 	LOG_INF("Performing JITP..");
 	ret = nrf_cloud_rest_jitp(CONFIG_NRF_CLOUD_SEC_TAG);
 
@@ -324,27 +381,60 @@ static int do_jitp(void)
 	return ret;
 }
 
-static int get_modem_info(struct modem_param_info *const modem_info)
+static int get_mobile_network_info(int *mcc_num, int *mnc_num)
 {
-	__ASSERT_NO_MSG(modem_info != NULL);
+	__ASSERT_NO_MSG((mcc_num != NULL) && (mnc_num != NULL));
+	char buf[100];
+	char mcc[4];
+	char mnc[4];
+	int len;
 
-	int err = modem_info_init();
-
-	if (err) {
-		LOG_ERR("Could not initialize modem info module, error: %d", err);
-		return err;
+	len = modem_info_string_get(MODEM_INFO_OPERATOR, buf, sizeof(buf));
+	if (len < 0) {
+		return len; /* it's an error code, not a length */
+	}
+	if ((len < 5) || (len > 6)) {
+		LOG_ERR("unexpected mcc+mnc string length:%d, %s", len, log_strdup(buf));
+		return -EINVAL;
 	}
 
-	err = modem_info_params_init(modem_info);
-	if (err) {
-		LOG_ERR("Could not initialize modem info parameters, error: %d", err);
-		return err;
+	/* mobile country code is required to be 3 decimal digits */
+	memcpy(mcc, buf, 3);
+	mcc[3] = '\0';
+	len -= 3;
+
+	/* mobile network code is either 2 or 3 decimal digits */
+	memcpy(mnc, &buf[3], len);
+	mnc[len] = '\0';
+
+	*mcc_num = (int)strtol(mcc, NULL, 10);
+	*mnc_num = (int)strtol(mnc, NULL, 10);
+
+	LOG_DBG("operator:%s, mcc_num:%d, mnc_num:%d", log_strdup(buf), *mcc_num, *mnc_num);
+	return 0;
+}
+
+static int configure_lna(void)
+{
+	int err;
+	const char *xmagpio_command = CONFIG_SAMPLE_AT_MAGPIO;
+	const char *xcoex0_command = CONFIG_SAMPLE_AT_COEX0;
+
+	/* Make sure the AT command is not empty */
+	if (xmagpio_command[0] != '\0') {
+		err = at_cmd_write(xmagpio_command, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to send XMAGPIO command");
+			return err;
+		}
 	}
 
-	err = modem_info_params_get(modem_info);
-	if (err) {
-		LOG_ERR("Could not obtain cell information, error: %d", err);
-		return err;
+	if (xcoex0_command[0] != '\0') {
+		err = at_cmd_write(xcoex0_command, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to send XCOEX0 command");
+			return err;
+		}
 	}
 
 	return 0;
@@ -353,12 +443,24 @@ static int get_modem_info(struct modem_param_info *const modem_info)
 static int init_gnss(void)
 {
 	int err;
+	size_t buf_size = nrf_cloud_agps_get_max_file_size(false);
 
-	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
-	if (err) {
-		LOG_ERR("Unable to activate GPS mode: %d", err);
-		return err;
+	agps_result.buf = k_calloc(buf_size, 1);
+	if (!agps_result.buf) {
+		LOG_ERR("Failed to allocate %u bytes for A-GPS buffer", buf_size);
+		failure_count = FAILURE_LIMIT;
+		return -ENOMEM;
 	}
+	agps_result.buf_sz = (uint32_t)buf_size;
+
+	k_work_queue_start(
+		&agps_work_q,
+		agps_workq_stack_area,
+		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
+		AGPS_WORKQ_THREAD_PRIORITY,
+		NULL);
+
+	k_work_init(&get_agps_data_work, get_agps_data);
 
 	/* Initialize and configure GNSS */
 	err = nrf_modem_gnss_init();
@@ -385,13 +487,13 @@ static int init_gnss(void)
 		}
 	}
 
-	err = nrf_modem_gnss_fix_retry_set(120);
+	err = nrf_modem_gnss_fix_retry_set(CONFIG_GNSS_FIX_RETRY);
 	if (err) {
 		LOG_ERR("Failed to set GNSS fix retry: %d", err);
 		return err;
 	}
 
-	err = nrf_modem_gnss_fix_interval_set(240);
+	err = nrf_modem_gnss_fix_interval_set(CONFIG_GNSS_FIX_INTERVAL);
 	if (err) {
 		LOG_ERR("Failed to set GNSS fix interval: %d", err);
 		return err;
@@ -416,26 +518,24 @@ static int init(void)
 		return err;
 	}
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
-	if (err) {
-		LOG_ERR("Failed to initialize modem library: %d", err);
-		LOG_ERR("This can occur after a modem FOTA.");
-		return err;
-	}
-
 	err = at_cmd_init();
 	if (err) {
 		LOG_ERR("Failed to initialize AT commands, err %d", err);
 		return err;
 	}
 
-	err = init_gnss();
+	err = modem_info_init();
+	if (err) {
+		LOG_ERR("Could not initialize modem info module, error: %d", err);
+		return err;
+	}
+
+	err = configure_lna();
 	if (err) {
 		return err;
 	}
-	LOG_INF("GPS started");
 
-	err = set_device_id();
+	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
 	if (err) {
 		LOG_ERR("Failed to set device ID, err %d", err);
 		return err;
@@ -449,6 +549,9 @@ static int init(void)
 		return err;
 	}
 
+	/* If configured, prompt the user to press a button to invoke JITP after
+	 * the device is connected to the cloud.
+	 */
 	err = request_jitp();
 	if (err) {
 		LOG_WRN("User JITP request failed");
@@ -465,7 +568,9 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		LOG_DBG("LTE_LC_EVT_NW_REG_STATUS: %d", evt->nw_reg_status);
 		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
 		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			(void)k_sem_reset(&lte_connected);
 			disconnected = true;
+			(void)set_led(0);
 			break;
 		}
 		disconnected = false;
@@ -498,167 +603,133 @@ static int connect_to_network(void)
 
 	(void)k_sem_reset(&lte_connected);
 
+#if defined(CONFIG_LTE_POWER_SAVING_MODE)
+	err = lte_lc_psm_req(true);
+	if (err) {
+		LOG_ERR("PSM request failed, error: %d", err);
+		return err;
+	}
+	LOG_INF("PSM mode requested");
+#endif
+
 	err = lte_lc_init_and_connect_async(lte_handler);
 	if (err) {
 		LOG_ERR("Failed to init modem, err %d", err);
 	} else {
-		k_sem_take(&lte_connected, K_FOREVER);
-		LOG_INF("Connected");
-		(void)set_led(1);
-
-		/* grab network info for part of A-GPS request later */
-		err = get_modem_info(&modem_info);
-		if (err) {
-			LOG_ERR("Error getting network information: %d", err);
-		} else {
-			current_cell.mcc = modem_info.network.mcc.value;
-			current_cell.mnc = modem_info.network.mnc.value;
-		}
+		err = wait_connected();
 	}
 
 	return err;
 }
 
+static int wait_connected(void)
+{
+	int err;
+
+	do {
+		err = k_sem_take(&lte_connected, K_SECONDS(10));
+		if (err == -EAGAIN) {
+			LOG_WRN("Timeout waiting for LTE: asking to connect...");
+			err = lte_lc_connect();
+			if (err) {
+				LOG_ERR("Error on lte_lc_connect():%d", err);
+				failure_count++;
+			}
+		}
+	} while (err);
+
+	LOG_INF("Connected");
+	(void)set_led(1);
+
+	return err;
+}
 
 void main(void)
 {
-	LOG_INF("Starting nRF Cloud REST A-GPS API Sample");
-
-	char rx_buf[REST_RX_BUF_SZ];
-	int agps_sz;
-	struct jwt_data jwt = {
-#if defined(CONFIG_REST_ID_SRC_INTERNAL_UUID)
-		.subject = NULL,
-#else
-		.subject = device_id,
-#endif
-		.audience = NULL,
-		.exp_delta_s = 300,
-		.sec_tag = CONFIG_REST_JWT_SEC_TAG,
-		.key = JWT_KEY_TYPE_CLIENT_PRIV,
-		.alg = JWT_ALG_TYPE_ES256,
-		.jwt_buf = NULL
-	};
-	struct nrf_cloud_rest_context rest_ctx = {
-		.connect_socket = -1,
-		.keep_alive = true,
-		.timeout_ms = 30000,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf),
-		.fragment_size = 0
-	};
-	struct lte_lc_cells_info net_info = {
-		.ncells_count = 0,
-		.neighbor_cells = NULL
-	};
-	struct nrf_cloud_rest_agps_request agps_req = {
-		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-		.agps_req = &agps_request,
-		.net_info = &net_info
-	};
-	struct nrf_cloud_rest_agps_result agps_result = {
-		.buf_sz = 0,
-		.buf = NULL
-	};
 	int err;
-	int failure_count = 0;
+	uint64_t fix_timestamp = 0;
+
+	cls_home();
+	LOG_INF("Starting nRF Cloud REST A-GPS API Sample");
 
 	err = init();
 	if (err) {
 		LOG_ERR("Initialization failed");
 		failure_count = FAILURE_LIMIT;
-		goto cleanup;
+		goto error;
 	}
 
 	err = connect_to_network();
 	if (err) {
 		failure_count++;
-		goto cleanup;
 	}
+
+	err = init_gnss();
+	if (err) {
+		failure_count = FAILURE_LIMIT;
+		goto error;
+	}
+	LOG_INF("GPS started");
 
 	agps_print_enable(false);
 
 	(void)do_jitp();
 
-retry:
-	LOG_INF("Waiting for AGPS request event..");
-	k_sem_take(&do_agps_request_sem, K_FOREVER);
+	for (; failure_count < FAILURE_LIMIT;) {
+		(void)k_poll(events, NUM_EVENTS, K_FOREVER);
 
-	if (disconnected) {
-		err = connect_to_network();
-		if (err) {
-			failure_count++;
-			goto cleanup;
+		if (events[0].state == K_POLL_STATE_SEM_AVAILABLE &&
+		    k_sem_take(events[0].sem, K_NO_WAIT) == 0) {
+			/* New PVT data available */
+
+			events[0].state = K_POLL_STATE_NOT_READY;
+			if (!IS_ENABLED(CONFIG_GPS_SAMPLE_NMEA_ONLY) &&
+			    !agps_data_download_ongoing()) {
+				print_satellite_stats(&last_pvt);
+
+				if (gnss_blocked) {
+					LOG_INF("GNSS operation blocked by LTE");
+				}
+				LOG_INF("---------------------------------\n");
+
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+					fix_timestamp = k_uptime_get();
+					print_pvt_data(&last_pvt);
+				} else {
+					LOG_INF("Seconds since last fix: %lld",
+							(k_uptime_get() - fix_timestamp) / 1000);
+				}
+#if defined(CONFIG_REST_NMEA)
+				LOG_INF("NMEA strings:");
+#endif
+			}
 		}
-	}
+#if defined(CONFIG_REST_NMEA)
+		struct nrf_modem_gnss_nmea_data_frame *nmea_data;
 
-	err = modem_jwt_generate(&jwt);
-	if (err) {
-		LOG_ERR("Failed to generate JWT, err %d", err);
-		failure_count++;
-		goto cleanup;
-	}
-	LOG_DBG("JWT:\n%s", log_strdup(jwt.jwt_buf));
-	rest_ctx.auth = jwt.jwt_buf;
+		if (events[1].state == K_POLL_STATE_MSGQ_DATA_AVAILABLE &&
+		    k_msgq_get(events[1].msgq, &nmea_data, K_NO_WAIT) == 0) {
+			/* New NMEA data available */
 
-	LOG_INF("\n********************* A-GPS API *********************");
-	net_info.current_cell = current_cell; /* update with latest cell tower info */
-	rest_ctx.fragment_size = 1; /* set size small so we query buffer size needed */
-	agps_sz = nrf_cloud_rest_agps_data_get(&rest_ctx, &agps_req, NULL);
-	if (agps_sz < 0) {
-		LOG_ERR("Failed to get A-GPS data: %d", agps_sz);
-		failure_count++;
-		goto cleanup;
-	} else if (agps_sz == 0) {
-		LOG_WRN("A-GPS data size is zero, skipping");
-		goto cleanup;
-	}
+			events[1].state = K_POLL_STATE_NOT_READY;
+			if (!agps_data_download_ongoing()) {
+				if (nmea_data && nmea_data->nmea_str) {
+					char *nmea = nmea_data->nmea_str;
 
-	LOG_INF("Additional buffer required to download A-GPS data of %d bytes",
-		agps_sz);
-
-	agps_result.buf_sz = (uint32_t)agps_sz;
-	agps_result.buf = k_calloc(agps_result.buf_sz, 1);
-	if (!agps_result.buf) {
-		LOG_ERR("Failed to allocate %u bytes for A-GPS buffer", agps_result.buf_sz);
-		failure_count = FAILURE_LIMIT;
-		goto cleanup;
-	}
-	/* Use the default configured fragment size */
-	rest_ctx.fragment_size = 0;
-	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &agps_req, &agps_result);
-	if (err) {
-		LOG_ERR("Failed to get A-GPS data: %d", err);
-		failure_count++;
-	} else {
-		LOG_INF("Successfully received A-GPS data");
-		failure_count = 0;
-		err = agps_cloud_data_process(agps_result.buf, agps_result.agps_sz);
-		if (err) {
-			LOG_ERR("Failed to process A-GPS data: %d", err);
+					if ((nmea[strlen(nmea) - 2] == '\r') ||
+					    (nmea[strlen(nmea) - 2] == '\n')) {
+						nmea[strlen(nmea) - 2] = '\0';
+					}
+					LOG_INF("%s", nmea_data->nmea_str);
+				}
+			}
+			k_free(nmea_data);
 		}
+#endif
 	}
 
-cleanup:
-	if (agps_result.buf) {
-		k_free(agps_result.buf);
-		agps_result.buf = NULL;
-	}
-	(void)nrf_cloud_rest_disconnect(&rest_ctx);
-	modem_jwt_free(jwt.jwt_buf);
-	jwt.jwt_buf = NULL;
-
-	if (err && (failure_count >= FAILURE_LIMIT)) {
-		LOG_INF("Rebooting in 30s..");
-		k_sleep(K_SECONDS(30));
-	} else {
-		if (failure_count) {
-			LOG_INF("Retrying in %d minute(s)..",
-				CONFIG_REST_RETRY_WAIT_TIME_MIN);
-			k_sleep(K_MINUTES(CONFIG_REST_RETRY_WAIT_TIME_MIN));
-		}
-		goto retry;
-	}
-
+error:
+	LOG_INF("Rebooting in 30s..");
+	k_sleep(K_SECONDS(30));
 	sys_reboot(SYS_REBOOT_COLD);
 }

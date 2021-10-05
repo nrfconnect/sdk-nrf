@@ -10,6 +10,9 @@ config REST_RETRY_WAIT_TIME_MIN
 	int "Wait time, in minutes, before retrying (rebooting)"
 	default 5
 
+config REST_TERM_CONTROL
+	bool "Use terminal control sequences to improve readability"
+
 config REST_NMEA
 	bool "Log NMEA sentences, not just PVT reports"
 
@@ -52,6 +55,43 @@ config SAMPLE_AT_COEX0
 	help
 	  Defines what is the AT%XCOEX0 command to be sent to GPS module. Leave
 	  empty if this command should not be sent.
+
+config LTE_POWER_SAVING_MODE
+	bool "Request Power Saving Mode (PSM) from cellular network"
+
+config SAMPLE_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
+	help
+	  Defines what is the AT%XMAGPIO command to be sent to GPS module. Leave
+	  empty if this command should not be sent.
+
+config SAMPLE_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_SAMPLE_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_SAMPLE_ANTENNA_EXTERNAL
+	help
+	  Defines what is the AT%XCOEX0 command to be sent to GPS module. Leave
+	  empty if this command should not be sent.
+
+config GNSS_FIX_RETRY
+	int "GNSS fix retry period in seconds"
+	default 120
+	help
+	  Fix retry parameter controls the maximum time the GNSS receiver is allowed to run while
+	  trying to produce a valid PVT estimate. If the fix retry time is non-zero, the GNSS
+	  receiver is turned off after the fix retry time is up regardless of whether a valid PVT
+	  estimate was produced or not. If fix retry parameter is set to zero, the GNSS receiver
+	  is allowed to run indefinitely until a valid PVT estimate is produced.
+
+config GNSS_FIX_INTERVAL
+	int "GNSS fix interval in seconds"
+	default 240
+	help
+	  Single fix navigation mode is engaged by setting the fix interval to 0.
+	  Continuous navigation mode is engaged by setting fix interval to 1.
+	  Periodic navigation mode is engaged by setting the fix interval to value 10...65535.
 
 endmenu
 
