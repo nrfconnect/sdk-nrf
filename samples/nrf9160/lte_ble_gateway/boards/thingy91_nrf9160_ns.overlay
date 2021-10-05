@@ -1,0 +1,31 @@
+/ {
+	chosen {
+		zephyr,bt-uart=&lpuart;
+	};
+};
+
+&uart1 {
+	current-speed = <1000000>;
+	status = "okay";
+	tx-pin = <22>;
+	rx-pin = <23>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
+	/delete-property/ hw-flow-control;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		status = "okay";
+		label = "LPUART";
+		req-pin = <24>;
+		rdy-pin = <25>;
+	};
+};
+
+&gpiote {
+	interrupts = <49 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&uart0 {
+	status = "disabled";
+};
