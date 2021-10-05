@@ -396,6 +396,94 @@ static void test_neighborcell_count_get(void)
 	zassert_equal(0, neighborcell_count_get(resp5), "Wrong neighbor cell count");
 }
 
+static void test_parse_psm(void)
+{
+	int err;
+	struct lte_lc_psm_cfg psm_cfg;
+	struct psm_strings {
+		char *active_time;
+		char *tau_ext;
+		char *tau_legacy;
+	};
+	struct psm_strings disabled = {
+		.active_time = "11100000",
+		.tau_ext = "11100000",
+		.tau_legacy = "11100000",
+	};
+	struct psm_strings tau_legacy = {
+		.active_time = "00001000",
+		.tau_ext = "11100000",
+		.tau_legacy = "00101010",
+	};
+	struct psm_strings no_tau_legacy = {
+		.active_time = "00001000",
+		.tau_ext = "11100000",
+	};
+	struct psm_strings invalid_values = {
+		.active_time = "0001111111",
+		.tau_ext = "00001",
+	};
+	struct psm_strings valid_values_0 = {
+		.active_time = "01000001",
+		.tau_ext = "01000010",
+	};
+	struct psm_strings valid_values_1 = {
+		.active_time = "00100100",
+		.tau_ext = "00001000",
+	};
+	struct psm_strings valid_values_2 = {
+		.active_time = "00010000",
+		.tau_ext = "10111011",
+	};
+
+	err = parse_psm(disabled.active_time, disabled.tau_ext, disabled.tau_legacy, &psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, -1, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, -1, "Wrong PSM active time (%d)", psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(tau_legacy.active_time, tau_legacy.tau_ext, tau_legacy.tau_legacy,
+			&psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, 600, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, 16, "Wrong PSM active time (%d)", psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(no_tau_legacy.active_time, no_tau_legacy.tau_ext, NULL, &psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, -1, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, 16, "Wrong PSM active time (%d)", psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(invalid_values.active_time, invalid_values.tau_ext, NULL, &psm_cfg);
+	zassert_equal(err, -EINVAL, "parse_psm was expected to return -EINVAL, but returned %d",
+		      err);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(valid_values_0.active_time, valid_values_0.tau_ext, NULL, &psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, 72000, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, 360, "Wrong PSM active time (%d)", psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(valid_values_1.active_time, valid_values_1.tau_ext, NULL, &psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, 4800, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, 240, "Wrong PSM active time (%d)", psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(valid_values_2.active_time, valid_values_2.tau_ext, NULL, &psm_cfg);
+	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
+	zassert_equal(psm_cfg.tau, 1620, "Wrong PSM TAU (%d)", psm_cfg.tau);
+	zassert_equal(psm_cfg.active_time, 32, "Wrong PSM active time (%d)", psm_cfg.active_time);
+}
+
 static void test_parse_mdmev(void)
 {
 	int err;
@@ -473,7 +561,8 @@ void test_main(void)
 		ztest_unit_test(test_response_is_valid),
 		ztest_unit_test(test_parse_ncellmeas),
 		ztest_unit_test(test_neighborcell_count_get),
-		ztest_unit_test(test_parse_mdmev)
+		ztest_unit_test(test_parse_mdmev),
+		ztest_unit_test(test_parse_psm)
 	);
 
 	ztest_run_test_suite(test_lte_lc);
