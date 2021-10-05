@@ -102,7 +102,11 @@ static void perform_custom_indication(zb_uint8_t led_idx)
 	zb_buf_get_out_delayed_ext(custom_indication, led_idx, 0);
 }
 
+#if (defined ZBOSS_PLATFORM_MAJOR) && (ZBOSS_PLATFORM_MAJOR < 5U)
 static zb_ret_t ncp_vendor_specific_req_handler(zb_uint8_t buf)
+#else /* (defined ZBOSS_PLATFORM_MAJOR) && (ZBOSS_PLATFORM_MAJOR < 5U) */
+static zb_uint16_t ncp_vendor_specific_req_handler(zb_uint8_t buf)
+#endif /* (defined ZBOSS_PLATFORM_MAJOR) && (ZBOSS_PLATFORM_MAJOR < 5U) */
 {
 	/* request tsn */
 	zb_uint8_t tsn = *ZB_BUF_GET_PARAM(buf, zb_uint8_t);
