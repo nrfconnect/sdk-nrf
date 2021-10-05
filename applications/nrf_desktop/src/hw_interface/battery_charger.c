@@ -12,7 +12,7 @@
 #include <sys/atomic.h>
 #include <spinlock.h>
 
-#include "event_manager.h"
+#include <event_manager.h>
 #include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "usb_event.h"

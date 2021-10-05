@@ -16,7 +16,7 @@
 #include <caf/gpio_pins.h>
 #include CONFIG_CAF_BUTTONS_DEF_PATH
 
-#include "event_manager.h"
+#include <event_manager.h>
 #include <caf/events/button_event.h>
 #include <caf/events/power_event.h>
 

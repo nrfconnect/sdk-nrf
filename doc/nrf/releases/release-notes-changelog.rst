@@ -308,6 +308,7 @@ Other libraries
 * :ref:`event_manager` library:
 
   * Increased number of supported Event Manager events.
+  * Moved the Event Manager features responsible for profiling events into the new ``event_manager_profiler`` module.
 
 * :ref:`fprotect_readme` library:
 

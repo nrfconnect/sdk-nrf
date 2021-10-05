@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 
-#include "event_manager.h"
+#include <event_manager.h>
 #include <caf/events/button_event.h>
 #include <caf/events/power_event.h>
 

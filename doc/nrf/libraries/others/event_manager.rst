@@ -99,7 +99,7 @@ The following code example shows a header file for the event type ``sample_event
 
 .. code-block:: c
 
-   #include "event_manager.h"
+   #include <event_manager.h>
 
    struct sample_event {
 	   struct event_header header;
@@ -119,7 +119,7 @@ For example, you can add the variable size data to a previously defined event by
 
 .. code-block:: c
 
-   #include "event_manager.h"
+   #include <event_manager.h>
 
    struct sample_event {
 	   struct event_header header;
@@ -308,7 +308,7 @@ Profiler allows you to observe the propagation of an event in the system, view t
 
 To profile an event, you must complete the following steps:
 
-1. Enable the profiler using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED` Kconfig option.
+1. Enable the profiler using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER` Kconfig option.
 #. Edit the source file for the event type:
 
    a. Define a profiling function that logs the event data to a given buffer by calling one of the following functions for every registered data type:
@@ -320,7 +320,7 @@ To profile an event, you must complete the following steps:
       * :c:func:`profiler_log_encode_uint8`
       * :c:func:`profiler_log_encode_int8`
       * :c:func:`profiler_log_encode_string`
-   #. Define an :c:struct:`event_info` structure, using :c:macro:`EVENT_INFO_DEFINE` in your event source file, and provide it as an argument when defining the event type with :c:macro:`EVENT_TYPE_DEFINE` macro.
+   #. Define a :c:struct:`profiler_info` structure, using :c:macro:`EVENT_INFO_DEFINE` in your event source file, and provide it as an argument when defining the event type with the :c:macro:`EVENT_TYPE_DEFINE` macro.
 	  This structure contains a profiling function and information about the data fields that are logged.
 	  The following code example shows a profiling function for the event type ``sample_event``:
 
@@ -354,8 +354,9 @@ To profile an event, you must complete the following steps:
 				&sample_event_info);	/* Structure with data for profiling. */
 
 	  .. note::
-		  * By default, all Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.
+		  * By default, all Event Manager events that are defined with a :c:struct:`profiler_info` argument are profiled.
 		  * :c:struct:`sample_event_info` is defined within the :c:macro:`EVENT_INFO_DEFINE` macro.
+   #. Add ``#include <event_manager_profiler.h>`` to the header file of the profiled event.
 
 #. Use profiler scripts to profile the application.
    See :ref:`profiler` for more details.

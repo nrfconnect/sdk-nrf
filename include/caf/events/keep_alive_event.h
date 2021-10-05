@@ -14,6 +14,7 @@
  */
 
 #include <event_manager.h>
+#include <event_manager_profiler.h>
 
 #ifdef __cplusplus
 extern "C" {
