@@ -38,7 +38,13 @@ There are no entries for this section yet.
 nRF5
 ====
 
-There are no entries for this section yet.
+Thread
+------
+
+* Added bugfixes to the OpenThread code, including:
+
+  * Fix for devices losing connectivity after Key Sequence update.
+  * Fixes for Link Metrics reported values.
 
 Common
 ======
