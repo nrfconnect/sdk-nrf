@@ -195,7 +195,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		ssize_t len;
 
 		len = snprintf(log_buf, sizeof(log_buf),
-			       "eDRX parameter update: eDRX: %f, PTW: %f",
+			       "eDRX parameter update: eDRX: %.2f, PTW: %.2f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
 			LOG_DBG("%s", log_strdup(log_buf));

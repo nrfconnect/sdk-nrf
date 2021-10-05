@@ -35,7 +35,7 @@ static int log_event(const struct event_header *eh, char *buf,
 		return snprintf(buf, buf_len, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == SENSOR_EVT_MOVEMENT_DATA_READY) {
-		return snprintf(buf, buf_len, "%s - X: %f, Y: %f, Z: %f",
+		return snprintf(buf, buf_len, "%s - X: %.2f, Y: %.2f, Z: %.2f",
 				get_evt_type_str(event->type),
 				event->data.accel.values[0],
 				event->data.accel.values[1],
