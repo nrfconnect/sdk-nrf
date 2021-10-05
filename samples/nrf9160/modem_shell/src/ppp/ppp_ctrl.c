@@ -221,7 +221,7 @@ int ppp_ctrl_start(void)
 	net_if_up(iface);
 
 	/* Create raw Zephyr socket for passing data to/from ppp link: */
-	ppp_data_socket_fd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
+	ppp_data_socket_fd = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE, IPPROTO_RAW);
 	if (ppp_data_socket_fd < 0) {
 		mosh_error("PPP data socket creation failed: (%d)!!!!\n", -errno);
 		goto return_error;
