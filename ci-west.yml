@@ -1,0 +1,8 @@
+manifest:
+  version: "0.10"
+
+  self:
+    west-commands: scripts/west-commands.yml
+    import:
+      - submanifests
+      - west.yml
