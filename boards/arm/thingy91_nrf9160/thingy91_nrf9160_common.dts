@@ -51,6 +51,12 @@
 		};
 	};
 
+	nrf52840_reset: gpio-reset {
+		compatible = "nordic,thingy91-nrf52840-reset";
+		status = "okay";
+		gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+	};
+
 	aliases {
 		sw0 = &button0;
 		led0 = &red_led;
