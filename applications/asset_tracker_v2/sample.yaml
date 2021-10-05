@@ -1,5 +1,9 @@
 sample:
   name: Asset Tracker v2 Application
+common:
+  integration_platforms:
+    - nrf9160dk_nrf9160_ns
+    - thingy91_nrf9160_ns
 tests:
   applications.asset_tracker_v2.nrf_cloud:
     build_only: true
