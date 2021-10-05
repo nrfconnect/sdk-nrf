@@ -366,6 +366,8 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 
 	case PEER_STATE_DISCONNECTED:
 		k_work_cancel(&send_queued);
+		/* Fall-through */
+
 	case PEER_STATE_DISCONNECTING:
 		/* Clear flags representing connection state. */
 		conn_state = 0;
