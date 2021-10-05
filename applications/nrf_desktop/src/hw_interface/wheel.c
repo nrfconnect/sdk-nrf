@@ -13,7 +13,7 @@
 #include <drivers/sensor.h>
 #include <drivers/gpio.h>
 
-#include "event_manager.h"
+#include <event_manager.h>
 #include "wheel_event.h"
 #include <caf/events/power_event.h>
 

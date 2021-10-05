@@ -47,23 +47,4 @@ config EVENT_MANAGER_MAX_EVENT_CNT
 	help
 	  Maximum number of declared event types in Event Manager.
 
-config EVENT_MANAGER_PROFILER_ENABLED
-	bool "Log events to Profiler"
-	select PROFILER
-	help
-	  Event Manager will use profiler event count equal to Event Manager event count
-	  + 2 events for processing event start/end.
-
-if EVENT_MANAGER_PROFILER_ENABLED
-
-config EVENT_MANAGER_TRACE_EVENT_EXECUTION
-	bool "Trace events execution"
-	default y
-
-config EVENT_MANAGER_PROFILE_EVENT_DATA
-	bool "Profile data connected with event"
-	default n
-
-endif # EVENT_MANAGER_PROFILER_ENABLED
-
 endif # EVENT_MANAGER

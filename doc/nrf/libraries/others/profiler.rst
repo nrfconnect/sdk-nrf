@@ -20,10 +20,10 @@ Apart from standard configuration parameters, there is one required setting:
 
 :kconfig:`CONFIG_PROFILER`
   Set this option to add the Profiler source code to the application.
-  If you use the Event Manager, you can also set this option by selecting :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`.
+  If you use the Event Manager, you can also set this option by selecting :kconfig:`CONFIG_EVENT_MANAGER_PROFILER`.
 
 Call :c:func:`profiler_init` during the application start to initialize the Profiler.
-If you set :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
+If you set :kconfig:`CONFIG_EVENT_MANAGER_PROFILER`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
 
 
 Profiling custom events
