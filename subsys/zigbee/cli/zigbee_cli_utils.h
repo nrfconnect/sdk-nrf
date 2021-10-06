@@ -38,11 +38,11 @@ static inline void zb_cli_print_error(const struct shell *shell,
 {
 	if (message) {
 		shell_error(shell, prepend_newline ?
-			    "\nError: %s\n" : "Error: %s\n", message);
+			    "\nError: %s" : "Error: %s", message);
 	} else {
 		shell_error(shell, prepend_newline ?
-			    "\nError: Unknown error occurred\n" :
-			    "Error: Unknown error occurred\n");
+			    "\nError: Unknown error occurred" :
+			    "Error: Unknown error occurred");
 	}
 }
 
