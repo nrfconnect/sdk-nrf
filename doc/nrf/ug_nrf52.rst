@@ -197,7 +197,7 @@ See the :ref:`ug_multiprotocol_support` user guide for instructions on how to en
 The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
 
 
-.. |note| replace:: There is currently no support for upgrading the bootloader (:doc:`mcuboot:index`) on nRF52 Series devices.
+.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.
 
 .. fota_upgrades_start
 
