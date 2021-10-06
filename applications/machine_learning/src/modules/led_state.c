@@ -41,8 +41,6 @@ static const struct led_effect *blocking_led_effect;
 static const char *cur_label;
 static size_t prediction_streak;
 
-static bool ml_signed;
-
 
 static bool is_led_effect_valid(const struct led_effect *le)
 {
@@ -101,7 +99,6 @@ static void ml_result_set_signin_state(bool state)
 	event->module_idx = MODULE_IDX(MODULE);
 	event->state = state;
 	EVENT_SUBMIT(event);
-	ml_signed = state;
 	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
 }
 
