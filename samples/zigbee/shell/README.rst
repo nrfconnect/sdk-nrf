@@ -38,6 +38,8 @@ The Zigbee shell sample takes the Zigbee Router role and implements two clusters
 The Basic cluster provides attributes and commands for determining basic information about the node.
 The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
 The device also includes all Zigbee shell commands, that allow for discovering, controlling and testing other Zigbee devices.
+Additionally, log shell commands are enabled to configure logging, for example the logging level for each log module.
+The logger is configured to also log module name and timestamps for every message.
 
 Available shell interfaces
 ==========================

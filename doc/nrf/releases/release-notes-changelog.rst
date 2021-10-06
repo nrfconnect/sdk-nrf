@@ -149,6 +149,9 @@ Zigbee
 
    * :ref:`Zigbee shell <zigbee_shell_sample>`.
    * Added ZCL commands to :ref:`Zigbee Shell library <lib_zigbee_shell>`.
+   * Fixes and improvements in :ref:`Zigbee Shell library <lib_zigbee_shell>`.
+   * Fixed issue with cluster declaration in :ref:`Zigbee shell <zigbee_shell_sample>` and :ref:`Zigbee template <zigbee_template_sample>`.
+   * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` and :ref:`Zigbee Shell library <lib_zigbee_shell>`.
 
 Common
 ======
