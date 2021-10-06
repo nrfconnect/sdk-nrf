@@ -39,6 +39,7 @@ enum slm_tcp_role {
 
 static struct k_thread tcp_thread;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
+static bool server_stop_pending;
 
 static struct tcp_proxy {
 	int sock;		/* Socket descriptor. */
@@ -228,25 +229,25 @@ static int do_tcp_server_stop(void)
 		proxy.sec_tag = INVALID_SEC_TAG;
 	}
 #endif
+	server_stop_pending = true;
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		(void)close(proxy.sock_peer);
 		proxy.sock_peer = INVALID_SOCKET;
-	}
-	ret = close(proxy.sock);
-	if (ret < 0) {
-		LOG_WRN("close() failed: %d", -errno);
-		ret = -errno;
+		sprintf(rsp_buf, "\r\n#XTCPSVR: 0,\"disconnected\"\r\n");
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
+		ret = close(proxy.sock);
+		if (ret < 0) {
+			LOG_WRN("close() failed: %d", -errno);
+			return ret;
+		}
 		proxy.sock = INVALID_SOCKET;
 	}
-	if (ret == 0 &&
-	    k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME * 2)) != 0) {
+	if (k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME + 1)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
 	}
-	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 
-	return ret;
+	return 0;
 }
 
 static int do_tcp_client_connect(const char *url, uint16_t port)
@@ -450,14 +451,18 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 	fds[1].events = POLLIN;
 	while (true) {
 		ret = poll(fds, 2, MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
-		if (ret < 0) {
+		if (server_stop_pending) {  /* server wait to stop */
+			ret = 0;
+			break;
+		}
+		if (ret < 0) { /* IO error */
 			LOG_WRN("poll() error: %d", -errno);
 			ret = -EIO;
 			break;
-		} /* IO error */
-		if (ret == 0) {
+		}
+		if (ret == 0) { /* timeout */
 			continue;
-		} /* timeout */
+		}
 		LOG_DBG("fds[0] events 0x%08x", fds[0].revents);
 		LOG_DBG("fds[1] events 0x%08x", fds[1].revents);
 		/* Listening socket events must be handled first*/
@@ -576,10 +581,10 @@ client_events:
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
-		sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
-
+	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	server_stop_pending = false;
 	LOG_INF("TCP server thread terminated");
 }
 
