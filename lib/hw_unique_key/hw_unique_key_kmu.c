@@ -17,7 +17,12 @@ static bool key_written(enum hw_unique_key_slot kmu_slot)
 	uint32_t idx = kmu_slot;
 
 	NRF_KMU->SELECTKEYSLOT = KMU_SELECT_SLOT(kmu_slot);
-	if (NRF_UICR_S->KEYSLOT.CONFIG[idx].PERM != 0xFFFFFFFF) {
+
+    uint32_t perm = NRF_UICR_S->KEYSLOT.CONFIG[idx].PERM;
+
+    __DSB();
+
+	if (perm != 0xFFFFFFFF) {
 		NRF_KMU->SELECTKEYSLOT = 0;
 		return true;
 	}
