@@ -9,6 +9,6 @@
 
 
 int ei_data_forwarder_parse_data(const float *data_ptr, size_t data_cnt,
-				 uint8_t *buf, size_t buf_size);
+				 char *buf, size_t buf_size);
 
 #endif /* _EI_DATA_FORWARDER_H_ */
