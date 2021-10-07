@@ -92,6 +92,7 @@ nRF Desktop
     It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
     When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
     For example, ``CONF_FILE=prj_release.conf`` is now used instead of ``CMAKE_BUILD_TYPE=ZRelease``.
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 Pelion client
 -------------
@@ -101,6 +102,21 @@ Pelion client
   * The application configuration files were switched to follow a generic scheme.
     When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
     E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+Thingy:53: Matter weather station
+---------------------------------
+
+* Updated:
+
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+nRF Machine Learning
+--------------------
+
+* Updated:
+
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -126,6 +142,7 @@ Bluetooth samples
 * :ref:`ble_llpm` sample - Added role selection.
 * :ref:`peripheral_uart` sample is now the default sample for the :ref:`ble_rpc` library.
   The sample runs out of the box with a serialized Bluetooth Low Energy Host.
+* Updated some samples to use DTS overlay instead of KConfig for external flash.
 * :ref:`peripheral_hids_mouse` sample now comes with the :ref:`ble_rpc_host` child image configuration overlay.
   The overlay shows how to configure an application running a serialized Bluetooth Low Energy Host.
   The :ref:`peripheral_hids_mouse` runs out the box with the :ref:`ble_rpc` library.
@@ -141,6 +158,7 @@ Bluetooth mesh samples
 * Updated:
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+  * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 Matter samples
 --------------
@@ -180,6 +198,7 @@ nRF9160 samples
 * :ref:`modem_shell_application` sample:
 
   * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
+  * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 * :ref:`gnss_sample` sample:
 
