@@ -76,12 +76,12 @@ zb_bool_t zb_cli_nvram_enabled(void)
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_nvram,
-	SHELL_CMD_ARG(enable, NULL, "Enable Zigbee NVRAM",
+	SHELL_CMD_ARG(enable, NULL, "Enable Zigbee NVRAM.",
 		      cmd_zb_nvram_enable, 1, 0),
-	SHELL_CMD_ARG(disable, NULL, "Disable Zigbee NVRAM",
+	SHELL_CMD_ARG(disable, NULL, "Disable Zigbee NVRAM.",
 		      cmd_zb_nvram_disable, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(nvram, &sub_nvram, "Zigbee NVRAM manipulation",
+SHELL_CMD_REGISTER(nvram, &sub_nvram, "Zigbee NVRAM manipulation.",
 		   NULL);
 #endif

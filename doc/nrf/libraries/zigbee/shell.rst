@@ -113,8 +113,9 @@ Example:
    Please refer to shell documentation for more details.
 
    Available commands:
-   bdb                :Base device behaviour manipulation
+   bdb                :Base device behaviour manipulation.
    clear              :Clear screen.
+   debug              :Return state of debug mode.
    device             :Device commands
    devmem             :Read/write physical memory"devmem address [width [value]]"
    flash              :Flash shell commands
@@ -122,15 +123,16 @@ Example:
    history            :Command history.
    kernel             :Kernel commands
    nrf_clock_control  :Clock control commmands
-   nvram              :Zigbee NVRAM manipulation
+   nvram              :Zigbee NVRAM manipulation.
    resize             :Console gets terminal screen size or assumes default in
-                      case the readout fails. It must be executed after each
-                      terminal width change to ensure correct text display.
+                       case the readout fails. It must be executed after each
+                       terminal width change to ensure correct text display.
    sensor             :Sensor commands
    shell              :Useful, not Unix-like shell commands.
    version            :Print firmware version
    zcl                :ZCL subsystem commands.
-   zdo                :ZDO manipulation
+   zdo                :ZDO manipulation.
+   zscheduler         :Zigbee scheduler manipulation.
 
 ----
 
