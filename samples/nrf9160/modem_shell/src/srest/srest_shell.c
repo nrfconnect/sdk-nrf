@@ -21,7 +21,8 @@ static const char srest_shell_cmd_usage_str[] =
 	"Simple REST shell client\n"
 	"Usage:\n"
 	"srest -d host [-p port] [-m method] [-u url] [-b body] [-H header1] [-H header2 ... header10]\n"
-	"              [-s sec_tag] [-v verify_level] [-t timeout_in_ms] [-l length of the response buffer]\n"
+	"               [-s sec_tag] [-v verify_level] [-t timeout_in_ms] [-l length of the response buffer]\n"
+	"               [-k] [-i sckt_id]\n"
 	"\n"
 	"  -d, --host,         Destination host/domain of the URL\n"
 	"Optionals:\n"
@@ -37,6 +38,9 @@ static const char srest_shell_cmd_usage_str[] =
 	"  -s, --sec_tag,      Used security tag for TLS connection\n"
 	"  -t, --timeout,      Request timeout in seconds\n"
 	"                      (default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT)\n"
+	"  -k, --keepalive,    Keep socket connection alive for upcoming requests\n"
+	"                      towards the ame server (default: false)\n"
+	"  -i, --sckt_id,      Use existing socket id (default: create new connection)\n"
 	"  -v, --peer_verify,  TLS peer verification level. None (0),\n"
 	"                      optional (1) or required (2). Default value is 2.\n";
 
@@ -52,6 +56,8 @@ static struct option long_options[] = {
 	{ "sec_tag", required_argument, 0, 's' },
 	{ "peer_verify", required_argument, 0, 'v' },
 	{ "timeout", required_argument, 0, 't' },
+	{ "keepalive", no_argument, 0, 'k' },
+	{ "sckt_id", required_argument, 0, 'i' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -100,8 +106,8 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:", long_options, &long_index)) !=
-	       -1) {
+	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:k", long_options,
+				  &long_index)) != -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "get") == 0) {
@@ -122,12 +128,18 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			method_set = true;
 			break;
+		case 'k':
+			rest_ctx.keep_alive = true;
+			break;
 		case 'd':
 			rest_ctx.host = optarg;
 			host_set = true;
 			break;
 		case 'u':
 			rest_ctx.url = optarg;
+			break;
+		case 'i':
+			rest_ctx.connect_socket = atoi(optarg);
 			break;
 		case 's':
 			rest_ctx.sec_tag = atoi(optarg);
@@ -269,9 +281,12 @@ int srest_shell(const struct shell *shell, size_t argc, char **argv)
 	} else {
 		mosh_print(
 			"Response:\n"
+			"  Socket ID: %d (sckt closed: %s)\n"
 			"  HTTP status: %d\n"
 			"  Body/Total length: %d/%d\n\n"
 			"  %s\n",
+			rest_ctx.used_socket_id,
+			(rest_ctx.used_socket_is_alive) ? "no" : "yes",
 			rest_ctx.http_status_code,
 			rest_ctx.response_len,
 			rest_ctx.total_response_len,
