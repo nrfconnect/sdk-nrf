@@ -197,8 +197,10 @@ static int method_gnss_get_modem_info(struct lte_lc_cell *serving_cell)
 		return err;
 	}
 
-	/* Request for MODEM_INFO_MNC returns both MNC and MCC in the same string. */
-	err = modem_info_string_get(MODEM_INFO_MNC, resp_buf_cops, MODEM_INFO_MAX_RESPONSE_SIZE);
+	/* Request for MODEM_INFO_OPERATOR returns both MNC and MCC in the same string. */
+	err = modem_info_string_get(MODEM_INFO_OPERATOR,
+				    resp_buf_cops,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
 	if (err < 0) {
 		LOG_ERR("Could not obtain current operator information");
 		return err;
