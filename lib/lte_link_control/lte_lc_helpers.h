@@ -304,7 +304,7 @@ int event_handler_list_append_handler(lte_lc_evt_handler_t handler);
  *
  * @return Zero on success, negative errno code if the API call fails.
  */
-int event_handler_list_remove_notif_handler(lte_lc_evt_handler_t handler);
+int event_handler_list_remove_handler(lte_lc_evt_handler_t handler);
 
 /* @brief Dispatch events for the registered event handlers.
  *

@@ -763,7 +763,7 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler)
 		LOG_ERR("Invalid handler (handler=0x%08X)", (uint32_t)handler);
 		return -EINVAL;
 	}
-	return event_handler_list_remove_notif_handler(handler);
+	return event_handler_list_remove_handler(handler);
 }
 
 int lte_lc_connect(void)
