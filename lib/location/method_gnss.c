@@ -64,7 +64,6 @@ static struct k_work method_gnss_timeout_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
-static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
 static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
 
@@ -83,7 +82,7 @@ static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-static struct gps_agps_request agps_request;
+static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -228,7 +227,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 
 	struct nrf_cloud_rest_agps_request request = {
 						      NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-						      &agps_request,
+						      &gnss_api_agps_request,
 						      NULL};
 	struct lte_lc_cells_info net_info = {0};
 
@@ -317,36 +316,6 @@ bool method_gnss_agps_required(struct nrf_modem_gnss_agps_data_frame *request)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-/* Converts the A-GPS data request from GNSS API to GPS driver format. */
-static void method_gnss_agps_request_convert(
-	const struct nrf_modem_gnss_agps_data_frame *src,
-	struct gps_agps_request *dest)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
-		dest->utc = 1;
-	}
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
-		dest->klobuchar = 1;
-	}
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
-		dest->nequick = 1;
-	}
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		dest->system_time_tow = 1;
-	}
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
-		dest->position = 1;
-	}
-	if (src->data_flags | NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		dest->integrity = 1;
-	}
-}
-#endif
-
 static void method_gnss_request_assistance(void)
 {
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -363,8 +332,6 @@ static void method_gnss_request_assistance(void)
 		gnss_api_agps_request.sv_mask_ephe,
 		gnss_api_agps_request.sv_mask_alm,
 		gnss_api_agps_request.data_flags);
-
-	method_gnss_agps_request_convert(&gnss_api_agps_request, &agps_request);
 
 	/* Check the request. If no A-GPS data types are requested, jump to P-GPS (if enabled) */
 	if (method_gnss_agps_required(&gnss_api_agps_request)) {
