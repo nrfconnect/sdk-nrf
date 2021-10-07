@@ -49,12 +49,12 @@ static int cmd_zb_resume(const struct shell *shell, size_t argc, char **argv)
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_zigbee,
-	SHELL_CMD_ARG(resume, NULL, "Suspend Zigbee scheduler processing",
+	SHELL_CMD_ARG(resume, NULL, "Suspend Zigbee scheduler processing.",
 		      cmd_zb_resume, 1, 0),
-	SHELL_CMD_ARG(suspend, NULL, "Suspend Zigbee scheduler processing",
+	SHELL_CMD_ARG(suspend, NULL, "Suspend Zigbee scheduler processing.",
 		      cmd_zb_suspend, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(zscheduler, &sub_zigbee, "Zigbee scheduler manipulation",
+SHELL_CMD_REGISTER(zscheduler, &sub_zigbee, "Zigbee scheduler manipulation.",
 		   NULL);
 #endif

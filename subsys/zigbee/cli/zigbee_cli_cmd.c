@@ -16,13 +16,13 @@
 #include "zigbee_cli.h"
 
 #define DEBUG_HELP \
-	"Return state of debug mode.\n"
+	"Return state of debug mode."
 
 #define DEBUG_ON_HELP \
-	"Turn on debug mode.\n"
+	"Turn on debug mode."
 
 #define DEBUG_OFF_HELP \
-	"Turn off debug mode.\n"
+	"Turn off debug mode."
 
 #define DEBUG_WARN_MSG \
 	"You are about to turn the debug mode on. This unblocks several\n" \

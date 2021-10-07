@@ -1017,8 +1017,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_bdb,
 		      1, 0),
 	SHELL_CMD_ARG(nwkkey, NULL, NWKKEY_HELP, cmd_zb_nwkkey, 2, 0),
 	SHELL_CMD_ARG(panid, NULL, PANID_HELP, cmd_zb_panid, 1, 1),
-	SHELL_CMD_ARG(role, &sub_role, ("Get role."), cmd_zb_role, 1, 1),
-	SHELL_CMD_ARG(start, NULL, "Start commissionning", cmd_zb_start, 1, 0),
+	SHELL_CMD_ARG(role, &sub_role, ("Set/get role."), cmd_zb_role, 1, 1),
+	SHELL_CMD_ARG(start, NULL, "Start commissionning.", cmd_zb_start, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(bdb, &sub_bdb, "Base device behaviour manipulation", NULL);
+SHELL_CMD_REGISTER(bdb, &sub_bdb, "Base device behaviour manipulation.", NULL);

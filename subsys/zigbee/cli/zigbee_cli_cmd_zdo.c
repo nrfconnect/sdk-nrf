@@ -2295,11 +2295,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_zdo,
 	SHELL_CMD_ARG(short, NULL, "Get the short address of the node.",
 		      cmd_zb_short, 1, 0),
 	SHELL_CMD(bind, &sub_bind,
-		  "Create/remove the binding entry in the remote node", NULL),
+		  "Create/remove the binding entry in the remote node.", NULL),
 	SHELL_CMD_ARG(mgmt_bind, NULL, MGMT_BIND_HELP, cmd_zb_mgmt_bind, 2, 1),
 	SHELL_CMD_ARG(mgmt_leave, NULL, MGMT_LEAVE_HELP, cmd_zb_mgmt_leave,
 		      2, 3),
 	SHELL_CMD_ARG(mgmt_lqi, NULL, MGMT_LQI_HELP, cmd_zb_mgmt_lqi, 2, 1),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(zdo, &sub_zdo, "ZDO manipulation", NULL);
+SHELL_CMD_REGISTER(zdo, &sub_zdo, "ZDO manipulation.", NULL);
