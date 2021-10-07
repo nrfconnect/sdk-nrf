@@ -88,7 +88,7 @@ int event_handler_list_append_handler(lte_lc_evt_handler_t handler)
 }
 
 /**@brief Remove the handler from the event handler list if registered. */
-int event_handler_list_remove_event_handler(lte_lc_evt_handler_t handler)
+int event_handler_list_remove_handler(lte_lc_evt_handler_t handler)
 {
 	struct event_handler *curr, *prev = NULL;
 
