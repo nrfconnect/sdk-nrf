@@ -34,4 +34,9 @@ void log_mock_clear(void);
 #endif
 #define LOG_MODULE_REGISTER(...)
 
+#ifdef LOG_MODULE_DECLARE
+#undef LOG_MODULE_DECLARE
+#endif
+#define LOG_MODULE_DECLARE(...)
+
 #endif /* LOG_MOCK_H_ */

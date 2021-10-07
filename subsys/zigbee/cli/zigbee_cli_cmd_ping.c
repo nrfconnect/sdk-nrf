@@ -19,7 +19,7 @@
 
 #define ZIGBEE_PING_FRAME_CONTROL_FIELD 0x11
 
-LOG_MODULE_REGISTER(ping, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_REGISTER(zigbee_shell_ping, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 static uint8_t ping_seq_num;
 static ping_time_cb_t ping_ind_cb;

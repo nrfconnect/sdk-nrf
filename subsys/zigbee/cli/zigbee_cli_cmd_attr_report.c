@@ -40,7 +40,7 @@
 #define ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MAX_INTERVAL 0xFFFF
 
 
-LOG_MODULE_REGISTER(report, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_REGISTER(zigbee_shell_report, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 /**@brief Handles timeout error and invalidates Configure Reporting entry in context manager.
  *

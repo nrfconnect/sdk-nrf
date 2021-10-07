@@ -9,7 +9,7 @@
 #include <zb_nrf_platform.h>
 #include <zigbee/zigbee_zcl_scenes.h>
 
-LOG_MODULE_REGISTER(zcl_scenes, CONFIG_ZIGBEE_SCENES_LOG_LEVEL);
+LOG_MODULE_REGISTER(zigbee_zcl_scenes, CONFIG_ZIGBEE_SCENES_LOG_LEVEL);
 
 static zb_uint8_t scene_table_get_entry(zb_uint16_t group_id, zb_uint8_t scene_id);
 static void scene_table_remove_entries_by_group(zb_uint16_t group_id);
