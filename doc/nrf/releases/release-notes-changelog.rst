@@ -122,6 +122,10 @@ Bluetooth® LE
 Bluetooth mesh
 --------------
 
+* Added:
+
+  * :ref:`bluetooth_ble_peripheral_lbs_coex` sample, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
+
 * Updated:
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
