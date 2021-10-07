@@ -583,3 +583,9 @@ void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_el
 		memcpy(received_elements, &processed, sizeof(*received_elements));
 	}
 }
+
+size_t nrf_cloud_agps_get_max_file_size(bool filtered)
+{
+	return filtered ? NRF_CLOUD_AGPS_FILTERED_MAX_FILE_SIZE :
+			  NRF_CLOUD_AGPS_MAX_FILE_SIZE;
+}

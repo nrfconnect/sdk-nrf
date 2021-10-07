@@ -22,9 +22,55 @@ extern "C" {
 #define NRF_CLOUD_AGPS_BIN_COUNT_OFFSET			(1)
 #define NRF_CLOUD_AGPS_BIN_COUNT_SIZE			(2)
 
-
+#define NRF_CLOUD_AGPS_MAX_SV				(32U)
 /* Maximum number of satellites in time-of-week data array. */
 #define NRF_CLOUD_AGPS_MAX_SV_TOW			(32U)
+
+/* Define sizes of data actually sent from the cloud; sizes provided to the modem
+ * will be smaller (no _HSIZE header).  The TOWS and System Time structures from the
+ * file will be combined and sent to the modem as one structure.
+ */
+#define _HSZ					(NRF_CLOUD_AGPS_BIN_TYPE_SIZE + \
+						 NRF_CLOUD_AGPS_BIN_COUNT_SIZE)
+#define NRF_CLOUD_AGPS_UTC_SIZE			(_HSZ + sizeof(struct nrf_cloud_agps_utc))
+#define NRF_CLOUD_AGPS_EPHEMERIS_SIZE		(_HSZ + \
+						 sizeof(struct nrf_cloud_agps_ephemeris) * \
+						 NRF_CLOUD_AGPS_MAX_SV)
+#define NRF_CLOUD_AGPS_FILTERED_EPHEMERIS_SIZE	(_HSZ + \
+						 sizeof(struct nrf_cloud_agps_ephemeris) * \
+						 NRF_CLOUD_AGPS_MAX_SV / 2)
+#define NRF_CLOUD_AGPS_ALMANAC_SIZE		(_HSZ + \
+						 sizeof(struct nrf_cloud_agps_almanac) * \
+						 NRF_CLOUD_AGPS_MAX_SV)
+#define NRF_CLOUD_AGPS_KLOBUCHAR_SIZE		(_HSZ + sizeof(struct nrf_cloud_agps_klobuchar))
+#define NRF_CLOUD_AGPS_NEQUICK_SIZE		(_HSZ + sizeof(struct nrf_cloud_agps_nequick))
+#define NRF_CLOUD_AGPS_TOWS_SIZE		(_HSZ + \
+						 sizeof(struct nrf_cloud_agps_tow_element) * \
+						 NRF_CLOUD_AGPS_MAX_SV_TOW)
+#define NRF_CLOUD_AGPS_SYSTEM_TIME_SIZE		(_HSZ + \
+						 sizeof(struct nrf_cloud_agps_system_time) - \
+						 sizeof(struct nrf_cloud_agps_tow_element) * \
+						 NRF_CLOUD_AGPS_MAX_SV_TOW)
+#define NRF_CLOUD_AGPS_LOCATION_SIZE		(_HSZ + sizeof(struct nrf_cloud_agps_location))
+#define NRF_CLOUD_AGPS_INTEGRITY_SIZE		(_HSZ + sizeof(struct nrf_cloud_agps_integrity))
+
+/* Absolute largest possible A-GPS file size */
+#define NRF_CLOUD_AGPS_MAX_FILE_SIZE ( \
+	NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE * 2 + NRF_CLOUD_AGPS_UTC_SIZE + \
+	NRF_CLOUD_AGPS_EPHEMERIS_SIZE + NRF_CLOUD_AGPS_ALMANAC_SIZE + \
+	NRF_CLOUD_AGPS_KLOBUCHAR_SIZE + NRF_CLOUD_AGPS_NEQUICK_SIZE + \
+	NRF_CLOUD_AGPS_TOWS_SIZE + NRF_CLOUD_AGPS_SYSTEM_TIME_SIZE + \
+	NRF_CLOUD_AGPS_LOCATION_SIZE + NRF_CLOUD_AGPS_INTEGRITY_SIZE)
+
+/* Absolute largest possible A-GPS file size when filtering ephemeris to only those visible,
+ * which is one half of the constellation size.
+ */
+#define NRF_CLOUD_AGPS_FILTERED_MAX_FILE_SIZE ( \
+	NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE * 2 + NRF_CLOUD_AGPS_UTC_SIZE + \
+	NRF_CLOUD_AGPS_FILTERED_EPHEMERIS_SIZE + NRF_CLOUD_AGPS_ALMANAC_SIZE + \
+	NRF_CLOUD_AGPS_KLOBUCHAR_SIZE + NRF_CLOUD_AGPS_NEQUICK_SIZE + \
+	NRF_CLOUD_AGPS_TOWS_SIZE + NRF_CLOUD_AGPS_SYSTEM_TIME_SIZE + \
+	NRF_CLOUD_AGPS_LOCATION_SIZE + NRF_CLOUD_AGPS_INTEGRITY_SIZE)
 
 enum nrf_cloud_agps_type {
 	NRF_CLOUD_AGPS_UTC_PARAMETERS			= 1,
