@@ -15,7 +15,7 @@
 LOG_LEVEL_SET(CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL);
 
 /**@brief Name of the log module related to Zigbee. */
-#define LOG_MODULE_NAME zboss_osif
+#define LOG_MODULE_NAME zigbee
 
 /** @brief Name of the submodule used for logger messaging. */
 #define LOG_SUBMODULE_NAME eprxzcl

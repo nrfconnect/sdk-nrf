@@ -18,7 +18,7 @@
 #define ATTRIBUTE_ENTRY_TIMEOUT_S  10
 
 
-LOG_MODULE_REGISTER(attr, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 /**@brief Invalidate an entry with Read/Write Attributes request data after the timeout.
  *        This function is called as the ZBOSS callback.

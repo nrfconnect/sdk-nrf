@@ -21,7 +21,7 @@
 /* CMD ID used to mark that frame is to be constructed as `zcl raw`. */
 #define ZCL_CMD_ID_RAW        0xFFFF
 
-LOG_MODULE_REGISTER(generic_cmd, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 /**@brief Handles timeout error and invalidates ZCL command entry in context manager.
  *

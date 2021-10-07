@@ -6,7 +6,6 @@
 
 #include <sys/__assert.h>
 #include <random/rand32.h>
-#include <logging/log.h>
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
 #include <crypto/cipher.h>
@@ -27,8 +26,6 @@
 #if !defined(CONFIG_ENTROPY_HAS_DRIVER)
 #error Entropy driver required for secure random number support
 #endif
-
-LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 
 #if CONFIG_CRYPTO_NRF_ECB
 static const struct device *dev;

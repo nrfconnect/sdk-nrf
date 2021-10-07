@@ -19,7 +19,7 @@ static zb_uint8_t cli_ep;
 /* Zigbee CLI debug mode indicator. */
 static zb_bool_t debug_mode = ZB_FALSE;
 
-LOG_MODULE_REGISTER(cli, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_REGISTER(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 /**@brief Returns the Endpoint number used by the CLI.
  */
