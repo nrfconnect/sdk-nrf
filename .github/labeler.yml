@@ -16,11 +16,13 @@
 
 "CI-libmodem-test":
   - "samples/nrf9160/**/*"
+  - "lib/lte_link_control/**/*"
   - "lib/nrf_modem_lib/*"
 
 "CI-lwm2m-test":
   - "samples/nrf9160/lwm2m_*/*"
   - "lib/bin/*"
+  - "lib/lte_link_control/**/*"
   - "lib/nrf_modem_lib/*"
 
 "CI-boot-dfu-test":
@@ -32,6 +34,7 @@
   - "include/dfu/**/*"
   - "include/net/**/*"
   - "cmake/*"
+  - "lib/lte_link_control/**/*"
   - "modules/mcuboot/**/*"
   - "samples/nrf9160/*fota/**/*"
   - "samples/nrf9160/fmfu_smp_svr/**/*"
