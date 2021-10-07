@@ -32,54 +32,54 @@ enum rest_client_http_status {
 struct rest_client_req_resp_context {
 	/** Request: */
 
-	/** Connection socket identifier; default REST_CLIENT_SCKT_CONNECT and
-	 * library will make the connection.
+	/** In: socket identifier for the connection. default: REST_CLIENT_SCKT_CONNECT and
+	 *      library will make a new socket connection.
 	 */
 	int connect_socket;
 
-	/** If the connection should remain after API call. Default: false. */
+	/** In: If the connection should remain after API call. Default: false. */
 	bool keep_alive;
 
-	/** Security tag. Default REST_CLIENT_NO_SEC and TLS will not be used. */
+	/** In: Security tag. Default REST_CLIENT_NO_SEC and TLS will not be used. */
 	int sec_tag;
 
-	/** Indicates the preference for peer verification.
-	 * Initialize to REST_CLIENT_TLS_DEFAULT_PEER_VERIFY
-	 * and default (TLS_PEER_VERIFY_REQUIRED) is used.
+	/** In: Indicates the preference for peer verification.
+	 *      Initialize to REST_CLIENT_TLS_DEFAULT_PEER_VERIFY
+	 *      and the default (TLS_PEER_VERIFY_REQUIRED) is used.
 	 */
 	int tls_peer_verify;
 
-	/** Used HTTP method. */
+	/** In: Used HTTP method. */
 	enum http_method http_method;
 
-	/** Hostname to be used in the request. */
+	/** In: Hostname to be used in the request. */
 	const char *host;
 
-	/** Port number to be used in the request. */
+	/** In: Port number to be used in the request. */
 	uint16_t port;
 
-	/** The URL for this request, for example: /index.html */
+	/** In: The URL for this request, for example: /index.html */
 	const char *url;
 
-	/** The HTTP header fields. This is a NULL terminated list of header fields.
-	 * May be NULL.
+	/** In: The HTTP header fields. Similar to Zephyr http client.
+	 *      This is a NULL terminated list of header fields. May be NULL.
 	 */
 	const char **header_fields;
 
-	/** Payload/body, may be NULL. */
+	/** In: Payload/body, may be NULL. */
 	char *body;
 
 	/** Response: */
 
-	/** User given timeout value for receiving a response data.
-	 * Default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT
+	/** In: User given timeout value for receiving a response data.
+	 *      Default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT
 	 */
 	int32_t timeout_ms;
 
-	/** User allocated buffer for receiving API response.*/
+	/** In: User allocated buffer for receiving API response.*/
 	char *resp_buff;
 
-	/** User given size of resp_buff */
+	/** In: User given size of resp_buff */
 	size_t resp_buff_len;
 
 	/** Out: Length of HTTP headers + response body/content data */
@@ -93,6 +93,16 @@ struct rest_client_req_resp_context {
 
 	/** Out: Numeric HTTP status code */
 	uint16_t http_status_code;
+
+	/** Out: Used socket identifier. Use this for keepalived connections as
+	 *       connect_socket.
+	 */
+	int used_socket_id;
+
+	/** Out: True if used_socket_id was kept alive and wasn't closed after the
+	 *       REST request.
+	 */
+	int used_socket_is_alive;
 };
 
 /**
