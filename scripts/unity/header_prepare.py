@@ -27,6 +27,22 @@ def header_prepare(in_file, out_file, out_wrap_file):
 
     content = cpp_comments_pattern.sub(r"", content)
 
+    # remove macros
+    # First remove all lines following first #define. Search for \ followed by new
+    # line and next line until next \ or new line.
+    macro_pattern = re.compile(
+        r'\\$\n[^\\|\n]*',
+        re.DOTALL | re.MULTILINE
+    )
+    content = macro_pattern.sub(r"", content)
+
+    # remove remaining part of the macro - first line.
+    macro_pattern2 = re.compile(
+        r'#define.*?$',
+        re.DOTALL | re.MULTILINE
+    )
+    content = macro_pattern2.sub(r"", content)
+
     # remove inline syscalls
     static_inline_pattern = re.compile(
         r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
