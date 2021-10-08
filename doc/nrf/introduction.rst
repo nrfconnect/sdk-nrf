@@ -23,6 +23,18 @@ Every nRF Connect SDK release consists of a combination of these repositories at
 The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, ``sdk-nrf``.
 It contains the SDK manifest file that enables you to manage the repositories as one code base with the west tool.
 
+About the |NCS| license
+***********************
+
+Licenses are located close to the source files.
+You can find a :file:`LICENSE` file, containing the details of the license, at the top of every |NCS| repository.
+Each file included in the repositories also has an `SPDX identifier`_ that mentions this license.
+
+If a folder or set of files is open source and included in |NCS| under its own license (for example, any of the Apache or MIT licenses), it will have either its own :file:`LICENSE` file included in the folder or the license information embedded inside the source files themselves.
+
+The `SPDX tool`_ is used to generate license reports on each release of the |NCS|.
+You can also use SPDX to generate license reports for your projects that are specific to the code included in your application.
+
 Documentation structure
 ***********************
 

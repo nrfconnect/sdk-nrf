@@ -750,3 +750,6 @@
 .. _`Install chocolatey`: https://chocolatey.org/install
 .. _`Chocolatey`: https://chocolatey.org/
 .. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
+
+.. _`SPDX tool`: https://spdx.dev/
+.. _`SPDX identifier`: https://spdx.dev/ids/

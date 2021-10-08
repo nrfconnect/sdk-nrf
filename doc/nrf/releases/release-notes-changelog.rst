@@ -278,4 +278,8 @@ Secure Partition Manager
 Documentation
 =============
 
-There are no entries for this section yet.
+In addition to documentation related to the changes listed above, the following documentation has been updated:
+
+* Updated pages:
+
+  * :ref:`ncs_introduction` - Added a section describing how licenses work in |NCS|.
