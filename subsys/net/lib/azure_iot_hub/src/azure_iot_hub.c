@@ -27,11 +27,11 @@ LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
 #define USER_NAME_STATIC	CONFIG_AZURE_IOT_HUB_HOSTNAME "/"	\
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID		\
-				"/?api-version=2018-06-30"
+				"/?api-version=2020-09-30"
 /* User name when connecting to Azure IoT Hub is on the form
- *	<IoT hub hostname>/<device ID>/?api-version=2018-06-30
+ *	<IoT hub hostname>/<device ID>/?api-version=2020-09-30
  */
-#define USER_NAME_TEMPLATE	"%s/%s/?api-version=2018-06-30"
+#define USER_NAME_TEMPLATE	"%s/%s/?api-version=2020-09-30"
 
 #define DPS_USER_NAME		CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE \
 				"/registrations/%s/api-version=2019-03-31"
@@ -72,7 +72,7 @@ static azure_iot_hub_evt_handler_t evt_handler;
 /* If DPS is used, the IoT hub hostname is obtained through that service,
  * otherwise it has to be set in compile time using
  * @option{CONFIG_AZURE_IOT_HUB_HOSTNAME}. The maximal size is length of hub
- * name + device ID length + length of "/?api-version=2018-06-30". In the case of DPS,
+ * name + device ID length + length of "/?api-version=2020-09-30". In the case of DPS,
  * the length of ".azure-devices-provisioning.net/" is also added.
  * When @option{CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP} is used, the app sets the
  * device ID in runtime, and the hostname is derived from that.
@@ -83,11 +83,11 @@ static azure_iot_hub_evt_handler_t evt_handler;
 #define USER_NAME_BUF_LEN	(CONFIG_AZURE_IOT_HUB_HOSTNAME_MAX_LEN + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
 				sizeof(".azure-devices-provisioning.net/") + \
-				sizeof("/?api-version=2018-06-30"))
+				sizeof("/?api-version=2020-09-30"))
 #else
 #define USER_NAME_BUF_LEN	(sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME "/") + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
-				sizeof("/?api-version=2018-06-30"))
+				sizeof("/?api-version=2020-09-30"))
 #endif
 
 static char user_name_buf[USER_NAME_BUF_LEN];
