@@ -69,12 +69,12 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 				       char * const rcv_buf, const size_t rcv_buf_len,
 				       struct multicell_location *const location)
 {
+	ARG_UNUSED(device_id);
+
 	int err;
 	struct nrf_cloud_cell_pos_result result;
 	struct nrf_cloud_rest_context rest_ctx = {
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_GENERATED)
 		.auth = jwt_buf,
-#endif
 		.connect_socket = -1,
 		.keep_alive = false,
 		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
@@ -86,7 +86,6 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 		.net_info = (struct lte_lc_cells_info *)cell_data
 	};
 
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_GENERATED)
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
@@ -94,12 +93,6 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	}
 
 	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
-#else
-	BUILD_ASSERT(IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_COMPILE_TIME));
-
-	rest_ctx.auth = CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING;
-	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
-#endif
 	if (!err) {
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
