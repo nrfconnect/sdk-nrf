@@ -250,6 +250,10 @@ Libraries for networking
 
   * Added REST client library for sending REST requests and receiving their responses.
 
+* :ref:`lib_azure_iot_hub` library:
+
+  * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
+
 Trusted Firmware-M libraries
 ----------------------------
 
