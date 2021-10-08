@@ -21,6 +21,10 @@ int foo_init(void *handle);
 
 static const char test_string[] = "test string";
 
+#define TEST_MACRO(xx) \
+	const Z_STRUCT_SECTION_ITERABLE(settings_handler_static, \
+			name)
+
 static inline int foo_execute(void)
 {
 	foo_t val = 0;
