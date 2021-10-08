@@ -114,7 +114,7 @@ static int ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 	return 0;
 }
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
+#if defined(CONFIG_HAS_HW_NRF_DPPIC)
 static int egu_instance_alloc(uint8_t *p_egu_instance_no)
 {
 	/* Always return EGU0. */
@@ -245,13 +245,13 @@ static int fem_nrf21540_gpio_configure(void)
 		return err;
 	}
 
-	IF_ENABLED(CONFIG_SOC_SERIES_NRF53X,
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 		   (err = egu_instance_alloc(&cfg.egu_instance_no);));
 	if (err) {
 		return err;
 	}
 
-	IF_ENABLED(CONFIG_SOC_SERIES_NRF53X,
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 		   (err = egu_channel_alloc(cfg.egu_channels,
 					    ARRAY_SIZE(cfg.egu_channels),
 					    cfg.egu_instance_no);))
