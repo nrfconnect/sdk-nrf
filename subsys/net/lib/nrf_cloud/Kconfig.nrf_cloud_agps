@@ -11,6 +11,15 @@ menuconfig NRF_CLOUD_AGPS
 
 if NRF_CLOUD_AGPS
 
+config NRF_CLOUD_AGPS_FILTERED_RUNTIME
+	bool "Allow runtime control of filtered ephemerides mode"
+	depends on NRF_CLOUD_AGPS_FILTERED
+	help
+	  Allow runtime settings in nrf_cloud_rest_agps_request structure
+	  to configure filtered mode and related elevation mask. Otherwise,
+	  NRF_CLOUD_AGPS_FILTERED and NRF_CLOUD_AGPS_ELEVATION_MASK set
+	  the request parameters directly.
+
 config NRF_CLOUD_AGPS_FILTERED
 	bool "Request only visible satellite ephemerides"
 	help
