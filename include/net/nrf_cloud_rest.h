@@ -120,6 +120,17 @@ struct nrf_cloud_rest_agps_request {
 	 * provide location assistance data if network info is NULL.
 	 */
 	struct lte_lc_cells_info *net_info;
+	/** Reduce set of ephemerides to only those visible at current
+	 * location.  This reduces the overall size of the download, but
+	 * may increase fix times towards the end of the validity period
+	 * and/or if the device is actively traveling long distances.
+	 */
+	bool filtered;
+	/** Constrain the set of ephemerides to only those currently
+	 *  visible at or above the specified elevation threshold
+	 *  angle in degrees. Range is 0 to 90.
+	 */
+	uint8_t mask_angle;
 };
 
 /** @brief nRF Cloud Assisted GPS (A-GPS) result */

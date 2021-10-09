@@ -69,6 +69,8 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_LOCATION			"/location"
 #define API_GET_CELL_POS_TEMPLATE	API_VER API_LOCATION "/cell"
 #define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps?"
+#define AGPS_FILTERED			"filtered=true"
+#define AGPS_ELEVATION_MASK		"&mask=%u"
 #define AGPS_REQ_TYPE			"&requestType=%s"
 #define NET_INFO_PRINT_SZ		(3 + 3 + 5 + UINT32_MAX_STR_SZ)
 #define AGPS_NET_INFO			"&mcc=%u&mnc=%u&tac=%u&eci=%u"
@@ -723,9 +725,29 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	char range_hdr[HDR_RANGE_BYTES_SZ];
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
+	static int64_t last_request_timestamp;
+	bool filtered;
+	uint8_t mask_angle;
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_GET);
+
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+	filtered = request->filtered;
+	mask_angle = request->mask_angle;
+#elif defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+	filtered = CONFIG_NRF_CLOUD_AGPS_FILTERED;
+	mask_angle = CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK;
+#else
+	filtered = false;
+	mask_angle = 0;
+#endif
+
+	if (filtered && (mask_angle > 90)) {
+		LOG_ERR("Mask angle %u out of range (must be <= 90)", mask_angle);
+		ret = -EINVAL;
+		goto clean_up;
+	}
 
 	if ((request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) &&
 	    (request->agps_req == NULL)) {
@@ -738,10 +760,28 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		goto clean_up;
 	}
 
+/** In filtered ephemeris mode, request A-GPS data no more often than
+ *  every 2 hours (time in milliseconds). Without this, the GNSS unit will
+ *  request for ephemeris every hour because a full set was not received.
+ */
+#define MARGIN_MINUTES 10
+#define AGPS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
+
+	if (filtered && (last_request_timestamp != 0) &&
+	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
+		LOG_WRN("A-GPS request was sent less than 2 hours ago");
+		ret = 0;
+		result->agps_sz = 0;
+		goto clean_up;
+	}
+
 	/* Determine size of URL buffer and allocate */
 	url_sz = sizeof(API_GET_AGPS_BASE);
 	if (request->net_info) {
 		url_sz += strlen(AGPS_NET_INFO) + NET_INFO_PRINT_SZ;
+	}
+	if (filtered) {
+		url_sz += strlen(AGPS_FILTERED) + strlen(AGPS_ELEVATION_MASK);
 	}
 	switch (request->type) {
 	case NRF_CLOUD_REST_AGPS_REQ_CUSTOM:
@@ -782,6 +822,25 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	pos = ret;
 	remain = url_sz - ret;
 
+	if (filtered) {
+		ret = snprintk(&url[pos], remain, AGPS_FILTERED);
+		if (ret < 0 || ret >= remain) {
+			LOG_ERR("Could not format URL: filtered");
+			ret = -ETXTBSY;
+			goto clean_up;
+		}
+		pos += ret;
+		remain -= ret;
+		ret = snprintk(&url[pos], remain, AGPS_ELEVATION_MASK, mask_angle);
+		if (ret < 0 || ret >= remain) {
+			LOG_ERR("Could not format URL: mask angle");
+			ret = -ETXTBSY;
+			goto clean_up;
+		}
+		pos += ret;
+		remain -= ret;
+	}
+
 	if (req_type) {
 		ret = snprintk(&url[pos], remain, AGPS_REQ_TYPE, req_type);
 		if (ret < 0 || ret >= remain) {
@@ -818,6 +877,8 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		pos += ret;
 		remain -= ret;
 	}
+
+	LOG_DBG("req url:%s", log_strdup(url));
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -913,6 +974,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	/* Set output size */
 	result->agps_sz = total_bytes;
+	last_request_timestamp = k_uptime_get();
 
 clean_up:
 	if (url) {
