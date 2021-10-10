@@ -283,8 +283,24 @@ struct lte_lc_cell {
 
 	/** Timing advance decimal value.
 	 *  Range [0..20512, TIMING_ADVANCE_NOT_VALID = 65535].
+	 *
+	 * Note: Timing advance may be reported from past measurements.
+	 *	 The parameters @c timing_advance_meas_time and @c measurement_time
+	 *	 can be used to evaluate if the parameter is usable.
 	 */
 	uint16_t timing_advance;
+
+	/** Timing advance measurement time in milliseconds, calculated from modem
+	 *  boot time.
+	 *  Range 0 - 18 446 744 073 709 551 614 ms.
+	 *
+	 *  For modem firmware versions >= 1.3.1, timing advance measurement time may
+	 *  be reported from the modem. This means that timing advance data
+	 *  may now also be available in neighbor cell measurements done in
+	 *  RRC idle, even though the timing advance data was captured in RRC connected.
+	 *  If the value is not reported by the modem, it is set to 0.
+	 */
+	uint64_t timing_advance_meas_time;
 
 	/** Measurement time of serving cell in milliseconds.
 	 *  Range 0 - 18 446 744 073 709 551 614 ms.

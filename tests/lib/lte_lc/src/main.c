@@ -375,14 +375,17 @@ static void test_parse_ncellmeas(void)
 {
 	int err;
 	char *resp1 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,"
-			"449,50,15,10891,5300,194,46,8,0,1650,292,60,27,24";
-	char *resp2 = "%NCELLMEAS: 1,\"021D140C\",\"24201\",\"0821\",65535,5300";
-	char *resp3 = "%NCELLMEAS: 0,\"071D340C\",\"24201\",\"0821\",65535,5300,449,50,15,10891";
+			"449,50,15,10891,5300,194,46,8,0,1650,292,60,27,24,8061152878017748";
+	char *resp2 = "%NCELLMEAS: 1,\"021D140C\",\"24201\",\"0821\",65535,5300,50000";
+	char *resp3 =
+		"%NCELLMEAS: 0,\"071D340C\",\"24201\",\"0821\",65535,5300,449,50,15,10891,655350";
+	char *resp4 = "%NCELLMEAS: 0,\"071D340C\",\"24202\",\"0762\",65535,5300,449,50,15,10871";
 	struct lte_lc_ncell ncells[17];
 	struct lte_lc_cells_info cells = {
 		.neighbor_cells = ncells,
 	};
 
+	/* Valid response with two neighbors and timing advance measurement time. */
 	err = parse_ncellmeas(resp1, &cells);
 	zassert_equal(err, 0, "parse_ncellmeas failed, error: %d", err);
 	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
@@ -391,6 +394,8 @@ static void test_parse_ncellmeas(void)
 	zassert_equal(cells.current_cell.id, 35460108, "Wrong cell ID");
 	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
 	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
+	zassert_equal(cells.current_cell.timing_advance_meas_time, 8061152878017748,
+		      "Wrong timing advance measurement time");
 	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
 	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
 	zassert_equal(cells.ncells_count, 2, "Wrong neighbor cell count");
@@ -407,6 +412,7 @@ static void test_parse_ncellmeas(void)
 
 	memset(&cells, 0, sizeof(cells));
 
+	/* Valid response of failed measurement. */
 	err = parse_ncellmeas(resp2, &cells);
 	zassert_equal(err, 1, "parse_ncellmeas was expected to return 1, but returned %d", err);
 	zassert_equal(cells.current_cell.id, LTE_LC_CELL_EUTRAN_ID_INVALID, "Wrong cell ID");
@@ -414,6 +420,7 @@ static void test_parse_ncellmeas(void)
 
 	memset(&cells, 0, sizeof(cells));
 
+	/* Valid response with timing advance measurement time. */
 	err = parse_ncellmeas(resp3, &cells);
 	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
 	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
@@ -422,7 +429,26 @@ static void test_parse_ncellmeas(void)
 	zassert_equal(cells.current_cell.id, 119354380, "Wrong cell ID");
 	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
 	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
+	zassert_equal(cells.current_cell.timing_advance_meas_time, 655350,
+		      "Wrong timing advance measurement time");
 	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
+	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
+	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
+
+	memset(&cells, 0, sizeof(cells));
+
+	/* Valid response without timing advance measurement time. */
+	err = parse_ncellmeas(resp4, &cells);
+	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
+	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
+	zassert_equal(cells.current_cell.mnc, 2, "Wrong MNC");
+	zassert_equal(cells.current_cell.tac, 1890, "Wrong TAC");
+	zassert_equal(cells.current_cell.id, 119354380, "Wrong cell ID");
+	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
+	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
+	zassert_equal(cells.current_cell.timing_advance_meas_time, 0,
+		      "Wrong timing advance measurement time");
+	zassert_equal(cells.current_cell.measurement_time, 10871, "Wrong measurement time");
 	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
 	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
 }
@@ -431,9 +457,9 @@ static void test_neighborcell_count_get(void)
 {
 	char *resp1 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
 		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
-		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
-	char *resp2 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4";
-	char *resp3 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10";
+		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1000";
+	char *resp2 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,1000";
+	char *resp3 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1000";
 	char *resp4 = "%NCELLMEAS: ";
 	char *resp5 = " ";
 
