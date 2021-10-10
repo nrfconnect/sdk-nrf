@@ -471,7 +471,7 @@ void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode)
 
 	ncellmeas_mode = mode;
 	if (start) {
-		ret = lte_lc_neighbor_cell_measurement();
+		ret = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
 		if (ret) {
 			mosh_error("lte_lc_neighbor_cell_measurement() returned err %d", ret);
 			mosh_error("Cannot start neigbor measurements");

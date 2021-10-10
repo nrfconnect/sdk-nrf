@@ -582,6 +582,32 @@ struct lte_lc_conn_eval_params {
 	uint32_t cell_id;
 };
 
+/** @brief Specifies which type of search the modem should perform when a neighbor
+ *	   cell measurement is started.
+ */
+enum lte_lc_neighbor_search_type {
+	/** The modem searches the network it is registered to (RPLMN) based on
+	 *  previous cell history.
+	 *  For modem firmware versions < 1.3.1, this is the only valid option.
+	 */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT = 0,
+
+	/** The modem starts with the same search method as the default type.
+	 *  If needed, it continues to search by measuring the radio conditions
+	 *  and makes assumptions on where networks might be deployed, i.e. a light search.
+	 *  The search is limited to bands that are valid for the area of the current
+	 *  ITU-T region. If RPLMN is not found based on previous cell history, the
+	 *  modem accepts any found PLMN.
+	 */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 1,
+
+	/** The modem follows the same procedure as for LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT,
+	 *  but will continue to perform a complete search instead of a light search,
+	 *  and the search is performed for all supported bands.
+	 */
+	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 2,
+};
+
 struct lte_lc_evt {
 	enum lte_lc_evt_type type;
 	union {
@@ -862,9 +888,15 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *	   After the event is received, the neighbor cell measurements
  *	   are automatically stopped.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @note For modem firmware versions < v1.3.1, LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT
+ *	 is the only accepted type. Other types will result in an error being returned.
+ *
+ * @param type Search type, see @c enum lte_lc_neighbor_search_type for more information.
+ *
+ * @retval 0 if neighbor cell measurement was successfully initiated.
+ * @retval -EFAULT if AT command failed.
  */
-int lte_lc_neighbor_cell_measurement(void);
+int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type);
 
 /** @brief Cancel an ongoing neighbor cell measurement.
  *

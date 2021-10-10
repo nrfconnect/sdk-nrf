@@ -504,7 +504,7 @@ static void send_cell_pos_request(struct k_work *work)
 #if defined(CONFIG_CELL_POS_MULTICELL)
 static void start_cell_measurements(void)
 {
-	int err = lte_lc_neighbor_cell_measurement();
+	int err = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
 
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements");
