@@ -13,6 +13,7 @@
 #include <device.h>
 #include <modem/lte_lc.h>
 #include <modem/lte_lc_trace.h>
+#include <nrf_modem_at.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
@@ -1500,9 +1501,23 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 	return 0;
 }
 
-int lte_lc_neighbor_cell_measurement(void)
+int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type)
 {
-	return at_cmd_write(AT_NCELLMEAS_START, NULL, 0, NULL);
+	int err;
+
+	/* Starting from modem firmware v1.3.1, there is an optional parameter to specify
+	 * the type of search.
+	 * If the type is LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT, we therefore use the AT
+	 * command without parameters to avoid error messages for older firmware version.
+	 */
+
+	if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT) {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS");
+	} else {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=%d", type);
+	}
+
+	return err ? -EFAULT : 0;
 }
 
 int lte_lc_neighbor_cell_measurement_cancel(void)

@@ -702,7 +702,7 @@ static int neighbor_cells_measurement_start(void)
 {
 	int err;
 
-	err = lte_lc_neighbor_cell_measurement();
+	err = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
 	if (err) {
 		LOG_ERR("Failed to start neighbor cell measurements, error: %d", err);
 		return err;
