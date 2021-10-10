@@ -917,6 +917,23 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	/* Neighbor cell count. */
 	cells->ncells_count = neighborcell_count_get(at_response);
+
+	/* Starting from modem firmware v1.3.1, timing advance measurement time
+	 * information is added as the last parameter in the response.
+	 */
+	size_t ta_meas_time_index = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
+			cells->ncells_count * AT_NCELLMEAS_N_PARAMS_COUNT;
+
+	if (at_params_valid_count_get(&resp_list) > ta_meas_time_index) {
+		err = at_params_int64_get(&resp_list, ta_meas_time_index,
+					  &cells->current_cell.timing_advance_meas_time);
+		if (err) {
+			goto clean_exit;
+		}
+	} else {
+		cells->current_cell.timing_advance_meas_time = 0;
+	}
+
 	if ((cells->ncells_count == 0) || (cells->neighbor_cells == NULL)) {
 		goto clean_exit;
 	}

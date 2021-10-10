@@ -79,6 +79,7 @@ nRF9160
     * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
     * Added support for multiple LTE event handlers. Thus, deregistration is not possible by using lte_lc_register_handler(NULL) anymore and it is done by the :c:func:`lte_lc_deregister_handler` function in the API.
     * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
+    * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
 
   * :ref:`https_client` sample:
 
