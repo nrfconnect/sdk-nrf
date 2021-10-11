@@ -148,6 +148,11 @@ Zigbee
 Common
 ======
 
+Libraries
+---------
+
+* Added API documentation and :ref:`conceptual documentation page <wave_gen>` for the wave generator library.
+
 Edge Impulse
 ------------
 
