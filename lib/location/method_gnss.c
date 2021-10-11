@@ -65,6 +65,7 @@ static struct k_work method_gnss_timeout_work;
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
 static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
+static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -82,7 +83,7 @@ static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
+static char jwt_buf[1024];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -219,11 +220,18 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 		.connect_socket = -1,
 		.keep_alive = false,
 		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
-		.auth = CONFIG_AGPS_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING,
+		.auth = jwt_buf,
 		.rx_buf = rest_api_recv_buf,
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
 	};
+
+	int err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
+
+	if (err) {
+		LOG_ERR("Failed to generate JWT, error: %d", err);
+		return;
+	}
 
 	struct nrf_cloud_rest_agps_request request = {
 						      NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
@@ -232,7 +240,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	struct lte_lc_cells_info net_info = {0};
 
 	/* Get network info for the A-GPS location request. */
-	int err = method_gnss_get_modem_info(&net_info.current_cell);
+	err = method_gnss_get_modem_info(&net_info.current_cell);
 
 	if (err) {
 		LOG_WRN("Requesting A-GPS data without location assistance");
@@ -254,11 +262,18 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 		.connect_socket = -1,
 		.keep_alive = false,
 		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
-		.auth = CONFIG_AGPS_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING,
+		.auth = jwt_buf,
 		.rx_buf = rest_api_recv_buf,
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
 	};
+
+	int err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
+
+	if (err) {
+		LOG_ERR("Failed to generate JWT, error: %d", err);
+		return;
+	}
 
 	struct gps_pgps_request pgps_req = {
 		.prediction_count = NUM_PREDICTIONS,
