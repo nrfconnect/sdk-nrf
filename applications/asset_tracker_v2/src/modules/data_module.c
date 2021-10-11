@@ -9,8 +9,8 @@
 #include <settings/settings.h>
 #include <date_time.h>
 #include <modem/modem_info.h>
-#if defined(CONFIG_AGPS)
-#include <modem/agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+#include <net/nrf_cloud_agps.h>
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -634,7 +634,7 @@ static void data_encode(void)
 	}
 }
 
-#if defined(CONFIG_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_AGPS_SRC_SUPL)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static int get_modem_info(struct modem_param_info *const modem_info)
 {
 	__ASSERT_NO_MSG(modem_info != NULL);
@@ -709,7 +709,7 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 
 	return err;
 }
-#endif /* CONFIG_AGPS && !CONFIG_NRF_CLOUD_MQTT && !CONFIG_AGPS_SRC_SUPL */
+#endif /* CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_MQTT */
 
 static void config_get(void)
 {
@@ -964,21 +964,11 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 {
 	int err;
 
-	/* If the A-GPS library is enabled, it will handle the creation of the A-GPS request,
-	 * send it, and process the returned data.
-	 *
-	 * If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
-	 * to sent the request. This is handled internally in the A-GPS library.
-	 *
-	 * If CONFIG_AGPS_SRC_SUPL is enabled a SUPL session is started and A-GPS data is requested
-	 * from a configured SUPL server.
-	 *
-	 * If both CONFIG_NRF_CLOUD_MQTT and CONFIG_AGPS_SRC_SUPL are enabled, SUPL will take
-	 * precedence over nRF Cloud as it is selected as the A-GPS source. By default, nRF Cloud is
-	 * selected as the A-GPS source via the CONFIG_AGPS_SRC_NRF_CLOUD option.
+	/* If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
+	 * to send the request.
 	 */
-#if defined(CONFIG_AGPS) && (defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_AGPS_SRC_SUPL))
-	err = agps_request_send(*incoming_request);
+#if defined(CONFIG_NRF_CLOUD_AGPS) && defined(CONFIG_NRF_CLOUD_MQTT)
+	err = nrf_cloud_agps_request(incoming_request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");
@@ -986,7 +976,7 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 		LOG_DBG("A-GPS request sent");
 		return;
 	}
-#elif defined(CONFIG_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_AGPS_SRC_SUPL)
+#elif defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 	/* If the nRF Cloud MQTT transport library is not enabled, we will have to create an
 	 * A-GPS request and send out an event containing the request for the cloud module to pick
 	 * up and send to the cloud that is currently used.

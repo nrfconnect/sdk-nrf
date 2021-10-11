@@ -45,6 +45,7 @@ nRF9160: Asset Tracker
 ----------------------
 
 * Updated the application to start sending batch messages to the new bulk endpoint topic supported in nRF Cloud.
+* Updated the application to use nRF Cloud A-GPS directly without the A-GPS library. SUPL is no longer supported.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
