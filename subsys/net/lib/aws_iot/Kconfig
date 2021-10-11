@@ -4,12 +4,19 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig AWS_IOT
-	bool "AWS IoT library"
+module = AWS_IOT
+module-prompt = "AWS IoT library"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+config $(module)
+	bool
+	prompt "AWS IoT library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_LIB
 	select MQTT_LIB_TLS
 
 if AWS_IOT
+
+menu "AWS IoT library"
 
 config AWS_IOT_SEND_TIMEOUT
 	bool "Send data with socket timeout"
@@ -129,5 +136,7 @@ module=AWS_IOT
 module-dep=LOG
 module-str=AWS IoT
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
 
 endif # AWS_IOT

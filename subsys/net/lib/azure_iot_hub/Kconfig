@@ -4,12 +4,19 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig AZURE_IOT_HUB
-	bool "Azure IoT Hub [EXPERIMENTAL]"
+module = AZURE_IOT_HUB
+module-prompt = "Azure IoT Hub [EXPERIMENTAL]"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+config $(module)
+	bool
+	prompt "Azure IoT Hub [EXPERIMENTAL]" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_LIB
 	select MQTT_LIB_TLS
 
 if AZURE_IOT_HUB
+
+menu "Azure IoT Hub"
 
 config AZURE_IOT_HUB_SEND_TIMEOUT
 	bool "Send data with socket timeout"
@@ -148,5 +155,7 @@ module=AZURE_IOT_HUB
 module-dep=LOG
 module-str=Azure IoT Hub
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
 
 endif # AZURE_IOT_HUB
