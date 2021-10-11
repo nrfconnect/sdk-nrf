@@ -51,7 +51,6 @@ LightBulbPublishService sLightBulbPublishService;
 bool sIsThreadProvisioned;
 bool sIsThreadEnabled;
 bool sHaveBLEConnections;
-bool sHaveServiceConnectivity;
 
 k_timer sFunctionTimer;
 } /* namespace */
@@ -138,26 +137,19 @@ int AppTask::StartApp()
 			sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
 			sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
 			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
-			sHaveServiceConnectivity = ConnectivityMgr().HaveServiceConnectivity();
 			PlatformMgr().UnlockChipStack();
 		}
 
 		/* Update the status LED.
 		 *
-		 * If system has "full connectivity", keep the LED On constantly.
-		 *
-		 * If thread and service provisioned, but not attached to the thread network yet OR no
-		 * connectivity to the service OR subscriptions are not fully established
-		 * THEN blink the LED Off for a short period of time.
+		 * If thread and service provisioned, keep the LED On constantly.
 		 *
 		 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
 		 * rate of 100ms.
 		 *
 		 * Otherwise, blink the LED On for a very short time. */
-		if (sHaveServiceConnectivity) {
+		if (sIsThreadProvisioned && sIsThreadEnabled) {
 			sStatusLED.Set(true);
-		} else if (sIsThreadProvisioned && sIsThreadEnabled) {
-			sStatusLED.Blink(950, 50);
 		} else if (sHaveBLEConnections) {
 			sStatusLED.Blink(100, 100);
 		} else {
