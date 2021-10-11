@@ -5,6 +5,27 @@
 
 menu "Application protocols"
 
+config CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	bool
+	default y if "$(CLOUD_SERVICE_SELECTOR)" = "choice"
+	help
+	  Internal setting which indicates that the Cloud Service is mutually
+	  exclusive.
+	  An application defconfig can indicate that the Cloud Service is
+	  mutually exclusive by requesting that selection of cloud services should
+	  be selectable using a choice menu.
+	  The choice selection can be enabled in the application Kconfig by
+	  setting the `CLOUD_SERVICE_SELECTOR` variable to `choice`, that is
+	  adding a line as:
+	  CLOUD_SERVICE_SELECTOR := choice
+
+choice CLOUD_SERVICE
+	bool
+	prompt "Cloud Service"
+	depends on CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	optional
+endchoice
+
 rsource "nrf_cloud/Kconfig"
 rsource "rest_client/Kconfig"
 rsource "download_client/Kconfig"

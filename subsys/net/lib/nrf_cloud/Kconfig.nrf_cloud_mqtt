@@ -3,14 +3,21 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig NRF_CLOUD_MQTT
-	bool "nRF Cloud MQTT"
+module = NRF_CLOUD_MQTT
+module-prompt = "nRF Cloud MQTT library"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+config $(module)
+	bool
+	prompt "nRF Cloud MQTT Library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_LIB
 	select MQTT_LIB_TLS
 	select SETTINGS if !MQTT_CLEAN_SESSION
 	select CJSON_LIB
 
 if NRF_CLOUD_MQTT
+
+menu "nRF Cloud MQTT Library"
 
 config NRF_CLOUD_STATIC_IPV4
 	bool "Enable use of static IPv4"
@@ -98,5 +105,7 @@ config NRF_CLOUD_MQTT_KEEPALIVE
 	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
 	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
 	  for nRF Cloud.
+
+endmenu
 
 endif # NRF_CLOUD_MQTT
