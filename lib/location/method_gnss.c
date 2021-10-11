@@ -93,7 +93,7 @@ static void method_gnss_manage_pgps(struct k_work *work)
 
 	LOG_INF("Sending prediction to modem...");
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+	err = nrf_cloud_pgps_inject(prediction, &gnss_api_agps_request);
 #else
 	err = nrf_cloud_pgps_inject(prediction, NULL);
 #endif
