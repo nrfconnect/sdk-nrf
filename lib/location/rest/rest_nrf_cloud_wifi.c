@@ -5,7 +5,6 @@
  */
 
 #include <zephyr.h>
-#include <modem/modem_jwt.h>
 #include <modem/lte_lc.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -15,6 +14,7 @@
 #include <cJSON.h>
 
 #include <net/rest_client.h>
+#include <net/nrf_cloud.h>
 
 #include "rest_nrf_cloud_wifi.h"
 
@@ -33,6 +33,8 @@ BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 #define HTTPS_PORT 443
 
 #define NRF_CLOUD_WIFI_POS_JSON_KEY_AP "accessPoints"
+
+static char jwt_buf[1024];
 
 /******************************************************************************/
 
@@ -70,7 +72,6 @@ nrf_cloud_wifi_rest_pos_req_json_format(const struct wifi_scanning_result_info s
 			goto cleanup;
 		}
 
-		//TODO: is rssi the same as signalStrength?
 		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "signalStrength", scan_result.rssi)) {
 			goto cleanup;
 		}
@@ -78,7 +79,6 @@ nrf_cloud_wifi_rest_pos_req_json_format(const struct wifi_scanning_result_info s
 		if (!cJSON_AddNumberToObjectCS(wifi_info_obj, "channel", scan_result.channel)) {
 			goto cleanup;
 		}
-		//TODO: frequency
 
 		if (!cJSON_AddItemToArray(wifi_info_array, wifi_info_obj)) {
 			goto cleanup;
@@ -217,28 +217,13 @@ int nrf_cloud_rest_wifi_pos_get(char *rcv_buf, size_t rcv_buf_len,
 	char *auth_hdr = NULL;
 	char *jwt_str = NULL;
 	int ret = 0;
-#ifdef CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
-	struct jwt_data jwt = {
-		.subject = ((strlen(CONFIG_LOCATION_DEVICE_ID)) ? CONFIG_LOCATION_DEVICE_ID : NULL),
-		.audience = NULL,
-		.exp_delta_s = (5 * 60),
-		.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_SEC_TAG,
-		.key = JWT_KEY_TYPE_CLIENT_PRIV,
-		.alg = JWT_ALG_TYPE_ES256,
-		/* Set to NULL so a properly sized buffer is allocated */
-		.jwt_buf = NULL,
-		.jwt_sz = 0
-	};
-	ret = modem_jwt_generate(&jwt);
+
+	ret = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (ret) {
 		LOG_ERR("Failed to generate JWT, error: %d", ret);
 		return ret;
 	}
-	jwt_str = jwt.jwt_buf;
-#else
-	/* TODO: this option shall be removed */
-	jwt_str = CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_STRING;
-#endif
+	jwt_str = jwt_buf;
 
 	/* Format auth header */
 	ret = nrf_cloud_rest_wifi_generate_auth_header(jwt_str, &auth_hdr);
@@ -291,9 +276,5 @@ clean_up:
 	if (body) {
 		cJSON_free(body);
 	}
-#ifdef CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
-	modem_jwt_free(jwt.jwt_buf);
-	jwt.jwt_buf = NULL;
-#endif
 	return ret;
 }

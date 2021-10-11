@@ -50,9 +50,9 @@ if LOCATION_METHOD_WIFI
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	default y
-	depends on MODEM_JWT
+	depends on NRF_CLOUD
 	help
-	  Use HERE location service
+	  Use nRF Cloud location service
 
 config LOCATION_METHOD_WIFI_SERVICE_HERE
 	bool "WiFi positioning using Here service"
@@ -83,33 +83,15 @@ config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
 if LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_HOSTNAME
 	string "nRF Cloud REST API hostname"
-	default "api.nrfcloud.com"
+	default NRF_CLOUD_REST_HOST_NAME
 	help
 	  Server hostname to use when connecting to the selected locations service.
-	  Usually the same as NRF_CLOUD_REST_HOST_NAME but cannot put as depend on that
-	  because NRF_CLOUD lib not (currently) used with LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD.
 
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_SEC_TAG
 	int "Security tag for JWT signing"
-	default 16842753
+	default NRF_CLOUD_SEC_TAG
 	help
 	  Modem security tag which contains the JWT signing key for nRF Cloud.
-	  Usually the same as NRF_CLOUD_SEC_TAG but cannot put as depend on that
-	  because NRF_CLOUD lib not (currently) used with LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD.
-
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
-	bool "JWT generated on the fly based on device id"
-	default y
-	help
-	  If enabled, then JWT generated on the run time based on device id.
-	  Otherwise the value from CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_STRING
-	  is used.
-
-if !LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_GENERATED
-config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_JWT_STRING
-	string "JWT set at compile time (TODO: to be removed, only at dev time)"
-	default "Your JWT"
-endif
 
 endif # LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 
