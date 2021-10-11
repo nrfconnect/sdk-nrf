@@ -330,3 +330,28 @@ bool event_handler_list_is_empty(void);
  * @retval -ENODATA if conversion failed.
  */
 int string_to_int(const char *str_buf, int base, int *output);
+
+/* @brief Get periodic search pattern string to be used in AT%PERIODICSEARCHCONF from
+ *	  a pattern struct.
+ *
+ * @param buf Buffer to store the string.
+ * @param buf_size Size of the provided buffer.
+ * @param pattern Pointer to pattern struct.
+ *
+ * @return Pointer to the buffer where the pattern string is stored.
+ */
+char *periodic_search_pattern_get(char *const buf, size_t buf_size,
+				  const struct lte_lc_periodic_search_pattern *const pattern);
+
+/* @brief Parse a periodic search pattern from an AT%PERIODICSEARCHCONF response
+ *	  and populate a pattern struct with the result.
+ *	  The pattern string is expected to be without quotation marks and null-terminated.
+ *
+ * @param pattern_str Pointer to pattern string.
+ * @param pattern Pointer to storage for the parsed pattern.
+ *
+ * @retval 0 if parsing was successful.
+ * @retval -EBADMSG if pattern could not be parsed.
+ */
+int parse_periodic_search_pattern(const char *const pattern_str,
+				  struct lte_lc_periodic_search_pattern *pattern);

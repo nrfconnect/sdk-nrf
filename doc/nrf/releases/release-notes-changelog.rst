@@ -212,6 +212,7 @@ Modem libraries
   * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
   * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
   * Updated the library to use the :ref:`nrfxlib:nrf_modem_at` API and the :ref:`at_monitor_readme` library for AT commands.
+  * Added support for periodic search configuration. API functions have been added to set, read and clear the configuration, and to request extra searches.
 
 * :ref:`nrf_modem_lib_readme` library:
 

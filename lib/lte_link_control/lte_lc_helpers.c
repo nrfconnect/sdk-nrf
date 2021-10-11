@@ -1061,3 +1061,133 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 
 	return -ENODATA;
 }
+
+char *periodic_search_pattern_get(char *const buf, size_t buf_size,
+				  const struct lte_lc_periodic_search_pattern *const pattern)
+{
+	int err;
+
+	if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) {
+		/* Range format:
+		 * "<type>,<initial_sleep>,<final_sleep>,[<time_to_final_sleep>],
+		 *  <pattern_end_point>"
+		 */
+		if (pattern->range.time_to_final_sleep != -1) {
+			err = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
+				       pattern->range.initial_sleep, pattern->range.final_sleep,
+				       pattern->range.time_to_final_sleep,
+				       pattern->range.pattern_end_point);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else {
+			err = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
+				       pattern->range.initial_sleep, pattern->range.final_sleep,
+				       pattern->range.pattern_end_point);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		}
+	} else if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) {
+		/* Table format: "<type>,<val1>[,<val2>][,<val3>][,<val4>][,<val5>]". */
+		if (pattern->table.val_2 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_3 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_4 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_5 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3, pattern->table.val_4);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3, pattern->table.val_4,
+				       pattern->table.val_5);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		}
+	} else {
+		LOG_WRN("Unrecognized periodic search pattern type");
+		buf[0] = '\0';
+	}
+
+	return buf;
+
+error:
+	LOG_ERR("An error occurred, the pattern string is empty. Error code %d", err);
+	buf[0] = '\0';
+
+	return buf;
+}
+
+int parse_periodic_search_pattern(const char *const pattern_str,
+				  struct lte_lc_periodic_search_pattern *pattern)
+{
+	int err;
+	int values[5];
+	size_t param_count;
+
+	err = sscanf(pattern_str, "%d,%u,%u,%u,%u,%u",
+		(int *)&pattern->type, &values[0], &values[1], &values[2], &values[3], &values[4]);
+	if (err < 1) {
+		LOG_ERR("Unrecognized pattern type");
+		return -EBADMSG;
+	}
+
+	param_count = err;
+
+	if ((pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) &&
+	    (param_count >= 3)) {
+		/* The 'time_to_final_sleep' parameter is optional and may not always be present.
+		 * If that's the case, there will be only 3 matches, and we need a
+		 * workaround to get the 'pattern_end_point' value.
+		 */
+		if (param_count == 3) {
+			param_count = sscanf(pattern_str, "%*u,%*u,%*u,,%u", &values[3]);
+			if (param_count != 1) {
+				LOG_ERR("Could not find 'pattern_end_point' value");
+				return -EBADMSG;
+			}
+
+			values[2] = -1;
+		}
+
+		pattern->range.initial_sleep = values[0];
+		pattern->range.final_sleep = values[1];
+		pattern->range.time_to_final_sleep = values[2];
+		pattern->range.pattern_end_point = values[3];
+	} else if ((pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) &&
+		   (param_count >= 2)) {
+		/* Populate optional parameters only if matched, otherwise set
+		 * to disabled, -1.
+		 */
+		pattern->table.val_1 = values[0];
+		pattern->table.val_2 = param_count > 2 ? values[1] : -1;
+		pattern->table.val_3 = param_count > 3 ? values[2] : -1;
+		pattern->table.val_4 = param_count > 4 ? values[3] : -1;
+		pattern->table.val_5 = param_count > 5 ? values[4] : -1;
+	} else {
+		LOG_DBG("No valid pattern found");
+		return -EBADMSG;
+	}
+
+	return 0;
+}

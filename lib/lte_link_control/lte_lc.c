@@ -1503,6 +1503,162 @@ int lte_lc_modem_events_disable(void)
 	return nrf_modem_at_printf(AT_MDMEV_DISABLE) ? -EFAULT : 0;
 }
 
+int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cfg)
+{
+	int err;
+	char pattern_buf[4][40];
+
+	if (!cfg || (cfg->pattern_count == 0) || (cfg->pattern_count > 4)) {
+		return -EINVAL;
+	}
+
+	/* Command syntax:
+	 *	AT%PERIODICSEARCHCONF=<mode>[,<loop>,<return_to_pattern>,<band_optimization>,
+	 *	<pattern_1>[,<pattern_2>][,<pattern_3>][,<pattern_4>]]
+	 */
+
+	err = nrf_modem_at_printf(
+		"AT%%PERIODICSEARCHCONF=0," /* Write mode */
+		"%u,"  /* <loop> */
+		"%u,"  /* <return_to_pattern> */
+		"%u,"  /* <band_optimization> */
+		"%s%s" /* <pattern_1> */
+		"%s%s" /* <pattern_2> */
+		"%s%s" /* <pattern_3> */
+		"%s",  /* <pattern_4> */
+		cfg->loop, cfg->return_to_pattern, cfg->band_optimization,
+		/* Pattern 1 */
+		periodic_search_pattern_get(pattern_buf[0], sizeof(pattern_buf[0]),
+					    &cfg->patterns[0]),
+		/* Pattern 2, if configured */
+		cfg->pattern_count > 1 ? "," : "",
+		cfg->pattern_count > 1 ? periodic_search_pattern_get(pattern_buf[1],
+						sizeof(pattern_buf[1]), &cfg->patterns[1]) : "",
+		/* Pattern 3, if configured */
+		cfg->pattern_count > 2 ? "," : "",
+		cfg->pattern_count > 2 ? periodic_search_pattern_get(pattern_buf[2],
+						sizeof(pattern_buf[2]), &cfg->patterns[2]) : "",
+		/* Pattern 4, if configured */
+		cfg->pattern_count > 3 ? "," : "",
+		cfg->pattern_count > 3 ? periodic_search_pattern_get(pattern_buf[3],
+						sizeof(pattern_buf[3]), &cfg->patterns[3]) : ""
+	);
+	if (err < 0) {
+		/* Failure to send the AT command. */
+		LOG_ERR("AT command failed, returned error code: %d", err);
+		return -EFAULT;
+	} else if (err > 0) {
+		/* The modem responded with "ERROR". */
+		LOG_ERR("The modem rejected the configuration");
+		return -EBADMSG;
+	}
+
+	return 0;
+}
+
+int lte_lc_periodic_search_clear(void)
+{
+	int err;
+
+	err = nrf_modem_at_printf("AT%%PERIODICSEARCHCONF=2");
+	if (err < 0) {
+		return -EFAULT;
+	} else if (err > 0) {
+		return -EBADMSG;
+	}
+
+	return 0;
+}
+
+int lte_lc_periodic_search_request(void)
+{
+	return nrf_modem_at_printf("AT%%PERIODICSEARCHCONF=3") ? -EFAULT : 0;
+}
+
+int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
+{
+
+	int err;
+	char pattern_buf[4][40];
+
+	if (!cfg) {
+		return -EINVAL;
+	}
+
+	/* Response format:
+	 *	%PERIODICSEARCHCONF=<loop>,<return_to_pattern>,<band_optimization>,<pattern_1>
+	 *	[,<pattern_2>][,<pattern_3>][,<pattern_4>]
+	 */
+
+	err = nrf_modem_at_scanf("AT%PERIODICSEARCHCONF=1",
+		"%%PERIODICSEARCHCONF: "
+		"%u," /* <loop> */
+		"%u," /* <return_to_pattern> */
+		"%u," /* <band_optimization> */
+		"\"%40[^\"]\","  /* <pattern_1> */
+		"\"%40[^\"]\","  /* <pattern_2> */
+		"\"%40[^\"]\","  /* <pattern_3> */
+		"\"%40[^\"]\"",  /* <pattern_4> */
+		&cfg->loop, &cfg->return_to_pattern, &cfg->band_optimization,
+		pattern_buf[0], pattern_buf[1], pattern_buf[2], pattern_buf[3]
+	);
+	if (err == -NRF_EBADMSG) {
+		return -ENOENT;
+	} else if (err < 0) {
+		return -EFAULT;
+	} else if (err < 4) {
+		/* No pattern found */
+		return -EBADMSG;
+	}
+
+	/* Pattern count is matched parameters minus 3 for loop, return_to_pattern
+	 * and band_optimization.
+	 */
+	cfg->pattern_count = err - 3;
+
+	if (cfg->pattern_count >= 1) {
+		LOG_DBG("Pattern 1: %s", log_strdup(pattern_buf[0]));
+
+		err = parse_periodic_search_pattern(pattern_buf[0], &cfg->patterns[0]);
+		if (err) {
+			LOG_ERR("Failed to parse periodic search pattern");
+			return err;
+		}
+	}
+
+	if (cfg->pattern_count >= 2) {
+		LOG_DBG("Pattern 2: %s", log_strdup(pattern_buf[1]));
+
+		err = parse_periodic_search_pattern(pattern_buf[1], &cfg->patterns[1]);
+		if (err) {
+			LOG_ERR("Failed to parse periodic search pattern");
+			return err;
+		}
+	}
+
+	if (cfg->pattern_count >= 3) {
+		LOG_DBG("Pattern 3: %s", log_strdup(pattern_buf[2]));
+
+		err = parse_periodic_search_pattern(pattern_buf[2], &cfg->patterns[2]);
+		if (err) {
+			LOG_ERR("Failed to parse periodic search pattern");
+			return err;
+		}
+	}
+
+	if (cfg->pattern_count == 4) {
+		LOG_DBG("Pattern 4: %s", log_strdup(pattern_buf[3]));
+
+		err = parse_periodic_search_pattern(pattern_buf[3], &cfg->patterns[3]);
+		if (err) {
+			LOG_ERR("Failed to parse periodic search pattern");
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 SYS_DEVICE_DEFINE("LTE_LINK_CONTROL", init_and_connect,
 		  NULL,

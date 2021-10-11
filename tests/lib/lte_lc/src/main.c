@@ -550,6 +550,257 @@ static void test_parse_mdmev(void)
 		      -ENODATA, err);
 }
 
+static void test_periodic_search_pattern_get(void)
+{
+	char buf[40] = {0};
+	struct lte_lc_periodic_search_pattern pattern_range_1 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
+		.range = {
+			.initial_sleep = 60,
+			.final_sleep = 3600,
+			.time_to_final_sleep = 300,
+			.pattern_end_point = 600
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_range_2 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
+		.range = {
+			.initial_sleep = 60,
+			.final_sleep = 3600,
+			.time_to_final_sleep = -1,
+			.pattern_end_point = 600
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_table_1 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		.table = {
+			.val_1 = 60,
+			.val_2 = -1,
+			.val_3 = -1,
+			.val_4 = -1,
+			.val_5 = -1,
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_table_2 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		.table = {
+			.val_1 = 20,
+			.val_2 = 80,
+			.val_3 = -1,
+			.val_4 = -1,
+			.val_5 = -1,
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_table_3 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		.table = {
+			.val_1 = 10,
+			.val_2 = 70,
+			.val_3 = 300,
+			.val_4 = -1,
+			.val_5 = -1,
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_table_4 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		.table = {
+			.val_1 = 1,
+			.val_2 = 60,
+			.val_3 = 120,
+			.val_4 = 3600,
+			.val_5 = -1,
+		},
+	};
+	struct lte_lc_periodic_search_pattern pattern_table_5 = {
+		.type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		.table = {
+			.val_1 = 2,
+			.val_2 = 30,
+			.val_3 = 40,
+			.val_4 = 900,
+			.val_5 = 3000,
+		},
+	};
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_1),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"0,60,3600,300,600\""), 0, "Wrong range string");
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_2),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"0,60,3600,,600\""), 0, "Wrong range string");
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_1),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"1,60\""), 0, "Wrong table string (%s)", buf);
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_2),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"1,20,80\""), 0, "Wrong table string (%s)", buf);
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_3),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"1,10,70,300\""), 0, "Wrong table string (%s)", buf);
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_4),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"1,1,60,120,3600\""), 0, "Wrong table string (%s)", buf);
+
+	memset(buf, 0, sizeof(buf));
+
+	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_5),
+			  "Unexpected pointer returned from periodic_search_pattern_get()");
+	zassert_equal(strcmp(buf, "\"1,2,30,40,900,3000\""), 0, "Wrong table string (%s)", buf);
+}
+
+static void test_parse_periodic_search_pattern(void)
+{
+	int err;
+	struct lte_lc_periodic_search_pattern pattern;
+	const char *pattern_range_1 = "0,60,3600,300,600";
+	const char *pattern_range_2 = "0,60,3600,,600";
+	const char *pattern_range_empty = "0";
+	const char *pattern_table_1 = "1,10";
+	const char *pattern_table_2 = "1,20,30";
+	const char *pattern_table_3 = "1,30,40,50";
+	const char *pattern_table_4 = "1,40,50,60,70";
+	const char *pattern_table_5 = "1,50,60,70,80,90";
+	const char *pattern_table_empty = "1";
+
+	err = parse_periodic_search_pattern(pattern_range_1, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.range.initial_sleep, 60,
+		      "Wrong 'initial_sleep' value (%d)", pattern.range.initial_sleep);
+	zassert_equal(pattern.range.final_sleep, 3600,
+		      "Wrong 'final_sleep' value (%d)", pattern.range.final_sleep);
+	zassert_equal(pattern.range.time_to_final_sleep, 300,
+		      "Wrong 'time_to_final_sleep' value (%d)", pattern.range.time_to_final_sleep);
+	zassert_equal(pattern.range.pattern_end_point, 600,
+		      "Wrong 'pattern_end_point' value (%d)", pattern.range.pattern_end_point);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_range_2, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.range.initial_sleep, 60,
+		      "Wrong 'initial_sleep' value (%d)", pattern.range.initial_sleep);
+	zassert_equal(pattern.range.final_sleep, 3600,
+		      "Wrong 'final_sleep' value (%d)", pattern.range.final_sleep);
+	zassert_equal(pattern.range.time_to_final_sleep, -1,
+		      "Wrong 'time_to_final_sleep' value (%d)", pattern.range.time_to_final_sleep);
+	zassert_equal(pattern.range.pattern_end_point, 600,
+		      "Wrong 'pattern_end_point' value (%d)", pattern.range.pattern_end_point);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_range_empty, &pattern);
+	zassert_equal(err, -EBADMSG, "Expected %d, but %d was returned", -EBADMSG, err);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_1, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.table.val_1, 10,
+		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
+	zassert_equal(pattern.table.val_2, -1,
+		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
+	zassert_equal(pattern.table.val_3, -1,
+		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
+	zassert_equal(pattern.table.val_4, -1,
+		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
+	zassert_equal(pattern.table.val_5, -1,
+		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_2, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.table.val_1, 20,
+		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
+	zassert_equal(pattern.table.val_2, 30,
+		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
+	zassert_equal(pattern.table.val_3, -1,
+		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
+	zassert_equal(pattern.table.val_4, -1,
+		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
+	zassert_equal(pattern.table.val_5, -1,
+		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_3, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.table.val_1, 30,
+		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
+	zassert_equal(pattern.table.val_2, 40,
+		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
+	zassert_equal(pattern.table.val_3, 50,
+		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
+	zassert_equal(pattern.table.val_4, -1,
+		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
+	zassert_equal(pattern.table.val_5, -1,
+		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_4, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.table.val_1, 40,
+		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
+	zassert_equal(pattern.table.val_2, 50,
+		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
+	zassert_equal(pattern.table.val_3, 60,
+		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
+	zassert_equal(pattern.table.val_4, 70,
+		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
+	zassert_equal(pattern.table.val_5, -1,
+		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_5, &pattern);
+	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
+	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
+		      "Wrong pattern type (%d)", pattern.type);
+	zassert_equal(pattern.table.val_1, 50,
+		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
+	zassert_equal(pattern.table.val_2, 60,
+		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
+	zassert_equal(pattern.table.val_3, 70,
+		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
+	zassert_equal(pattern.table.val_4, 80,
+		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
+	zassert_equal(pattern.table.val_5, 90,
+		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+
+	memset(&pattern, 0, sizeof(pattern));
+
+	err = parse_periodic_search_pattern(pattern_table_empty, &pattern);
+	zassert_equal(err, -EBADMSG, "Expected %d, but %d was returned", -EBADMSG, err);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(test_lte_lc,
@@ -562,7 +813,9 @@ void test_main(void)
 		ztest_unit_test(test_parse_ncellmeas),
 		ztest_unit_test(test_neighborcell_count_get),
 		ztest_unit_test(test_parse_mdmev),
-		ztest_unit_test(test_parse_psm)
+		ztest_unit_test(test_parse_psm),
+		ztest_unit_test(test_periodic_search_pattern_get),
+		ztest_unit_test(test_parse_periodic_search_pattern)
 	);
 
 	ztest_run_test_suite(test_lte_lc);
