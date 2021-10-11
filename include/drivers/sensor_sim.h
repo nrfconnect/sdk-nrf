@@ -21,10 +21,17 @@ extern "C" {
 #include <drivers/sensor.h>
 #include <wave_gen.h>
 
+/**
+ * @defgroup sensor_sim Simulated sensor driver
+ * @{
+ * @brief Simulated sensor device driver.
+ *
+ */
+
 /** @brief Set simulated acceleration parameters.
  *
  * @note	This function can be used only if acceleration is generated as wave signal.
- * @warning	This function is thread-safe, but cannot be used in interrupts.
+ *		Moreover, although it is thread-safe, it cannot be used in interrupts.
  *
  * @param[in] chan		Selected sensor channel.
  * @param[in] set_params	Parameters of wave signal.
@@ -37,5 +44,9 @@ int sensor_sim_set_wave_param(enum sensor_channel chan, const struct wave_gen_pa
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* _SENSOR_SIM_H_ */

@@ -30,10 +30,10 @@ By default, the following sensors are used by the application:
 
 * Thingy:52 - built-in accelerometer (``LIS2DH``).
 * Thingy:53 - built-in accelerometer (``ADXL362``).
-* nRF52840 Development Kit - simulated sensor (``sensor_sim`` available in the |NCS|).
+* nRF52840 Development Kit - simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
-* nRF5340 Development Kit - simulated sensor (``sensor_sim`` available in the |NCS|).
+* nRF5340 Development Kit - simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
 

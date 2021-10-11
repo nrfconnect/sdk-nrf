@@ -153,6 +153,11 @@ Libraries
 
 * Added API documentation and :ref:`conceptual documentation page <wave_gen>` for the wave generator library.
 
+Drivers
+-------
+
+* Added API documentation and :ref:`conceptual documentation page <sensor_sim>` for the simulated sensor driver.
+
 Edge Impulse
 ------------
 
