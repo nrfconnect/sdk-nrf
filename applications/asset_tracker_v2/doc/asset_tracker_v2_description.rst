@@ -386,12 +386,6 @@ You can add the following optional configurations to configure the heap or to pr
 * :kconfig:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
 * :kconfig:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
 
-The application supports Assisted GPS.
-To set the source of the A-GPS data, set the following options:
-
-* :kconfig:`CONFIG_AGPS_SRC_SUPL` - Sets the external SUPL Client library as A-GPS data source. See the documentation on :ref:`supl_client_lib`.
-* :kconfig:`CONFIG_AGPS_SRC_NRF_CLOUD` - Sets nRF Cloud as A-GPS data source.
-
 The application supports Predicted GPS (P-GPS).
 To enable P-GPS, set the :kconfig:`CONFIG_NRF_CLOUD_PGPS` option.
 It enables requesting and processing of P-GPS data from nRF Cloud.

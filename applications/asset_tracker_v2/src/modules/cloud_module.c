@@ -10,9 +10,6 @@
 #include <dfu/mcuboot.h>
 #include <math.h>
 #include <event_manager.h>
-#if defined(CONFIG_AGPS)
-#include <modem/agps.h>
-#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
@@ -238,8 +235,8 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 {
 	int err;
 
-#if defined(CONFIG_AGPS) && defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
-	err = agps_cloud_data_process(buf, len);
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	err = nrf_cloud_agps_process(buf, len);
 	if (err) {
 		LOG_WRN("Unable to process A-GPS data, error: %d", err);
 	} else {
