@@ -123,6 +123,8 @@ Bluetooth® LE
 * Updated:
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+  * :ref:`ble_llpm` sample - Added role selection.
+    The user now selects the role for each board by typing "m" or "s" in the terminal emulator.
 
 Bluetooth mesh
 --------------

@@ -146,7 +146,7 @@ struct bt_gatt_dm_cb discovery_cb = {
 	.error_found       = discovery_error,
 };
 
-static void advertise_and_scan(void)
+static void adv_start(void)
 {
 	int err;
 
@@ -158,6 +158,11 @@ static void advertise_and_scan(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void scan_start(void)
+{
+	int err;
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
@@ -183,8 +188,11 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	}
 
 	/* make sure we're not scanning or advertising */
-	bt_le_adv_stop();
-	bt_scan_stop();
+	if (conn_info.role == BT_CONN_ROLE_MASTER) {
+		bt_scan_stop();
+	} else {
+		bt_le_adv_stop();
+	}
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_MASTER ? "master" : "slave");
@@ -209,7 +217,11 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		default_conn = NULL;
 	}
 
-	advertise_and_scan();
+	if (conn_info.role == BT_CONN_ROLE_MASTER) {
+		scan_start();
+	} else {
+		adv_start();
+	}
 }
 
 static void le_param_updated(struct bt_conn *conn, uint16_t interval,
@@ -438,8 +450,6 @@ void main(void)
 
 	printk("Bluetooth initialized\n");
 
-	scan_init();
-
 	err = bt_latency_init(&latency, NULL);
 	if (err) {
 		printk("Latency service initialization failed (err %d)\n", err);
@@ -457,7 +467,26 @@ void main(void)
 		return;
 	}
 
-	advertise_and_scan();
+	while (true) {
+		printk("Choose device role - type m (master role) or s (slave role): ");
+
+		char input_char = console_getchar();
+
+		printk("\n");
+
+		if (input_char == 'm') {
+			printk("Master role. Starting scanning\n");
+			scan_init();
+			scan_start();
+			break;
+		} else if (input_char == 's') {
+			printk("Slave role. Starting advertising\n");
+			adv_start();
+			break;
+		}
+
+		printk("Invalid role\n");
+	}
 
 	if (enable_qos_conn_evt_report()) {
 		printk("Enable LLPM QoS failed.\n");

@@ -103,8 +103,9 @@ After programming the sample to both development kits, test it by performing the
 1. Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Reset both kits.
+#. In one of the terminal emulators, type "m" to start the application on the connected board in the master (tester) role.
+#. In the other terminal emulator, type "s" to start the application in the slave (peer) role.
 #. Observe that the kits establish a connection.
-   When they are connected, one of them serves as *master* and the other one as *slave*.
 
    - The master outputs the following information::
 
@@ -167,7 +168,8 @@ The result should look similar to the following output.
    ***** Booting Zephyr OS build v1.14.99-ncs3-snapshot2-2647-gd6e67554cfeb *****
    Bluetooth initialized
    LLPM mode enabled
-   Advertising successfully started
+   Choose device role - type m (master role) or s (slave role): m
+   Master role. Starting scanning
    Scanning successfully started
    Connection event reports enabled
    Filter not match. Address: 08:c6:a4:e0:72:e9 (random) connectable: 0
@@ -216,8 +218,9 @@ The result should look similar to the following output.
    ***** Booting Zephyr OS build v1.14.99-ncs3-snapshot2-2647-gd6e67554cfeb *****
    Bluetooth initialized
    LLPM mode enabled
+   Choose device role - type m (master role) or s (slave role): s
+   Slave role. Starting advertising
    Advertising successfully started
-   Scanning successfully started
    Connection event reports enabled
    Filter not match. Address: 1d:18:b1:84:fd:05 (random) connectable: 0
    Filter not match. Address: 00:92:3f:a6:3f:48 (random) connectable: 0
