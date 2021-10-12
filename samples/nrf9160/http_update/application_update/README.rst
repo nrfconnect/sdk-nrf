@@ -58,6 +58,11 @@ To specify the location in |SES|:
 #. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
 #. Click :guilabel:`Configure` to save the configuration.
 
+To specify the location in other IDEs:
+
+1. In the :file:`prj.conf` file change ``CONFIG_DOWNLOAD_HOST`` to your download hostname (e.g. "google.com").
+#. Change ``CONFIG_DOWNLOAD_FILE`` to the filename (e.g. "download/app_update.bin").
+
 .. include:: /includes/aws_s3_bucket.txt
 
 Hosting your image on an AWS S3 Server
@@ -81,9 +86,9 @@ After programming the sample to your development kit, test it by performing the 
 1. Configure the application version to be 2.
    To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` > :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
    Then rebuild the application.
-#. Upload the file :file:`update.bin` to the server you have chosen.
+#. Upload the file :file:`app_update.bin` to the server you have chosen.
    To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
-   Then select the file :file:`update.bin` and upload it.
+   Then select the file :file:`app_update.bin` and upload it.
 #. Reset your nRF9160 DK to start the application.
 #. Open a terminal emulator and observe that an output similar to this is printed:
 
