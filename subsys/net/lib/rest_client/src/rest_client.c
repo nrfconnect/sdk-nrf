@@ -69,13 +69,15 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 }
 
 static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
-				      const sec_tag_t sec_tag, int tls_peer_verify)
+				      const sec_tag_t sec_tag, int tls_peer_verify,
+				      bool session_cache)
 {
 	int err;
 	int verify = TLS_PEER_VERIFY_REQUIRED;
 	const sec_tag_t tls_sec_tag[] = {
 		sec_tag,
 	};
+	uint8_t cache;
 
 	if (tls_peer_verify == TLS_PEER_VERIFY_REQUIRED ||
 	    tls_peer_verify == TLS_PEER_VERIFY_OPTIONAL ||
@@ -92,6 +94,18 @@ static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (err) {
 		LOG_ERR("Failed to setup TLS sec tag, error: %d", errno);
+		return err;
+	}
+
+	if (session_cache) {
+		cache = TLS_SESSION_CACHE_ENABLED;
+	} else {
+		cache = TLS_SESSION_CACHE_DISABLED;
+	}
+
+	err = setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
+	if (err) {
+		LOG_ERR("Unable to set session cache, errno %d", errno);
 		return err;
 	}
 
@@ -132,15 +146,14 @@ static int rest_client_sckt_timeouts_set(int fd)
 }
 
 static int rest_client_sckt_connect(int *const fd, const char *const hostname,
-				     const uint16_t port_num, const char *const ip_address,
+				     const uint16_t port_num,
 				     const sec_tag_t sec_tag,
 				     int tls_peer_verify)
 {
 	int ret;
 	struct addrinfo *addr_info;
 	char peer_addr[INET_ADDRSTRLEN];
-	/* Use IP to connect if provided, always use hostname for TLS (SNI) */
-	const char *const connect_addr = ip_address ? ip_address : hostname;
+	const char *const connect_addr = hostname;
 
 	struct addrinfo hints = {
 		.ai_family = AF_INET,
@@ -174,7 +187,8 @@ static int rest_client_sckt_connect(int *const fd, const char *const hostname,
 	}
 
 	if (sec_tag >= 0) {
-		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
+		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify,
+						 true); /* Always using TLS session cache */
 		if (ret) {
 			ret = -EACCES;
 			goto clean_up;
@@ -247,8 +261,9 @@ static int rest_client_do_api_call(struct http_request *http_req,
 	int err = 0;
 
 	if (rest_ctx->connect_socket < 0) {
-		err = rest_client_sckt_connect(&rest_ctx->connect_socket, http_req->host,
-						rest_ctx->port, NULL,
+		err = rest_client_sckt_connect(&rest_ctx->connect_socket,
+						http_req->host,
+						rest_ctx->port,
 						rest_ctx->sec_tag, rest_ctx->tls_peer_verify);
 		if (err) {
 			return err;
