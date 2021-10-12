@@ -57,12 +57,15 @@ int AppTask::Init()
 {
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
+	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 
 	sStatusLED.Init(DK_LED1);
 	sLockLED.Init(DK_LED2);
 	sLockLED.Set(!BoltLockMgr().IsUnlocked());
 	sUnusedLED.Init(DK_LED3);
 	sUnusedLED_1.Init(DK_LED4);
+
+	UpdateStatusLED();
 
 	/* Initialize buttons */
 	int ret = dk_buttons_init(ButtonEventHandler);
@@ -110,46 +113,10 @@ int AppTask::StartApp()
 	AppEvent event = {};
 
 	while (true) {
-		ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
+		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 
-		while (!ret) {
-			DispatchEvent(event);
-			ret = k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
-		}
-
-		/* Collect connectivity and configuration state from the CHIP stack.  Because the
-		 * CHIP event loop is being run in a separate task, the stack must be locked
-		 * while these values are queried.  However we use a non-blocking lock request
-		 * (TryLockChipStack()) to avoid blocking other UI activities when the CHIP
-		 * task is busy (e.g. with a long crypto operation). */
-
-		if (PlatformMgr().TryLockChipStack()) {
-			sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
-			sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
-			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
-			PlatformMgr().UnlockChipStack();
-		}
-
-		/* Update the status LED.
-		 *
-		 * If thread and service provisioned, keep the LED On constantly.
-		 *
-		 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
-		 * rate of 100ms.
-		 *
-		 * Otherwise, blink the LED On for a very short time. */
-		if (sIsThreadProvisioned && sIsThreadEnabled) {
-			sStatusLED.Set(true);
-		} else if (sHaveBLEConnections) {
-			sStatusLED.Blink(100, 100);
-		} else {
-			sStatusLED.Blink(50, 950);
-		}
-
-		sStatusLED.Animate();
-		sLockLED.Animate();
-		sUnusedLED.Animate();
-		sUnusedLED_1.Animate();
+		DispatchEvent(event);
+		k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
 	}
 }
 
@@ -191,7 +158,7 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		break;
 	case AppEvent::Toggle:
 		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock :
-								     BoltLockManager::Action::Unlock,
+							       BoltLockManager::Action::Unlock,
 				  event.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::CompleteLockAction:
@@ -211,6 +178,9 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		break;
 	case AppEvent::StartBleAdvertising:
 		StartBLEAdvertisingHandler();
+		break;
+	case AppEvent::UpdateLedState:
+		event.UpdateLedStateEvent.LedWidget->UpdateState();
 		break;
 #ifdef CONFIG_MCUMGR_SMP_BT
 	case AppEvent::StartSMPAdvertising:
@@ -270,6 +240,8 @@ void AppTask::FunctionReleaseHandler()
 
 		/* Set lock status LED back to show state of lock. */
 		sLockLED.Set(!BoltLockMgr().IsUnlocked());
+
+		UpdateStatusLED();
 
 		sAppTask.CancelFunctionTimer();
 		sAppTask.mFunction = TimerFunction::NoneSelected;
@@ -335,23 +307,58 @@ void AppTask::StartBLEAdvertisingHandler()
 	}
 }
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
-void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
+void AppTask::LEDStateUpdateHandler(LEDWidget &ledWidget)
 {
-	if (event->Type != DeviceEventType::kCHIPoBLEAdvertisingChange)
-		return;
+	sAppTask.PostEvent(AppEvent{ AppEvent::UpdateLedState, &ledWidget });
+}
 
-	if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-		if (NFCMgr().IsTagEmulationStarted()) {
-			LOG_INF("NFC Tag emulation is already started");
-		} else {
-			ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-		}
-	} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-		NFCMgr().StopTagEmulation();
+void AppTask::UpdateStatusLED()
+{
+	/* Update the status LED.
+	 *
+	 * If thread and service provisioned, keep the LED On constantly.
+	 *
+	 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
+	 * rate of 100ms.
+	 *
+	 * Otherwise, blink the LED On for a very short time. */
+	if (sIsThreadProvisioned && sIsThreadEnabled) {
+		sStatusLED.Set(true);
+	} else if (sHaveBLEConnections) {
+		sStatusLED.Blink(100, 100);
+	} else {
+		sStatusLED.Blink(50, 950);
 	}
 }
+
+void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
+{
+	switch (event->Type) {
+	case DeviceEventType::kCHIPoBLEAdvertisingChange:
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
+			if (NFCMgr().IsTagEmulationStarted()) {
+				LOG_INF("NFC Tag emulation is already started");
+			} else {
+				ShareQRCodeOverNFC(
+					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+			}
+		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+			NFCMgr().StopTagEmulation();
+		}
 #endif
+		sHaveBLEConnections = ConnectivityMgr().NumBLEConnections() != 0;
+		UpdateStatusLED();
+		break;
+	case DeviceEventType::kThreadStateChange:
+		sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
+		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
+		UpdateStatusLED();
+		break;
+	default:
+		break;
+	}
+}
 
 void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 {

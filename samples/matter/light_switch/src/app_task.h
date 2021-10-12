@@ -7,6 +7,7 @@
 #pragma once
 
 #include "app_event.h"
+#include "led_widget.h"
 
 #include <core/CHIPError.h>
 
@@ -28,6 +29,7 @@ private:
 	static void ButtonEventHandler(uint32_t buttonsState, uint32_t hasChanged);
 	static void LightLevelTimerHandler(k_timer *);
 	static void DiscoveryTimeoutHandler(k_timer *);
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 
 	friend AppTask &GetAppTask();
 	static AppTask sAppTask;

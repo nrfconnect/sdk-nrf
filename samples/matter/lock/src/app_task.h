@@ -8,6 +8,7 @@
 
 #include "app_event.h"
 #include "bolt_lock_manager.h"
+#include "led_widget.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -39,8 +40,10 @@ private:
 	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
+	static void UpdateStatusLED();
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);

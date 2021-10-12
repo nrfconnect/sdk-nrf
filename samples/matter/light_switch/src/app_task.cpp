@@ -69,6 +69,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize UI components */
 
 	LEDWidget::InitGpio();
+	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 	sStatusLED.Init(DK_LED1);
 
 	int ret = dk_buttons_init(ButtonEventHandler);
@@ -95,14 +96,10 @@ CHIP_ERROR AppTask::StartApp()
 	AppEvent event = {};
 
 	while (true) {
-		int ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
+		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 
-		while (!ret) {
-			DispatchEvent(event);
-			ret = k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
-		}
-
-		sStatusLED.Animate();
+		DispatchEvent(event);
+		k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
 	}
 
 	return CHIP_NO_ERROR;
@@ -140,6 +137,9 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		sLightSwitch.StopDiscovery();
 		sStatusLED.Set(sLightSwitch.Pair(event.LightFoundEvent.PeerAddress) == CHIP_NO_ERROR);
 		break;
+	case AppEvent::UpdateLedState:
+		event.UpdateLedStateEvent.LedWidget->UpdateState();
+		break;
 	default:
 		LOG_INF("Unknown event received");
 		break;
@@ -156,6 +156,11 @@ void AppTask::StartDiscoveryHandler()
 	sLightSwitch.StartDiscovery();
 	sStatusLED.Blink(100, 900);
 	k_timer_start(&sDiscoveryTimeout, K_SECONDS(10), K_NO_WAIT);
+}
+
+void AppTask::LEDStateUpdateHandler(LEDWidget &ledWidget)
+{
+	sAppTask.PostEvent(AppEvent{ AppEvent::UpdateLedState, &ledWidget });
 }
 
 void AppTask::ButtonEventHandler(uint32_t buttonsState, uint32_t hasChanged)

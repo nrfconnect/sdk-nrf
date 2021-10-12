@@ -7,6 +7,7 @@
 #pragma once
 
 #include "app_event.h"
+#include "led_widget.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -29,6 +30,9 @@ private:
 	void FunctionReleaseHandler();
 	void FunctionTimerEventHandler();
 
+	static void UpdateStatusLED();
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
 
