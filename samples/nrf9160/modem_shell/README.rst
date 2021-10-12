@@ -306,7 +306,7 @@ Examples
   .. code-block:: console
 
      link funmode -4
-     sock rai --rai_enable
+     link rai -e
      link funmode -1
      sock connect -a 111.222.111.222 -p 20000
      sock rai -i 0 --rai_last
