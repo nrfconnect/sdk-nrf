@@ -15,15 +15,20 @@
 #include <nrfx.h>
 
 
+enum state {
+	STATE_DISABLED,
+	STATE_INACTIVE,
+	STATE_ACTIVE,
+	STATE_TERMINATED,
+};
+
 /* By default, when there is no shell, all events are profiled. */
 #ifndef CONFIG_SHELL
 uint32_t profiler_enabled_events = 0xffffffff;
 #endif
 
-
 static K_SEM_DEFINE(profiler_sem, 0, 1);
-static bool protocol_running;
-static bool sending_events;
+static atomic_t profiler_state;
 
 enum nordic_command {
 	NORDIC_COMMAND_START	= 1,
@@ -112,7 +117,7 @@ static void send_system_description(void)
 
 static void profiler_nordic_thread_fn(void)
 {
-	while (protocol_running) {
+	while (atomic_get(&profiler_state) != STATE_TERMINATED) {
 		uint8_t read_data;
 		enum nordic_command command;
 
@@ -122,10 +127,10 @@ static void profiler_nordic_thread_fn(void)
 			command = (enum nordic_command)read_data;
 			switch (command) {
 			case NORDIC_COMMAND_START:
-				sending_events = true;
+				atomic_cas(&profiler_state, STATE_INACTIVE, STATE_ACTIVE);
 				break;
 			case NORDIC_COMMAND_STOP:
-				sending_events = false;
+				atomic_cas(&profiler_state, STATE_ACTIVE, STATE_INACTIVE);
 				break;
 			case NORDIC_COMMAND_INFO:
 				send_system_description();
@@ -142,17 +147,17 @@ static void profiler_nordic_thread_fn(void)
 
 int profiler_init(void)
 {
-	static bool profiler_initialized;
-
 	k_sched_lock();
-	if (profiler_initialized) {
+
+	if (!atomic_cas(&profiler_state, STATE_DISABLED, STATE_INACTIVE)) {
 		k_sched_unlock();
 		return 0;
 	}
-	protocol_running = true;
+
 	if (IS_ENABLED(CONFIG_PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START)) {
-		sending_events = true;
+		atomic_cas(&profiler_state, STATE_INACTIVE, STATE_ACTIVE);
 	}
+
 	int ret;
 
 	ret = SEGGER_RTT_ConfigUpBuffer(
@@ -185,20 +190,19 @@ int profiler_init(void)
 			(k_thread_entry_t) profiler_nordic_thread_fn,
 			NULL, NULL, NULL,
 			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);
-	profiler_initialized = true;
+
 	k_sched_unlock();
+
 	return 0;
 }
 
 void profiler_term(void)
 {
-	/* Already terminated. */
-	if (!protocol_running) {
+	if (atomic_set(&profiler_state, STATE_TERMINATED) == STATE_TERMINATED) {
+		/* Already terminated. */
 		return;
 	}
 
-	sending_events = false;
-	protocol_running = false;
 	k_wakeup(protocol_thread_id);
 	k_sem_take(&profiler_sem, K_FOREVER);
 }
@@ -329,7 +333,7 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
-	if (sending_events) {
+	if (atomic_get(&profiler_state) == STATE_ACTIVE) {
 		uint8_t type_id = event_type_id & UCHAR_MAX;
 
 		buf->payload_start[0] = type_id;
