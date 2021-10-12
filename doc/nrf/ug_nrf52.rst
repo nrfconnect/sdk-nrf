@@ -232,6 +232,10 @@ To perform a FOTA upgrade, complete the following steps:
       The :file:`app_update.bin` file is the file that must be downloaded to the device.
 
 #. Download the new image to a device.
+
+      .. note::
+         When performing FOTA upgrade on a Bluetooth mesh device and if the device's composition data is going to change after the firmware upgrade, unprovision the device before downloading the new image.
+
       Use `nRF Connect for Mobile`_ or `nRF Toolbox`_ to upgrade your device with the new firmware.
 
       To do so, make sure that you can access the :file:`app_update.bin` file from your phone or tablet.
