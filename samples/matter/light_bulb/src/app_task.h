@@ -7,6 +7,7 @@
 #pragma once
 
 #include "app_event.h"
+#include "led_widget.h"
 #include "lighting_manager.h"
 
 #include <platform/CHIPDeviceLayer.h>
@@ -41,8 +42,10 @@ private:
 
 	static void ActionInitiated(LightingManager::Action aAction);
 	static void ActionCompleted(LightingManager::Action aAction);
+	static void UpdateStatusLED();
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);

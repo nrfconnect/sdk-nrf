@@ -7,6 +7,7 @@
 #pragma once
 
 #include "app_event.h"
+#include "led_widget.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -20,26 +21,26 @@ class AppTask {
 public:
 	int StartApp();
 
-	void PostEvent(const AppEvent *aEvent);
-	void PostEvent(AppEvent::Type type, AppEvent::Handler handler);
+	void PostEvent(const AppEvent &aEvent);
 	void UpdateClusterState();
-	void UpdateLedState();
 
 private:
 	friend AppTask &GetAppTask();
 
 	int Init();
 	void OpenPairingWindow();
-	void DispatchEvent(AppEvent *event);
+	void DispatchEvent(AppEvent &event);
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);
 #endif
 	static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
-	static void ButtonPushHandler(AppEvent *event);
-	static void ButtonReleaseHandler(AppEvent *event);
-	static void FunctionTimerHandler(AppEvent *event);
-	static void MeasurementsTimerHandler(AppEvent *event);
+	static void ButtonPushHandler();
+	static void ButtonReleaseHandler();
+	static void FunctionTimerHandler();
+	static void MeasurementsTimerHandler();
+	static void UpdateStatusLED();
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
 	static AppTask sAppTask;

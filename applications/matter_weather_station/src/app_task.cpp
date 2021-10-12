@@ -75,9 +75,13 @@ int AppTask::Init()
 {
 	/* Initialize RGB LED */
 	LEDWidget::InitGpio();
+	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
+
 	sRedLED.Init(DK_LED1);
 	sGreenLED.Init(DK_LED2);
 	sBlueLED.Init(DK_LED3);
+
+	UpdateStatusLED();
 
 	/* Initialize buttons */
 	int ret = dk_buttons_init(ButtonStateHandler);
@@ -99,11 +103,10 @@ int AppTask::Init()
 
 	/* Initialize timers */
 	k_timer_init(
-		&sFunctionTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, FunctionTimerHandler); },
-		nullptr);
+		&sFunctionTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::FunctionTimer }); }, nullptr);
 	k_timer_init(
-		&sMeasurementsTimer,
-		[](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, MeasurementsTimerHandler); }, nullptr);
+		&sMeasurementsTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::MeasurementsTimer }); },
+		nullptr);
 	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
 
 	/* Init ZCL Data Model and start server */
@@ -152,61 +155,63 @@ int AppTask::StartApp()
 	AppEvent event = {};
 
 	while (true) {
-		ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
+		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 
-		while (!ret) {
-			DispatchEvent(&event);
-			ret = k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
-		}
-
-		if (PlatformMgr().TryLockChipStack()) {
-			sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
-			sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
-			sIsBleAdvertisingEnabled = ConnectivityMgr().IsBLEAdvertisingEnabled();
-			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
-			PlatformMgr().UnlockChipStack();
-		}
-
-		UpdateLedState();
+		DispatchEvent(event);
+		k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
 	}
 }
 
-void AppTask::PostEvent(const AppEvent *event)
+void AppTask::PostEvent(const AppEvent &event)
 {
-	if (k_msgq_put(&sAppEventQueue, event, K_NO_WAIT)) {
+	if (k_msgq_put(&sAppEventQueue, &event, K_NO_WAIT)) {
 		LOG_ERR("Failed to post event to app task event queue");
 	}
-}
-
-void AppTask::PostEvent(AppEvent::Type type, AppEvent::Handler handler)
-{
-	AppEvent event;
-	event.mType = type;
-	event.mHandler = handler;
-	PostEvent(&event);
 }
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 void AppTask::RequestSMPAdvertisingStart(void)
 {
-	sAppTask.PostEvent(AppEvent::Type::kStartSMPAdvertising,
-			   [](AppEvent *) { GetDFUOverSMP().StartBLEAdvertising(); });
+	sAppTask.PostEvent(AppEvent{ AppEvent::StartSMPAdvertising });
 }
 #endif
 
-void AppTask::DispatchEvent(AppEvent *event)
+void AppTask::DispatchEvent(AppEvent &event)
 {
-	assert(event->mHandler);
-	event->mHandler(event);
+	switch (event.Type) {
+	case AppEvent::FunctionPress:
+		ButtonPushHandler();
+		break;
+	case AppEvent::FunctionRelease:
+		ButtonReleaseHandler();
+		break;
+	case AppEvent::FunctionTimer:
+		FunctionTimerHandler();
+		break;
+	case AppEvent::MeasurementsTimer:
+		MeasurementsTimerHandler();
+		break;
+	case AppEvent::UpdateLedState:
+		event.UpdateLedStateEvent.LedWidget->UpdateState();
+		break;
+#ifdef CONFIG_MCUMGR_SMP_BT
+	case AppEvent::StartSMPAdvertising:
+		GetDFUOverSMP().StartBLEAdvertising();
+		break;
+#endif
+	default:
+		LOG_INF("Unknown event received");
+		break;
+	}
 }
 
-void AppTask::ButtonPushHandler(AppEvent *)
+void AppTask::ButtonPushHandler()
 {
 	sFunctionTimerMode = FunctionTimerMode::kFactoryResetTrigger;
 	k_timer_start(&sFunctionTimer, K_MSEC(kFactoryResetTriggerTimeoutMs), K_NO_WAIT);
 }
 
-void AppTask::ButtonReleaseHandler(AppEvent *)
+void AppTask::ButtonReleaseHandler()
 {
 	/* If the button was released within the first kFactoryResetTriggerTimeoutMs, open the BLE pairing
 	 * window. */
@@ -222,13 +227,13 @@ void AppTask::ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged)
 {
 	if (hasChanged & DK_BTN1_MSK) {
 		if (buttonState & DK_BTN1_MSK)
-			sAppTask.PostEvent(AppEvent::Type::kButtonPush, ButtonPushHandler);
+			sAppTask.PostEvent(AppEvent{ AppEvent::FunctionPress });
 		else
-			sAppTask.PostEvent(AppEvent::Type::kButtonRelease, ButtonReleaseHandler);
+			sAppTask.PostEvent(AppEvent{ AppEvent::FunctionRelease });
 	}
 }
 
-void AppTask::FunctionTimerHandler(AppEvent *)
+void AppTask::FunctionTimerHandler()
 {
 	switch (sFunctionTimerMode) {
 	case FunctionTimerMode::kFactoryResetTrigger:
@@ -245,7 +250,7 @@ void AppTask::FunctionTimerHandler(AppEvent *)
 	}
 }
 
-void AppTask::MeasurementsTimerHandler(AppEvent *)
+void AppTask::MeasurementsTimerHandler()
 {
 	sAppTask.UpdateClusterState();
 }
@@ -335,7 +340,7 @@ void AppTask::UpdateClusterState()
 	}
 }
 
-void AppTask::UpdateLedState()
+void AppTask::UpdateStatusLED()
 {
 	LedState nextState;
 
@@ -374,26 +379,39 @@ void AppTask::UpdateLedState()
 	default:
 		break;
 	}
-
-	sGreenLED.Animate();
-	sBlueLED.Animate();
-	sRedLED.Animate();
 }
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+void AppTask::LEDStateUpdateHandler(LEDWidget &ledWidget)
+{
+	sAppTask.PostEvent(AppEvent{ AppEvent::UpdateLedState, &ledWidget });
+}
+
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
-	if (event->Type != DeviceEventType::kCHIPoBLEAdvertisingChange)
-		return;
-
-	if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-		if (NFCMgr().IsTagEmulationStarted()) {
-			LOG_INF("NFC Tag emulation is already started");
-		} else {
-			ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	switch (event->Type) {
+	case DeviceEventType::kCHIPoBLEAdvertisingChange:
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
+			if (NFCMgr().IsTagEmulationStarted()) {
+				LOG_INF("NFC Tag emulation is already started");
+			} else {
+				ShareQRCodeOverNFC(
+					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+			}
+		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+			NFCMgr().StopTagEmulation();
 		}
-	} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-		NFCMgr().StopTagEmulation();
+#endif
+		sIsBleAdvertisingEnabled = ConnectivityMgr().IsBLEAdvertisingEnabled();
+		sHaveBLEConnections = ConnectivityMgr().NumBLEConnections() != 0;
+		UpdateStatusLED();
+		break;
+	case DeviceEventType::kThreadStateChange:
+		sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
+		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
+		UpdateStatusLED();
+		break;
+	default:
+		break;
 	}
 }
-#endif
