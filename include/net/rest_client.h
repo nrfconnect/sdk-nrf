@@ -8,6 +8,7 @@
  * @file rest_client.h
  *
  * @brief REST Client.
+ *
  */
 #ifndef REST_CLIENT_H__
 #define REST_CLIENT_H__
@@ -52,7 +53,7 @@ struct rest_client_req_resp_context {
 	/** In: Used HTTP method. */
 	enum http_method http_method;
 
-	/** In: Hostname to be used in the request. */
+	/** In: Hostname or IP address to be used in the request. */
 	const char *host;
 
 	/** In: Port number to be used in the request. */
@@ -61,7 +62,7 @@ struct rest_client_req_resp_context {
 	/** In: The URL for this request, for example: /index.html */
 	const char *url;
 
-	/** In: The HTTP header fields. Similar to Zephyr http client.
+	/** In: The HTTP header fields. Similar than with Zephyr http client.
 	 *      This is a NULL terminated list of header fields. May be NULL.
 	 */
 	const char **header_fields;
@@ -85,7 +86,7 @@ struct rest_client_req_resp_context {
 	/** Out: Length of HTTP headers + response body/content data */
 	size_t total_response_len;
 
-	/** Out: Length of response content data */
+	/** Out: Length of response body/content data */
 	size_t response_len;
 
 	/** Out: start of response data (i.e. the body/content) in resp_buff */
@@ -95,7 +96,7 @@ struct rest_client_req_resp_context {
 	uint16_t http_status_code;
 
 	/** Out: Used socket identifier. Use this for keepalived connections as
-	 *       connect_socket.
+	 *       connect_socket for upcoming requests.
 	 */
 	int used_socket_id;
 
@@ -118,7 +119,7 @@ int rest_client_request(struct rest_client_req_resp_context *req_resp_ctx);
 /**
  * @brief Sets the default values into given contexts.
  *
- * @details Intended to be used before calling rest_client_request() with more custom parameters.
+ * @details Intended to be used before calling rest_client_request().
  * 
  * @param[in,out] req_resp_ctx Request and response context for communicating with REST Client API.
  */
