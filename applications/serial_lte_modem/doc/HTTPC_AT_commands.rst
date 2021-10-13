@@ -205,7 +205,7 @@ The ``#XHTTPCRSP`` is an unsolicited notification that indicates that a part of 
 Unsolicited notification
 ------------------------
 
-The set command allows you to connect to and disconnect from an HTTP server.
+It indicates that a part of the HTTP response has been received.
 
 Syntax
 ~~~~~~

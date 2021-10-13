@@ -188,6 +188,18 @@ void mqtt_evt_handler(struct mqtt_client *const c, const struct mqtt_evt *evt)
 		}
 		break;
 
+	case MQTT_EVT_UNSUBACK:
+		if (evt->result == 0) {
+			LOG_DBG("UNSUBACK packet id: %u", evt->param.unsuback.message_id);
+		}
+		break;
+
+	case MQTT_EVT_PINGRESP:
+		if (evt->result == 0) {
+			LOG_DBG("PINGRESP packet");
+		}
+		break;
+
 	default:
 		LOG_DBG("default: %d", evt->type);
 		break;

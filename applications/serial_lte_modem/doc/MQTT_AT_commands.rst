@@ -9,6 +9,45 @@ MQTT AT commands
 
 The following commands list contains the AT commands used to operate the MQTT client.
 
+MQTT event #XMQTTEVT
+====================
+
+The ``#XMQTTEVT`` is an unsolicited notification that indicates the event of the MQTT client.
+
+Unsolicited notification
+------------------------
+
+It indicates the event of the MQTT client.
+
+Syntax
+~~~~~~
+
+::
+
+   #XMQTTEVT=<evt_type>,<result>
+
+* The ``<evt_type>`` value is an integer indicating the type of the event.
+  It can assume the following values:
+
+  * ``0`` - Connection request.
+  * ``1`` - Disconnection.
+    The MQTT client is disconnected from the MQTT broker once this event is notified.
+  * ``2`` - Message received on a topic the client is subscribed to.
+  * ``3`` - Acknowledgment for the published message with QoS 1.
+  * ``4`` - Confirmation of the reception for the published message with QoS 2.
+  * ``5`` - Release of the published message with QoS 2.
+  * ``6`` - Confirmation to a publish release message with QoS 2.
+  * ``7`` - Reception of the subscribe request.
+  * ``8`` - Reception of the unsubscription request.
+  * ``9`` - Ping response from the MQTT broker.
+
+* The ``<result>`` value is an integer indicating the result of the event.
+  It can assume the following values:
+
+  * ``0`` - Success.
+  * *Negative value* - Failure.
+    It is the error code indicating the reason for the failure.
+
 MQTT connect #XMQTTCON
 ======================
 
