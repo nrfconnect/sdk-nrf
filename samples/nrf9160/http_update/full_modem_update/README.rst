@@ -37,6 +37,39 @@ The sample supports the following development kit, version 0.14.0 or higher:
 
 .. include:: /includes/spm.txt
 
+
+
+Configuration options
+*********************
+
+You can customize the firmware files downloaded by the sample through the following Kconfig options in the :file:`prj.conf` file:
+
+.. _CONFIG_DOWNLOAD_HOST:
+
+CONFIG_DOWNLOAD_HOST
+   It sets the hostname of the server where the updates are located.
+
+.. _CONFIG_DOWNLOAD_MODEM_0_FILE:
+
+CONFIG_DOWNLOAD_MODEM_0_FILE
+   It sets the file name of the first firmware.
+   It supports files encoded in the serialized :file:`.cbor` format.
+   See :ref:`lib_fmfu_fdev_serialization` for additional information.
+
+.. _CONFIG_DOWNLOAD_MODEM_0_VERSION:
+
+CONFIG_DOWNLOAD_MODEM_0_VERSION
+   It sets the version of the first firmware.
+
+.. _CONFIG_DOWNLOAD_MODEM_1_FILE:
+
+CONFIG_DOWNLOAD_MODEM_1_FILE
+   It sets the file name of the second firmware.
+   It supports files encoded in the serialized :file:`.cbor` format.
+   See :ref:`lib_fmfu_fdev_serialization` for additional information.
+
+See :ref:`configure_application` for more information on how to customize configuration options.
+
 Building and running
 ********************
 
@@ -46,30 +79,6 @@ Building and running
 
 The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
-
-You can customize the firmware files downloaded by the sample through the following Kconfig options in the :file:`prj.conf` file:
-
-* .. option:: CONFIG_DOWNLOAD_HOST
-
-   It sets the hostname of the server where the updates are located.
-
-* .. option:: CONFIG_DOWNLOAD_MODEM_0_FILE
-
-   It sets the file name of the first firmware.
-   It supports files encoded in the serialized :file:`.cbor` format.
-   See :ref:`lib_fmfu_fdev_serialization` for additional information.
-
-* .. option:: CONFIG_DOWNLOAD_MODEM_0_VERSION
-
-   It sets the version of the first firmware.
-
-* .. option:: CONFIG_DOWNLOAD_MODEM_1_FILE
-
-   It sets the file name of the second firmware.
-   It supports files encoded in the serialized :file:`.cbor` format.
-   See :ref:`lib_fmfu_fdev_serialization` for additional information.
-
-See :ref:`configure_application` for more information on how to customize configuration options.
 
 Testing
 =======

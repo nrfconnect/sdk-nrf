@@ -19,19 +19,24 @@ Overview
 The sample can act as either a network server or a network client.
 By default, the sample is configured to act as a server.
 
+Configuration options
+*********************
+
 You can configure the following options to make the sample act as either a server or a client:
 
-* .. option:: CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER
+.. _CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER:
 
-     Set to ``y`` to make the sample act as a server.
-     When acting as a server, the sample waits for a connection from the client on port 4243.
-     After the TCP connection is established, the sample automatically initiates the TLS handshake by waiting for the *ClientHello* message from the client.
+CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER
+   Set to ``y`` to make the sample act as a server.
+   When acting as a server, the sample waits for a connection from the client on port 4243.
+   After the TCP connection is established, the sample automatically initiates the TLS handshake by waiting for the *ClientHello* message from the client.
 
-* .. option:: CONFIG_PSA_TLS_SAMPLE_TYPE_CLIENT
+.. _CONFIG_PSA_TLS_SAMPLE_TYPE_CLIENT:
 
-     Set to ``y`` to make the sample act as a client.
-     When acting as a client, the sample tries to connect to the server on port 4243.
-     After the TCP connection is established, the sample automatically initiates the TLS handshake by sending the *ClientHello* message.
+CONFIG_PSA_TLS_SAMPLE_TYPE_CLIENT
+   Set to ``y`` to make the sample act as a client.
+   When acting as a client, the sample tries to connect to the server on port 4243.
+   After the TCP connection is established, the sample automatically initiates the TLS handshake by sending the *ClientHello* message.
 
 After a successful TLS handshake, the client and server echo any message received over the secured connection.
 
@@ -41,10 +46,7 @@ Certificates
 
 The sample supports certificates signed with either ECDSA or RSA.
 By default, the sample is configured to use ECDSA certificates.
-You can configure the following option to ``y`` to make the sample use RSA certificates:
-
-* .. option:: CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA
-
+You can configure the ``CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA`` option to ``y`` to make the sample use RSA certificates.
 
 Certificates when running in a non-secure domain
 ------------------------------------------------

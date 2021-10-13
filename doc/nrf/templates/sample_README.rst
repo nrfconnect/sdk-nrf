@@ -130,14 +130,19 @@ Configuration options*
 
 Check and configure the following configuration options for the sample:
 
-.. option:: SAMPLE_CONFIG - Sample configuration
+.. _SAMPLE_CONFIG:
 
+SAMPLE_CONFIG - Sample configuration
    The sample configuration defines ...
 
-.. option:: ANOTHER_CONFIG - Another configuration
+.. _ANOTHER_CONFIG:
 
+ANOTHER_CONFIG - Another configuration
    This configuration option specifies ...
 
+.. note::
+
+   Use :ref:`SAMPLE_CONFIG <SAMPLE_CONFIG>` to link to sample specific option.
 
 Additional configuration*
 =========================
