@@ -28,81 +28,31 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
-nRF9160
-=======
+Protocols
+=========
 
-* Added:
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+See `Samples`_ for lists of changes for the protocol-related samples.
 
-  * :ref:`lib_rest_client` library:
+* No entries yet.
 
-    * Added REST client library for sending REST requests and receiving their responses.
+Applications
+============
 
-* Updated:
+This section provides detailed lists of changes by :ref:`application <applications>`.
 
-  * :ref:`serial_lte_modem` application:
+nRF9160: Asset Tracker
+----------------------
 
-    * Added new AT commands related to the General Purpose Input/Output (GPIO).
+* Updated the application to start sending batch messages to the new bulk endpoint topic supported in nRF Cloud.
 
-  * :ref:`lwm2m_client` sample:
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
 
-    * Added support for Thingy:91.
-    * Added more LwM2M objects.
-    * LwM2M sensor objects now uses the actual sensors available to the Thingy:91. If the nRF9160 DK is used, it uses simulated sensors instead.
-    * Added possibility to poll sensors and notify the server if the measured changes are large enough.
-
-  * A-GPS library:
-
-    * Removed GNSS socket API support.
-
-  * :ref:`lib_nrf_cloud` library:
-
-    * Removed GNSS socket API support from A-GPS and P-GPS.
-    * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
-      A message published to the bulk topic is typically a combination of multiple messages.
-    * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
-      Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
-    * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
-    * Fixed an issue with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
-    * Added :c:func:`nrf_cloud_pgps_request_reset` so P-GPS application request handler can indicate failure to process the request.
-      This ensures the P-GPS library tries the request again.
-
-  * :ref:`asset_tracker_v2` application:
-
-    * Updated the application to start sending batch messages to the new bulk endpoint topic supported in nRF Cloud.
-
-  * :ref:`multicell_location` sample:
-
-    * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
-    * Added support for Polte location service.
-
-  * :ref:`lte_lc_readme` library:
-
-    * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
-    * Added support for multiple LTE event handlers. Thus, deregistration is not possible by using lte_lc_register_handler(NULL) anymore and it is done by the :c:func:`lte_lc_deregister_handler` function in the API.
-    * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
-    * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
-
-  * :ref:`https_client` sample:
-
-    * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
-
-  * :ref:`serial_lte_modem` application:
-
-    * Added the ``#XUUID`` command to read out the device UUID from the modem.
-    * Added to the ``XNRFCLOUD`` command the following features:
-      * The possibility to send to and receive from nRF Cloud JSON messages in data mode.
-      * The ability to read out the ``sec_tag`` and the UUID of the device.
-
-  * :ref:`lib_lwm2m_client_utils` library:
-
-    * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
-
-  * :ref:`nrf_modem_lib_readme` library:
-
-    * Added a possibility to create native sockets when nRF91 socket offloading is enabled.
-
-nRF5
-====
+* Added non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
+* Added secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
+* Added power manager to the :ref:`nrf_machine_learning_app` application.
+* Updated information about custom build types.
 
 nRF Desktop
 -----------
@@ -125,17 +75,29 @@ nRF Desktop
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
 
-Bluetooth® LE
--------------
+nRF9160: Serial LTE modem
+-------------------------
 
-* Updated:
+* Added new AT commands related to the General Purpose Input/Output (GPIO).
+* Added the ``#XUUID`` command to read out the device UUID from the modem.
+* Added to the ``XNRFCLOUD`` command the following features:
 
-  * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
-  * :ref:`ble_llpm` sample - Added role selection.
-    The user now selects the role for each board by typing "m" or "s" in the terminal emulator.
+  * The possibility to send to and receive from nRF Cloud JSON messages in data mode.
+  * The ability to read out the ``sec_tag`` and the UUID of the device.
 
-Bluetooth mesh
---------------
+Samples
+=======
+
+This section provides detailed lists of changes by :ref:`sample <sample>`, including protocol-related samples.
+For lists of protocol-specific changes, see `Protocols`_.
+
+Bluetooth samples
+-----------------
+
+* Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+
+Bluetooth mesh samples
+----------------------
 
 * Added:
 
@@ -145,57 +107,61 @@ Bluetooth mesh
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
 
-Matter
-------
+nRF9160 samples
+---------------
+
+* :ref:`https_client` sample:
+
+  * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
+
+* :ref:`lwm2m_client` sample:
+
+  * Added support for Thingy:91.
+  * Added more LwM2M objects.
+  * LwM2M sensor objects now uses the actual sensors available to the Thingy:91. If the nRF9160 DK is used, it uses simulated sensors instead.
+  * Added possibility to poll sensors and notify the server if the measured changes are large enough.
+
+* :ref:`multicell_location` sample:
+
+  * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
+  * Added support for Polte location service.
+
+Matter samples
+--------------
 
 * Added:
 
   * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
 
-Zigbee
-------
+Zigbee samples
+--------------
 
 * Added:
 
-   * :ref:`Zigbee shell <zigbee_shell_sample>`.
-   * Added ZCL commands to :ref:`Zigbee Shell library <lib_zigbee_shell>`.
-   * Fixes and improvements in :ref:`Zigbee Shell library <lib_zigbee_shell>`.
-   * Fixed issue with cluster declaration in :ref:`Zigbee shell <zigbee_shell_sample>` and :ref:`Zigbee template <zigbee_template_sample>`.
-   * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` and :ref:`Zigbee Shell library <lib_zigbee_shell>`.
+   * :ref:`Zigbee shell <zigbee_shell_sample>` sample.
 
-Common
-======
+Other samples
+-------------
 
-Build system
-------------
+* :ref:`bootloader` sample:
 
-* Bug fixes:
+  * Improved how hardware unique keys are handled.
 
-  * NCSIDB-581: Fixed a bug where application signing and file conversion for device firmware update (DFU) could fail in SES during a build.
-
-Partition Manager
------------------
-
-* Partition manager information is no longer appended to the ``rom_report`` target.
-  To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
-
-Libraries
----------
-
-* Added API documentation and :ref:`conceptual documentation page <wave_gen>` for the wave generator library.
+    * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
+    * The bootloader now allows a single boot with no key present, to allow the app to write a key.
+      After the first boot, the key must be present or the bootloader won't boot the app.
 
 Drivers
--------
+=======
+
+This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added API documentation and :ref:`conceptual documentation page <sensor_sim>` for the simulated sensor driver.
 
-Edge Impulse
-------------
+Libraries
+=========
 
-* Added non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
-* Added secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
-* Added power manager to the :ref:`nrf_machine_learning_app` application.
-* Updated information about custom build types.
+This section provides detailed lists of changes by :ref:`library <libraries>`.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -212,66 +178,102 @@ Updated:
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 * The :ref:`caf_power_manager` now has a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
 
-Event Manager
--------------
+Modem libraries
+---------------
 
-* Increased number of supported Event Manager events.
+* :ref:`lte_lc_readme` library:
 
-Profiler
---------
+  * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
+  * Added support for multiple LTE event handlers. Thus, deregistration is not possible by using lte_lc_register_handler(NULL) anymore and it is done by the :c:func:`lte_lc_deregister_handler` function in the API.
+  * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
+  * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
 
-* Updated Python scripts to use multiple processes that communicate over sockets.
-* Increase number of supported profiler events.
+* :ref:`nrf_modem_lib_readme` library:
 
-Hardware unique key
--------------------
+  * Added a possibility to create native sockets when nRF91 socket offloading is enabled.
 
-* Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
-* Refactored the HUK_HAS_* macros to be defined/undefined instead of 1/0.
-* Added a new sample :ref:`hw_unique_key_usage` showing how to use a hardware unique key to derive an encryption key.
-  The sample can be run with or without TF-M.
+Libraries for networking
+------------------------
 
-Bugfixes:
+* :ref:`lib_lwm2m_client_utils` library:
 
-* Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
+  * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
 
-Trusted Firmware-M
-------------------
+* :ref:`lib_nrf_cloud` library:
+
+  * Removed GNSS socket API support from A-GPS and P-GPS.
+  * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
+    A message published to the bulk topic is typically a combination of multiple messages.
+  * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
+    Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
+  * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
+  * Fixed an issue with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
+  * Added :c:func:`nrf_cloud_pgps_request_reset` so P-GPS application request handler can indicate failure to process the request.
+    This ensures the P-GPS library tries the request again.
+
+* :ref:`lib_nrf_cloud_agps` library:
+
+  * Removed GNSS socket API support.
+
+* :ref:`lib_rest_client` library:
+
+  * Added REST client library for sending REST requests and receiving their responses.
+
+Trusted Firmware-M libraries
+----------------------------
 
 * Added:
 
   * Support for non-secure storage.
     This enables non-secure applications to use the Zephyr Settings API to save and load persistent data.
 
-fprotect
---------
+Other libraries
+---------------
 
-* Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
+* Added API documentation and :ref:`conceptual documentation page <wave_gen>` for the wave generator library.
 
-Immutable bootloader
+* :ref:`event_manager` library:
+
+  * Increased number of supported Event Manager events.
+
+* :ref:`fprotect_readme` library:
+
+  * Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
+
+* :ref:`lib_hw_unique_key` library:
+
+  * Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
+  * Refactored the HUK_HAS_* macros to be defined/undefined instead of 1/0.
+  * Added a new sample :ref:`hw_unique_key_usage` showing how to use a hardware unique key to derive an encryption key.
+    The sample can be run with or without TF-M.
+  * Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
+
+* :ref:`profiler` library:
+
+  * Updated Python scripts to use multiple processes that communicate over sockets.
+  * Increase the number of supported profiler events.
+
+* :ref:`lib_spm`:
+
+  * : Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
+  * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+
+Libraries for Zigbee
 --------------------
 
-* Improved how hardware unique keys are handled.
+* Added ZCL commands to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 
-  * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
-  * The bootloader now allows a single boot with no key present, to allow the app to write a key.
-    After the first boot, the key must be present or the bootloader won't boot the app.
+Scripts
+=======
 
-Immutable bootloader
---------------------
+This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* Improved how hardware unique keys are handled.
+Partition Manager
+-----------------
 
-  * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
-  * The bootloader now allows a single boot with no key present, to allow the app to write a key.
-    After the first boot, the key must be present or the bootloader won't boot the app.
-
-Secure partition manager (SPM)
-------------------------------
-
-Bug fixes:
-
-* NCSDK-5156: Fixed the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
+* Partition manager information is no longer appended to the ``rom_report`` target.
+  To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
+* Added the ``share_size`` functionality to let a partition share size with a partition in another region.
 
 MCUboot
 =======
@@ -326,27 +328,19 @@ The following list summarizes the most important changes inherited from the upst
   * Support for Administrator Commissioning Cluster, which allows enabling or disabling the commissioning window on a Matter device.
     This is required by the Matter multi-admin functionality.
 
-Partition Manager
-=================
-
-* Added the ``share_size`` functionality to let a partition share size with a partition in another region.
-
-Secure Partition Manager
-========================
-
-* All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
-
 Documentation
 =============
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* Added:
+* General changes:
 
-  * :ref:`lib_fatal_error` documentation.
-  * :ref:`library_template` - added a template for documenting libraries.
-
-* Updated pages:
-
+  * Modified section names on this page.
+    Now the section names better match the |NCS| code and documentation structure.
   * :ref:`ncs_introduction` - Added a section describing how licenses work in |NCS|.
   * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
+  * :ref:`library_template` - added a template for documenting libraries.
+
+* Libraries:
+
+  * Added the documentation page for :ref:`lib_fatal_error`.
