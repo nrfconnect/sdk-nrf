@@ -40,41 +40,50 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_MQTT_BROKER_HOSTNAME - MQTT Broker host name
+.. _CONFIG_MQTT_BROKER_HOSTNAME:
 
-This configuration option defines the MQTT Broker host name.
+CONFIG_MQTT_BROKER_HOSTNAME - MQTT Broker host name
+   This configuration option defines the MQTT Broker host name.
 
-.. option:: CONFIG_MQTT_CLIENT_ID - MQTT Client ID
+.. _CONFIG_MQTT_CLIENT_ID:
 
-This configuration option specifies the MQTT Client ID.
+CONFIG_MQTT_CLIENT_ID - MQTT Client ID
+   This configuration option specifies the MQTT Client ID.
 
-.. option:: CONFIG_MQTT_SUB_TOPIC - MQTT Subscribe topic
+.. _CONFIG_MQTT_SUB_TOPIC:
 
-This configuration option sets the MQTT Subscribe topic.
+CONFIG_MQTT_SUB_TOPIC - MQTT Subscribe topic
+   This configuration option sets the MQTT Subscribe topic.
 
-.. option:: CONFIG_MQTT_PUB_TOPIC - MQTT Publish topic
+.. _CONFIG_MQTT_PUB_TOPIC:
 
-This configuration option sets the MQTT Publish topic.
+CONFIG_MQTT_PUB_TOPIC - MQTT Publish topic
+   This configuration option sets the MQTT Publish topic.
 
-.. option:: CONFIG_MQTT_BROKER_PORT - MQTT Broker Port
+.. _CONFIG_MQTT_BROKER_PORT:
 
-This configuration option specifies the port number associated with the MQTT broker.
+CONFIG_MQTT_BROKER_PORT - MQTT Broker Port
+   This configuration option specifies the port number associated with the MQTT broker.
 
-.. option:: CONFIG_BUTTON_EVENT_PUBLISH_MSG - Button event publish message
+.. _CONFIG_BUTTON_EVENT_PUBLISH_MSG:
 
-This configuration option specifies the message text which is published on a button press.
+CONFIG_BUTTON_EVENT_PUBLISH_MSG - Button event publish message
+   This configuration option specifies the message text which is published on a button press.
 
-.. option:: CONFIG_BUTTON_EVENT_BTN_NUM - Button number for publish
+.. _CONFIG_BUTTON_EVENT_BTN_NUM:
 
-This configuration option specifies the button number which, when pressed, will publish an MQTT message.
+CONFIG_BUTTON_EVENT_BTN_NUM - Button number for publish
+   This configuration option specifies the button number which, when pressed, will publish an MQTT message.
 
-.. option:: CONFIG_MQTT_RECONNECT_DELAY_S - MQTT broker reconnect delay
+.. _CONFIG_MQTT_RECONNECT_DELAY_S:
 
-This configuration option specifies the delay (in seconds) before attempting to reconnect to the broker.
+CONFIG_MQTT_RECONNECT_DELAY_S - MQTT broker reconnect delay
+   This configuration option specifies the delay (in seconds) before attempting to reconnect to the broker.
 
-.. option:: CONFIG_LTE_CONNECT_RETRY_DELAY_S - LTE connection retry delay
+.. _CONFIG_LTE_CONNECT_RETRY_DELAY_S:
 
-This configuration option specifies delay (in seconds) before attempting to retry LTE connection.
+CONFIG_LTE_CONNECT_RETRY_DELAY_S - LTE connection retry delay
+   This configuration option specifies delay (in seconds) before attempting to retry LTE connection.
 
 Configuration files
 =====================
@@ -123,10 +132,10 @@ Testing
 #. Observe that the sample displays the following information in the terminal::
 
        The MQTT simple sample started
-#. Observe that the development kit connects to the configured MQTT broker (:kconfig:`CONFIG_MQTT_BROKER_HOSTNAME`) after it gets the LTE connection.
-   At this stage, the development kit is ready to echo the data sent to it on the configured subscribe topic (:kconfig:`CONFIG_MQTT_SUB_TOPIC`).
+#. Observe that the development kit connects to the configured MQTT broker (:ref:`CONFIG_MQTT_BROKER_HOSTNAME <CONFIG_MQTT_BROKER_HOSTNAME>`) after it gets the LTE connection.
+   At this stage, the development kit is ready to echo the data sent to it on the configured subscribe topic (:ref:`CONFIG_MQTT_SUB_TOPIC <CONFIG_MQTT_SUB_TOPIC>`).
 #. Use an MQTT client like `Mosquitto`_ to subscribe to and publish data to the broker.
-   Observe that the development kit publishes all the data that you publish to :kconfig:`CONFIG_MQTT_SUB_TOPIC` on :kconfig:`CONFIG_MQTT_PUB_TOPIC`.
+   Observe that the development kit publishes all the data that you publish to :ref:`CONFIG_MQTT_SUB_TOPIC <CONFIG_MQTT_SUB_TOPIC>` on :ref:`CONFIG_MQTT_PUB_TOPIC <CONFIG_MQTT_PUB_TOPIC>`.
 
 Sample output
 =============
@@ -154,10 +163,10 @@ Troubleshooting
 ===============
 
 Public MQTT brokers might be unstable.
-If you experience problems connecting to the MQTT broker, try switching to another MQTT broker by changing the value of the :kconfig:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option.
+If you experience problems connecting to the MQTT broker, try switching to another MQTT broker by changing the value of the :ref:`CONFIG_MQTT_BROKER_HOSTNAME <CONFIG_MQTT_BROKER_HOSTNAME>` configuration option.
 
 .. note::
-   If the :kconfig:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option is changed and the overlay TLS configuration is used, the included CA certificate must be updated with the CA certificate for
+   If the :ref:`CONFIG_MQTT_BROKER_HOSTNAME <CONFIG_MQTT_BROKER_HOSTNAME>` configuration option is changed and the overlay TLS configuration is used, the included CA certificate must be updated with the CA certificate for
    the newly configurated MQTT broker.
 
 

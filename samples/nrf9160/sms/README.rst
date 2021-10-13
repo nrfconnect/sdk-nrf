@@ -43,8 +43,9 @@ Configuration options
 
 Check and configure the following configuration option for the sample:
 
-.. option:: CONFIG_SMS_SEND_PHONE_NUMBER - Configuration for recipient phone number.
+.. _CONFIG_SMS_SEND_PHONE_NUMBER:
 
+CONFIG_SMS_SEND_PHONE_NUMBER - Configuration for recipient phone number
    The sample configuration is used to set the recipient phone number if you need to send SMS.
 
 Additional configuration

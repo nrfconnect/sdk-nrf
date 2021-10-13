@@ -41,16 +41,19 @@ To get started with Memfault, see :ref:`using_memfault`.
 Configuration options
 *********************
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT - Configuration for transfer of Memfault data
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT - Configuration for transfer of Memfault data
    This option, if enabled, makes the debug module trigger events carrying Memfault data. This data can be routed through an external transport to Memfault cloud, for example, through AWS IoT, Azure IoT Hub, or `nRF Cloud`_.
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC - Configuration for |NCS| Memfault metrics tracking interval
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC - Configuration for nRF Connect SDK Memfault metrics tracking interval
    This option sets the time interval for tracking |NCS| Memfault metrics.
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX - Configuration for maximum size of transmitted packets.
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX - Configuration for maximum size of transmitted packets
    This option sets the maximum size of packets transmitted over the configured custom transport.
 
 Module configurations

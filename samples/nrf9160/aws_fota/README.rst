@@ -93,7 +93,7 @@ Use LTE Link Monitor to write the certificates to the kit:
    #. Paste the three certificates into the respective fields.
    #. Choose a security tag.
    #. Click :guilabel:`Update certificates`.
-   #. Before programming the sample, make sure to configure the :kconfig:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
+   #. Before programming the sample, make sure to configure the :ref:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
 
 .. include:: /includes/aws_s3_bucket.txt
 
@@ -120,30 +120,34 @@ Building and running
 
 .. _configuring:
 
-Sample configuration
-====================
+Configuration options
+*********************
 
 Before you build the sample, check and update the following configuration options:
 
-.. option:: CONFIG_APP_VERSION - Application version
+.. _CONFIG_APP_VERSION:
 
+CONFIG_APP_VERSION - Application version
    The version string is printed when the sample starts.
    Use this information to verify that the FOTA update worked.
 
-.. option:: CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
+.. _CONFIG_CERT_SEC_TAG:
 
+CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
    By default, the sample uses the certificates that are stored with the security tag for nRF Cloud.
    To use different certificates, configure a different security tag.
    If you used LTE Link Monitor to store the certificates, make sure to configure the security tag to the same that you used to store them.
 
-.. option:: CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
+.. _CONFIG_MQTT_BROKER_HOSTNAME:
 
+CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
    By default, the sample uses nRF Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
    To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Test` and select :guilabel:`View endpoint` from the :guilabel:`Connected as XXX` drop-down menu.
 
-.. option:: CONFIG_USE_CUSTOM_CLIENT_ID - Custom MQTT client ID
+.. _CONFIG_USE_CUSTOM_CLIENT_ID:
 
+CONFIG_USE_CUSTOM_CLIENT_ID - Custom MQTT client ID
    The client ID links your kit to the thing in AWS IoT.
    By default, the client ID is ``your_client_id``.
    If you chose a different name for your thing in AWS IoT, check this option and specify the AWS IoT thing name as client ID.

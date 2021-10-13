@@ -62,20 +62,24 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only mode
+.. _CONFIG_GNSS_SAMPLE_NMEA_ONLY:
 
+CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only mode
    The NMEA-only mode can be used for example with 3rd party tools to visualize the GNSS output.
 
-.. option:: CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL - To use an external GNSS antenna
+.. _CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL:
 
+CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL - To use an external GNSS antenna
    This configuration option should be enabled if an external GNSS antenna is used, so that the Low Noise Amplifier (LNA) can be configured accordingly.
 
-.. option:: CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GPS
+.. _CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD:
 
+CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GPS
    This configuration option enables A-GPS usage.
 
-.. option:: CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
+.. _CONFIG_GNSS_SAMPLE_MODE_PERIODIC:
 
+CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
    This configuration option enables periodic fixes instead of continuous tracking.
    Set :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
 

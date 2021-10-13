@@ -52,33 +52,42 @@ Configuration
 Configuration options
 =====================
 
-.. option:: CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES - UDP data upload size configuration
+You can configure the following options:
 
-This configuration option sets the number of bytes to be transmitted to the server.
+.. _CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES:
 
-.. option:: CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS - UDP data upload frequency configuration
+CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES - UDP data upload size configuration
+   This configuration option sets the number of bytes to be transmitted to the server.
 
-This configuration option sets the frequency with which the sample transmits data to the server.
+.. _CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS:
 
-.. option:: CONFIG_UDP_SERVER_ADDRESS_STATIC - UDP Server IP Address configuration
+CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS - UDP data upload frequency configuration
+   This configuration option sets the frequency with which the sample transmits data to the server.
 
-This configuration option sets the static IP address of the server.
+.. _CONFIG_UDP_SERVER_ADDRESS_STATIC:
 
-.. option:: CONFIG_UDP_SERVER_PORT - UDP server port configuration
+CONFIG_UDP_SERVER_ADDRESS_STATIC - UDP Server IP Address configuration
+   This configuration option sets the static IP address of the server.
 
-This configuration option sets the server address port number.
+.. _CONFIG_UDP_SERVER_PORT:
 
-.. option:: CONFIG_UDP_PSM_ENABLE - PSM mode configuration
+CONFIG_UDP_SERVER_PORT - UDP server port configuration
+   This configuration option sets the server address port number.
 
-This configuration option, if set, allows the sample to request PSM from the modem or cellular network.
+.. _CONFIG_UDP_PSM_ENABLE:
 
-.. option:: CONFIG_UDP_EDRX_ENABLE - eDRX mode configuration
+CONFIG_UDP_PSM_ENABLE - PSM mode configuration
+   This configuration option, if set, allows the sample to request PSM from the modem or cellular network.
 
-This configuration option, if set, allows the sample to request eDRX from the modem or cellular network.
+.. _CONFIG_UDP_EDRX_ENABLE:
 
-.. option:: CONFIG_UDP_RAI_ENABLE - RAI configuration
+CONFIG_UDP_EDRX_ENABLE - eDRX mode configuration
+   This configuration option, if set, allows the sample to request eDRX from the modem or cellular network.
 
-This configuration option, if set, allows the sample to request RAI for transmitted messages.
+.. _CONFIG_UDP_RAI_ENABLE:
+
+CONFIG_UDP_RAI_ENABLE - RAI configuration
+   This configuration option, if set, allows the sample to request RAI for transmitted messages.
 
 .. note::
    PSM, eDRX and RAI value or timers are set using the configurable options for the :ref:`lte_lc_readme` library.
@@ -87,23 +96,13 @@ This configuration option, if set, allows the sample to request RAI for transmit
 Additional configuration
 ========================
 
-You can configure the following options:
-
-* :kconfig:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES`
-* :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`
-* :kconfig:`CONFIG_UDP_SERVER_ADDRESS_STATIC`
-* :kconfig:`CONFIG_UDP_SERVER_PORT`
-* :kconfig:`CONFIG_UDP_PSM_ENABLE`
-* :kconfig:`CONFIG_UDP_EDRX_ENABLE`
-* :kconfig:`CONFIG_UDP_RAI_ENABLE`
-
 The following configurations are recommended for low power behavior:
 
-* :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`.
+* :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>`.
 * :kconfig:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
 * :kconfig:`CONFIG_SERIAL` disabled in :file:`prj.conf` and :file:`spm.conf`.
-* :kconfig:`CONFIG_UDP_EDRX_ENABLE` set to false.
-* :kconfig:`CONFIG_UDP_RAI_ENABLE` set to true for NB-IoT. It is not supported for LTE-M.
+* :ref:`CONFIG_UDP_EDRX_ENABLE <CONFIG_UDP_EDRX_ENABLE>` set to false.
+* :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` set to true for NB-IoT. It is not supported for LTE-M.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
 See `Power saving mode setting section in AT commands reference document`_ for a conversion chart of these timer values.
