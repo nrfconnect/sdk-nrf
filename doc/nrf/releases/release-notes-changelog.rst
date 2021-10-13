@@ -299,6 +299,10 @@ Documentation
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
+* Added:
+
+  * :ref:`lib_fatal_error` documentation.
+
 * Updated pages:
 
   * :ref:`ncs_introduction` - Added a section describing how licenses work in |NCS|.

@@ -13,7 +13,7 @@ For very simple samples, see the :ref:`zephyr:basic-sample`.
 Those samples are a good starting point for understanding how to put together your own application.
 
 .. note::
-   All samples in the |NCS| are configured to perform a system reset if a fatal error occurs.
+   All samples in the |NCS| use :ref:`lib_fatal_error` library and are configured to perform a system reset if a fatal error occurs.
    This behavior is different from how fatal errors are handled in the Zephyr samples.
    You can change the default behavior by updating the configuration option :kconfig:`CONFIG_RESET_ON_FATAL_ERROR`.
 
