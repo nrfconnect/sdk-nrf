@@ -43,7 +43,9 @@ static bool link_subscribe_for_rsrp;
 
 extern bool uart_disable_during_sleep_requested;
 
+#if defined(CONFIG_DATE_TIME)
 static bool date_time_received;
+#endif
 
 struct pdn_activation_status_info {
 	bool activated;
@@ -128,6 +130,7 @@ static void link_api_get_pdn_activation_status(
 
 /* ****************************************************************************/
 
+#if defined(CONFIG_DATE_TIME)
 static void link_date_time_evt_handler(const struct date_time_evt *evt)
 {
 	struct timespec tp = { 0 };
@@ -159,6 +162,7 @@ static void link_date_time_evt_handler(const struct date_time_evt *evt)
 		"NTP" :
 		"external source");
 }
+#endif
 
 /* ****************************************************************************/
 
@@ -182,10 +186,12 @@ static void link_registered_work(struct k_work *unused)
 
 	link_api_modem_info_get_for_shell(true);
 
+#if defined(CONFIG_DATE_TIME)
 	/* Request time update if not already received. Modem needs some time before this. */
 	if (!date_time_received) {
 		date_time_update_async(link_date_time_evt_handler);
 	}
+#endif
 }
 
 /******************************************************************************/
