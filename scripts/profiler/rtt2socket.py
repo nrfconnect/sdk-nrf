@@ -159,15 +159,14 @@ class Rtt2Socket:
                 self.disconnect()
                 sys.exit()
 
-            if len(buf) > self.config['rtt_additional_read_thresh']:
-                bufs.extend(buf)
-                continue
-
             if len(buf) > 0:
                 bufs.extend(buf)
+
+            if len(buf) < self.config['rtt_additional_read_thresh']:
                 break
 
             time.sleep(0.05)
+
         return bufs
 
     def _read_all_events_descriptions(self):
