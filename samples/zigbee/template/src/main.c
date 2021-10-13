@@ -61,8 +61,8 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 
 ZB_HA_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
 	app_template_clusters,
-	identify_attr_list,
-	basic_attr_list);
+	basic_attr_list,
+	identify_attr_list);
 
 ZB_HA_DECLARE_RANGE_EXTENDER_EP(
 	app_template_ep,
