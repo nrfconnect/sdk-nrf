@@ -117,34 +117,6 @@ static void test_date_time_invalid_input(void)
 
 	reset_to_valid_time(&date_time_dummy);
 
-	/**********************************************************************/
-
-	/** Invalid week day. */
-	date_time_dummy.tm_wday = -1;
-
-	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
-
-	date_time_dummy.tm_wday = 7;
-
-	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
-
-	reset_to_valid_time(&date_time_dummy);
-
-	/**********************************************************************/
-
-	/** Invalid year day. */
-	date_time_dummy.tm_yday = -1;
-
-	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
-
-	date_time_dummy.tm_yday = 366;
-
-	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
-
 }
 
 static void test_date_time_premature_request(void)
