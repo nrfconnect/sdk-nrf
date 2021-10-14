@@ -123,6 +123,20 @@ Whenever you update to a newer release of the |NCS|, check the :ref:`gs_recommen
       Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
 ..
 
+.. _gs_updating_ses_packages:
+
+Updating SES packages
+=====================
+
+Updating SES Nordic Edition will not update already installed packages.
+You might need to manually update the CPU support package when you cannot select a CPU as :guilabel:`Target Processor` when configuring a new project.
+
+To update the nRF CPU Support Package after a SES update:
+
+1. In SES, select :guilabel:`Tools` > :guilabel:`Package Manager...`.
+#. Search for "nRF CPU Support Package".
+#. Update the package to the latest version.
+
 .. _repo_move:
 
 Pointing the repositories to the right remotes after they were moved

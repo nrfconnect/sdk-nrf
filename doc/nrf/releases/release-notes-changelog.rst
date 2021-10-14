@@ -298,7 +298,7 @@ Other libraries
 
 * :ref:`lib_spm`:
 
-  * : Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
+  * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
 
 Libraries for Zigbee
@@ -389,9 +389,12 @@ In addition to documentation related to the changes listed above, the following 
     * Added a section describing the Git tool.
     * Expanded the existing section about the West tool.
 
+  * :ref:`gs_programming` - Updated the :ref:`gs_programming_ses` with a warning about a "no input files" error.
+  * :ref:`gs_updating` - Added a section about :ref:`gs_updating_ses_packages`.
   * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
   * :ref:`library_template` - added a template for documenting libraries.
   * :ref:`ug_nrf5340` - Added a note about varying folder names of the network core child image when programming with nrfjprog.
+  * :ref:`ug_nrf5340` - Updated the :ref:`ug_nrf5340_ses_multi_image` to better match the programming procedure.
 
 * Libraries:
 
