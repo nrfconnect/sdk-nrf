@@ -69,8 +69,7 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 }
 
 static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
-				      const sec_tag_t sec_tag, int tls_peer_verify,
-				      bool session_cache)
+				      const sec_tag_t sec_tag, int tls_peer_verify)
 {
 	int err;
 	int verify = TLS_PEER_VERIFY_REQUIRED;
@@ -97,7 +96,7 @@ static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 		return err;
 	}
 
-	if (session_cache) {
+	if (IS_ENABLED(CONFIG_REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE)) {
 		cache = TLS_SESSION_CACHE_ENABLED;
 	} else {
 		cache = TLS_SESSION_CACHE_DISABLED;
@@ -187,8 +186,7 @@ static int rest_client_sckt_connect(int *const fd, const char *const hostname,
 	}
 
 	if (sec_tag >= 0) {
-		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify,
-						 true); /* Always using TLS session cache */
+		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
 		if (ret) {
 			ret = -EACCES;
 			goto clean_up;
