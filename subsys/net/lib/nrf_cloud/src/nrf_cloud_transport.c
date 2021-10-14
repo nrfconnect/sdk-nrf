@@ -21,8 +21,14 @@
 #include <sys/util.h>
 #include <settings/settings.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
-#include <nrf_socket.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/arpa/inet.h>
+#include <posix/netdb.h>
+#include <posix/sys/socket.h>
+#else
+#include <net/socket.h>
 #endif
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
