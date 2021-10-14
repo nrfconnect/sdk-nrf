@@ -60,12 +60,9 @@ const char *location_service_get_certificate(void)
 }
 
 int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       const char * const device_id,
 				       char * const rcv_buf, const size_t rcv_buf_len,
 				       struct multicell_location *const location)
 {
-	ARG_UNUSED(device_id);
-
 	int err;
 	struct nrf_cloud_cell_pos_result result;
 	struct nrf_cloud_rest_context rest_ctx = {

@@ -123,11 +123,6 @@ nRF9160 samples
   * Added support for polling sensors and notifying the server if the measured changes are large enough.
   * Added support for full modem firmware update.
 
-* :ref:`multicell_location` sample:
-
-  * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
-  * Added support for Polte location service.
-
 Matter samples
 --------------
 
@@ -201,6 +196,12 @@ Libraries for networking
 
   * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
   * Added support for full modem firmware update.
+
+* :ref:`multicell_location` library:
+
+  * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
+  * Added support for Polte location service.
+  * Removed device ID from the :c:func:`multicell_location_get` parameter list. nRF Cloud and HERE did not use it. Skyhook will now set modem UUID as its device ID.
 
 * :ref:`lib_nrf_cloud` library:
 

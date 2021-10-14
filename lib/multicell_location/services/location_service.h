@@ -27,7 +27,6 @@ const char *location_service_get_certificate(void);
  * @brief Generate location request, send, and parse response.
  *
  * @param cell_data Pointer to neighbor cell data.
- * @param device_id Unique device identifier.
  * @param rcv_buf Buffer for storing the HTTP response.
  * @param rcv_buf_len Length of the provided buffer.
  * @param location Storage for the result from response parsing.
@@ -35,7 +34,6 @@ const char *location_service_get_certificate(void);
  * @return 0 on success, or -1 on failure.
  */
 int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       const char * const device_id,
 				       char *const rcv_buf, const size_t rcv_buf_len,
 				       struct multicell_location *const location);
 
