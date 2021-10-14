@@ -49,7 +49,8 @@ typedef void (*date_time_evt_handler_t)(const struct date_time_evt *evt);
 /** @brief Set the current date time.
  *
  *  @note See http://www.cplusplus.com/reference/ctime/tm/ for accepted input
- *        format.
+ *        format. Members wday and yday have no impact on the date time UTC and are thus
+ *        does not need to be set.
  *
  *  @param[in] new_date_time Pointer to a tm structure.
  *

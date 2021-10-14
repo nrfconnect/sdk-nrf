@@ -395,18 +395,6 @@ int date_time_set(const struct tm *new_date_time)
 		err = -EINVAL;
 	}
 
-	/** Days since Sunday. */
-	if (new_date_time->tm_wday < 0 || new_date_time->tm_wday > 6) {
-		LOG_ERR("Week day in time structure not in correct format");
-		err = -EINVAL;
-	}
-
-	/** Days since January 1. */
-	if (new_date_time->tm_yday < 0 || new_date_time->tm_yday > 365) {
-		LOG_ERR("Year day in time structure not in correct format");
-		err = -EINVAL;
-	}
-
 	if (err) {
 		return err;
 	}
