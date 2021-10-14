@@ -5,6 +5,7 @@
 
 menuconfig REST_CLIENT
 	bool "REST client library"
+	select HTTP_CLIENT
 
 if REST_CLIENT
 
