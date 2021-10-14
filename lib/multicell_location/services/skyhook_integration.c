@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <modem/modem_info.h>
+#include <modem/modem_jwt.h>
 #include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -40,6 +40,7 @@ LOG_MODULE_REGISTER(multicell_location_skyhook, CONFIG_MULTICELL_LOCATION_LOG_LE
 #define API_LOCATE_PATH		"/wps2/json/location"
 #define API_KEY_PARAM		"key="API_KEY
 #define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user=%s"
+#define REQUEST_URL_NO_USER	API_LOCATE_PATH"?"API_KEY_PARAM
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 #define HEADER_CONNECTION      "Connection: close\r\n"
@@ -147,9 +148,10 @@ static int adjust_rsrp(int input)
 	return input - 141;
 }
 
-static int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
-					     const char *const device_id,
-					     char *buf, size_t buf_len)
+int location_service_generate_request(
+	const struct lte_lc_cells_info *cell_data,
+	char *buf,
+	size_t buf_len)
 {
 	int len;
 	enum lte_lc_lte_mode mode;
@@ -326,37 +328,20 @@ clean_exit:
 	return err;
 }
 
-static int location_service_generate_url(
-	const char * const device_id, char * const request_url, const size_t request_url_len)
+static int location_service_generate_url(char * const request_url, const size_t request_url_len)
 {
 	int err;
-	char imei[20];
 	int len;
-	char *dev_id = device_id ? (char *)device_id : imei;
+	struct nrf_modem_fw_uuid mfw_uuid;
 
-	if (device_id == NULL) {
-		err = modem_info_init();
-		if (err) {
-			LOG_ERR("modem_info_init failed, error: %d", err);
-			return err;
-		}
-		err = modem_info_string_get(MODEM_INFO_IMEI, imei, sizeof(imei));
-		if (err < 0) {
-			LOG_ERR("Failed to get IMEI, error: %d", err);
-			LOG_WRN("Falling back to uptime as user ID");
-
-			len = snprintk(imei, sizeof(imei), "%d", k_cycle_get_32());
-			if ((len < 0) || (len >= sizeof(imei))) {
-				LOG_ERR("Too small buffer for IMEI buffer");
-				return -ENOMEM;
-			}
-		} else {
-			/* Null-terminate the IMEI. */
-			imei[15] = '\0';
-		}
+	err = modem_jwt_get_uuids(NULL, &mfw_uuid);
+	if (err) {
+		LOG_WRN("modem_jwt_get_uuids failed (error: %d), not setting UUID as user id", err);
+		len = snprintk(request_url, request_url_len, REQUEST_URL_NO_USER);
+	} else {
+		len = snprintk(request_url, request_url_len, REQUEST_URL, mfw_uuid.str);
 	}
 
-	len = snprintk(request_url, request_url_len, REQUEST_URL, dev_id);
 	if ((len < 0) || (len >= request_url_len)) {
 		LOG_ERR("Too small buffer for HTTP request URL");
 		return -ENOMEM;
@@ -366,13 +351,12 @@ static int location_service_generate_url(
 }
 
 int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       const char * const device_id,
 				       char * const rcv_buf, const size_t rcv_buf_len,
 				       struct multicell_location *const location)
 {
 	int err;
-	/* Reserving 30 bytes for device ID */
-	char request_url[sizeof(REQUEST_URL) + 30];
+	/* Reserving NRF_MODEM_FW_UUID_STR_LEN bytes for UUID */
+	char request_url[sizeof(REQUEST_URL) + NRF_MODEM_FW_UUID_STR_LEN + 1];
 	struct rest_client_req_context req_ctx = { 0 };
 	struct rest_client_resp_context resp_ctx = { 0 };
 	char *const headers[] = {
@@ -382,13 +366,15 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 		NULL
 	};
 
-	err = location_service_generate_url(device_id, request_url, sizeof(request_url));
+	err = location_service_generate_url(request_url, sizeof(request_url));
 	if (err) {
-		LOG_ERR("modem_info_init failed, error: %d", err);
+		LOG_ERR("location_service_generate_url failed, error: %d", err);
 		return err;
 	}
 
-	err = location_service_generate_request(cell_data, device_id, body, sizeof(body));
+	LOG_DBG("Generated request URL:\r\n%s", log_strdup(request_url));
+
+	err = location_service_generate_request(cell_data, body, sizeof(body));
 	if (err) {
 		LOG_ERR("Failed to generate HTTP request, error: %d", err);
 		return err;

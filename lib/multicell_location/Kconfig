@@ -33,8 +33,7 @@ config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	depends on NRF_CLOUD_REST
 	depends on MODEM_JWT
 	help
-	  Use nRF Cloud location service. If a device ID is not provided for
-	  a location request, the device's internal UUID will be used.
+	  Use nRF Cloud location service
 
 config MULTICELL_LOCATION_SERVICE_HERE
 	bool "HERE location service"
@@ -45,16 +44,15 @@ config MULTICELL_LOCATION_SERVICE_HERE
 config MULTICELL_LOCATION_SERVICE_SKYHOOK
 	bool "Skyhook location service"
 	select REST_CLIENT
+	depends on MODEM_JWT
 	help
-	  Use Skyhook location service. If a device ID is not provided for
-	  a location request, the device's IMEI will be used.
+	  Use Skyhook location service
 
 config MULTICELL_LOCATION_SERVICE_POLTE
 	bool "Polte location service"
 	select REST_CLIENT
 	help
-	  Use Polte location service.
-
+	  Use Polte location service
 endchoice
 
 if MULTICELL_LOCATION_SERVICE_HERE

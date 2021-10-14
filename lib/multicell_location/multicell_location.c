@@ -27,7 +27,6 @@ static char recv_buf[CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE];
 
 
 int multicell_location_get(const struct lte_lc_cells_info *cell_data,
-			   const char * const device_id,
 			   struct multicell_location *location)
 {
 	if ((cell_data == NULL) || (location == NULL)) {
@@ -46,7 +45,7 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 	}
 
 	return location_service_get_cell_location(
-		cell_data, device_id, recv_buf, sizeof(recv_buf), location);
+		cell_data, recv_buf, sizeof(recv_buf), location);
 }
 
 int multicell_location_provision_certificate(bool overwrite)
