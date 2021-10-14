@@ -132,7 +132,11 @@ static int client_handle_get_response(uint8_t *buf, int received)
 		return 0;
 	}
 
-	snprintf(temp_buf, MAX(payload_len, sizeof(temp_buf)), "%s", payload);
+	if (payload_len > 0) {
+		snprintf(temp_buf, MAX(payload_len, sizeof(temp_buf)), "%s", payload);
+	} else {
+		strcpy(temp_buf, "EMPTY");
+	}
 
 	printk("CoAP response: code: 0x%x, token 0x%02x%02x, payload: %s\n",
 	       coap_header_get_code(&reply), token[1], token[0], temp_buf);
