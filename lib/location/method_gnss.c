@@ -64,8 +64,10 @@ static struct k_work method_gnss_timeout_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
-static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
+static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
+#endif
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -81,6 +83,15 @@ static bool running;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
+static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
+			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
+static char jwt_buf[1024];
+#endif
+#endif
+
+/* remove the following block once MQTT + P-GPS combo is working */
+#if (defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_NRF_CLOUD_MQTT))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
 static char jwt_buf[1024];
@@ -165,6 +176,18 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 #endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+static void method_gnss_agps_request_work_fn(struct k_work *item)
+{
+	int err = nrf_cloud_agps_request(&gnss_api_agps_request);
+
+	if (err) {
+		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
+		return;
+	}
+}
+
+#else // defined(CONFIG_NRF_CLOUD_MQTT)
 static int method_gnss_get_modem_info(struct lte_lc_cell *serving_cell)
 {
 	__ASSERT_NO_MSG(serving_cell != NULL);
@@ -255,7 +278,8 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
 	nrf_cloud_agps_process(result.buf, result.agps_sz);
 }
-#endif
+#endif // defined(CONFIG_NRF_CLOUD_MQTT)
+#endif // defined(CONFIG_NRF_CLOUD_AGPS)
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static void method_gnss_pgps_request_work_fn(struct k_work *item)
