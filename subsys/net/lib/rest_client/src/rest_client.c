@@ -294,7 +294,6 @@ static int rest_client_do_api_call(struct http_request *http_req,
 		err = 0;
 	}
 
-	rest_client_close_connection(rest_ctx);
 	return err;
 }
 
