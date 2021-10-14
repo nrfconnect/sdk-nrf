@@ -3,7 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#if defined(CONFIG_POSIX_API)
+#include <posix/poll.h>
+#else
 #include <net/socket.h>
+#endif
 #include <net/cloud.h>
 #include <net/nrf_cloud.h>
 #include <net/mqtt.h>
