@@ -6,11 +6,7 @@
 #include <zephyr.h>
 #include <drivers/gpio.h>
 #include <drivers/flash.h>
-#include <nrf_modem.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
-#include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
@@ -155,19 +151,12 @@ static void modem_configure(void)
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 	int err;
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	/* Initialize AT only if nrf_modem_lib_init() is manually
-	 * called by the main application
-	 */
-	err = at_notif_init();
-	__ASSERT(err == 0, "AT Notify could not be initialized.");
-	err = at_cmd_init();
-	__ASSERT(err == 0, "AT CMD could not be established.");
+
 #if defined(CONFIG_USE_HTTPS)
 	err = cert_provision();
 	__ASSERT(err == 0, "Could not provision root CA to %d", TLS_SEC_TAG);
 #endif
-#endif
+
 	printk("LTE Link Connecting ...\n");
 	err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
