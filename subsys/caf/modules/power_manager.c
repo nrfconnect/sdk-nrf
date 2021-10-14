@@ -296,7 +296,8 @@ static bool event_handler(const struct event_header *eh)
 			return true;
 		}
 
-		if (power_state == POWER_STATE_OFF) {
+		if ((power_state == POWER_STATE_OFF) ||
+		    (power_state == POWER_STATE_ERROR_OFF)) {
 			LOG_INF("Wake up when going into sleep - rebooting");
 			sys_reboot(SYS_REBOOT_WARM);
 		}
