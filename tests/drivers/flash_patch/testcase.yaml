@@ -1,8 +1,12 @@
 tests:
   flash_patch.flash_patch_off:
     platform_allow: nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dk_nrf52840
     tags: flash_patch
     extra_args: CONFIG_DISABLE_FLASH_PATCH=n
   flash_patch.flash_patch_on:
     platform_allow: nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dk_nrf52840
     tags: flash_patch
