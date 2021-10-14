@@ -4,48 +4,68 @@ tests:
   crypto.vanilla:
     extra_args: OVERLAY_CONFIG=overlay-vanilla.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - nrf5340dk_nrf5340_cpuapp
     tags: crypto ci_build
     timeout: 600
   crypto.cc3xx:
     extra_args: OVERLAY_CONFIG=overlay-cc3xx.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - nrf5340dk_nrf5340_cpuapp
     tags: crypto ci_build
     timeout: 200
   crypto.multi:
     extra_args: OVERLAY_CONFIG=overlay-multi.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - nrf5340dk_nrf5340_cpuapp
     tags: crypto ci_build
     timeout: 200
   crypto.oberon:
     extra_args: OVERLAY_CONFIG=overlay-oberon.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - nrf5340dk_nrf5340_cpuapp
     tags: crypto ci_build
     timeout: 200
   crypto.cc3xx_oberon:
     extra_args: OVERLAY_CONFIG=overlay-cc3xx-oberon.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
     tags: crypto ci_build
     timeout: 200
   crypto.small.hash:
     extra_args: OVERLAY_CONFIG="overlay-small-devices/overlay-small.conf;overlay-small-devices/overlay-small-hash.conf"
     platform_allow: nrf52840dk_nrf52811 nrf52dk_nrf52810
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52811
+      - nrf52dk_nrf52810
     tags: crypto ci_build
     timeout: 200
   crypto.small.aes:
     extra_args: OVERLAY_CONFIG="overlay-small-devices/overlay-small.conf;overlay-small-devices/overlay-small-aes.conf"
     platform_allow: nrf52840dk_nrf52811 nrf52dk_nrf52810
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52811
+      - nrf52dk_nrf52810
     tags: crypto ci_build
     timeout: 200
   crypto.small.ecc:
     extra_args: OVERLAY_CONFIG="overlay-small-devices/overlay-small.conf;overlay-small-devices/overlay-small-ecc.conf"
     platform_allow: nrf52840dk_nrf52811 nrf52dk_nrf52810
-    build_on_all: True
+    integration_platforms:
+      - nrf52840dk_nrf52811
+      - nrf52dk_nrf52810
     tags: crypto ci_build
     timeout: 200
