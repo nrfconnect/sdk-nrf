@@ -111,7 +111,6 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 
 		ret = multicell_location_get(
 			&cell_data,
-			((strlen(CONFIG_LOCATION_DEVICE_ID)) ? CONFIG_LOCATION_DEVICE_ID : NULL),
 			&location);
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d",
