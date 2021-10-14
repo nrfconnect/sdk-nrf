@@ -46,6 +46,9 @@
 #if defined(CONFIG_MOSH_SIMPLE_REST_CLIENT)
 #include "srest_shell.h"
 #endif
+#if defined(CONFIG_MOSH_CLOUD)
+#include "cloud_shell.h"
+#endif
 
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
@@ -223,4 +226,10 @@ SHELL_CMD_REGISTER(location, NULL,
 SHELL_CMD_REGISTER(srest, NULL,
 	"Simple REST Client.",
 	srest_shell);
+#endif
+
+#if defined(CONFIG_MOSH_CLOUD)
+SHELL_CMD_REGISTER(cloud, NULL,
+	"MQTT connection to nRFCloud.",
+	cloud_shell);
 #endif
