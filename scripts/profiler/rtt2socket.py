@@ -148,26 +148,17 @@ class Rtt2Socket:
         self.logger.info("Disconnected from device")
 
     def read_bytes(self):
-        bufs = bytearray()
-        while True:
-            try:
-                buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
-                                          self.config['rtt_read_chunk_size'],
-                                          encoding=None)
-            except APIError:
-                self.logger.error("Problem with reading RTT data")
-                self.disconnect()
-                sys.exit()
+        try:
+            buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
+                                      self.config['rtt_read_chunk_size'],
+                                      encoding=None)
 
-            if len(buf) > 0:
-                bufs.extend(buf)
+        except APIError:
+            self.logger.error("Problem with reading RTT data")
+            self.disconnect()
+            sys.exit()
 
-            if len(buf) < self.config['rtt_additional_read_thresh']:
-                break
-
-            time.sleep(0.05)
-
-        return bufs
+        return buf
 
     def _read_all_events_descriptions(self):
         self._send_command(Command.INFO)
@@ -200,15 +191,20 @@ class Rtt2Socket:
         self.start_logging_events()
         while True:
             buf = self.read_bytes()
-            try:
-                self.out_stream.send_ev(buf)
-            except StreamError as err:
-                if err.args[1] != 'closed':
-                    self.logger.error("Error. Unable to send data: {}".format(err))
-                    self.disconnect()
-                    sys.exit()
-                # Receiver has been closed
-                self.close()
+
+            if len(buf) > 0:
+                try:
+                    self.out_stream.send_ev(buf)
+                except StreamError as err:
+                    if err.args[1] != 'closed':
+                        self.logger.error("Error. Unable to send data: {}".format(err))
+                        self.disconnect()
+                        sys.exit()
+                    # Receiver has been closed
+                    self.close()
+
+            if len(buf) < self.config['rtt_additional_read_thresh']:
+                time.sleep(self.config['rtt_read_sleep_time'])
 
     def start_logging_events(self):
         self._send_command(Command.START)
