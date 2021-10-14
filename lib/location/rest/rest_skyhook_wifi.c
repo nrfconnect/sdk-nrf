@@ -32,8 +32,6 @@ BUILD_ASSERT(sizeof(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY) > 1,
 #define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user="CONFIG_LOCATION_DEVICE_ID
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
-#define HEADER_HOST            "Host: "HOSTNAME"\r\n"
-#define HEADER_CONNECTION      "Connection: close\r\n"
 
 #define HTTPS_PORT 443
 
@@ -209,10 +207,8 @@ int skyhook_rest_wifi_pos_get(
 
 	struct rest_client_req_resp_context rest_ctx = { 0 };
 	char *const headers[] = {
-		HEADER_HOST,
 		HEADER_CONTENT_TYPE,
-		HEADER_CONNECTION,
-		/* Note: Content-length set according to payload */
+		/* Note: Host and Content-length set by http_client */
 		NULL
 	};
 	char *body = NULL;

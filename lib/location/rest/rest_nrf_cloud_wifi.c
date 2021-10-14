@@ -27,8 +27,6 @@ BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 #define REQUEST_URL "/v1/location/wifi"
 
 #define HEADER_CONTENT_TYPE "Content-Type: application/json\r\n"
-#define HEADER_HOST "Host: " HOSTNAME "\r\n"
-#define HEADER_CONNECTION "Connection: close\r\n"
 
 #define HTTPS_PORT 443
 
@@ -231,9 +229,9 @@ int nrf_cloud_rest_wifi_pos_get(char *rcv_buf, size_t rcv_buf_len,
 		LOG_ERR("Could not format HTTP auth header, err: %d", ret);
 		goto clean_up;
 	}
-	char *const headers[] = { HEADER_HOST, HEADER_CONTENT_TYPE, HEADER_CONNECTION,
+	char *const headers[] = { HEADER_CONTENT_TYPE,
 				  (char *const)auth_hdr,
-				  /* Note: Content-length set according to payload */
+				  /* Note: Host and Content-length set by http_client */
 				  NULL };
 
 	/* Set the defaults: */
