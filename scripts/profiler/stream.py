@@ -24,6 +24,9 @@ class Stream():
 
     @staticmethod
     def _send(bytes, own_socket, remote_address):
+        # Ensure that data would not be dropped.
+        assert len(bytes) <= Stream.RECV_BUF_SIZE
+
         try:
             own_socket.sendto(bytes, remote_address)
         except socket.error as err:
