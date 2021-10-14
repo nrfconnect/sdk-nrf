@@ -33,15 +33,12 @@ struct multicell_location {
  * @note Certificate must be provisioned before a request can be sent,
  *       @ref multicell_location_provision_certificate.
  *
- * @param cell_data Pointer to neighbor cell data.
- * @param location Pointer to location.
- * @param device_id Unique device identifier. If NULL, IMEI or UUID will
- *                  be used, if required, depending on the configured service.
+ * @param[in] cell_data Pointer to neighbor cell data.
+ * @param[out] location Pointer to location.
  *
  * @return 0 on success, or negative error code on failure.
  */
 int multicell_location_get(const struct lte_lc_cells_info *cell_data,
-			   const char *const device_id,
 			   struct multicell_location *location);
 
 /* @brief Provision TLS certificate that the selected location service requires
@@ -54,9 +51,9 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
  *	 LTE link in an application, but it can also be done by setting the
  *	 modem in offline mode before provisioning.
  *
- * @param overwrite If this flag is set, any CA certificate currently
- *		    provisioned to CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG is
- *		    overwritten.
+ * @param[in] overwrite If this flag is set, any CA certificate currently
+ *		        provisioned to CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG is
+ *		        overwritten.
  *
  * @return 0 on success, or negative error code on failure.
  */
