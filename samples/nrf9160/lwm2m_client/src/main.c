@@ -22,6 +22,8 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include <modem/at_cmd.h>
 #include <modem/lte_lc.h>
+#include <modem/modem_info.h>
+#include <modem/at_notif.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -445,6 +447,13 @@ void main(void)
 		return;
 	}
 
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	ret = nrf_modem_lib_init(NORMAL_MODE);
+	if (ret != 0 && ret != MODEM_DFU_RESULT_OK) {
+		LOG_ERR("Unable to init modem library (%d)", ret);
+		return;
+	}
+#endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = fota_settings_init();
 	if (ret < 0) {
@@ -459,6 +468,19 @@ void main(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
+#endif
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	ret = at_cmd_init();
+	if (ret != 0) {
+		LOG_ERR("at_cmd_init failed: %d\n", ret);
+		return;
+	}
+
+	ret = at_notif_init();
+	if (ret != 0) {
+		LOG_ERR("at_notif_init failed: %d\n", ret);
+		return;
+	}
 #endif
 
 	LOG_INF("Initializing modem.");

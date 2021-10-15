@@ -119,7 +119,8 @@ nRF9160 samples
   * Added support for Thingy:91.
   * Added more LwM2M objects.
   * LwM2M sensor objects now uses the actual sensors available to the Thingy:91. If the nRF9160 DK is used, it uses simulated sensors instead.
-  * Added possibility to poll sensors and notify the server if the measured changes are large enough.
+  * Added support for polling sensors and notifying the server if the measured changes are large enough.
+  * Added support for full modem firmware update.
 
 * :ref:`multicell_location` sample:
 
