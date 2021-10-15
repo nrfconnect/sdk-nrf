@@ -10,6 +10,7 @@
 #include <sys/reboot.h>
 #include <net/lwm2m.h>
 #include <net/lwm2m_path.h>
+#include <ncs_version.h>
 
 #include "pm_config.h"
 #include "lwm2m_app_utils.h"
@@ -42,6 +43,9 @@ static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args, uint16
 
 int lwm2m_app_init_device(char *serial_num)
 {
+	char *client_sw_ver = (strlen(CONFIG_APP_CUSTOM_VERSION) > 0) ?
+			      CONFIG_APP_CUSTOM_VERSION : NCS_VERSION_STRING;
+
 	lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
 				  CONFIG_APP_MANUFACTURER, sizeof(CONFIG_APP_MANUFACTURER),
 				  LWM2M_RES_DATA_FLAG_RO);
@@ -58,6 +62,8 @@ int lwm2m_app_init_device(char *serial_num)
 				  LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
 				  CLIENT_HW_VER, sizeof(CLIENT_HW_VER), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
+				  client_sw_ver, strlen(client_sw_ver) + 1, LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_STATUS_RID),
 				  &bat_status, sizeof(bat_status), 0);
 	lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, MEMORY_TOTAL_RID),

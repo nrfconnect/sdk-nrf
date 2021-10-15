@@ -82,15 +82,13 @@ static void modem_data_update(struct k_work *work)
 	lwm2m_engine_set_u16("4/0/9", modem_param.network.mnc.value);
 	lwm2m_engine_set_u16("4/0/10", modem_param.network.mcc.value);
 
-	/* set "Firmware Version" as modem firmware version in device object */
+	/* Set "Firmware Version" as modem firmware version in device object.
+	 * Do it here not to repeat the process elsewhere - we read the FW
+	 * version from the `modem_param_info` structure.
+	 */
 	lwm2m_engine_set_res_data("3/0/3",
 		modem_param.device.modem_fw.value_string,
 		strlen(modem_param.device.modem_fw.value_string),
-		LWM2M_RES_DATA_FLAG_RO);
-	/* set "Software Version" as NCS APP_VERSION in device object */
-	lwm2m_engine_set_res_data("3/0/19",
-		(char *)modem_param.device.app_version,
-		strlen(modem_param.device.app_version),
 		LWM2M_RES_DATA_FLAG_RO);
 }
 

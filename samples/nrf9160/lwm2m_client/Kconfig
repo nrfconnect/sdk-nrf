@@ -163,6 +163,9 @@ config APP_MCUBOOT_FLASH_BUF_SZ
 	help
 	  Buffer size must be aligned to the minimal flash write block size.
 
+config APP_CUSTOM_VERSION
+	string "Application version. Leave empty to use NCS version."
+
 module = APP
 module-dep = LOG
 module-str = Log level for sample

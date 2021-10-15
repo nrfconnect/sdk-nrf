@@ -369,6 +369,9 @@ LwM2M objects options
 
    The configuration option sets the version of the OMA IPSO object specification that is to be used by the user defined Color sensor IPSO object to 1.1.
 
+.. option:: CONFIG_APP_CUSTOM_VERSION - Configuration to set custom application version reported in the Device object.
+
+   The configuration option allows to specify custom application version reported to the LwM2M server. By default, the current |NCS| version is used.
 
 .. _sensor_module_options:
 
