@@ -26,6 +26,10 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 {
 	int err;
 
+	if (configured) {
+		return -EALREADY;
+	}
+
 	err = dfu_target_stream_init(
 		&(struct dfu_target_stream_init){ .id = "DFU_FULL_MODEM",
 						  .buf = params->buf,
