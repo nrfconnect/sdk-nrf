@@ -12,7 +12,6 @@ API documentation is generated from Doxygen comments.
 
 See :ref:`zephyr:documentation-overview` in the Zephyr developer guide for information about reStructuredText.
 
-
 Before you start
 ****************
 
@@ -33,31 +32,17 @@ Complete the following steps to install the required tools:
 #. Install PlantUML.
    On Windows, you can install `PlantUML from chocolatey`_.
 
-.. _documentation_sets:
-
-Documentation structure
-***********************
-
-All documentation build files are located in the :file:`ncs/nrf/doc` folder.
-The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
-Documentation for samples and libraries are provided in a :file:`README.rst` or another :file:`.rst` file in the same directory as the code.
-
-Building the documentation output requires building the output for all documentation sets.
-Following are the available documentation sets:
-
-- ``nrf``: |NCS|
-- ``nrfx``: nrfx
-- ``nrfxlib``: nrfxlib
-- ``zephyr``: Zephyr RTOS
-- ``mcuboot``: MCUboot
-- ``tfm``: Trusted Firmware-M
-- ``matter``: Matter
-- ``kconfig``: All available Kconfig options in the |NCS|
-
-Since there are links from the |NCS| documentation set into other documentation sets, the documentation is built in a predefined order.
+.. _doc_build_steps:
 
 Building documentation output
 *****************************
+
+All documentation build files are located in the :file:`ncs/nrf/doc` folder.
+The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
+Documentation for samples and libraries is provided in a :file:`README.rst` or another :file:`.rst` file in the same directory as the code.
+
+Building the documentation output requires building the output for all documentation sets that are part of the :ref:`doc_structure`.
+Since there are links from the |NCS| documentation set into other documentation sets, the documentation is built in a predefined order.
 
 Complete the following steps to build the documentation output:
 
@@ -150,18 +135,14 @@ For example, on Windows, enter the following command::
 The cached build is downloaded only if there are no local modifications to a specific documentation set.
 To force the download even if there are local modifications, set :envvar:`NCS_CACHE_FORCE` in addition to :envvar:`NCS_CACHE_ENABLE`.
 
-Different versions
-******************
+.. _testing_versions:
+
+Testing different versions locally
+**********************************
 
 Documentation sets for different versions of the |NCS| are defined in the :file:`doc/versions.json` file.
-This file is used to display the version drop-down in the *top-left corner of each documentation page*.
+This file is used to display the :ref:`version drop-down <doc_structure_versions>`.
 
-.. figure:: images/switcher_version_snipped.gif
-   :alt: nRF Connect SDK documentation version drop-down
-
-   |NCS| documentation version drop-down
-
-The version drop-down is displayed only if the documentation files are organized in the required folder structure and the documentation is hosted on a web server.
 To test the version drop-down locally, complete the following steps:
 
 1. In the documentation build folder (for example, :file:`_build`), rename the :file:`html` folder to :file:`latest`.
