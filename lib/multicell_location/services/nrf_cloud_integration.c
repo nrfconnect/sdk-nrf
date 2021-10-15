@@ -13,6 +13,10 @@
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
+#define NRF_CLOUD_INTEGRATION_JWT_VALID_TIME (5 * 60)
+
+static char jwt_buf[600];
+
 /* TLS certificate:
  *	CN=Starfield Services Root Certificate Authority - G2
  *	O=Starfield Technologies, Inc.
@@ -60,20 +64,12 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 				       char * const rcv_buf, const size_t rcv_buf_len,
 				       struct multicell_location *const location)
 {
+	ARG_UNUSED(device_id);
+
 	int err;
 	struct nrf_cloud_cell_pos_result result;
-	struct jwt_data jwt = {
-		.subject = device_id,
-		.audience = NULL,
-		.exp_delta_s = (5 * 60),
-		.sec_tag = CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG,
-		.key = JWT_KEY_TYPE_CLIENT_PRIV,
-		.alg = JWT_ALG_TYPE_ES256,
-		/* Set to NULL so a properly sized buffer is allocated */
-		.jwt_buf = NULL,
-		.jwt_sz = 0
-	};
 	struct nrf_cloud_rest_context rest_ctx = {
+		.auth = jwt_buf,
 		.connect_socket = -1,
 		.keep_alive = false,
 		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
@@ -81,24 +77,20 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0
 	};
-
 	const struct nrf_cloud_rest_cell_pos_request loc_req = {
 		.net_info = (struct lte_lc_cells_info *)cell_data
 	};
 
-	err = modem_jwt_generate(&jwt);
+	err = nrf_cloud_jwt_generate(
+		NRF_CLOUD_INTEGRATION_JWT_VALID_TIME,
+		jwt_buf,
+		sizeof(jwt_buf));
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
 		return err;
 	}
 
-	rest_ctx.auth = jwt.jwt_buf;
-
 	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
-
-	modem_jwt_free(jwt.jwt_buf);
-	jwt.jwt_buf = NULL;
-
 	if (!err) {
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
