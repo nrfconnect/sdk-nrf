@@ -198,6 +198,7 @@ Libraries for networking
 * :ref:`lib_lwm2m_client_utils` library:
 
   * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
+  * Added support for full modem firmware update.
 
 * :ref:`lib_nrf_cloud` library:
 
