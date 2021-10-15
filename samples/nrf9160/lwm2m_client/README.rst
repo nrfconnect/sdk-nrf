@@ -512,10 +512,7 @@ Firmware Over-the-Air (FOTA)
 ============================
 
 You can update the firmware of the device if you are using Coiote Device Management server or Leshan server.
-Application firmware updates and delta modem firmware updates are supported.
-
-.. note::
-   Full modem firmware update is not supported when using Coiote Device Management server or Leshan server.
+Application firmware updates and modem firmware (both full and delta) updates are supported.
 
 To update the firmware, complete the following steps:
 
@@ -542,6 +539,10 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`
 * :ref:`lib_date_time`
+* :ref:`lib_dfu_target`
+* :ref:`lib_fmfu_fdev`
+* :ref:`lib_fota_download`
+* :ref:`lib_download_client`
 
 It uses the following `sdk-nrfxlib`_ library:
 
