@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <init.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <modem/lte_lc_trace.h>
 #include <memfault_ncs.h>
 
@@ -90,20 +90,20 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 
 static int request_imei(const char *cmd, char *buf, size_t buf_len)
 {
-	enum at_cmd_state at_state;
-	int err = at_cmd_write(cmd, buf, buf_len, &at_state);
+	int err = nrf_modem_at_cmd(buf, buf_len, cmd);
 
 	if (err) {
-		LOG_ERR("at_cmd_write failed, error: %d, at_state: %d", err, at_state);
+		LOG_ERR("nrf_modem_at_cmd failed, error: %d", err);
+		return -EFAULT;
 	}
 
-	return err;
+	return 0;
 }
 
 static int device_info_init(void)
 {
 	int err;
-	char imei_buf[IMEI_LEN + 2 + 1]; /* Add 2 for \r\n and 1 for \0 */
+	char imei_buf[IMEI_LEN + 6 + 1]; /* Add 6 for \r\nOK\r\n and 1 for \0 */
 
 	err = request_imei("AT+CGSN", imei_buf, sizeof(imei_buf));
 	if (err) {
