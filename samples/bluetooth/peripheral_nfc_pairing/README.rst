@@ -81,7 +81,7 @@ The sample has the following additional requirements:
 User interface
 **************
 
-Button 1:
+Button 4:
    Removes all bonded devices and terminates current connections.
 
 LED 1:
@@ -105,14 +105,14 @@ After programming the sample to your development kit, test it by performing the 
 Testing with NFC Poller Device
 ------------------------------
 
-1. Touch the NFC antenna with the smartphone or tablet and observe that LED 2 is lit.
-#. Confirm pairing with ``Nordic_NFC_pairing`` in a pop-up window on the smartphone or tablet and observe that LED 1 lights up.
-#. Move the smartphone or tablet away from the NFC antenna and observe that LED 2 turns off.
+1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 2** is lit.
+#. Confirm pairing with :guilabel:`Nordic_NFC_pairing` in a pop-up window on the smartphone or tablet and observe that **LED 1** lights up.
+#. Move the smartphone or tablet away from the NFC antenna and observe that **LED 2** turns off.
 
 Testing with NFC TNEP Poller Device
 -----------------------------------
 
-1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that LED 2 is lit.
+1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
 #. Observe the output log.
    The content of the exchanged NDEF messages is printed there.
 #. Check the security level of the paring on the terminal.
@@ -136,7 +136,7 @@ In addition, it uses the Type 4 Tag library from nrfxlib:
 
 * :ref:`nrfxlib:nfc_api_type4`
 
-The sample uses the following Zephyr libraries:
+It uses the following Zephyr libraries:
 
 * ``include/zephyr.h``
 * ``include/device.h``
