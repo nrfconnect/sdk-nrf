@@ -11,8 +11,7 @@
 
 #include <logging/log.h>
 
-#include <cJSON.h>
-
+#include <modem/modem_jwt.h>
 #include <net/rest_client.h>
 
 #include "rest_skyhook_wifi.h"
@@ -28,8 +27,8 @@ BUILD_ASSERT(sizeof(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY) > 1,
 #define API_LOCATE_PATH		"/wps2/json/location"
 #define API_KEY_PARAM		"key="CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY
 
-/* TODO: get imei runtime instead CONFIG_LOCATION_DEVICE_ID*/
-#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user="CONFIG_LOCATION_DEVICE_ID
+#define REQUEST_URL		API_LOCATE_PATH"?"API_KEY_PARAM"&user=%s"
+#define REQUEST_URL_NO_USER	API_LOCATE_PATH"?"API_KEY_PARAM
 
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 
@@ -194,6 +193,30 @@ cleanup:
 
 /******************************************************************************/
 
+static int skyhook_rest_generate_url(char * const request_url, const size_t request_url_len)
+{
+	int err;
+	int len;
+	struct nrf_modem_fw_uuid mfw_uuid;
+
+	err = modem_jwt_get_uuids(NULL, &mfw_uuid);
+	if (err) {
+		LOG_WRN("modem_jwt_get_uuids failed (error: %d), not setting UUID as user id", err);
+		len = snprintk(request_url, request_url_len, REQUEST_URL_NO_USER);
+	} else {
+		len = snprintk(request_url, request_url_len, REQUEST_URL, mfw_uuid.str);
+	}
+
+	if ((len < 0) || (len >= request_url_len)) {
+		LOG_ERR("Too small buffer for HTTP request URL");
+		return -ENOMEM;
+	}
+
+	return 0;
+}
+
+/******************************************************************************/
+
 int skyhook_rest_wifi_pos_get(
 	char *rcv_buf,
 	size_t rcv_buf_len,
@@ -206,6 +229,8 @@ int skyhook_rest_wifi_pos_get(
 	__ASSERT_NO_MSG(rcv_buf_len > 0);
 
 	struct rest_client_req_resp_context rest_ctx = { 0 };
+	/* Reserving NRF_MODEM_FW_UUID_STR_LEN bytes for UUID */
+	char request_url[sizeof(REQUEST_URL) + NRF_MODEM_FW_UUID_STR_LEN + 1];
 	char *const headers[] = {
 		HEADER_CONTENT_TYPE,
 		/* Note: Host and Content-length set by http_client */
@@ -214,18 +239,15 @@ int skyhook_rest_wifi_pos_get(
 	char *body = NULL;
 	int ret = 0;
 
-	/* Set the defaults: */
-	rest_client_request_defaults_set(&rest_ctx);
-	rest_ctx.http_method = HTTP_POST;
-	rest_ctx.url = REQUEST_URL;
-	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG;
-	rest_ctx.port = HTTPS_PORT;
-	rest_ctx.host = HOSTNAME;
-	rest_ctx.header_fields = (const char **)headers;
-	rest_ctx.resp_buff = rcv_buf;
-	rest_ctx.resp_buff_len = rcv_buf_len;
+	/* Generate the URL for the request */
+	ret = skyhook_rest_generate_url(request_url, sizeof(request_url));
+	if (ret) {
+		LOG_ERR("skyhook_rest_generate_url failed, error: %d", ret);
+		return ret;
+	}
+	rest_ctx.url = request_url;
 
-	/* Get the body/payload to request: */
+	/* Generate the body/payload to request */
 	ret = skyhook_rest_format_wifi_pos_req_body(
 		request->scanning_results,
 		request->wifi_scanning_result_count,
@@ -235,6 +257,16 @@ int skyhook_rest_wifi_pos_get(
 		goto clean_up;
 	}
 	rest_ctx.body = body;
+
+	/* Set the defaults */
+	rest_client_request_defaults_set(&rest_ctx);
+	rest_ctx.http_method = HTTP_POST;
+	rest_ctx.sec_tag = CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG;
+	rest_ctx.port = HTTPS_PORT;
+	rest_ctx.host = HOSTNAME;
+	rest_ctx.header_fields = (const char **)headers;
+	rest_ctx.resp_buff = rcv_buf;
+	rest_ctx.resp_buff_len = rcv_buf_len;
 
 	ret = rest_client_request(&rest_ctx);
 	if (ret) {

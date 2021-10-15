@@ -49,6 +49,7 @@ config LOCATION_METHOD_WIFI_SERVICE_HERE
 config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
 	bool "WiFi positioning using Skyhook service"
 	default y
+	depends on MODEM_JWT
 	help
 	  Use Skyhook location service
 
@@ -128,14 +129,6 @@ config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG
 endif # LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
 
 endif # LOCATION_METHOD_WIFI
-
-config LOCATION_DEVICE_ID
-	string "Device ID set at compile time"
-	default ""
-	help
-	  Set the device id that is used for JWT generation. This is needed if
-	  other than UUID was used as a Device ID with cloud key registering
-	  or provisioning.
 
 module = LOCATION
 module-str = Location
