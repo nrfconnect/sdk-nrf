@@ -120,6 +120,21 @@ Bluetooth mesh samples
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
 
+Matter samples
+--------------
+
+* Added:
+
+  * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
+  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
+
+NFC samples
+-----------
+
+* Added:
+
+  * :ref:`record_launch_app` sample.
+
 nRF9160 samples
 ---------------
 
@@ -143,14 +158,6 @@ nRF9160 samples
 * :ref:`modem_shell_application` sample:
 
   * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
-
-Matter samples
---------------
-
-* Added:
-
-  * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
-  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
 
 Zigbee samples
 --------------
@@ -270,6 +277,13 @@ Libraries for networking
 
   * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
 
+Libraries for NFC
+-----------------
+
+* Added:
+
+  * :ref:`nfc_launch_app` library.
+
 Trusted Firmware-M libraries
 ----------------------------
 
@@ -309,6 +323,7 @@ Other libraries
 
   * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+
 
 Libraries for Zigbee
 --------------------
