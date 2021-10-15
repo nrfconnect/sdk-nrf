@@ -21,6 +21,13 @@
 /* Firmware update needs access to internal functions as well */
 #include <lwm2m_engine.h>
 
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+#include <dfu/dfu_target_full_modem.h>
+#include <nrf_modem_full_dfu.h>
+#include <dfu/fmfu_fdev.h>
+#include <string.h>
+#endif
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
@@ -29,20 +36,86 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+#define EXT_FLASH_DEVICE DT_LABEL(DT_INST(0, jedec_spi_nor))
+static uint8_t fmfu_buf[1024];
+static const struct device *flash_dev;
+static struct k_work full_modem_update_work;
+#endif
+
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 #endif
 
-static int image_type;
+static int image_type = DFU_TARGET_IMAGE_TYPE_ANY;
 static char *fota_path;
 static char *fota_host;
 static int fota_sec_tag;
-static bool fota_download_finished;
 
 static struct k_work_delayable reboot_work;
 static struct k_work download_work;
 
 void client_acknowledge(void);
+
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+static void apply_fmfu_from_ext_flash(struct k_work *work)
+{
+	int ret;
+
+	LOG_INF("Applying full modem firmware update from external flash\n");
+
+	ret = nrf_modem_lib_shutdown();
+	if (ret != 0) {
+		LOG_ERR("nrf_modem_lib_shutdown() failed: %d\n", ret);
+		return;
+	}
+
+	ret = nrf_modem_lib_init(FULL_DFU_MODE);
+	if (ret != 0) {
+		LOG_ERR("nrf_modem_lib_init(FULL_DFU_MODE) failed: %d\n", ret);
+		return;
+	}
+
+	ret = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), flash_dev, 0);
+	if (ret != 0) {
+		LOG_ERR("fmfu_fdev_load failed: %d\n", ret);
+		return;
+	}
+	LOG_INF("Modem firmware update completed\n");
+	LOG_INF("Rebooting device");
+
+	k_work_schedule(&reboot_work, REBOOT_DELAY);
+}
+
+static int configure_full_modem_update(void)
+{
+	int ret = 0;
+
+	if (flash_dev == NULL) {
+		flash_dev = device_get_binding(EXT_FLASH_DEVICE);
+	}
+	if (flash_dev == NULL) {
+		LOG_ERR("Failed to get flash device: %s\n", EXT_FLASH_DEVICE);
+	}
+
+	const struct dfu_target_full_modem_params params = {
+		.buf = fmfu_buf,
+		.len = sizeof(fmfu_buf),
+		.dev = &(struct dfu_target_fmfu_fdev){ .dev = flash_dev,
+							.offset = 0,
+							.size = 0 }
+	};
+
+	ret = dfu_target_full_modem_cfg(&params);
+	if (ret != 0 && ret != -EALREADY) {
+		LOG_ERR("dfu_target_full_modem_cfg failed: %d\n", ret);
+	} else {
+		ret = 0;
+	}
+
+	return ret;
+}
+#endif
 
 static void reboot_work_handler(struct k_work *work)
 {
@@ -60,6 +133,7 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 	int ret = 0;
 
 	LOG_DBG("Executing firmware update");
+	LOG_INF("Firmware image type %d", image_type);
 
 	/* Bump update counter so it can be verified on the next reboot */
 	ret = fota_update_counter_read(&update_counter);
@@ -76,22 +150,15 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 		goto cleanup;
 	}
 
-	if (!fota_download_finished) {
-		/* Fota download client already handled this */
-		ret = dfu_target_done(true);
-		if (ret != 0) {
-			LOG_ERR("Failed to upgrade %s firmware.",
-				image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
-					"modem" :
-					"application");
-			goto cleanup;
-		}
-		fota_download_finished = false;
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+	if (image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
+		k_work_submit(&full_modem_update_work);
+	} else
+#endif
+	{
+		LOG_INF("Rebooting device");
+		k_work_schedule(&reboot_work, REBOOT_DELAY);
 	}
-
-	LOG_INF("Rebooting device");
-
-	k_work_schedule(&reboot_work, REBOOT_DELAY);
 
 	return 0;
 
@@ -133,7 +200,12 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		client_acknowledge();
 
 		image_type = dfu_target_img_type(data, data_len);
-
+		LOG_INF("Image type %d", image_type);
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+		if (image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
+			configure_full_modem_update();
+		}
+#endif
 		ret = dfu_target_init(image_type, total_size, dfu_target_cb);
 		if (ret < 0) {
 			LOG_ERR("Failed to init DFU target, err: %d", ret);
@@ -141,7 +213,8 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		}
 
 		LOG_INF("%s firmware download started.",
-			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
+			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
+			image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM ?
 				"Modem" :
 				"Application");
 	}
@@ -189,12 +262,18 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		goto cleanup;
 	}
 
-	if (!last_block) {
-		/* Keep going */
-		return 0;
-	} else {
+	if (last_block) {
+		/* Last write to flash should be flush write */
+		ret = dfu_target_done(true);
+		if (ret < 0) {
+			LOG_ERR("dfu_target_done error, err %d", ret);
+			goto cleanup;
+		}
 		LOG_INF("Firmware downloaded, %d bytes in total",
 			bytes_downloaded);
+	} else {
+		/* Keep going */
+		return 0;
 	}
 
 	if (total_size && (bytes_downloaded != total_size)) {
@@ -233,9 +312,9 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		lwm2m_firmware_set_update_state(STATE_IDLE);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		LOG_INF("FOTA download finished");
+		image_type = fota_download_target();
+		LOG_INF("FOTA download finished, target %d", image_type);
 		lwm2m_firmware_set_update_state(STATE_DOWNLOADED);
-		fota_download_finished = true;
 		break;
 	}
 	k_free(fota_host);
@@ -245,6 +324,13 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 
 static void start_fota_download(struct k_work *work)
 {
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+	/* We can't know if the download is full modem firmware
+	 * before the downloader actually starts, so configure
+	 * the dfu_target_full_modem here
+	 */
+	configure_full_modem_update();
+#endif
 	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, NULL, 0);
 
 	if (ret < 0) {
@@ -274,8 +360,6 @@ static int write_dl_uri(uint16_t obj_inst_id,
 		LOG_ERR("FOTA download already ongoing");
 		return -EBUSY;
 	}
-
-	fota_download_finished = false;
 
 	bool is_tls = strncmp((char *) data, "https://", 8) == 0 ||
 		      strncmp((char *) data, "coaps://", 8) == 0;
@@ -324,6 +408,9 @@ int lwm2m_init_firmware(void)
 {
 	k_work_init_delayable(&reboot_work, reboot_work_handler);
 	k_work_init(&download_work, start_fota_download);
+#if defined(CONFIG_DFU_TARGET_FULL_MODEM)
+	k_work_init(&full_modem_update_work, apply_fmfu_from_ext_flash);
+#endif
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	/* setup data buffer for block-wise transfer */
 	lwm2m_engine_register_pre_write_callback("5/0/0", firmware_get_buf);
