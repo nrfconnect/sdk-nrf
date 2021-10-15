@@ -1008,6 +1008,9 @@ Suspend Zigbee scheduler processing.
 
    zscheduler suspend
 
+.. note::
+    |precondition4|
+
 ----
 
 .. _zscheduler_resume:
@@ -1020,6 +1023,9 @@ Resume Zigbee scheduler processing.
 .. code-block::
 
    zscheduler resume
+
+.. note::
+    |precondition4|
 
 ----
 
