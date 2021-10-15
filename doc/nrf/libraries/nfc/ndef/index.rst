@@ -20,6 +20,7 @@ The NFC NDEF libraries are used in the following samples:
 * :ref:`nfc_tag_reader`
 * :ref:`nfc_tnep_tag`
 * :ref:`nfc_tnep_poller`
+* :ref:`record_launch_app`
 
 .. toctree::
    :maxdepth: 1
