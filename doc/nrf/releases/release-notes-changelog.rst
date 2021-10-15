@@ -31,6 +31,12 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
+* Added:
+
+  * :ref:`lib_rest_client` library:
+
+    * Added REST client library for sending REST requests and receiving their responses.
+
 * Updated:
 
   * :ref:`serial_lte_modem` application:
