@@ -458,7 +458,6 @@ Visual Studio Code extension
 ============================
 
 |vsc_extension_instructions|
-For detailed instructions see the `nRF Connect for Visual Studio Code`_ README file.
 
 .. _installing_ses:
 
