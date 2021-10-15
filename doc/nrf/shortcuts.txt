@@ -91,7 +91,7 @@
 
 .. |gps_tradeoffs| replace:: For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
 
-.. |vsc_extension_instructions| replace:: The `nRF Connect for Visual Studio Code`_ extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices. This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal.
+.. |vsc_extension_instructions| replace:: The |VSC| extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices. This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal. For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
 
 .. |VSC| replace:: nRF Connect for Visual Studio Code
 

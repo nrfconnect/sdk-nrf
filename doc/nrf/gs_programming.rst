@@ -20,8 +20,6 @@ Building with the VS Code extension
 ***********************************
 
 |vsc_extension_instructions|
-For detailed instructions on how to set up your build configuration, see `Creating an application`_ in the extension's README file.
-
 
 .. _gs_programming_ses:
 

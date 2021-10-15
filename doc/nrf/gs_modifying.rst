@@ -109,8 +109,8 @@ For detailed information about configuration options, see :ref:`zephyr:applicati
 Configuring in the VS Code extension
 ====================================
 
-The `nRF Connect for Visual Studio Code`_ extension lets you modify your build configuration for custom boards, add additional CMake build arguments, select Kconfig fragments, and more.
-For detailed instructions on how to configure your application, see `Building an application`_ in the extension's README file.
+The |VSC| extension lets you modify your build configuration for custom boards, add additional CMake build arguments, select Kconfig fragments, and more.
+For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
 
 Changing the configuration permanently
 ======================================
