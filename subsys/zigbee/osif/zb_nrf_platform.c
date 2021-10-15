@@ -96,6 +96,16 @@ static k_tid_t zboss_tid;
 static bool stack_is_started;
 
 #ifdef CONFIG_ZIGBEE_DEBUG_FUNCTIONS
+/**@brief Function for checking if the ZBOSS thread has been created.
+ */
+bool zigbee_debug_zboss_thread_is_created(void)
+{
+	if (zboss_tid) {
+		return true;
+	}
+	return false;
+}
+
 /**@brief Function for suspending zboss thread.
  */
 void zigbee_debug_suspend_zboss_thread(void)
