@@ -18,7 +18,6 @@ choice
 
 config MEMFAULT_NCS_DEVICE_ID_IMEI
 	bool "Use IMEI as Memfault device ID"
-	depends on AT_CMD
 	help
 	  Use the device's IMEI as Memfault device ID
 
