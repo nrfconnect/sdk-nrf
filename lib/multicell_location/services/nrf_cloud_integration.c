@@ -13,8 +13,6 @@
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME CONFIG_NRF_CLOUD_REST_HOST_NAME
-
 /* TLS certificate:
  *	CN=Starfield Services Root Certificate Authority - G2
  *	O=Starfield Technologies, Inc.
@@ -51,11 +49,6 @@ static const char tls_certificate[] =
 	"59vPr5KW7ySaNRB6nJHGDn2Z9j8Z3/VyVOEVqQdZe4O/Ui5GjLIAZHYcSNPYeehu\n"
 	"VsyuLAOQ1xk4meTKCRlb/weWsKh/NEnfVqn3sF/tM+2MR7cwA130A4w=\n"
 	"-----END CERTIFICATE-----\n";
-
-const char *location_service_get_hostname(void)
-{
-	return HOSTNAME;
-}
 
 const char *location_service_get_certificate(void)
 {
