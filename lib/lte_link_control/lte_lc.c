@@ -1511,10 +1511,13 @@ int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type)
 	 * command without parameters to avoid error messages for older firmware version.
 	 */
 
-	if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT) {
-		err = nrf_modem_at_printf("AT%%NCELLMEAS");
+	if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT) {
+		err = at_cmd_write("AT%NCELLMEAS=1",  NULL, 0, NULL);
+	} else if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
+		err = at_cmd_write("AT%NCELLMEAS=2",  NULL, 0, NULL);
 	} else {
-		err = nrf_modem_at_printf("AT%%NCELLMEAS=%d", type);
+		/* Defaulting to use LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT */
+		err = at_cmd_write("AT%NCELLMEAS",  NULL, 0, NULL);
 	}
 
 	return err ? -EFAULT : 0;
