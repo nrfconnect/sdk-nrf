@@ -118,6 +118,21 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
+Low-power build
+===============
+
+You can configure the sample to consume less power by using the low-power build, which enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
+
+To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+
+For example, when building on the command line, you can run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
+
 User interface
 **************
 

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Matter Lock sample application"
+
+config STATE_LEDS
+	bool "Use LEDs to indicate the device state"
+	default y
+	help
+	  Use LEDs to render the current state of the device such as the progress of commissioning of
+	  the device into a network or the factory reset initiation. Note that setting this option to
+	  'n' does not disable the LED indicating the state of the simulated bolt.
+
+source "Kconfig.zephyr"

@@ -62,10 +62,27 @@
 	};
 };
 
- &i2c1 {
+&i2c1 {
 	bme688@76 {
-        compatible = "bosch,bme680";
-        label = "BME688";
-        reg = <0x76>;
-    };
+		compatible = "bosch,bme680";
+		label = "BME688";
+		reg = <0x76>;
+	};
+};
+
+/* Disable unused peripherals to reduce power consumption */
+&adc {
+	status = "disabled";
+};
+&gpio1 {
+	status = "disabled";
+};
+&pwm0 {
+	status = "disabled";
+};
+&pwm1 {
+	status = "disabled";
+};
+&pwm2 {
+	status = "disabled";
 };

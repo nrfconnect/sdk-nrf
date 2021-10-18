@@ -113,6 +113,7 @@ nRF9160 samples
 * :ref:`https_client` sample:
 
   * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
+  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
 
 * :ref:`lwm2m_client` sample:
 
