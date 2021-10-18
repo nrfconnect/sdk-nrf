@@ -113,6 +113,15 @@ IRIS-2676: Missing support for FOTA on nRF Cloud
 Other issues
 ============
 
+.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+
+NCSDK-11684: Failure loading KMU registers on nRF9160 devices
+  Certain builds will experience problems loading HUK to KMU due to a bug in nrf_cc3xx_platform library prior to version 0.9.12.
+  The problem arises in certain builds depending on alignment of code.
+  The reason for the issue is improper handling of PAN 7 on nRF9160 devices.
+
+  **Workaround**: Update to nrf_cc3xx_platform/nrf_cc3xx_mbedcrypto v0.9.12 or newer versions if KMU is needed.
+
 .. rst-class:: v1-7-0
 
 NCSDK-11033: Dial-up usage not working
