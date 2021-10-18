@@ -25,6 +25,7 @@ Those samples are a good starting point for understanding how to put together yo
    samples/samples_bl.rst
    samples/samples_crypto.rst
    samples/samples_edge.rst
+   samples/samples_gazell.rst
    samples/samples_matter.rst
    samples/samples_nfc.rst
    samples/samples_nrf5340.rst

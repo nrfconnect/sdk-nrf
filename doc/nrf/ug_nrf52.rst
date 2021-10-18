@@ -95,7 +95,7 @@ See :ref:`ug_bootloader` for more information and instructions on how to enable 
 Supported protocols
 *******************
 
-The nRF52 Series multiprotocol radio supports Bluetooth Low Energy, proprietary (including Enhanced Shock Burst), ANT, Thread, Zigbee, and 802.15.4.
+The nRF52 Series multiprotocol radio supports Bluetooth Low Energy, proprietary (including Enhanced ShockBurst and Gazell), ANT, Thread, Zigbee, and 802.15.4.
 Standard interface protocols like NFC and USB are supported on a range of the devices in the series and with supporting software.
 
 .. note::
@@ -131,6 +131,16 @@ Enhanced ShockBurst
 
 See the :ref:`ug_esb` user guide for information about how to work with Enhanced ShockBurst.
 To start developing, check out the :ref:`esb_prx_ptx` sample.
+
+Gazell
+======
+
+.. include:: ug_gzll.rst
+   :start-after: gzll_intro_start
+   :end-before: gzll_intro_end
+
+See the :ref:`ug_gzll` user guide and the :ref:`ug_gzp` user guide for information about how to work with Gazell.
+To start developing, check out the :ref:`gazell_samples`.
 
 Matter
 ======
