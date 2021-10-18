@@ -5,9 +5,7 @@
 #
 
 config MPSL_CX
-	bool "Radio Coexistence interface support [EXPERIMENTAL]"
-# Generic coexistence is not yet supported by Bluetooth
-	depends on !BT
+	bool "Radio Coexistence interface support"
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
 	  when MPSL is initialized.
@@ -23,13 +21,25 @@ choice MPSL_CX_CHOICE
 config MPSL_CX_THREAD
 	select NRFX_GPIOTE
 	select GPIO
-	bool "Thread Radio Coexistence"
+	depends on !BT
+	bool "Thread Radio Coexistence [EXPERIMENTAL]"
 	help
 	  Radio Coexistence interface implementation according to Thread Radio
 	  Coexistence Practical recommendations for using a 3-wire PTA
 	  implementation for co-located 2.4 GHz radios.
 
-endchoice	# MPSL_CX_CHOICE
+config MPSL_CX_BT
+	depends on SOC_SERIES_NRF52X
+	depends on !NRF_802154_RADIO_DRIVER
+	select NRFX_GPIOTE
+	select GPIO
+	select NRFX_TIMER1
+	bool "Bluetooth Radio Coexistence"
+	help
+	  Radio Coexistence interface implementation using a 3-wire PTA
+	  implementation for co-located 2.4 GHz radios.
+
+endchoice # MPSL_CX_CHOICE
 
 endif	# MPSL_CX
 
