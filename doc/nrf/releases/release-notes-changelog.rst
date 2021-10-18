@@ -234,6 +234,9 @@ Modem libraries
 * :ref:`pdn_readme` library:
 
   * Added an optional ``family`` parameter to :c:func:`pdn_activate`, which is used to report when the IP family of a PDN changes after activation.
+  * Aligned the return values of :c:func:`pdn_init` to return negative errnos on error.
+  * Added logging on modem errors.
+  * Changed the return values on modem errors to -ENOEXEC to avoid conflicts with return of other positive values.
 
 Libraries for networking
 ------------------------
