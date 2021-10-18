@@ -328,7 +328,7 @@ int link_shell_pdn_activate(int pdn_cid)
 	int esm;
 
 	/* Activate a PDN connection */
-	ret = pdn_activate(pdn_cid, &esm);
+	ret = pdn_activate(pdn_cid, &esm, NULL);
 	if (ret) {
 		mosh_error(
 			"pdn_activate() failed, err %d esm %d %s\n",

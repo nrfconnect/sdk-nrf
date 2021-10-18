@@ -109,7 +109,7 @@ void main(void)
 	       cid, apn, fam_str[PDN_FAM_IPV4V6]);
 
 	/* Activate a PDN connection */
-	err = pdn_activate(cid, &esm);
+	err = pdn_activate(cid, &esm, NULL);
 	if (err) {
 		printk("pdn_activate() failed, err %d esm %d %s\n",
 			err, esm, esm_strerr(esm));

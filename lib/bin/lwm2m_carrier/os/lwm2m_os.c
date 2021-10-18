@@ -845,7 +845,7 @@ int lwm2m_os_pdn_ctx_destroy(uint8_t cid)
 
 int lwm2m_os_pdn_activate(uint8_t cid, int *esm)
 {
-	return pdn_activate(cid, esm);
+	return pdn_activate(cid, esm, NULL);
 }
 
 int lwm2m_os_pdn_deactivate(uint8_t cid)

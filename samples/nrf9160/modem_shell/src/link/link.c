@@ -84,7 +84,7 @@ static void link_api_activate_mosh_contexts(
 	for (i = 0; i < size; i++) {
 		if (pdn_act_status_arr[i].activated == false &&
 		    link_shell_pdn_info_is_in_list(pdn_act_status_arr[i].cid)) {
-			ret = pdn_activate(pdn_act_status_arr[i].cid, &esm);
+			ret = pdn_activate(pdn_act_status_arr[i].cid, &esm, NULL);
 			if (ret) {
 				mosh_warn(
 					"Cannot reactivate ctx with CID #%d, err: %d, removing from the list",
