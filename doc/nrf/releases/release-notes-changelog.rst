@@ -42,7 +42,9 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
-* No entries yet.
+* :ref:`ug_zigbee`:
+
+  * Added :ref:`ug_zigee_qsg`.
 
 Applications
 ============

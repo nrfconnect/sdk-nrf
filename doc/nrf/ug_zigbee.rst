@@ -20,6 +20,7 @@ See also :ref:`zigbee_samples` for the list of available Zigbee samples and :ref
    :maxdepth: 1
    :caption: Subpages:
 
+   ug_zigbee_qsg.rst
    ug_zigbee_supported_features.rst
    ug_zigbee_architectures.rst
    ug_zigbee_memory.rst
