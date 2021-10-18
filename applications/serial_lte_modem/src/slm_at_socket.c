@@ -1153,7 +1153,7 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 			if (type == AT_PARAM_TYPE_NUM_INT) {
 				err = do_secure_socketopt_set_int(name, value_int);
 			} else if (type == AT_PARAM_TYPE_STRING) {
-				if (size == 0) {
+				if (size != 0) {
 					err = do_secure_socketopt_set_str(name, value_str);
 				} else {
 					err = do_secure_socketopt_set_str(name, NULL);
