@@ -30,7 +30,7 @@ For this sample to work, the following samples also need to be programmed:
 Overview
 ********
 
-The Zigbee light bulb sample takes the Zigbee Router role and implements the Dimmable Light profile.
+The Zigbee light bulb sample takes the Zigbee Router role and implements the Dimmable Light device specification, as defined in the Zigbee Home Automation public application profile.
 This profile allows changing the brightness level of a LED of the light bulb.
 
 Configuration

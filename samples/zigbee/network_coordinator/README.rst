@@ -48,6 +48,9 @@ FEM support
 User interface
 **************
 
+LED 1:
+    Blinks to indicate that the main application thread is running.
+
 LED 3:
     Indicates whether the network is open or closed:
 
@@ -76,6 +79,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Turn on the development kit that runs the coordinator sample.
+   When **LED 1** starts blinking, the main application thread has started.
    When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network and the network is established.
 #. Turn on the other development kits that you programmed.
 
