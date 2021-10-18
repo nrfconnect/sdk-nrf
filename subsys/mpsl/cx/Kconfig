@@ -31,37 +31,6 @@ config MPSL_CX_THREAD
 
 endchoice	# MPSL_CX_CHOICE
 
-if MPSL_CX_THREAD
-
-config MPSL_CX_THREAD_PIN_REQUEST
-	int "GPIO pin id used as coexistence Request signal"
-	default 13
-	help
-	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
-	  P0.04 is 4; P1.04 is 36.
-
-	  Note: This configuration will be moved to device tree.
-
-config MPSL_CX_THREAD_PIN_PRIORITY
-	int "GPIO pin id used as coexistence Priority signal"
-	default 14
-	help
-	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
-	  P0.04 is 4; P1.04 is 36.
-
-	  Note: This configuration will be moved to device tree.
-
-config MPSL_CX_THREAD_PIN_GRANT
-	int "GPIO pin id used as coexistence Grant signal"
-	default 12
-	help
-	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
-	  P0.04 is 4; P1.04 is 36.
-
-	  Note: This configuration will be moved to device tree.
-
-endif
-
 endif	# MPSL_CX
 
 module=MPSL_CX
