@@ -83,7 +83,11 @@ static int do_tcp_server_start(uint16_t port)
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		ret = socket(proxy.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+#else
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+#endif
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
