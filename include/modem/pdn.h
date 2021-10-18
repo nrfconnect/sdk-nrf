@@ -149,11 +149,13 @@ int pdn_ctx_destroy(uint8_t cid);
  * @brief Activate a Packet Data Network (PDN) connection.
  *
  * @param cid The PDP context ID to activate a connection for.
- * @param[out] esm If provided, the function will block to return
- *		   the ESM error reason.
+ * @param[out] esm If provided, the function will block to return the ESM error reason.
+ * @param[out] family If provided, the function will block to return PDN_FAM_IPV4 if only IPv4 is
+ *		      supported, or PDN_FAM_IPV6 if only IPv6 is supported. Otherwise, this value
+ *		      will remain unchanged.
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_activate(uint8_t cid, int *esm);
+int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *family);
 
 /**
  * @brief Deactivate a Packet Data Network (PDN) connection.

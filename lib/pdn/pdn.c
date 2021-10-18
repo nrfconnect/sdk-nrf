@@ -20,13 +20,24 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
 #define CID_UNASSIGNED (-1)
 
+#define PDN_ACT_REASON_NONE	 (-1)
+#define PDN_ACT_REASON_IPV4_ONLY (0)
+#define PDN_ACT_REASON_IPV6_ONLY (1)
+
 struct pdn {
 	pdn_event_handler_t callback;
 	int8_t context_id;
 };
 
-static int esm_from_notif;
-static struct k_sem notif_sem;
+/* Variables used for synchronizing pdn_activate() with AT notifications. */
+static struct {
+	int8_t cid;
+	int8_t esm;
+	int8_t reason;
+	struct k_sem sem_cgev;
+	struct k_sem sem_cnec;
+} pdn_act_notif;
+static K_MUTEX_DEFINE(pdn_act_mutex);
 static struct pdn pdn_contexts[CONFIG_PDN_CONTEXTS_MAX];
 static pdn_event_handler_t default_callback;
 
@@ -76,8 +87,10 @@ static void on_cnec_esm(const char *notif)
 		pdn->callback((intptr_t)cid, PDN_EVENT_CNEC_ESM, esm_err);
 	}
 
-	esm_from_notif = esm_err;
-	k_sem_give(&notif_sem);
+	if (cid == pdn_act_notif.cid) {
+		pdn_act_notif.esm = esm_err;
+		k_sem_give(&pdn_act_notif.sem_cnec);
+	}
 }
 
 static void on_cgev(const char *notif)
@@ -90,11 +103,11 @@ static void on_cgev(const char *notif)
 		const char *notif;
 		const enum pdn_event event;
 	} map[] = {
-		{"ME PDN ACT",		PDN_EVENT_ACTIVATED},	/* +CGEV: ME PDN ACT <cid> */
-		{"ME PDN DEACT",	PDN_EVENT_DEACTIVATED},	/* +CGEV: ME PDN DEACT <cid> */
+		{"ME PDN ACT",	 PDN_EVENT_ACTIVATED},	 /* +CGEV: ME PDN ACT <cid>[,<reason>] */
+		{"ME PDN DEACT", PDN_EVENT_DEACTIVATED}, /* +CGEV: ME PDN DEACT <cid> */
 		/* Order is important */
-		{"IPV6 FAIL",		PDN_EVENT_IPV6_DOWN},	/* +CGEV: IPV6 FAIL <cid> */
-		{"IPV6",		PDN_EVENT_IPV6_UP},	/* +CGEV: IPV6 <cid> */
+		{"IPV6 FAIL",	 PDN_EVENT_IPV6_DOWN},	 /* +CGEV: IPV6 FAIL <cid> */
+		{"IPV6",	 PDN_EVENT_IPV6_UP},	 /* +CGEV: IPV6 <cid> */
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(map); i++) {
@@ -103,7 +116,15 @@ static void on_cgev(const char *notif)
 			continue;
 		}
 
-		cid = strtoul(p + strlen(map[i].notif), NULL, 10);
+		cid = strtoul(p + strlen(map[i].notif), &p, 10);
+		if (cid == pdn_act_notif.cid && map[i].event == PDN_EVENT_ACTIVATED) {
+			if (*p == ',') {
+				pdn_act_notif.reason = strtol(p + 1, NULL, 10);
+			} else {
+				pdn_act_notif.reason = PDN_ACT_REASON_NONE;
+			}
+			k_sem_give(&pdn_act_notif.sem_cgev);
+		}
 
 		if (default_callback && cid == 0) {
 			default_callback(0, map[i].event, 0);
@@ -117,8 +138,9 @@ static void on_cgev(const char *notif)
 
 		if (pdn->callback) {
 			pdn->callback((intptr_t)cid, map[i].event, 0);
-			return;
 		}
+
+		return;
 	}
 }
 
@@ -133,7 +155,9 @@ int pdn_init(void)
 		return 0;
 	}
 
-	k_sem_init(&notif_sem, 0, 1);
+	pdn_act_notif.cid = CID_UNASSIGNED;
+	k_sem_init(&pdn_act_notif.sem_cgev, 0, 1);
+	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
 
 #if defined(CONFIG_PDN_LEGACY_PCO)
 	err = nrf_modem_at_printf("AT%XEPCO=0");
@@ -310,21 +334,34 @@ static int cgact(uint8_t cid, bool activate)
 	return 0;
 }
 
-int pdn_activate(uint8_t cid, int *esm)
+int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *fam)
 {
 	int err;
 	int timeout;
 
+	k_mutex_lock(&pdn_act_mutex, K_FOREVER);
+	pdn_act_notif.cid = cid;
+
 	err = cgact(cid, true);
+	if (!err && fam) {
+		k_sem_take(&pdn_act_notif.sem_cgev, K_FOREVER);
+		if (pdn_act_notif.reason == PDN_ACT_REASON_IPV4_ONLY) {
+			*fam = PDN_FAM_IPV4;
+		} else if (pdn_act_notif.reason == PDN_ACT_REASON_IPV6_ONLY) {
+			*fam = PDN_FAM_IPV6;
+		}
+	}
 	if (esm) {
-		timeout = k_sem_take(&notif_sem, K_MSEC(CONFIG_PDN_ESM_TIMEOUT));
+		timeout = k_sem_take(&pdn_act_notif.sem_cnec, K_MSEC(CONFIG_PDN_ESM_TIMEOUT));
 		if (!timeout) {
-			*esm = esm_from_notif;
+			*esm = pdn_act_notif.esm;
 		} else if (timeout == -EAGAIN) {
 			*esm = 0;
 		}
-		esm_from_notif = 0;
 	}
+
+	pdn_act_notif.cid = CID_UNASSIGNED;
+	k_mutex_unlock(&pdn_act_mutex);
 
 	return err;
 }

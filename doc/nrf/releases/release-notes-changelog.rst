@@ -189,6 +189,10 @@ Modem libraries
 
   * Added a possibility to create native sockets when nRF91 socket offloading is enabled.
 
+* :ref:`pdn_readme` library:
+
+  * Added an optional ``family`` parameter to :c:func:`pdn_activate`, which is used to report when the IP family of a PDN changes after activation.
+
 Libraries for networking
 ------------------------
 
