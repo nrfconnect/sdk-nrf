@@ -254,6 +254,7 @@ void AppTask::FunctionTimerEventHandler()
 		sAppTask.StartFunctionTimer(kFactoryResetCancelWindow);
 		sAppTask.mFunction = TimerFunction::FactoryReset;
 
+#ifdef CONFIG_STATE_LEDS
 		/* Turn off all LEDs before starting blink to make sure blink is co-ordinated. */
 		sStatusLED.Set(false);
 		sLockLED.Set(false);
@@ -264,7 +265,7 @@ void AppTask::FunctionTimerEventHandler()
 		sLockLED.Blink(500);
 		sUnusedLED.Blink(500);
 		sUnusedLED_1.Blink(500);
-
+#endif
 	} else if (sAppTask.mFunction == TimerFunction::FactoryReset) {
 		sAppTask.mFunction = TimerFunction::NoneSelected;
 		LOG_INF("Factory Reset triggered");
@@ -312,6 +313,7 @@ void AppTask::LEDStateUpdateHandler(LEDWidget &ledWidget)
 
 void AppTask::UpdateStatusLED()
 {
+#ifdef CONFIG_STATE_LEDS
 	/* Update the status LED.
 	 *
 	 * If thread and service provisioned, keep the LED On constantly.
@@ -327,6 +329,7 @@ void AppTask::UpdateStatusLED()
 	} else {
 		sStatusLED.Blink(50, 950);
 	}
+#endif
 }
 
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
