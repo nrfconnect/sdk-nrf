@@ -174,7 +174,7 @@ int pdn_init(void)
 				CONFIG_PDN_DEFAULT_FAM, NULL);
 	if (err) {
 		LOG_ERR("Failed to configure default CID, err %d", err);
-		return -1;
+		return err;
 	}
 
 #if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
@@ -186,7 +186,7 @@ int pdn_init(void)
 			       CONFIG_PDN_DEFAULT_PASSWORD);
 	if (err) {
 		LOG_ERR("Failed to set auth params for default CID, err %d", err);
-		return -1;
+		return err;
 	}
 #endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
 #endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
@@ -279,6 +279,10 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 
 	if (err) {
 		LOG_ERR("Failed to configure CID %d, err, %d", cid, err);
+		if (err > 0) {
+			err = -ENOEXEC;
+		}
+
 		return err;
 	}
 
@@ -297,6 +301,10 @@ int pdn_ctx_auth_set(uint8_t cid, enum pdn_auth method,
 	err = nrf_modem_at_printf("AT+CGAUTH=%u,%d,%s,%s", cid, method, user, password);
 	if (err) {
 		LOG_ERR("Failed to configure auth for CID %d, err, %d", cid, err);
+		if (err > 0) {
+			err = -ENOEXEC;
+		}
+
 		return err;
 	}
 
@@ -315,6 +323,11 @@ int pdn_ctx_destroy(uint8_t cid)
 
 	err = nrf_modem_at_printf("AT+CGDCONT=%u", cid);
 	if (err) {
+		LOG_ERR("Failed to remove auth for CID %d, err, %d", cid, err);
+		if (err > 0) {
+			err = -ENOEXEC;
+		}
+
 		return err;
 	}
 
@@ -331,6 +344,10 @@ static int cgact(uint8_t cid, bool activate)
 	err = nrf_modem_at_printf("AT+CGACT=%u,%u", activate ? 1 : 0, cid);
 	if (err) {
 		LOG_WRN("Failed to activate PDN for CID %d, err %d", cid, err);
+		if (err > 0) {
+			err = -ENOEXEC;
+		}
+
 		return err;
 	}
 
@@ -390,6 +407,10 @@ int pdn_id_get(uint8_t cid)
 	err = nrf_modem_at_cmd(resp, sizeof(resp), "AT%%XGETPDNID=%u", cid);
 	if (err) {
 		LOG_ERR("Failed to read PDN ID for CID %d, err %d", cid, err);
+		if (err > 0) {
+			err = -ENOEXEC;
+		}
+
 		return err;
 	}
 
@@ -429,8 +450,7 @@ static int pdn_sys_init(const struct device *unused)
 
 	err = pdn_init();
 	if (err) {
-		LOG_ERR("Failed to initialize PDN library, err %d", err);
-		return -1;
+		return err;
 	}
 
 	return 0;
