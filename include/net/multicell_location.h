@@ -24,6 +24,23 @@ struct multicell_location {
 	float accuracy;
 };
 
+/** Cellular positioning service. */
+enum multicell_service {
+	/**
+	 * @brief Use any location service that has been configured to be available.
+	 *
+	 * @details This is especially useful when only one service is configured but can be used
+	 * even if many are available.
+	 */
+	MULTICELL_SERVICE_ANY,
+	/** nRF Cloud location service. */
+	MULTICELL_SERVICE_NRF_CLOUD,
+	/** Here location service. */
+	MULTICELL_SERVICE_HERE,
+	/** Skyhook location service. */
+	MULTICELL_SERVICE_SKYHOOK
+};
+
 /* @brief Send a request for location based on cell measurements to the
  *        selected location service.
  *
@@ -33,12 +50,14 @@ struct multicell_location {
  * @note Certificate must be provisioned before a request can be sent,
  *       @ref multicell_location_provision_certificate.
  *
+ * @param[in] service Cellular positioning service to be used.
  * @param[in] cell_data Pointer to neighbor cell data.
  * @param[out] location Pointer to location.
  *
  * @return 0 on success, or negative error code on failure.
  */
-int multicell_location_get(const struct lte_lc_cells_info *cell_data,
+int multicell_location_get(enum multicell_service service,
+			   const struct lte_lc_cells_info *cell_data,
 			   struct multicell_location *location);
 
 /* @brief Provision TLS certificate that the selected location service requires

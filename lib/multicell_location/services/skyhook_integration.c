@@ -12,6 +12,7 @@
 #include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <net/multicell_location.h>
 
 #include "location_service.h"
 
@@ -20,7 +21,7 @@
 LOG_MODULE_REGISTER(multicell_location_skyhook, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
 #define API_KEY		CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY
-#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HOSTNAME
+#define HOSTNAME	CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME
 
 /* The timing advance returned by the nRF9160 modem must be divided by 16
  * to have the range expected by Skyhook.
@@ -137,12 +138,7 @@ static const char tls_certificate[] =
 	"CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=\n"
 	"-----END CERTIFICATE-----\n";
 
-const char *location_service_get_hostname(void)
-{
-	return HOSTNAME;
-}
-
-const char *location_service_get_certificate(void)
+const char *location_service_get_certificate_skyhook(void)
 {
 	return tls_certificate;
 }
@@ -156,8 +152,8 @@ static int adjust_rsrp(int input)
 	return input - 141;
 }
 
-int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
-				      char *buf, size_t buf_len)
+static int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
+					     char *buf, size_t buf_len)
 {
 	int len;
 	enum lte_lc_lte_mode mode;
@@ -262,7 +258,9 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 	return 0;
 }
 
-int location_service_parse_response(const char *response, struct multicell_location *location)
+static int location_service_parse_response(
+	const char *response,
+	struct multicell_location *location)
 {
 	int err;
 	struct cJSON *root_obj, *location_obj, *lat_obj, *lng_obj, *accuracy_obj;
@@ -355,9 +353,11 @@ static int location_service_generate_url(char * const request_url, const size_t 
 	return 0;
 }
 
-int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       char * const rcv_buf, const size_t rcv_buf_len,
-				       struct multicell_location *const location)
+int location_service_get_cell_location_skyhook(
+	const struct lte_lc_cells_info *cell_data,
+	char * const rcv_buf,
+	const size_t rcv_buf_len,
+	struct multicell_location *const location)
 {
 	int err;
 	/* Reserving NRF_MODEM_FW_UUID_STR_LEN bytes for UUID */
@@ -391,9 +391,9 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	rest_client_request_defaults_set(&rest_ctx);
 	rest_ctx.http_method = HTTP_POST;
 	rest_ctx.url = request_url;
-	rest_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG;
-	rest_ctx.port = CONFIG_MULTICELL_LOCATION_HTTPS_PORT;
-	rest_ctx.host = CONFIG_MULTICELL_LOCATION_HOSTNAME;
+	rest_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG;
+	rest_ctx.port = CONFIG_MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT;
+	rest_ctx.host = CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME;
 	rest_ctx.header_fields = (const char **)headers;
 	rest_ctx.resp_buff = rcv_buf;
 	rest_ctx.resp_buff_len = rcv_buf_len;
