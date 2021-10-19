@@ -37,18 +37,22 @@ static const char location_usage_str[] =
 static const char location_get_usage_str[] =
 	"Usage: location get [--method <method>] [--interval <secs>]\n"
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
-	"[--gnss_timeout <timeout in secs>] [--cellular_timeout <timeout in secs>]\n"
+	"[--gnss_timeout <timeout in secs>]\n"
+	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
 	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
 	"Options:\n"
 	"  --method,           Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
 	"                      '--method' parameters may be given to indicate list of\n"
 	"                      methods in priority order.\n"
-	"  --interval,         Position update interval in seconds (default: 0, = single position)\n"
+	"  --interval,         Position update interval in seconds\n"
+	"                      (default: 0 = single position)\n"
 	"  --gnss_accuracy,    Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
-	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy set to 'high',\n"
-	"                      default: 2)\n"
+	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy\n"
+	"                      set to 'high', default: 2)\n"
 	"  --gnss_timeout,     GNSS timeout in seconds\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
+	"  --cellular_service, Used cellular positioning service:\n"
+	"                      'any' (default), 'nrf', 'skyhook' or 'here'\n"
 	"  --wifi_timeout,     WiFi timeout in seconds\n"
 	"  --wifi_service,     Used WiFi positioning service:\n"
 	"                      'nrf' (default), 'skyhook' or 'here'\n";
@@ -62,8 +66,9 @@ enum {  LOCATION_SHELL_OPT_METHOD           = 1001,
 	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1004,
 	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1005,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1006,
-	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1007,
-	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1008,
+	LOCATION_SHELL_OPT_CELLULAR_SERVICE = 1007,
+	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1008,
+	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1009,
 };
 
 /* Specifying the expected options: */
@@ -74,6 +79,7 @@ static struct option long_options[] = {
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
+	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
 	{ 0, 0, 0, 0 }
@@ -115,6 +121,25 @@ static const char *location_shell_method_to_string(int method, char *out_str_buf
 	return out_str_buff;
 }
 
+#define MOSH_LOC_SERVICE_NONE 0xFF
+
+static enum loc_service location_shell_service_to_string(const char *service_str)
+{
+	enum loc_service service = MOSH_LOC_SERVICE_NONE;
+
+	if (strcmp(service_str, "any") == 0) {
+		service = LOC_SERVICE_ANY;
+	} else if (strcmp(service_str, "nrf") == 0) {
+		service = LOC_SERVICE_NRF_CLOUD;
+	} else if (strcmp(service_str, "here") == 0) {
+		service = LOC_SERVICE_HERE;
+	} else if (strcmp(service_str, "skyhook") == 0) {
+		service = LOC_SERVICE_SKYHOOK;
+	}
+
+	return service;
+}
+
 /******************************************************************************/
 
 void location_ctrl_event_handler(const struct loc_event_data *event_data)
@@ -129,11 +154,6 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 			"  used method: %s (%d)",
 			location_shell_method_to_string(event_data->method, snum),
 			event_data->method);
-		if (event_data->method == LOC_METHOD_CELLULAR) {
-			mosh_print(
-				"  used service: %s",
-				CONFIG_MULTICELL_LOCATION_HOSTNAME);
-		}
 		mosh_print("  latitude: %.06f", event_data->location.latitude);
 		mosh_print("  longitude: %.06f", event_data->location.longitude);
 		mosh_print("  accuracy: %.01f m", event_data->location.accuracy);
@@ -197,14 +217,15 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	int cellular_timeout = 0;
 	bool cellular_timeout_set = false;
+	enum loc_service cellular_service = LOC_SERVICE_ANY;
 
 	int wifi_timeout = 0;
 	bool wifi_timeout_set = false;
+	enum loc_service wifi_service = LOC_SERVICE_NRF_CLOUD;
 
 	enum loc_method method_list[LOC_MAX_METHODS] = { 0 };
 	int method_count = 0;
 
-	enum loc_wifi_service wifi_service = LOC_WIFI_SERVICE_NRF_CLOUD;
 
 	int opt;
 	int ret = 0;
@@ -256,6 +277,14 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			cellular_timeout_set = true;
 			break;
 
+		case LOCATION_SHELL_OPT_CELLULAR_SERVICE:
+			cellular_service = location_shell_service_to_string(optarg);
+			if (cellular_service == MOSH_LOC_SERVICE_NONE) {
+				mosh_error("Unknown cellular positioning service. See usage:");
+				goto show_usage;
+			}
+			break;
+
 		case LOCATION_SHELL_OPT_WIFI_TIMEOUT:
 			wifi_timeout = atoi(optarg);
 			if (wifi_timeout == 0) {
@@ -269,16 +298,17 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		case LOCATION_SHELL_OPT_WIFI_SERVICE:
 			if (strcmp(optarg, "nrf") == 0) {
-				wifi_service = LOC_WIFI_SERVICE_NRF_CLOUD;
+				wifi_service = LOC_SERVICE_NRF_CLOUD;
 			} else if (strcmp(optarg, "here") == 0) {
-				wifi_service = LOC_WIFI_SERVICE_HERE;
+				wifi_service = LOC_SERVICE_HERE;
 			} else if (strcmp(optarg, "skyhook") == 0) {
-				wifi_service = LOC_WIFI_SERVICE_SKYHOOK;
+				wifi_service = LOC_SERVICE_SKYHOOK;
 			} else {
 				mosh_error("Unknown WiFi positioning service. See usage:");
 				goto show_usage;
 			}
 			break;
+
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(optarg);
 			interval_set = true;
@@ -366,11 +396,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				if (gnss_num_fixes_set) {
 					methods[i].gnss.num_consecutive_fixes = gnss_num_fixes;
 				}
-			} else if (methods[i].method == LOC_METHOD_CELLULAR) {
+			} else if (method_list[i] == LOC_METHOD_CELLULAR) {
+				methods[i].cellular.service = cellular_service;
 				if (cellular_timeout_set) {
 					methods[i].cellular.timeout = cellular_timeout;
 				}
-			} else if (methods[i].method == LOC_METHOD_WIFI) {
+			} else if (method_list[i] == LOC_METHOD_WIFI) {
 				methods[i].wifi.service = wifi_service;
 				if (wifi_timeout_set) {
 					methods[i].wifi.timeout = wifi_timeout;
