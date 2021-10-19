@@ -490,27 +490,35 @@ See the following instructions for programming the images separately:
 
    .. group-tab:: west
 
-      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
+      1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
-        west flash --erase
+           west flash --erase
 
-      Then navigate to the build folder of the application sample and enter the same command to erase the flash memory of the application core and program the application sample::
+      2. Navigate to the build folder of the application sample and enter the same command to erase the flash memory of the application core and program the application sample::
 
-        west flash --erase
+           west flash --erase
 
    .. group-tab:: nrfjprog
 
-      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
+      1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
-        nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex --chiperase
+           nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex --chiperase
 
-      Then navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
+         .. note::
+            If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
 
-        nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
+            * :file:`rpc_host`
+            * :file:`hci_rpsmg`
+            * :file:`802154_rpmsg`
+            * :file:`multiprotocol_rpmsg`
 
-      Finally, reset the development kit::
+      2. Navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
 
-        nrfjprog --pinreset
+           nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
+
+      3. Reset the development kit::
+
+           nrfjprog --pinreset
 
 See :ref:`readback_protection_error` if you encounter an error.
 
