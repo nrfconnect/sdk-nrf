@@ -236,8 +236,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_encrypt = 1;
 	cmds->hci_le_rand = 1;
 
-#if defined(CONFIG_BT_CTLR_LE_ENC)
+#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CENTRAL)
 	cmds->hci_le_enable_encryption = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_PERIPHERAL)
 	cmds->hci_le_long_term_key_request_reply = 1;
 	cmds->hci_le_long_term_key_request_negative_reply = 1;
 #endif
