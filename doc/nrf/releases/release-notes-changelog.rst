@@ -133,6 +133,10 @@ nRF9160 samples
   * Added support for full modem firmware update.
   * Increased the NB-IoT time (in seconds) before the registration timeout when the LwM2M Registration Update message is sent by the engine.
 
+* :ref:`multicell_location` sample:
+
+  * Modified to use runtime location service selection instead of compile-time configurations.
+
 Matter samples
 --------------
 

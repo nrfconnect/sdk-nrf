@@ -32,7 +32,13 @@ The sample acquires LTE cell information from :ref:`lte_lc_readme`.
 The cell information is passed on to the :ref:`lib_multicell_location` library, where an HTTP request is generated and sent to the location service of choice.
 Responses from location services are parsed and returned to the sample, which displays the responses on a terminal.
 
-Currently, the sample can be used with the location services supported by the :ref:`lib_multicell_location` library, which are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
+Currently, you can use the sample with the following location services supported by the :ref:`lib_multicell_location` library:
+
+* `nRF Cloud Location Services`_
+* `HERE Positioning`_
+* `Skyhook Precision Location`_
+* `Polte Location API`_
+
 Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
 
 .. include:: ../../../doc/nrf/libraries/networking/multicell_location.rst
@@ -110,18 +116,13 @@ Additional configuration
 
 Check and configure the following library options that are used by the sample:
 
-
 * :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
-For the location service that is used, the authorization method can be set with one of the following options:
+See :ref:`lib_multicell_location` for more information on the various configuration options available for the services.
 
-* :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
-
-See :ref:`lib_multicell_location` for more information on the various configuration options that exist for the services.
 
 Building and running
 ********************
@@ -185,7 +186,7 @@ Testing
       <inf> multicell_location_sample:     Physical cell ID: 447
       <inf> multicell_location_sample:     RSRP: 33
       <inf> multicell_location_sample:     RSRQ: -17
-      <inf>multicell_location_sample: Neighbor cell 2
+      <inf> multicell_location_sample: Neighbor cell 2
       <inf> multicell_location_sample:     EARFCN: 100
       <inf> multicell_location_sample:     Time difference: 24
       <inf> multicell_location_sample:     Physical cell ID: 447
@@ -198,12 +199,12 @@ Testing
       <inf> multicell_location_sample:     RSRP: 41
       <inf> multicell_location_sample:     RSRQ: 13
 
-#. Confirm that location request is sent, and that the response is received:
+#. Confirm that location request is sent, and that the response is received for each enabled service:
 
    .. code-block:: console
 
-      <inf> multicell_location_sample: Sending location request...
-      <inf> multicell_location_sample: Location obtained:
+      <inf> multicell_location_sample: Sending location request for nRF Cloud...
+      <inf> multicell_location_sample: Location obtained from nRF Cloud:
       <inf> multicell_location_sample:     Latitude: 63.4216744
       <inf> multicell_location_sample:     Longitude: 10.4373742
       <inf> multicell_location_sample:     Accuracy: 310
