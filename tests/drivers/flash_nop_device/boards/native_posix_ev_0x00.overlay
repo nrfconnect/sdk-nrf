@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&sim_flash {
+&flashcontroller0 {
 	erase-value = < 0x00 >;
 };
