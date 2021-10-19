@@ -16,17 +16,17 @@
 
 #include <logging/log.h>
 
-#define TLS_SEC_TAG	CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG
-
 LOG_MODULE_REGISTER(multicell_location, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
-BUILD_ASSERT(!IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NONE),
-	     "A location service must be enabled");
+BUILD_ASSERT(IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD) ||
+	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_HERE) ||
+	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK) ||
+	     IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE),
+	     "At least one location service must be enabled");
 
-static char recv_buf[CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE];
 
-
-int multicell_location_get(const struct lte_lc_cells_info *cell_data,
+int multicell_location_get(enum multicell_service service,
+			   const struct lte_lc_cells_info *cell_data,
 			   struct multicell_location *location)
 {
 	if ((cell_data == NULL) || (location == NULL)) {
@@ -44,24 +44,23 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 		LOG_WRN("Increase CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS to use more cells");
 	}
 
-	return location_service_get_cell_location(
-		cell_data, recv_buf, sizeof(recv_buf), location);
+	return location_service_get_cell_location(service, cell_data, location);
 }
 
-int multicell_location_provision_certificate(bool overwrite)
+static int multicell_location_provision_service_certificate(
+	int sec_tag,
+	const char *certificate,
+	bool overwrite)
 {
 	int err;
 	bool exists;
-	const char *certificate = location_service_get_certificate();
 
 	if (certificate == NULL) {
 		LOG_ERR("No certificate was provided by the location service");
 		return -EFAULT;
 	}
 
-	err = modem_key_mgmt_exists(TLS_SEC_TAG,
-				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    &exists);
+	err = modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
 	if (err) {
 		LOG_ERR("Failed to check for certificates err %d", err);
 		return err;
@@ -71,27 +70,69 @@ int multicell_location_provision_certificate(bool overwrite)
 		/* For the sake of simplicity we delete what is provisioned
 		 * with our security tag and reprovision our certificate.
 		 */
-		err = modem_key_mgmt_delete(TLS_SEC_TAG,
-					    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+		err = modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
 		if (err) {
 			LOG_ERR("Failed to delete existing certificate, err %d", err);
 		}
 	} else if (exists && !overwrite) {
-		LOG_INF("A certificate is already provisioned to sec tag %d",
-			TLS_SEC_TAG);
+		LOG_DBG("A certificate is already provisioned to sec tag %d", sec_tag);
 		return 0;
 	}
 
 	LOG_INF("Provisioning certificate");
 
 	/*  Provision certificate to the modem */
-	err = modem_key_mgmt_write(TLS_SEC_TAG,
+	err = modem_key_mgmt_write(sec_tag,
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				   certificate, strlen(certificate));
+				   certificate,
+				   strlen(certificate));
 	if (err) {
 		LOG_ERR("Failed to provision certificate, err %d", err);
 		return err;
 	}
 
 	return 0;
+}
+
+int multicell_location_provision_certificate(bool overwrite)
+{
+	int ret = -ENOTSUP;
+
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD)
+	ret = multicell_location_provision_service_certificate(
+		CONFIG_NRF_CLOUD_SEC_TAG,
+		location_service_get_certificate(MULTICELL_SERVICE_NRF_CLOUD),
+		overwrite);
+	if (ret) {
+		return ret;
+	}
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
+	ret = multicell_location_provision_service_certificate(
+		CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG,
+		location_service_get_certificate(MULTICELL_SERVICE_HERE),
+		overwrite);
+	if (ret) {
+		return ret;
+	}
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK)
+	ret = multicell_location_provision_service_certificate(
+		CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG,
+		location_service_get_certificate(MULTICELL_SERVICE_SKYHOOK),
+		overwrite);
+	if (ret) {
+		return ret;
+	}
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
+	ret = multicell_location_provision_service_certificate(
+		CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG,
+		location_service_get_certificate(MULTICELL_SERVICE_POLTE),
+		overwrite);
+	if (ret) {
+		return ret;
+	}
+#endif
+	return ret;
 }

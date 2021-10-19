@@ -18,15 +18,6 @@ menuconfig MULTICELL_LOCATION
 
 if MULTICELL_LOCATION
 
-choice MULTICELL_LOCATION_SERVICE
-	prompt "Location service"
-	default MULTICELL_LOCATION_SERVICE_NONE
-	help
-	  Select which location service that will be used for location requests
-
-config MULTICELL_LOCATION_SERVICE_NONE
-	bool "No location service"
-
 config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	depends on NRF_CLOUD
@@ -53,7 +44,6 @@ config MULTICELL_LOCATION_SERVICE_POLTE
 	select REST_CLIENT
 	help
 	  Use Polte location service
-endchoice
 
 if MULTICELL_LOCATION_SERVICE_HERE
 choice MULTICELL_LOCATION_SERVICE_HERE_VERSION
@@ -111,6 +101,28 @@ config MULTICELL_LOCATION_HERE_APP_ID
 	  HERE app ID
 
 endif # MULTICELL_LOCATION_HERE_USE_APP_CODE_ID
+
+config MULTICELL_LOCATION_HERE_HTTPS_PORT
+	int "HTTPS port number for HERE"
+	default 443
+	help
+	  Port number to use when connecting to HERE location service
+
+config MULTICELL_LOCATION_HERE_HOSTNAME
+	string "Server hostname for HERE"
+	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
+	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
+	help
+	  Server hostname to use when connecting to HERE location service
+
+config MULTICELL_LOCATION_HERE_TLS_SEC_TAG
+	int "Security tag for HERE TLS certificates"
+	default 175
+	help
+	  Security tag where the required TLS certificates for HERE
+	  service will be stored. This sec tag will also be used to provision
+	  certificates when multicell_location_provision_certificate() is called.
+
 endif # MULTICELL_LOCATION_SERVICE_HERE
 
 if MULTICELL_LOCATION_SERVICE_SKYHOOK
@@ -121,7 +133,57 @@ config MULTICELL_LOCATION_SKYHOOK_API_KEY
 	  Skyhook API key to use for authentication towards Skyhook location
 	  service
 
+config MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT
+	int "HTTPS port number for Skyhook"
+	default 443
+	help
+	  Port number to use when connecting to Skyhook location service
+
+config MULTICELL_LOCATION_SKYHOOK_HOSTNAME
+	string "Server hostname for Skyhook"
+	default "global.skyhookwireless.com"
+	help
+	  Server hostname to use when connecting to Skyhook location service
+
+config MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG
+	int "Security tag for Skyhook TLS certificates"
+	default 176
+	help
+	  Security tag where the required TLS certificates for Skyhook
+	  service will be stored. This sec tag will also be used to provision
+	  certificates when multicell_location_provision_certificate() is called.
+
 endif # MULTICELL_LOCATION_SERVICE_SKYHOOK
+
+if MULTICELL_LOCATION_SERVICE_POLTE
+
+config MULTICELL_LOCATION_POLTE_CUSTOMER_ID
+	string "Polte customer ID"
+
+config MULTICELL_LOCATION_POLTE_API_TOKEN
+	string "Polte API token"
+
+config MULTICELL_LOCATION_POLTE_HTTPS_PORT
+	int "HTTPS port number for Polte"
+	default 443
+	help
+	  Port number to use when connecting to Polte location service
+
+config MULTICELL_LOCATION_POLTE_HOSTNAME
+	string "Server hostname for Polte"
+	default "polte.io"
+	help
+	  Server hostname to use when connecting to Polte location service
+
+config MULTICELL_LOCATION_POLTE_TLS_SEC_TAG
+	int "Security tag for Polte TLS certificates"
+	default 178
+	help
+	  Security tag where the required TLS certificates for Polte
+	  service will be stored. This sec tag will also be used to provision
+	  certificates when multicell_location_provision_certificate() is called.
+
+endif # MULTICELL_LOCATION_SERVICE_POLTE
 
 config MULTICELL_LOCATION_MAX_NEIGHBORS
 	int "Max number of neighbor cells"
@@ -132,81 +194,6 @@ config MULTICELL_LOCATION_MAX_NEIGHBORS
 	  Increasing the max number will increase the library's RAM usage
 	  proportionally.
 
-if MULTICELL_LOCATION_SERVICE_POLTE
-
-config MULTICELL_LOCATION_POLTE_CUSTOMER_ID
-	string "Polte customer ID"
-
-config MULTICELL_LOCATION_POLTE_API_TOKEN
-	string "Polte API token"
-
-endif # MULTICELL_LOCATION_SERVICE_POLTE
-
-config MULTICELL_LOCATION_HTTPS_PORT
-	int "HTTPS port number"
-	default 443
-	help
-	  Port number to use when connecting to the selected location service
-
-config MULTICELL_LOCATION_HOSTNAME
-	string "Server hostname"
-	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
-	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
-	default "global.skyhookwireless.com" if MULTICELL_LOCATION_SERVICE_SKYHOOK
-	default NRF_CLOUD_REST_HOST_NAME if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	default "polte.io" if MULTICELL_LOCATION_SERVICE_POLTE
-	help
-	  Server hostname to use when connecting to the selected locations service
-
-if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-config MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG
-	int "Security tag for JWT signing"
-	default NRF_CLOUD_SEC_TAG
-	help
-	  Modem security tag which contains the JWT signing key for nRF Cloud.
-	  This will usually be the same value as MULTICELL_LOCATION_TLS_SEC_TAG.
-endif # MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-
-config MULTICELL_LOCATION_TLS_SEC_TAG
-	int "Security tag for TLS certificates"
-	default 175 if MULTICELL_LOCATION_SERVICE_HERE
-	default 176 if MULTICELL_LOCATION_SERVICE_SKYHOOK
-	default NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	default 178 if MULTICELL_LOCATION_SERVICE_POLTE
-	default -1
-	range NRF_CLOUD_SEC_TAG NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	help
-	  Security tag where the required TLS certificates for the selected
-	  service will be stored. This sec tag will also be used to provision
-	  certificates when multicell_location_provision_certificate() is called.
-
-config MULTICELL_LOCATION_SEND_TIMEOUT
-	int "Send timeout, in seconds"
-	default NRF_CLOUD_REST_SEND_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	range NRF_CLOUD_REST_SEND_TIMEOUT NRF_CLOUD_REST_SEND_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	default 60
-	help
-	  Sets the timeout duration in seconds to use when sending data.
-	  To disable, set the timeout duration to -1.
-
-config MULTICELL_LOCATION_RECV_TIMEOUT
-	int "Receive timeout, in seconds"
-	default NRF_CLOUD_REST_RECV_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	range NRF_CLOUD_REST_RECV_TIMEOUT NRF_CLOUD_REST_RECV_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	default 60
-	help
-	  Sets the timeout duration in seconds to use when receiving data.
-	  To disable, set the timeout duration to -1.
-
-config MULTICELL_LOCATION_SEND_BUF_SIZE
-	int "Send buffer size"
-	default 2048 if (MULTICELL_LOCATION_SERVICE_SKYHOOK || MULTICELL_LOCATION_SERVICE_POLTE)
-	default 0 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	default 1024
-	help
-	  Size of the buffer used to store the generated HTTP request that's sent
-	  to the location service.
-
 config MULTICELL_LOCATION_RECV_BUF_SIZE
 	int "Receive buffer size"
 	default 1536 if MULTICELL_LOCATION_SERVICE_POLTE
@@ -214,7 +201,6 @@ config MULTICELL_LOCATION_RECV_BUF_SIZE
 	help
 	  Size of the buffer used to store the response from the location
 	  service.
-
 
 module = MULTICELL_LOCATION
 module-str = Multicell location

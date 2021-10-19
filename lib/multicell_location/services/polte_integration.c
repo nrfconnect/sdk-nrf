@@ -18,7 +18,7 @@
 LOG_MODULE_REGISTER(multicell_location_polte, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
 #define API_KEY		CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN
-#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HOSTNAME
+#define HOSTNAME	CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME
 
 /* The timing advance returned by the nRF9160 modem must be divided by 8
  * to have the range expected by Polte.
@@ -88,12 +88,7 @@ BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 
 static bool cjson_is_init;
 
-const char *location_service_get_hostname(void)
-{
-	return HOSTNAME;
-}
-
-const char *location_service_get_certificate(void)
+const char *location_service_get_certificate_polte(void)
 {
 	return tls_certificate;
 }
@@ -109,7 +104,6 @@ static int adjust_rsrp(int input)
 
 static int location_service_generate_request(
 	const struct lte_lc_cells_info *cell_data,
-	const char *const device_id,
 	char *buf,
 	size_t buf_len)
 {
@@ -117,8 +111,6 @@ static int location_service_generate_request(
 	cJSON *root_obj, *payload_obj, *earfcn_array, *pcid_array, *rsrp_array;
 	size_t neighbors_to_use =
 		MIN(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS, cell_data->ncells_count);
-
-	ARG_UNUSED(device_id);
 
 	if ((cell_data == NULL) || (buf == NULL) || (buf_len == 0)) {
 		return -EINVAL;
@@ -288,10 +280,11 @@ clean_exit:
 	return err;
 }
 
-int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       const char * const device_id,
-				       char * const rcv_buf, const size_t rcv_buf_len,
-				       struct multicell_location *const location)
+int location_service_get_cell_location_polte(
+	const struct lte_lc_cells_info *cell_data,
+	char * const rcv_buf,
+	const size_t rcv_buf_len,
+	struct multicell_location *const location)
 {
 	int err;
 	struct rest_client_req_context req_ctx = { 0 };
@@ -305,7 +298,7 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	};
 	static char body[HTTP_BODY_SIZE];
 
-	err = location_service_generate_request(cell_data, device_id, body, sizeof(body));
+	err = location_service_generate_request(cell_data, body, sizeof(body));
 	if (err) {
 		LOG_ERR("Failed to generate HTTP request, error: %d", err);
 		return err;
@@ -317,9 +310,9 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	rest_client_request_defaults_set(&req_ctx);
 	req_ctx.http_method = HTTP_POST;
 	req_ctx.url = REQUEST_URL;
-	req_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG;
-	req_ctx.port = CONFIG_MULTICELL_LOCATION_HTTPS_PORT;
-	req_ctx.host = CONFIG_MULTICELL_LOCATION_HOSTNAME;
+	req_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG;
+	req_ctx.port = CONFIG_MULTICELL_LOCATION_POLTE_HTTPS_PORT;
+	req_ctx.host = CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME;
 	req_ctx.header_fields = (const char **)headers;
 	req_ctx.resp_buff = rcv_buf;
 	req_ctx.resp_buff_len = rcv_buf_len;
