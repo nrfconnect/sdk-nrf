@@ -372,7 +372,7 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 		break;
 	}
 
-	return !err ? ZB_TRUE : ZB_FALSE;
+	return ZB_TRUE;
 }
 
 /* Notifies the driver that the buffer containing the received frame
