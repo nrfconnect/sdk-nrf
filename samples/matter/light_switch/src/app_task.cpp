@@ -97,9 +97,7 @@ CHIP_ERROR AppTask::StartApp()
 
 	while (true) {
 		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
-
 		DispatchEvent(event);
-		k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
 	}
 
 	return CHIP_NO_ERROR;

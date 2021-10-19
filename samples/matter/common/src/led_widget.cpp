@@ -24,7 +24,6 @@ void LEDWidget::SetStateUpdateCallback(LEDWidgetStateUpdateHandler stateUpdateCb
 
 void LEDWidget::Init(uint32_t gpioNum)
 {
-	mLastChangeTimeMS = 0;
 	mBlinkOnTimeMS = 0;
 	mBlinkOffTimeMS = 0;
 	mGPIONum = gpioNum;
@@ -44,18 +43,19 @@ void LEDWidget::Invert()
 void LEDWidget::Set(bool state)
 {
 	k_timer_stop(&mLedTimer);
-	mLastChangeTimeMS = mBlinkOnTimeMS = mBlinkOffTimeMS = 0;
+	mBlinkOnTimeMS = mBlinkOffTimeMS = 0;
 	DoSet(state);
 }
 
 void LEDWidget::Blink(uint32_t changeRateMS)
 {
-	k_timer_stop(&mLedTimer);
 	Blink(changeRateMS, changeRateMS);
 }
 
 void LEDWidget::Blink(uint32_t onTimeMS, uint32_t offTimeMS)
 {
+	k_timer_stop(&mLedTimer);
+
 	mBlinkOnTimeMS = onTimeMS;
 	mBlinkOffTimeMS = offTimeMS;
 
@@ -78,8 +78,11 @@ void LEDWidget::DoSet(bool state)
 
 void LEDWidget::UpdateState()
 {
-	DoSet(!mState);
-	ScheduleStateChange();
+	/* Prevent from keep updating the state if LED was set to solid On/Off value */
+	if (mBlinkOnTimeMS != 0 && mBlinkOffTimeMS != 0) {
+		DoSet(!mState);
+		ScheduleStateChange();
+	}
 }
 
 void LEDWidget::LedStateTimerHandler(k_timer *timer)
