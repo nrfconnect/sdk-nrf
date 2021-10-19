@@ -8,17 +8,17 @@ Multicell location
    :depth: 2
 
 The Multicell location library provides a way to acquire the location of the device based on LTE cell measurements.
-The library uses HTTP requests to get the location from a configurable location service.
+The library uses REST requests to get the location from the selected location service.
 
 
 Overview
 ********
 
-The library uses LTE cell information such as :ref:`lte_lc_readme` library to generate HTTP requests.
-The HTTP request is then sent using TLS to the configured location service.
+The library uses LTE cell information such as :ref:`lte_lc_readme` library to generate REST requests through either :ref:`lib_nrf_cloud_rest` or :ref:`lib_rest_client` depending on the selected service.
+The REST request is then sent to the selected location service through TLS.
 
-When the location service has resolved the location based on the cell measurements provided in the request, it sends back an HTTP response to the device.
-After receiving the HTTP response, the Multicell location library parses the response and returns the location to the caller.
+When the location service has resolved the location based on the cell measurements provided in the request, it sends back an REST response to the device.
+After receiving the REST response, the Multicell location library parses the response and returns the location to the caller.
 
 The library supports the following location services:
 
@@ -56,30 +56,40 @@ Configuration
 
 To use the multicell location library, enable the :kconfig:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
-Select nRF Cloud, HERE, Skyhook or Polte location services using one of the following options:
+Select nRF Cloud, HERE, Skyhook and Polte location services using at least one of the following sets of options and configure corresponding authentication parameters:
 
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY` (see below other authentication options)
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
-The next required step is to configure the authentication method.
-By default, API key is used for HERE, Skyhook and Polte (needs also customer ID).
+API key is used for HERE, Skyhook and Polte (needs also customer ID) as default authentication method.
 A JSON Web Token (JWT) signed by the device's private key is used for nRF Cloud.
-Depending on the selected service, configure some of these options:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
+The following options offer different version and authentication method for HERE location service:
+
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_V1`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_V2`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_USE_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_USE_APP_CODE_ID`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_APP_CODE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_APP_ID`
 
 Following are the options that can usually have default values:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HOSTNAME`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SEND_BUF_SIZE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_HTTPS_PORT`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HTTPS_PORT`
+
+Other relevant options for configuring location retrieval can be found from :ref:`lib_nrf_cloud_rest` and :ref:`lib_rest_client`.
 
 Limitations
 ***********
@@ -93,6 +103,8 @@ This library uses the following |NCS| libraries:
 
 * :ref:`lte_lc_readme`
 * :ref:`nrf_modem_lib_readme`
+* :ref:`lib_rest_client`
+* :ref:`lib_nrf_cloud_rest`
 
 API documentation
 *****************

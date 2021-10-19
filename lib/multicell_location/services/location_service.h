@@ -18,24 +18,30 @@ extern "C" {
 /**
  * @brief Get pointer to certificate to location service.
  *
+ * @param[in] service Cellular positioning service to be used.
+ *
  * @return A pointer to null-terminated root CA certificate in case of success,
  *         or NULL in case of failure.
  */
-const char *location_service_get_certificate(void);
+const char *location_service_get_certificate(enum multicell_service service);
 
 /**
  * @brief Generate location request, send, and parse response.
  *
- * @param cell_data Pointer to neighbor cell data.
- * @param rcv_buf Buffer for storing the HTTP response.
- * @param rcv_buf_len Length of the provided buffer.
- * @param location Storage for the result from response parsing.
+ * @param[in] service Cellular positioning service to be used.
+ * @param[in] cell_data Pointer to neighbor cell data.
+ * @param[out] location Storage for the result from response parsing.
  *
- * @return 0 on success, or -1 on failure.
+ * @return 0 on success, or negative error code on failure.
+ * @retval -ENOENT No cellular cells found from cell_data. I.e., even current cell
+ *                 is not available and there is no cellular connectivity.
+ * @retval -ENOMEM Out of memory.
+ * @retval -ENOMSG Parsing response from the location service failed.
  */
-int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       char *const rcv_buf, const size_t rcv_buf_len,
-				       struct multicell_location *const location);
+int location_service_get_cell_location(
+	enum multicell_service service,
+	const struct lte_lc_cells_info *cell_data,
+	struct multicell_location *const location);
 
 #ifdef __cplusplus
 }

@@ -9,6 +9,7 @@
 #include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <net/multicell_location.h>
 
 #include "location_service.h"
 
@@ -16,7 +17,7 @@
 
 LOG_MODULE_REGISTER(multicell_location_here, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HOSTNAME
+#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME
 
 /* Estimated size requirements for HTTP header */
 #define HTTP_HEADER_SIZE	200
@@ -82,7 +83,7 @@ BUILD_ASSERT(sizeof(API_APP_ID) > 1, "App ID must be configured");
 		"\"pci\": %d"						\
 	"}"
 
-BUILD_ASSERT(sizeof(CONFIG_MULTICELL_LOCATION_HOSTNAME) > 1, "Hostname must be configured");
+BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 
 static char body[HTTP_BODY_SIZE];
 static char neighbors[NEIGHBOR_BUFFER_SIZE];
@@ -120,7 +121,7 @@ static const char tls_certificate[] =
 	"WD9f\n"
 	"-----END CERTIFICATE-----\n";
 
-const char *location_service_get_certificate(void)
+const char *location_service_get_certificate_here(void)
 {
 	return tls_certificate;
 }
@@ -265,9 +266,11 @@ clean_exit:
 	return err;
 }
 
-int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       char * const rcv_buf, const size_t rcv_buf_len,
-				       struct multicell_location *const location)
+int location_service_get_cell_location_here(
+	const struct lte_lc_cells_info *cell_data,
+	char * const rcv_buf,
+	const size_t rcv_buf_len,
+	struct multicell_location *const location)
 {
 	int err;
 	struct rest_client_req_context req_ctx = { 0 };
@@ -291,9 +294,9 @@ int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data
 	rest_client_request_defaults_set(&req_ctx);
 	req_ctx.http_method = HTTP_POST;
 	req_ctx.url = REQUEST_URL;
-	req_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG;
-	req_ctx.port = CONFIG_MULTICELL_LOCATION_HTTPS_PORT;
-	req_ctx.host = CONFIG_MULTICELL_LOCATION_HOSTNAME;
+	req_ctx.sec_tag = CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG;
+	req_ctx.port = CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT;
+	req_ctx.host = CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME;
 	req_ctx.header_fields = (const char **)headers;
 	req_ctx.resp_buff = rcv_buf;
 	req_ctx.resp_buff_len = rcv_buf_len;

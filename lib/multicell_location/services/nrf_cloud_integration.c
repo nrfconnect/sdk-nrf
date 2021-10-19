@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <modem/modem_jwt.h>
 #include <net/nrf_cloud_rest.h>
+#include <net/multicell_location.h>
 #include "location_service.h"
 
 #include <logging/log.h>
@@ -54,14 +55,16 @@ static const char tls_certificate[] =
 	"VsyuLAOQ1xk4meTKCRlb/weWsKh/NEnfVqn3sF/tM+2MR7cwA130A4w=\n"
 	"-----END CERTIFICATE-----\n";
 
-const char *location_service_get_certificate(void)
+const char *location_service_get_certificate_nrf_cloud(void)
 {
 	return tls_certificate;
 }
 
-int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
-				       char * const rcv_buf, const size_t rcv_buf_len,
-				       struct multicell_location *const location)
+int location_service_get_cell_location_nrf_cloud(
+	const struct lte_lc_cells_info *cell_data,
+	char * const rcv_buf,
+	const size_t rcv_buf_len,
+	struct multicell_location *const location)
 {
 	int err;
 	struct nrf_cloud_cell_pos_result result;
