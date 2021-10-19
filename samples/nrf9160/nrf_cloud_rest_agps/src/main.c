@@ -16,6 +16,14 @@
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud_agps.h>
 #include <nrf_modem_gnss.h>
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <pm_config.h>
+#endif
+#if defined(CONFIG_DATE_TIME)
+#include <date_time.h>
+#endif
+#include <debug/stack.h>
+#include <kernel.h>
 
 LOG_MODULE_REGISTER(rest_agps_sample, CONFIG_NRF_CLOUD_REST_AGPS_SAMPLE_LOG_LEVEL);
 
@@ -26,7 +34,7 @@ LOG_MODULE_REGISTER(rest_agps_sample, CONFIG_NRF_CLOUD_REST_AGPS_SAMPLE_LOG_LEVE
 #define LED_NUM CONFIG_REST_LED_NUM
 #define JITP_REQ_WAIT_SEC 10
 #define FAILURE_LIMIT 10
-#define AGPS_WORKQ_THREAD_STACK_SIZE 2048
+#define AGPS_WORKQ_THREAD_STACK_SIZE 3072
 #define AGPS_WORKQ_THREAD_PRIORITY   5
 
 static K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
@@ -37,6 +45,19 @@ static K_SEM_DEFINE(button_press_sem, 0, 1);
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(pvt_data_sem, 0, 1);
 
+#if defined(CONFIG_DATE_TIME)
+static K_SEM_DEFINE(time_obtained_sem, 0, 1);
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static K_SEM_DEFINE(do_pgps_request_sem, 0, 1);
+static struct k_work request_pgps_work;
+static struct k_work manage_pgps_work;
+static struct k_work notify_pgps_work;
+static struct nrf_cloud_pgps_prediction *prediction;
+static struct gps_pgps_request pgps_req;
+static struct nrf_cloud_rest_pgps_request pgps_request;
+#endif
+
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 static struct lte_lc_cell current_cell;
 static char rx_buf[REST_RX_BUF_SZ];
@@ -45,21 +66,22 @@ static char jwt[JWT_BUF_SZ];
 static bool jitp_requested;
 static bool disconnected = true;
 
+static struct nrf_modem_gnss_agps_data_frame agps_request;
+static struct nrf_cloud_rest_agps_result agps_result = {
+	.buf_sz = 0,
+	.buf = NULL
+};
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct lte_lc_cells_info net_info = {
 	.ncells_count = 0,
 	.neighbor_cells = NULL
 };
-
-static struct nrf_modem_gnss_agps_data_frame agps_request;
 static struct nrf_cloud_rest_agps_request agps_req = {
 	.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
 	.agps_req = &agps_request,
 	.net_info = &net_info
 };
-static struct nrf_cloud_rest_agps_result agps_result = {
-	.buf_sz = 0,
-	.buf = NULL
-};
+#endif
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
 static volatile bool gnss_blocked;
 static volatile int failure_count;
@@ -80,7 +102,9 @@ struct k_poll_event events[] = {
 
 void agps_print_enable(bool enable);
 static int wait_connected(void);
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 static int get_mobile_network_info(int *mcc_num, int *mnc_num);
+#endif
 
 static void cls_home(void)
 {
@@ -89,8 +113,63 @@ static void cls_home(void)
 #endif
 }
 
+static void stack_dump(const struct k_thread *thread, void *user_data)
+{
+	ARG_UNUSED(user_data);
+#if defined(CONFIG_THREAD_STACK_INFO) && defined(CONFIG_THREAD_MONITOR)
+	unsigned int pcnt;
+	size_t unused;
+	size_t size = thread->stack_info.size;
+	const char *tname;
+	int ret;
+
+	ret = k_thread_stack_space_get(thread, &unused);
+	if (ret) {
+		LOG_ERR("Unable to determine unused stack size (%d)", ret);
+		return;
+	}
+
+	tname = k_thread_name_get((struct k_thread *)thread);
+
+	/* Calculate the real size reserved for the stack */
+	pcnt = ((size - unused) * 100U) / size;
+
+	LOG_INF("%p %-10s (real size %u):\tunused %u\tusage %u / %u (%u %%)",
+		      thread,
+		      tname ? tname : "NA",
+		      size, unused, size - unused, size, pcnt);
+#else
+	ARG_UNUSED(thread);
+#endif
+}
+
+static void dump_stack_usage(void)
+{
+	k_thread_foreach(stack_dump, NULL);
+}
+
 static void get_agps_data(struct k_work *item)
 {
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* almanac is optional so skip that */
+	agps_request.sv_mask_alm = 0;
+
+	/* AGPS data not expected, so move on to PGPS */
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	if (!agps_request.data_flags) {
+		k_work_submit_to_queue(&agps_work_q, &notify_pgps_work);
+		return;
+	}
+	/* save ephemeris request map for later P-GPS processing */
+	uint32_t sv_mask_ephe = agps_request.sv_mask_ephe;
+
+	/* P-GPS will handle ephemerides; no need to request it */
+	agps_request.sv_mask_ephe = 0;
+#else
+	k_work_submit_to_queue(&agps_work_q, &notify_pgps_work);
+#endif
+#endif
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 	ARG_UNUSED(item);
 	int err;
 	struct nrf_cloud_rest_context rest_ctx = {
@@ -111,8 +190,8 @@ static void get_agps_data(struct k_work *item)
 	}
 
 	cls_home();
-	LOG_INF("New A-GPS data requested, contacting nRF Cloud, flags 0x%04X\n",
-		agps_request.data_flags);
+	LOG_INF("New A-GPS data requested, contacting nRF Cloud at %s, flags 0x%04X\n",
+		CONFIG_NRF_CLOUD_REST_HOST_NAME, agps_request.data_flags);
 
 	err = nrf_cloud_jwt_generate(JWT_DURATION_S, jwt, sizeof(jwt));
 	if (err) {
@@ -152,7 +231,104 @@ cleanup:
 		agps_result.buf = NULL;
 	}
 	(void)nrf_cloud_rest_disconnect(&rest_ctx);
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* restore value so that P-GPS can use it next */
+	agps_request.sv_mask_ephe = sv_mask_ephe;
+	k_work_submit_to_queue(&agps_work_q, &notify_pgps_work);
+#endif
+#endif
+	dump_stack_usage();
 }
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void request_pgps(struct k_work *work)
+{
+	int err;
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = true,
+		.timeout_ms = 30000,
+		.rx_buf = rx_buf,
+		.rx_buf_len = sizeof(rx_buf),
+		.fragment_size = 0
+	};
+
+	err = nrf_cloud_jwt_generate(JWT_DURATION_S, jwt, sizeof(jwt));
+	if (err) {
+		LOG_ERR("Failed to generate JWT, err %d", err);
+		failure_count++;
+		return;
+	}
+	LOG_DBG("JWT:\n%s", log_strdup(jwt));
+	rest_ctx.auth = jwt;
+
+	LOG_INF("Requesting P-GPS data");
+	pgps_request.pgps_req = &pgps_req;
+	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &pgps_request);
+	if (err) {
+		LOG_ERR("P-GPS request failed, error: %d", err);
+		nrf_cloud_pgps_request_reset();
+	} else {
+		LOG_INF("Processing P-GPS data");
+		err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+		if (err) {
+			LOG_ERR("P-GPS process failed, error: %d", err);
+		}
+	}
+	(void)nrf_cloud_rest_disconnect(&rest_ctx);
+	dump_stack_usage();
+}
+
+static void manage_pgps(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	int err;
+
+	LOG_INF("Sending prediction to modem...");
+	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+	if (err) {
+		LOG_ERR("Unable to send prediction to modem: %d", err);
+	}
+
+	err = nrf_cloud_pgps_preemptive_updates();
+	if (err) {
+		LOG_ERR("Error requesting updates: %d", err);
+	}
+	dump_stack_usage();
+}
+
+static void notify_pgps(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	int err;
+
+	LOG_INF("Notifying P-GPS library that predictions are needed");
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("error requesting notification of prediction availability: %d", err);
+	}
+	dump_stack_usage();
+}
+
+void pgps_handler(struct nrf_cloud_pgps_event *event)
+{
+	/* GPS unit asked for it, but we didn't have it; check now */
+	LOG_INF("P-GPS event type: %d", event->type);
+
+	if (event->type == PGPS_EVT_REQUEST) {
+		LOG_INF("PGPS_EVT_REQUEST");
+		memcpy(&pgps_req, event->request, sizeof(pgps_req));
+		k_work_submit_to_queue(&agps_work_q, &request_pgps_work);
+		return;
+	} else if (event->type != PGPS_EVT_AVAILABLE) {
+		return;
+	}
+
+	prediction = event->prediction;
+	k_work_submit_to_queue(&agps_work_q, &manage_pgps_work);
+}
+#endif
 
 static void print_pvt_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
@@ -280,8 +456,67 @@ static void gnss_event_handler(int event)
 
 static bool agps_data_download_ongoing(void)
 {
-	return k_work_is_pending(&get_agps_data_work);
+	bool ret = false;
+
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	ret |= k_work_is_pending(&get_agps_data_work);
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	ret |= k_work_is_pending(&request_pgps_work);
+#endif
+	return ret;
 }
+
+#if defined(CONFIG_DATE_TIME)
+static void print_time(void)
+{
+	int err;
+	int64_t unix_time_ms;
+	char dst[120];
+
+	err = date_time_now(&unix_time_ms);
+	if (!err) {
+		time_t unix_time;
+		struct tm *time;
+
+		unix_time = unix_time_ms / MSEC_PER_SEC;
+		LOG_INF("Unix time: %lld", unix_time);
+		time = gmtime(&unix_time);
+		if (time) {
+			/* 2020-02-19T18:38:50.363Z */
+			strftime(dst, sizeof(dst), "%Y-%m-%dT%H:%M:%S.000Z", time);
+			LOG_INF("Date/time %s", log_strdup(dst));
+		} else {
+			LOG_WRN("Time not valid");
+		}
+	} else {
+		LOG_ERR("Date/time not available: %d", err);
+	}
+}
+
+static void date_time_event_handler(const struct date_time_evt *evt)
+{
+	switch (evt->type) {
+	case DATE_TIME_OBTAINED_MODEM:
+		LOG_INF("DATE_TIME_OBTAINED_MODEM");
+		k_sem_give(&time_obtained_sem);
+		break;
+	case DATE_TIME_OBTAINED_NTP:
+		LOG_INF("DATE_TIME_OBTAINED_NTP");
+		k_sem_give(&time_obtained_sem);
+		break;
+	case DATE_TIME_OBTAINED_EXT:
+		LOG_INF("DATE_TIME_OBTAINED_EXT");
+		k_sem_give(&time_obtained_sem);
+		break;
+	case DATE_TIME_NOT_OBTAINED:
+		LOG_INF("DATE_TIME_NOT_OBTAINED");
+		break;
+	default:
+		break;
+	}
+}
+#endif
 
 static int set_led(const int state)
 {
@@ -381,6 +616,7 @@ static int do_jitp(void)
 	return ret;
 }
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 static int get_mobile_network_info(int *mcc_num, int *mnc_num)
 {
 	__ASSERT_NO_MSG((mcc_num != NULL) && (mnc_num != NULL));
@@ -413,6 +649,7 @@ static int get_mobile_network_info(int *mcc_num, int *mnc_num)
 	LOG_DBG("operator:%s, mcc_num:%d, mnc_num:%d", log_strdup(buf), *mcc_num, *mnc_num);
 	return 0;
 }
+#endif
 
 static int configure_lna(void)
 {
@@ -452,15 +689,46 @@ static int init_gnss(void)
 		return -ENOMEM;
 	}
 	agps_result.buf_sz = (uint32_t)buf_size;
+	struct k_work_queue_config cfg = {.name = "agps_work_q", .no_yield = false};
 
 	k_work_queue_start(
 		&agps_work_q,
 		agps_workq_stack_area,
 		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
 		AGPS_WORKQ_THREAD_PRIORITY,
-		NULL);
+		&cfg);
 
 	k_work_init(&get_agps_data_work, get_agps_data);
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	k_work_init(&request_pgps_work, request_pgps);
+	k_work_init(&manage_pgps_work, manage_pgps);
+	k_work_init(&notify_pgps_work, notify_pgps);
+#endif
+
+#if defined(CONFIG_DATE_TIME)
+	date_time_update_async(date_time_event_handler);
+	LOG_INF("Waiting to get valid time..");
+	err = k_sem_take(&time_obtained_sem, K_MINUTES(5));
+	if (err) {
+		LOG_ERR("Failed to get time");
+		return err;
+	}
+	print_time();
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	struct nrf_cloud_pgps_init_param param = {
+		.event_handler = pgps_handler,
+		.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
+		.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+	};
+
+	err = nrf_cloud_pgps_init(&param);
+	if (err) {
+		LOG_ERR("nrf_cloud_pgps_init: %d", err);
+		return err;
+	}
+#endif
 
 	/* Initialize and configure GNSS */
 	err = nrf_modem_gnss_init();
