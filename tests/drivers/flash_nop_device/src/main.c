@@ -8,8 +8,9 @@
 #include <drivers/flash.h>
 #include <device.h>
 
-/* configuration derived from DT */
-#define SOC_NV_FLASH_NODE DT_CHILD(DT_INST(0, zephyr_sim_flash), flash_sim_0)
+/* configuration derived from native_posix DT */
+#define SOC_NV_FLASH_NODE DT_CHILD(DT_INST(0, zephyr_sim_flash), flash_0)
+
 #define FLASH_NOP_DEVICE_BASE_OFFSET DT_REG_ADDR(SOC_NV_FLASH_NODE)
 #define FLASH_NOP_DEVICE_ERASE_UNIT DT_PROP(SOC_NV_FLASH_NODE, erase_block_size)
 #define FLASH_NOP_DEVICE_PROG_UNIT DT_PROP(SOC_NV_FLASH_NODE, write_block_size)
