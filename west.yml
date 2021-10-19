@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 15be5e615498377e9326cb2eb5819c7c62005299
+      revision: 379117545b61f57d9263fc3f0048929c779524df
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -88,6 +88,7 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
+          - openthread
           - segger
           - tinycbor
           - tinycrypt
@@ -98,16 +99,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 7606d9cad32c95a0d6fb7e872b070c71e85f931d
+      revision: 03421652deaf4a41814caaffd209a8c3c3e9e347
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 4a060cdb789b8e8eec025f7164d77322ad0cc2a5
+      revision: dbcb163b7513fa7367f34d4ae1f170d103597063
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: d2e93153863e7add9fae3849faf7de430258c0de
+      revision: f9884923ea99cd96d47432b4fa04eb760cc2fa1a
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -133,10 +134,6 @@ manifest:
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: de387884c80094df8e310353c3a487c13c0c056b
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -175,7 +172,7 @@ manifest:
       - find-my
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.26.1
+      revision: 0.27.1
       remote: memfault
 
   # West-related configuration for the nrf repository.
