@@ -24,7 +24,6 @@ public:
 	void UpdateState();
 
 private:
-	int64_t mLastChangeTimeMS;
 	uint32_t mBlinkOnTimeMS;
 	uint32_t mBlinkOffTimeMS;
 	uint32_t mGPIONum;
