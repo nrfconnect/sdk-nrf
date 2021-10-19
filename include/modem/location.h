@@ -54,14 +54,21 @@ enum loc_accuracy {
 	LOC_ACCURACY_HIGH
 };
 
-/** WiFi positioning service. */
-enum loc_wifi_service {
+/** Positioning service. */
+enum loc_service {
+	/**
+	 * @brief Use any location service that has been configured to be available.
+	 *
+	 * @details This is especially useful when only one service is configured but can be used
+	 * even if many are available.
+	 */
+	LOC_SERVICE_ANY,
 	/** nRF Cloud location service. */
-	LOC_WIFI_SERVICE_NRF_CLOUD,
+	LOC_SERVICE_NRF_CLOUD,
 	/**Here location service. */
-	LOC_WIFI_SERVICE_HERE,
+	LOC_SERVICE_HERE,
 	/**Skyhook location service. */
-	LOC_WIFI_SERVICE_SKYHOOK
+	LOC_SERVICE_SKYHOOK
 };
 
 /** Date and time (UTC). */
@@ -118,12 +125,6 @@ struct loc_event_data {
 	};
 };
 
-/** LTE cellular positioning configuration. */
-struct loc_cellular_config {
-	/** Timeout (in seconds) on how long cellular positioning procedure can take. */
-	uint16_t timeout;
-};
-
 /** GNSS configuration. */
 struct loc_gnss_config {
 	/**
@@ -152,14 +153,22 @@ struct loc_gnss_config {
 	uint8_t num_consecutive_fixes;
 };
 
+/** LTE cellular positioning configuration. */
+struct loc_cellular_config {
+	/** Timeout (in seconds) on how long cellular positioning procedure can take. */
+	uint16_t timeout;
+
+	/** Used cellular positioning service. */
+	enum loc_service service;
+};
+
 /** WiFi positioning configuration. */
 struct loc_wifi_config {
 	/** Timeout (in seconds) on how long WiFi positioning procedure can take. */
 	uint16_t timeout;
 
 	/** Used WiFi positioning service. */
-	enum loc_wifi_service service;
-
+	enum loc_service service;
 };
 
 /** Positioning method configuration. */

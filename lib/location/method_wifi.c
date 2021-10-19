@@ -212,7 +212,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 			if (latest_scan_result_count == 1) {
 				/* Following statement seems to be true at least with Here
 				 * (400: bad request) and also with Skyhook (404: not found).
-				 * Thus, fail faster in this case and safe the data transfer costs.
+				 * Thus, fail faster in this case and save the data transfer costs.
 				 */
 				LOG_WRN("Retrieving a location based on a single WiFi access point "
 					"is not possible");

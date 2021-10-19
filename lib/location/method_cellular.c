@@ -16,6 +16,13 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
+BUILD_ASSERT(
+	(int)LOC_SERVICE_ANY == (int)MULTICELL_SERVICE_ANY &&
+	(int)LOC_SERVICE_NRF_CLOUD == (int)MULTICELL_SERVICE_NRF_CLOUD &&
+	(int)LOC_SERVICE_HERE == (int)MULTICELL_SERVICE_HERE &&
+	(int)LOC_SERVICE_SKYHOOK == (int)MULTICELL_SERVICE_SKYHOOK,
+	"Incompatible enums loc_service and multicell_service");
+
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
 
@@ -109,9 +116,10 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			return;
 		}
 
-		ret = multicell_location_get(
-			&cell_data,
-			&location);
+		/* enum multicell_service can be used directly
+		 * because BUILD_ASSERT verifies enums are equal
+		 */
+		ret = multicell_location_get(cellular_config.service, &cell_data, &location);
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d",
 				ret);
