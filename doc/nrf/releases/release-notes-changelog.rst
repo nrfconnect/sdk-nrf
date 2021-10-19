@@ -373,6 +373,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
   * :ref:`library_template` - added a template for documenting libraries.
+  * :ref:`ug_nrf5340` - Added a note about varying folder names of the network core child image when programming with nrfjprog.
 
 * Libraries:
 
