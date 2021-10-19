@@ -33,22 +33,23 @@ config NRF_CLOUD_PGPS_PREDICTION_PERIOD
 
 config NRF_CLOUD_PGPS_NUM_PREDICTIONS
 	int "Desired number of predictions."
-	range 1 84
+	range 2 84
 	default 42
 	help
 	  This value, together with the prediction period, determines the
 	  overall timespan that the GPS predictions will cover. The
-	  default values allows for one week of predictions.
+	  default values allows for one week of predictions. Odd numbers
+	  are not allowed.
 
 config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
 	int "Number of predictions remaining before fetching more."
-	range 0 84
+	range 0 82
 	default 0
 	help
 	  When set to 0, no attempt will be made to update the prediction
 	  set from the cloud until all predictions have expired. When set
 	  to an even number less than or equal to
-	  NRF_CLOUD_PGPS_NUM_PREDICTIONS, any expired predictions will be
+	  NRF_CLOUD_PGPS_NUM_PREDICTIONS - 2, any expired predictions will be
 	  replaced with predictions following the last remaining valid
 	  prediction. Odd numbers are not allowed.
 
@@ -81,5 +82,11 @@ config NRF_CLOUD_PGPS_TRANSPORT_MQTT
 	  data and receive responses.
 
 endchoice # NRF_CLOUD_PGPS_TRANSPORT
+
+config NRF_CLOUD_PGPS_SOCKET_RETRIES
+	int "Number of times to retry a P-GPS download"
+	default 2
+	help
+	  This sets the maximum number of times to retry a download.
 
 endif # NRF_CLOUD_PGPS
