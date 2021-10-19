@@ -123,6 +123,10 @@ nRF9160 samples
   * Added support for polling sensors and notifying the server if the measured changes are large enough.
   * Added support for full modem firmware update.
 
+* :ref:`multicell_location` sample:
+
+  * Modified to use runtime location service selection instead of compile-time configurations.
+
 Matter samples
 --------------
 

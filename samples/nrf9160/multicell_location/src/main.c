@@ -257,10 +257,28 @@ static void print_cell_data(void)
 	}
 }
 
-void main(void)
+static void request_location(enum multicell_service service, const char *service_str)
 {
 	int err;
 	struct multicell_location location;
+
+	LOG_INF("Sending location request for %s ...", service_str);
+
+	err = multicell_location_get(service, &cell_data, &location);
+	if (err) {
+		LOG_ERR("Failed to acquire location, error: %d", err);
+		return;
+	}
+
+	LOG_INF("Location obtained from %s: ", service_str);
+	LOG_INF("\tLatitude: %f", location.latitude);
+	LOG_INF("\tLongitude: %f", location.longitude);
+	LOG_INF("\tAccuracy: %.0f", location.accuracy);
+}
+
+void main(void)
+{
+	int err;
 
 	LOG_INF("Multicell location sample has started");
 
@@ -306,17 +324,19 @@ void main(void)
 			print_cell_data();
 		}
 
-		LOG_INF("Sending location request...");
-
-		err = multicell_location_get(&cell_data, &location);
-		if (err) {
-			LOG_ERR("Failed to acquire location, error: %d", err);
-			continue;
-		}
-
-		LOG_INF("Location obtained: ");
-		LOG_INF("\tLatitude: %f", location.latitude);
-		LOG_INF("\tLongitude: %f", location.longitude);
-		LOG_INF("\tAccuracy: %.0f", location.accuracy);
+		/* Request location for all different services to demonstrate the possibilities */
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD)
+		request_location(MULTICELL_SERVICE_NRF_CLOUD, "nRF Cloud");
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
+		request_location(MULTICELL_SERVICE_HERE, "HERE");
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK)
+		request_location(MULTICELL_SERVICE_SKYHOOK, "Skyhook");
+#endif
+#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
+		request_location(MULTICELL_SERVICE_POLTE, "Polte");
+#endif
+		request_location(MULTICELL_SERVICE_ANY, "Any");
 	}
 }
