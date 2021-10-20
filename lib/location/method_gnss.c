@@ -64,7 +64,6 @@ static struct k_work method_gnss_timeout_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
-static struct nrf_modem_gnss_agps_data_frame gnss_api_agps_request;
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
 static char agps_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
 #endif
@@ -75,6 +74,7 @@ static struct k_work method_gnss_pgps_request_work;
 static struct k_work method_gnss_manage_pgps_work;
 static struct k_work method_gnss_notify_pgps_work;
 static struct nrf_cloud_pgps_prediction *prediction;
+static struct gps_pgps_request pgps_request;
 #endif
 
 static int fix_attempts_remaining;
@@ -83,18 +83,12 @@ static bool running;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
+static struct nrf_modem_gnss_agps_data_frame agps_request;
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-static char jwt_buf[1024];
+static char jwt_buf[600];
 #endif
-#endif
-
-/* remove the following block once MQTT + P-GPS combo is working */
-#if (defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_NRF_CLOUD_MQTT))
-static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
-			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
-static char jwt_buf[1024];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -104,11 +98,9 @@ static void method_gnss_manage_pgps(struct k_work *work)
 	int err;
 
 	LOG_INF("Sending prediction to modem...");
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	err = nrf_cloud_pgps_inject(prediction, &gnss_api_agps_request);
-#else
-	err = nrf_cloud_pgps_inject(prediction, NULL);
-#endif
+
+	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
@@ -129,6 +121,7 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 		k_work_submit_to_queue(loc_core_work_queue_get(),
 				       &method_gnss_manage_pgps_work);
 	} else if (event->type == PGPS_EVT_REQUEST) {
+		memcpy(&pgps_request, event->request, sizeof(pgps_request));
 		k_work_submit_to_queue(loc_core_work_queue_get(),
 				       &method_gnss_pgps_request_work);
 	}
@@ -137,9 +130,8 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 static void method_gnss_notify_pgps(struct k_work *work)
 {
 	ARG_UNUSED(work);
-	int err;
+	int err = nrf_cloud_pgps_notify_prediction();
 
-	err = nrf_cloud_pgps_notify_prediction();
 	if (err) {
 		LOG_ERR("Error requesting notification of prediction availability: %d", err);
 	}
@@ -179,7 +171,7 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void method_gnss_agps_request_work_fn(struct k_work *item)
 {
-	int err = nrf_cloud_agps_request(&gnss_api_agps_request);
+	int err = nrf_cloud_agps_request(&agps_request);
 
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
@@ -260,7 +252,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 
 	struct nrf_cloud_rest_agps_request request = {
 						      NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-						      &gnss_api_agps_request,
+						      &agps_request,
 						      NULL};
 	struct lte_lc_cells_info net_info = {0};
 
@@ -281,7 +273,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 #endif // defined(CONFIG_NRF_CLOUD_MQTT)
 #endif // defined(CONFIG_NRF_CLOUD_AGPS)
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static void method_gnss_pgps_request_work_fn(struct k_work *item)
 {
 	struct nrf_cloud_rest_context rest_ctx = {
@@ -301,14 +293,9 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 		return;
 	}
 
-	struct gps_pgps_request pgps_req = {
-		.prediction_count = NUM_PREDICTIONS,
-		.prediction_period_min = PREDICTION_PERIOD,
-		.gps_day = 0,
-		.gps_time_of_day = 0
+	struct nrf_cloud_rest_pgps_request request = {
+		.pgps_req = &pgps_request
 	};
-
-	struct nrf_cloud_rest_pgps_request request = {&pgps_req};
 
 	nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
 	nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
@@ -357,11 +344,11 @@ bool method_gnss_agps_required(struct nrf_modem_gnss_agps_data_frame *request)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static void method_gnss_request_assistance(void)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	int err = nrf_modem_gnss_read(&gnss_api_agps_request,
-				      sizeof(gnss_api_agps_request),
+	int err = nrf_modem_gnss_read(&agps_request,
+				      sizeof(agps_request),
 				      NRF_MODEM_GNSS_DATA_AGPS_REQ);
 
 	if (err) {
@@ -370,12 +357,14 @@ static void method_gnss_request_assistance(void)
 	}
 
 	LOG_INF("A-GPS request from modem: emask:0x%08X amask:0x%08X flags:%d",
-		gnss_api_agps_request.sv_mask_ephe,
-		gnss_api_agps_request.sv_mask_alm,
-		gnss_api_agps_request.data_flags);
-
-	/* Check the request. If no A-GPS data types are requested, jump to P-GPS (if enabled) */
-	if (method_gnss_agps_required(&gnss_api_agps_request)) {
+		agps_request.sv_mask_ephe,
+		agps_request.sv_mask_alm,
+		agps_request.data_flags);
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	/* Check the request. If no A-GPS data types except ephemeris or almanac are requested,
+	 * jump to P-GPS (if enabled)
+	 */
+	if (method_gnss_agps_required(&agps_request)) {
 		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_agps_request_work);
 	} else
 #endif
@@ -385,6 +374,7 @@ static void method_gnss_request_assistance(void)
 #endif
 	}
 }
+#endif // defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 
 void method_gnss_event_handler(int event)
 {
@@ -404,7 +394,9 @@ void method_gnss_event_handler(int event)
 		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_timeout_work);
 		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 		method_gnss_request_assistance();
+#endif
 		break;
 	}
 }
@@ -639,7 +631,9 @@ int method_gnss_location_get(const struct loc_method_config *config)
 	}
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	date_time_update_async(method_gnss_date_time_event_handler);
+	if (!date_time_is_valid()) {
+		date_time_update_async(method_gnss_date_time_event_handler);
+	}
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -701,7 +695,9 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_agps_request_work, method_gnss_agps_request_work_fn);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
 	k_work_init(&method_gnss_pgps_request_work, method_gnss_pgps_request_work_fn);
+#endif
 	k_work_init(&method_gnss_manage_pgps_work, method_gnss_manage_pgps);
 	k_work_init(&method_gnss_notify_pgps_work, method_gnss_notify_pgps);
 
