@@ -512,6 +512,8 @@ void zb_osif_init(void)
 void zb_osif_abort(void)
 {
 	LOG_ERR("Fatal error occurred");
+	ZB_OSIF_SERIAL_FLUSH();
+
 	k_fatal_halt(K_ERR_KERNEL_PANIC);
 }
 
