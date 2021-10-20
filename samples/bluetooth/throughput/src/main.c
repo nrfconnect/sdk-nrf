@@ -123,7 +123,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 		return;
 	}
 
-	if (info.role == BT_CONN_ROLE_MASTER) {
+	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		instruction_print();
 		test_ready = true;
 	}
@@ -200,10 +200,10 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	}
 
 	printk("Connected as %s\n",
-	       info.role == BT_CONN_ROLE_MASTER ? "master" : "slave");
+	       info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
 	printk("Conn. interval is %u units\n", info.le.interval);
 
-	if (info.role == BT_CONN_ROLE_MASTER) {
+	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
 				       BT_UUID_THROUGHPUT,
 				       &discovery_cb,
@@ -296,7 +296,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 
 	/* Re-connect using same roles */
-	if (info.role == BT_CONN_ROLE_MASTER) {
+	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		scan_start();
 	} else {
 		adv_start();
@@ -446,7 +446,7 @@ static int connection_configuration_set(const struct shell *shell,
 		return err;
 	}
 
-	if (info.role != BT_CONN_ROLE_MASTER) {
+	if (info.role != BT_CONN_ROLE_CENTRAL) {
 		shell_error(shell,
 		"'run' command shall be executed only on the master board");
 	}

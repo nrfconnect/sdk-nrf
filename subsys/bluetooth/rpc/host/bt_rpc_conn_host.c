@@ -557,7 +557,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_create, BT_CONN_LE_CREATE_RPC_CMD,
 			 bt_conn_le_create_rpc_handler, NULL);
 
-#if defined(CONFIG_BT_WHITELIST)
+#if defined(CONFIG_BT_FILTER_ACCEPT_LIST)
 static void bt_conn_le_create_auto_rpc_handler(CborValue *value, void *handler_data)
 {
 	struct bt_conn_le_create_param create_param;
@@ -596,9 +596,9 @@ static void bt_conn_create_auto_stop_rpc_handler(CborValue *value, void *handler
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_create_auto_stop, BT_CONN_CREATE_AUTO_STOP_RPC_CMD,
 			 bt_conn_create_auto_stop_rpc_handler, NULL);
-#endif /* defined(CONFIG_BT_WHITELIST) */
+#endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
-#if !defined(CONFIG_BT_WHITELIST)
+#if !defined(CONFIG_BT_FILTER_ACCEPT_LIST)
 static void bt_le_set_auto_conn_rpc_handler(CborValue *value, void *handler_data)
 {
 	bt_addr_le_t addr_data;
@@ -631,7 +631,7 @@ decoding_error:
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_set_auto_conn, BT_LE_SET_AUTO_CONN_RPC_CMD,
 			 bt_le_set_auto_conn_rpc_handler, NULL);
-#endif  /* !defined(CONFIG_BT_WHITELIST) */
+#endif  /* !defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 #endif  /* defined(CONFIG_BT_CENTRAL) */
 
 #if defined(CONFIG_BT_SMP)

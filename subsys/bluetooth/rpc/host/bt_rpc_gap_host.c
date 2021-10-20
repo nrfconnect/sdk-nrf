@@ -1115,8 +1115,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_register_on_remote,
 			 bt_le_scan_cb_register_on_remote_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_OBSERVER) */
 
-#if defined(CONFIG_BT_WHITELIST)
-static void bt_le_whitelist_add_rpc_handler(CborValue *value, void *handler_data)
+#if defined(CONFIG_BT_FILTER_ACCEPT_LIST)
+static void bt_le_filter_accept_list_add_rpc_handler(CborValue *value, void *handler_data)
 {
 	bt_addr_le_t addr_data;
 	const bt_addr_le_t *addr;
@@ -1128,7 +1128,7 @@ static void bt_le_whitelist_add_rpc_handler(CborValue *value, void *handler_data
 		goto decoding_error;
 	}
 
-	result = bt_le_whitelist_add(addr);
+	result = bt_le_filter_accept_list_add(addr);
 
 	ser_rsp_send_int(result);
 
@@ -1137,10 +1137,10 @@ decoding_error:
 	report_decoding_error(BT_LE_WHITELIST_ADD_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_add, BT_LE_WHITELIST_ADD_RPC_CMD,
-			 bt_le_whitelist_add_rpc_handler, NULL);
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_add, BT_LE_WHITELIST_ADD_RPC_CMD,
+			 bt_le_filter_accept_list_add_rpc_handler, NULL);
 
-static void bt_le_whitelist_rem_rpc_handler(CborValue *value, void *handler_data)
+static void bt_le_filter_accept_list_remove_rpc_handler(CborValue *value, void *handler_data)
 {
 	bt_addr_le_t addr_data;
 	const bt_addr_le_t *addr;
@@ -1152,7 +1152,7 @@ static void bt_le_whitelist_rem_rpc_handler(CborValue *value, void *handler_data
 		goto decoding_error;
 	}
 
-	result = bt_le_whitelist_rem(addr);
+	result = bt_le_filter_accept_list_remove(addr);
 
 	ser_rsp_send_int(result);
 
@@ -1161,23 +1161,23 @@ decoding_error:
 	report_decoding_error(BT_LE_WHITELIST_REM_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_rem, BT_LE_WHITELIST_REM_RPC_CMD,
-			 bt_le_whitelist_rem_rpc_handler, NULL);
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_remove, BT_LE_WHITELIST_REM_RPC_CMD,
+			 bt_le_filter_accept_list_remove_rpc_handler, NULL);
 
-static void bt_le_whitelist_clear_rpc_handler(CborValue *value, void *handler_data)
+static void bt_le_filter_accept_list_clear_rpc_handler(CborValue *value, void *handler_data)
 {
 	int result;
 
 	nrf_rpc_cbor_decoding_done(value);
 
-	result = bt_le_whitelist_clear();
+	result = bt_le_filter_accept_list_clear();
 
 	ser_rsp_send_int(result);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,
-			 bt_le_whitelist_clear_rpc_handler, NULL);
-#endif /* defined(CONFIG_BT_WHITELIST) */
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,
+			 bt_le_filter_accept_list_clear_rpc_handler, NULL);
+#endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
 static void bt_le_set_chan_map_rpc_handler(CborValue *value, void *handler_data)
 {

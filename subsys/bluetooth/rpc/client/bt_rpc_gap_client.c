@@ -1671,8 +1671,8 @@ void bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
 }
 #endif /* defined(CONFIG_BT_OBSERVER) */
 
-#if defined(CONFIG_BT_WHITELIST)
-int bt_le_whitelist_add(const bt_addr_le_t *addr)
+#if defined(CONFIG_BT_FILTER_ACCEPT_LIST)
+int bt_le_filter_accept_list_add(const bt_addr_le_t *addr)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
@@ -1691,7 +1691,7 @@ int bt_le_whitelist_add(const bt_addr_le_t *addr)
 }
 
 
-int bt_le_whitelist_rem(const bt_addr_le_t *addr)
+int bt_le_filter_accept_list_remove(const bt_addr_le_t *addr)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
@@ -1710,7 +1710,7 @@ int bt_le_whitelist_rem(const bt_addr_le_t *addr)
 }
 
 
-int bt_le_whitelist_clear(void)
+int bt_le_filter_accept_list_clear(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
@@ -1723,7 +1723,7 @@ int bt_le_whitelist_clear(void)
 
 	return result;
 }
-#endif /* defined(CONFIG_BT_WHITELIST) */
+#endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
 int bt_le_set_chan_map(uint8_t chan_map[5])
 {
