@@ -41,27 +41,45 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a non-secure firmware image for the nrf9160dk_nrf9160_ns build target.
+The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
 The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
 
 Specifying the image file
 =========================
 
-Before building the sample, you must specify where the image file will be located.
-If you do not want to host it yourself, you can upload it to a public S3 bucket on Amazon Web Services (AWS).
-See `Setting up an AWS S3 bucket`_ for instructions.
+Before building the sample, you must specify where the image file will be located by configuring the following Kconfig options:
 
-To specify the location in |SES|:
+* ``CONFIG_DOWNLOAD_HOST`` - it specifies the hostname of the server where the image file is located.
+* ``CONFIG_DOWNLOAD_FILE`` - it specifies the name of the image file.
 
-1. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-#. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
-#. Click :guilabel:`Configure` to save the configuration.
+To configure these Kconfig options, follow these steps:
+
+.. tabs::
+
+   .. group-tab:: From |SES|
+
+      1. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
+      #. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
+      #. Click :guilabel:`Configure` to save the configuration.
+
+   .. group-tab:: From the :file:`prj.conf` configuration file
+
+      1. Locate your :file:`prj.conf` project configuration file.
+      #. Change the ``CONFIG_DOWNLOAD_HOST`` option to indicate the hostname of the server where the image file is located (for example ``website.net``).
+      #. Change the ``CONFIG_DOWNLOAD_FILE`` option to indicate the name and path of the image file (for example ``download/app_update.bin``).
+
+      You can then use the :file:`prj.conf` project configuration file in your builds from the command line or using the *nRF Connect for Visual Studio Code* extension.
+      See the `Building and running`_ section for more information.
+
+If you do not want to host the image file, you can also upload it to a public S3 bucket on Amazon Web Services (AWS).
 
 .. include:: /includes/aws_s3_bucket.txt
 
 Hosting your image on an AWS S3 Server
 --------------------------------------
+
+To upload the file to a public S3 bucket, do the following:
 
 1. Go to `AWS S3 console`_ and sign in.
 #. Go to the bucket you have created.
@@ -69,9 +87,11 @@ Hosting your image on an AWS S3 Server
    It is located in the :file:`zephyr` subfolder of your build directory.
 #. Click the file you uploaded in the bucket and check the :guilabel:`Object URL` field to find the download URL for the file.
 
-When specifying the image file, use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL for the download hostname.
-Make sure to not include ``https``.
-Specify the file name as the remaining part of the URL.
+You can then configure the ``CONFIG_DOWNLOAD_HOST`` and ``CONFIG_DOWNLOAD_FILE`` options as mentioned in the `Specifying the image file`_ section, noting the following:
+
+* Use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL for the download hostname.
+  Do not include ``https://``.
+* Use the remaining part of the URL as the file name.
 
 Testing
 =======
@@ -81,16 +101,16 @@ After programming the sample to your development kit, test it by performing the 
 1. Configure the application version to be 2.
    To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` > :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
    Then rebuild the application.
-#. Upload the file :file:`update.bin` to the server you have chosen.
+#. Upload the file :file:`app_update.bin` to the server you have chosen.
    To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
-   Then select the file :file:`update.bin` and upload it.
+   Then select the file :file:`app_update.bin` and upload it.
 #. Reset your nRF9160 DK to start the application.
 #. Open a terminal emulator and observe that an output similar to this is printed:
 
-.. code-block::
+   .. code-block::
 
-   SPM: prepare to jump to Non-Secure image
-   ***** Booting Zephyr OS v1.13.99 *****
+      SPM: prepare to jump to Non-Secure image
+      ***** Booting Zephyr OS v1.13.99 *****
 
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
