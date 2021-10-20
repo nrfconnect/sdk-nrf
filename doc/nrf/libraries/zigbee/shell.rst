@@ -290,6 +290,37 @@ Example:
 
 ----
 
+.. _bdb_ic_list:
+
+bdb ic list
+===========
+
+Read and print install codes stored on the device.
+
+.. parsed-literal::
+   :class: highlight
+
+   bdb ic list
+
+.. note::
+    |precondition4|
+
+    |precondition6|
+
+    |precondition7|
+
+Example:
+
+.. code-block::
+
+   > bdb ic list
+   [idx] EUI64:           IC:                                  options:
+   [  0] 0b010e2f79e9dbfa 83fed3407a939723a5c639b26916d505c3b5 0x3
+   Total entries for the install codes table: 1
+   Done
+
+----
+
 .. _bdb_ic_policy:
 
 bdb ic policy
