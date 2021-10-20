@@ -557,11 +557,10 @@ static void reg_step(struct k_work *work)
 	float p = input * kp;
 	uint16_t output = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
 
-	/* The regulator output is always in linear format. We'll convert to
-	 * the configured representation again before calling the Lightness
-	 * server.
+	/* The regulator output is always in linear format, so we need the
+	 * target value to be linear as well for the comparison.
 	 */
-	uint16_t lvl = light_get(srv);
+	uint16_t lvl = light_to_repr(light_get(srv), LINEAR);
 
 	/* Output value is max out of regulator and configured level. */
 	if (output > lvl) {
@@ -579,7 +578,9 @@ static void reg_step(struct k_work *work)
 	srv->reg.prev = output;
 
 	struct bt_mesh_lightness_set set = {
-		.lvl = light_to_repr(output, LINEAR),
+		/* Regulator output is linear, but lightness works in the configured representation.
+		 */
+		.lvl = repr_to_light(output, LINEAR),
 	};
 
 	bt_mesh_lightness_srv_set(srv->lightness, NULL, &set,
@@ -1121,13 +1122,13 @@ static int prop_get(struct net_buf_simple *buf,
 		break; /* Prevent returning -ENOENT */
 #endif
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
-		val.val1 = srv->cfg.light[LIGHT_CTRL_STATE_ON];
+		val.val1 = light_to_repr(srv->cfg.light[LIGHT_CTRL_STATE_ON], ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
-		val.val1 = srv->cfg.light[LIGHT_CTRL_STATE_PROLONG];
+		val.val1 = light_to_repr(srv->cfg.light[LIGHT_CTRL_STATE_PROLONG], ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
-		val.val1 = srv->cfg.light[LIGHT_CTRL_STATE_STANDBY];
+		val.val1 = light_to_repr(srv->cfg.light[LIGHT_CTRL_STATE_STANDBY], ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
 		to_prop_time(srv->cfg.fade_prolong, &val);
@@ -1228,14 +1229,15 @@ static int prop_set(struct net_buf_simple *buf,
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
 		break; /* Prevent returning -ENOENT */
 #endif
+	/* Properties are always set in light actual representation: */
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
-		srv->cfg.light[LIGHT_CTRL_STATE_ON] = val.val1;
+		srv->cfg.light[LIGHT_CTRL_STATE_ON] = repr_to_light(val.val1, ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
-		srv->cfg.light[LIGHT_CTRL_STATE_PROLONG] = val.val1;
+		srv->cfg.light[LIGHT_CTRL_STATE_PROLONG] = repr_to_light(val.val1, ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
-		srv->cfg.light[LIGHT_CTRL_STATE_STANDBY] = val.val1;
+		srv->cfg.light[LIGHT_CTRL_STATE_STANDBY] = repr_to_light(val.val1, ACTUAL);
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
 		srv->cfg.fade_prolong = from_prop_time(&val);
