@@ -48,7 +48,7 @@
 struct ic_cmd_ctx {
 	volatile bool taken;
 	zb_ieee_addr_t addr;
-	zb_uint8_t ic[ZB_CCM_KEY_SIZE + 2];
+	zb_uint8_t ic[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
 	const struct shell *shell;
 };
 
@@ -644,7 +644,7 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 {
 	const char *err_msg = NULL;
 	/* +2 for CRC16. */
-	zb_uint8_t ic[ZB_CCM_KEY_SIZE + 2];
+	zb_uint8_t ic[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
 
 	if ((argc == 2) && (strcmp(argv[0], "set") == 0)) {
 		if (zb_cli_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
