@@ -150,7 +150,7 @@ static bool conn_params_update_required(struct connected_peer *peer)
 		return true;
 	}
 
-	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_MASTER);
+	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_CENTRAL);
 
 	if ((peer->llpm_support && (info.le.interval != CONN_INTERVAL_LLPM_REG)) ||
 	    (!peer->llpm_support && (info.le.interval != CONN_INTERVAL_BLE_REG)) ||

@@ -52,7 +52,7 @@ The module listens for the following events related to data transfer initiated b
 * ``ble_smp_transfer_event`` - This event is received when the firmware update is received by :ref:`nrf_desktop_ble_smp`.
 
 When these events are received, the module sets the connection latency to low.
-When the :ref:`nrf_desktop_config_channel` is no longer in use and firmware update is not received by :ref:`nrf_desktop_ble_smp` (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:`CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY`  to reduce the power consumption.
+When the :ref:`nrf_desktop_config_channel` is no longer in use and firmware update is not received by :ref:`nrf_desktop_ble_smp` (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:`CONFIG_BT_PERIPHERAL_PREF_LATENCY`  to reduce the power consumption.
 
   .. note::
      If the option :kconfig:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.

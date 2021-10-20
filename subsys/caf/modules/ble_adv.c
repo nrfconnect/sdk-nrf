@@ -206,8 +206,8 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_2;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_WHITELIST)) {
-		int err = bt_le_whitelist_clear();
+	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
+		int err = bt_le_filter_accept_list_clear();
 
 		if (err) {
 			LOG_ERR("Cannot clear whitelist (err: %d)", err);
@@ -217,7 +217,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		if (bt_addr_le_cmp(bond_addr, BT_ADDR_LE_ANY)) {
 			adv_param.options |= BT_LE_ADV_OPT_FILTER_SCAN_REQ;
 			adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
-			err = bt_le_whitelist_add(bond_addr);
+			err = bt_le_filter_accept_list_add(bond_addr);
 		}
 
 		if (err) {

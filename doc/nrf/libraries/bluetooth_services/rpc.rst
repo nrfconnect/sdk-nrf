@@ -42,7 +42,7 @@ Set the following options in the same way for the :ref:`ble_rpc_host` and applic
 
    * :kconfig:`CONFIG_BT_CENTRAL`
    * :kconfig:`CONFIG_BT_PERIPHERAL`
-   * :kconfig:`CONFIG_BT_WHITELIST`
+   * :kconfig:`CONFIG_BT_FILTER_ACCEPT_LIST`
    * :kconfig:`CONFIG_BT_USER_PHY_UPDATE`
    * :kconfig:`CONFIG_BT_USER_DATA_LEN_UPDATE`
    * :kconfig:`CONFIG_BT_PRIVACY`

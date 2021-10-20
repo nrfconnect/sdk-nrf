@@ -136,7 +136,7 @@ The module performs one of the following operations:
 Avoiding connection requests from unbonded centrals when bonded
 ===============================================================
 
-If :kconfig:`CONFIG_BT_WHITELIST` is enabled and Bluetooth local identity that is in use already has a bond, the device will whitelist incoming scan response data requests and connection requests.
+If :kconfig:`CONFIG_BT_FILTER_ACCEPT_LIST` is enabled and Bluetooth local identity that is in use already has a bond, the device will whitelist incoming scan response data requests and connection requests.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 
 .. |ble_adv| replace:: Bluetooth® LE advertising module
