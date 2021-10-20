@@ -24,7 +24,7 @@ These ephemeris predictions are downloaded from the cloud, stored by the device 
 
    If two-week prediction sets are used, TTFF towards the end of the second week will increase due to accumulated errors in the predictions and decrease in number of satellite ephemerides in the later prediction periods.
 
-If nRF Cloud services such as P-GPS or A-GPS are used either individually or in combination, the broadcasted information and future estimates of position can be downloaded at a faster rate from nRF Cloud than from the GPS satellites.
+If nRF Cloud services such as A-GPS or P-GPS are used either individually or in combination, the broadcasted information and predictions of satellite data can be downloaded at a faster rate from nRF Cloud than from the GPS satellites.
 
 The use of P-GPS reduces Time to First Fix (TTFF) (time for a GPS device to estimate its position) when compared to using no assistance at all.
 Further, it only requires a cloud connection approximately once a week, depending on configuration.
