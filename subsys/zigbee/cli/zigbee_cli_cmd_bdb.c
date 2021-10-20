@@ -24,9 +24,9 @@
 	("Set Trust Center install code policy.\n" \
 	"Usage: policy <enable|disable>")
 
-#define IC_SET_POLICY_HELP \
-	("Add install code for device with given eui64.\n" \
-	"Usage: add <h:install_code> <h:eui64>")
+#define IC_SET_HELP \
+	("Add install code for the device.\n" \
+	"Usage: set <h:install_code>")
 
 #define CHANNEL_HELP \
 	("Set/get channel.\n" \
