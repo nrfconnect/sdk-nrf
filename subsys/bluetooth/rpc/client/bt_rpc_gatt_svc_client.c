@@ -568,7 +568,7 @@ int bt_rpc_gatt_init(void)
 {
 	int err;
 
-	Z_STRUCT_SECTION_FOREACH(bt_gatt_service_static, svc) {
+	STRUCT_SECTION_FOREACH(bt_gatt_service_static, svc) {
 		err = send_service((const struct bt_gatt_service *)svc);
 		if (err) {
 			LOG_ERR("Sending static service error: %d", err);

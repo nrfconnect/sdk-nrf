@@ -140,7 +140,7 @@ struct nfc_tnep_tag_service {
 		.error_detected = _error_cb,                            \
 	};                                                              \
 									\
-	const Z_STRUCT_SECTION_ITERABLE(nfc_tnep_tag_service, _name##_svc) = \
+	const STRUCT_SECTION_ITERABLE(nfc_tnep_tag_service, _name##_svc) = \
 		NFC_TNEP_TAG_SERVICE(_name)
 
 /**

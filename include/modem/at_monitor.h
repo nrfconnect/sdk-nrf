@@ -69,7 +69,7 @@ void at_monitor_init(void);
  */
 #define AT_MONITOR(name, _filter, _handler, ...)                               \
 	static void _handler(const char *);                                    \
-	Z_STRUCT_SECTION_ITERABLE(at_monitor_entry, at_monitor_##name) = {     \
+	STRUCT_SECTION_ITERABLE(at_monitor_entry, at_monitor_##name) = {       \
 		.filter = _filter,                                             \
 		.handler = _handler,                                           \
 		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())         \

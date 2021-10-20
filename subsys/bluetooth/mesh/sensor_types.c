@@ -25,7 +25,7 @@
 	const struct bt_mesh_sensor_format bt_mesh_sensor_format_##_name
 
 #define SENSOR_TYPE(name)                                                      \
-	const Z_STRUCT_SECTION_ITERABLE(bt_mesh_sensor_type,                   \
+	const STRUCT_SECTION_ITERABLE(bt_mesh_sensor_type,                     \
 					bt_mesh_sensor_##name)
 
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
@@ -1204,7 +1204,7 @@ SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
 
 const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id)
 {
-	Z_STRUCT_SECTION_FOREACH(bt_mesh_sensor_type, type) {
+	STRUCT_SECTION_FOREACH(bt_mesh_sensor_type, type) {
 		if (type->id == id) {
 			return type;
 		}
