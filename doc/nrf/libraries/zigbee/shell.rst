@@ -257,35 +257,29 @@ Example:
 
 ----
 
-.. _bdb_ic:
+.. _bdb_ic_add:
 
-bdb ic
-======
+bdb ic add
+==========
 
-Set install code on the device, add information about the install code on the trust center, set the trust center install code policy.
+Add information about the install code on the trust center.
 
 .. parsed-literal::
    :class: highlight
 
    bdb ic add *h:install code* *h:eui64*
-   bdb ic set *h:install code*
-   bdb ic policy *enable|disable*
+
+For *h:eui64*, use the address of the joining device.
+For *h:install code*, use 128bit install code with correct CRC value.
 
 .. note::
     |precondition3|
 
-* ``bdb ic set`` must only be used on a joining device.
+    |precondition5|
 
-* ``bdb ic add`` must only be used on a coordinator.
-  For *h:eui64*, use the address of the joining device.
+    |precondition6|
 
-* ``bdb ic policy`` must only be used on a coordinator.
-
-Provide the install code as an ASCII-encoded :file:`HEX` file that includes CRC16/X-25 in little-endian order.
-
-For production devices, an install code must be installed by the production
-configuration present in flash.
-
+    |precondition7|
 
 Example:
 
@@ -294,6 +288,62 @@ Example:
    > bdb ic add 83FED3407A939723A5C639B26916D505C3B5 0B010E2F79E9DBFA
    Done
 
+----
+
+.. _bdb_ic_policy:
+
+bdb ic policy
+=============
+
+Set the trust center install code policy.
+
+.. parsed-literal::
+   :class: highlight
+
+   bdb ic policy *enable|disable*
+
+.. note::
+    |precondition6|
+
+    |precondition7|
+
+Example:
+
+.. code-block::
+
+    > bdb ic policy enable
+    Done
+
+
+----
+
+.. _bdb_ic_set:
+
+bdb ic set
+==========
+
+Set install code on the device.
+
+.. parsed-literal::
+   :class: highlight
+
+   bdb ic set *h:install code*
+
+Must only be used on a joining device.
+
+.. note::
+    |precondition2|
+
+    |precondition5|
+
+    |precondition6|
+
+Example:
+
+.. code-block::
+
+   > bdb ic set 83fed3407a939723a5c639b26916d505c3b5
+   Done
 
 ----
 
@@ -1067,3 +1117,9 @@ Disable Zigbee NVRAM.
 .. |precondition3| replace:: Adding install codes only after :ref:`bdb_start`.
 
 .. |precondition4| replace:: Use only after :ref:`bdb_start`.
+
+.. |precondition5| replace:: Provide the install code as an ASCII-encoded hexadecimal file that includes CRC16/X-25 in little-endian order.
+
+.. |precondition6| replace:: For production devices, make sure that an install code is installed by the production configuration present in the flash.
+
+.. |precondition7| replace:: Must only be used on a coordinator.
