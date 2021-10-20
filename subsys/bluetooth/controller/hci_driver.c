@@ -93,6 +93,16 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_ADV_SET_COUNT 0
 #endif
 
+#if defined(CONFIG_BT_PER_ADV)
+	#define SDC_PERIODIC_ADV_COUNT CONFIG_BT_EXT_ADV_MAX_ADV_SET
+	#define SDC_PERIODIC_ADV_MEM_SIZE \
+		(SDC_PERIODIC_ADV_COUNT * \
+		 SDC_MEM_PER_PERIODIC_ADV_SET(CONFIG_BT_CTLR_ADV_DATA_LEN_MAX))
+#else
+	#define SDC_PERIODIC_ADV_COUNT 0
+	#define SDC_PERIODIC_ADV_MEM_SIZE 0
+#endif
+
 #if defined(CONFIG_BT_OBSERVER)
 	#if defined(CONFIG_BT_EXT_ADV)
 		#define SDC_SCAN_BUF_SIZE SDC_MEM_SCAN_BUFFER_EXT(SDC_DEFAULT_SCAN_BUFFER_COUNT)
@@ -128,6 +138,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define MEMPOOL_SIZE ((CONFIG_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
 		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE) + \
 		      (SDC_ADV_SET_COUNT * SDC_MEM_DEFAULT_ADV_SIZE) + \
+		       SDC_PERIODIC_ADV_MEM_SIZE + \
 		       SDC_SCAN_BUF_SIZE)
 
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
@@ -443,6 +454,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
+		err = sdc_support_le_periodic_adv();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 		err = sdc_support_slave();
 		if (err) {
@@ -564,6 +582,17 @@ static int configure_memory_usage(void)
 		required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 			    SDC_CFG_TYPE_ADV_BUFFER_CFG,
+			    &cfg);
+		if (required_memory < 0) {
+			return required_memory;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
+		cfg.periodic_adv_count.count = SDC_PERIODIC_ADV_COUNT;
+		required_memory =
+		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+			    SDC_CFG_TYPE_PERIODIC_ADV_COUNT,
 			    &cfg);
 		if (required_memory < 0) {
 			return required_memory;

@@ -80,6 +80,11 @@ static bool is_host_using_legacy_and_extended_commands(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_READ_NUMBER_OF_SUPPORTED_ADV_SETS:
 	case SDC_HCI_OPCODE_CMD_LE_REMOVE_ADV_SET:
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_ADV_SETS:
+#if defined(CONFIG_BT_PER_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_ENABLE:
+#endif  /* CONFIG_BT_PER_ADV */
 #endif  /* CONFIG_BT_BROADCASTER */
 #if defined(CONFIG_BT_OBSERVER)
 	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_PARAMS:
@@ -298,7 +303,12 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_read_number_of_supported_advertising_sets = 1;
 	cmds->hci_le_remove_advertising_set = 1;
 	cmds->hci_le_clear_advertising_sets = 1;
-#endif
+#if defined(CONFIG_BT_PER_ADV)
+	cmds->hci_le_set_periodic_advertising_parameters = 1;
+	cmds->hci_le_set_periodic_advertising_data = 1;
+	cmds->hci_le_set_periodic_advertising_enable = 1;
+#endif /* CONFIG_BT_PER_ADV*/
+#endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
 	cmds->hci_le_set_extended_scan_parameters = 1;
@@ -387,6 +397,10 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 #ifdef CONFIG_BT_CTLR_ADV_EXT
 	features->le_extended_advertising = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_ADV_PERIODIC
+	features->le_periodic_advertising = 1;
 #endif
 
 	features->channel_selection_algorithm_2 = 1;
@@ -782,7 +796,19 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_CLEAR_ADV_SETS:
 		return sdc_hci_cmd_le_clear_adv_sets();
-#endif
+
+#if defined(CONFIG_BT_PER_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS:
+		return sdc_hci_cmd_le_set_periodic_adv_params((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_DATA:
+		return sdc_hci_cmd_le_set_periodic_adv_data((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_ENABLE:
+		return sdc_hci_cmd_le_set_periodic_adv_enable((void *)cmd_params);
+#endif /* CONFIG_BT_PER_ADV */
+
+#endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
 	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_PARAMS:
