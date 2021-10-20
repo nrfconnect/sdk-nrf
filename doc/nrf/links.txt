@@ -204,7 +204,7 @@
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT
+.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
@@ -287,8 +287,8 @@
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 .. _`Nordic Thingy:91 Getting Started`: https://infocenter.nordicsemi.com/topic/ug_thingy91_gsg/UG/thingy91_gsg/intro.html
 
-.. _`Programming applications on Nordic Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_appln_thingy91.html
-.. _`Programming the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem_thingy91_intro.html
+.. _`Programming application and modem firmware on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91_gsg/UG/thingy91_gsg/updating_fw.html
+
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
 
 .. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html

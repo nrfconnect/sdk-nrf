@@ -124,7 +124,7 @@ You can program either the nRF9160 SiP or the nRF52840 SoC component on the Thin
 
 Alternatively, you can use an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33 to program applications on a Thingy:91.
 
-See `Programming applications on Nordic Thingy:91`_ for the detailed procedures to program a Thingy:91 using nRF Connect Programmer.
+See `Programming application and modem firmware on Thingy:91`_ for the detailed procedures to program a Thingy:91 using nRF Connect Programmer.
 
 Updating the modem firmware
 ===========================
@@ -134,7 +134,7 @@ You can update the modem firmware of Thingy:91 using any of the following method
 * Using USB (MCUboot)
 * Using an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33
 
-See `Programming the Thingy:91 modem`_ for the detailed steps to update the modem firmware.
+See `Programming application and modem firmware on Thingy:91`_ for the detailed steps to update the modem firmware.
 
 
 .. _building_pgming:
