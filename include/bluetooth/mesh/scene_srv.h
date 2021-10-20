@@ -34,7 +34,7 @@ extern "C" {
  *  @param[in] _name Name of the scene entry type
  */
 #define BT_MESH_SCENE_ENTRY_SIG(_name)                                         \
-	static const Z_STRUCT_SECTION_ITERABLE(                                \
+	static const STRUCT_SECTION_ITERABLE(                                \
 		bt_mesh_scene_entry, bt_mesh_scene_entry_sig_##_name)
 
 /** @def BT_MESH_SCENE_ENTRY_VND
@@ -44,7 +44,7 @@ extern "C" {
  *  @param[in] _name Name of the scene entry type
  */
 #define BT_MESH_SCENE_ENTRY_VND(_name)                                         \
-	static const Z_STRUCT_SECTION_ITERABLE(                                \
+	static const STRUCT_SECTION_ITERABLE(                                \
 		bt_mesh_scene_entry, bt_mesh_scene_entry_vnd_##_name)
 
 struct bt_mesh_scene_srv;
