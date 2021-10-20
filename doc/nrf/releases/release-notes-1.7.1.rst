@@ -18,7 +18,9 @@ See the release notes and documentation for those protocols and libraries for fu
 Highlights
 **********
 
-* Entry 1
+This minor release adds the following fixes on top of :ref:`nRF Connect SDK v1.7.0 <ncs_release_notes_170>`:
+
+* The :ref:`bt_mesh` is now capable of qualifying with the Bluetooth® Special Interest Group (SIG).
 
 Release tag
 ***********
@@ -55,14 +57,22 @@ The following changes are relevant for the nRF52 and nRF53 Series.
 Bluetooth mesh
 --------------
 
-* Added:
-
-  * Entry 1
-
 * Updated:
 
-  * Entry 1
+  * Fixed an issue where the :ref:`bt_mesh_scene_srv_readme` target scene matched the current scene.
+    The transition now completes immediately.
+  * Fixed an issue where the :ref:`bt_mesh_light_temp_srv_readme` calculated the time to edge to be longer than expected.
 
-* Migration:
+Zephyr
+======
 
-  * Entry 1
+.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
+
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``14f09a3b00``, plus some |NCS| specific additions.
+This is the same commit ID as the one used for |NCS| :ref:`v1.7.0 <ncs_release_notes_170>`.
+
+For a complete list of |NCS| specific commits since v1.7.0, run:
+
+.. code-block:: none
+
+   git log --oneline manifest-rev ^v2.6.0-rc1-ncs1
