@@ -981,10 +981,10 @@ static int cmd_child_max(const struct shell *shell, size_t argc, char **argv)
 #endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_ic,
-	SHELL_CMD_ARG(add, NULL, IC_ADD_HELP, cmd_zb_install_code, 3, 0),
-#ifndef ZB_ED_ROLE
-	SHELL_CMD_ARG(policy, NULL, IC_POLICY_HELP, cmd_zb_install_code, 2, 0),
 	SHELL_CMD_ARG(set, NULL, IC_SET_POLICY_HELP, cmd_zb_install_code, 2, 0),
+#ifndef ZB_ED_ROLE
+	SHELL_CMD_ARG(add, NULL, IC_ADD_HELP, cmd_zb_install_code, 3, 0),
+	SHELL_CMD_ARG(policy, NULL, IC_POLICY_HELP, cmd_zb_install_code, 2, 0),
 #endif
 	SHELL_SUBCMD_SET_END);
 
