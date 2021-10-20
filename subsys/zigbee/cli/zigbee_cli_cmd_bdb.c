@@ -16,6 +16,10 @@
 	("Add install code for device with given eui64.\n" \
 	"Usage: add <h:install_code> <h:eui64>")
 
+#define IC_LIST_HELP \
+	("Read install codes stored at the device.\n" \
+	"Usage: list")
+
 #define IC_POLICY_HELP \
 	("Set Trust Center install code policy.\n" \
 	"Usage: policy <enable|disable>")
@@ -45,6 +49,21 @@
 	("Set/get panid.\n" \
 	"Usage: panid [<h:id>]")
 
+/* Forward declarations. */
+#ifndef ZB_ED_ROLE
+static void zb_install_code_list_read(zb_uint8_t buffer, zb_uint16_t start_index);
+#endif
+
+/* Install code list entry structure. */
+struct __packed zb_secur_ic_list_entry {
+	/* Partner address */
+	zb_ieee_addr_t device_address;
+	zb_uint8_t options;
+	zb_uint8_t reserved;
+	/* 16b installcode +2b crc. */
+	zb_uint8_t installcode[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
+};
+
 struct ic_cmd_ctx {
 	volatile bool taken;
 	zb_ieee_addr_t addr;
@@ -52,9 +71,15 @@ struct ic_cmd_ctx {
 	const struct shell *shell;
 };
 
+struct ic_cmd_list_ctx {
+	volatile bool taken;
+	const struct shell *shell;
+};
+
 static zb_bool_t legacy_mode = ZB_FALSE;
-static struct ic_cmd_ctx ic_add_ctx = {0};
 #ifndef ZB_ED_ROLE
+static struct ic_cmd_ctx ic_add_ctx = {0};
+static struct ic_cmd_list_ctx ic_list_ctx = {0};
 static zb_nwk_device_type_t default_role = ZB_NWK_DEVICE_TYPE_ROUTER;
 #else
 static zb_nwk_device_type_t default_role = ZB_NWK_DEVICE_TYPE_ED;
@@ -586,8 +611,6 @@ static void zb_secur_ic_add_cb(zb_ret_t status)
 	ic_add_ctx.taken = false;
 }
 
-#endif /* !ZB_ED_ROLE */
-
 /**@brief Function adding install code, to be executed in Zigbee thread context.
  *
  * @param[in] param Unused param.
@@ -603,10 +626,146 @@ void zb_install_code_add(zb_uint8_t param)
 		return;
 	}
 
-#ifndef ZB_ED_ROLE
 	zb_secur_ic_add(ic_add_ctx.addr, ZB_IC_TYPE_128, ic_add_ctx.ic, zb_secur_ic_add_cb);
-#endif /* ZB_ED_ROLE */
 }
+
+/**@brief Function to print install codes list table header.
+ */
+static inline void zb_install_code_list_print_header(void)
+{
+	shell_print(ic_list_ctx.shell,
+		    "[idx] EUI64:           IC:                                  options:");
+}
+
+/**@brief Function to print number of entries in the install codes table.
+ *
+ * @param[in] total_rows    Number of rows present in the install code table.
+ */
+static inline void zb_install_code_list_print_summary(zb_uint8_t total_entries)
+{
+	shell_print(ic_list_ctx.shell,
+		    "Total entries for the install codes table: %d",
+		    total_entries);
+}
+
+/**@brief Function to print install codes list table row.
+ *
+ * @param[in] ic            Pointer to zb_secur_ic_list_entry structure to read install codes from.
+ * @param[in] index         Index of install code in the install code table.
+ */
+static void zb_install_code_list_print_row(struct zb_secur_ic_list_entry *ic, zb_uint8_t index)
+{
+	/* Print row index. */
+	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, "[%3d] ", index);
+	/* Print device long address. */
+	zb_cli_print_eui64(ic_list_ctx.shell, ic->device_address);
+	/* Print space to separate device address and install code fields. */
+	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, " ");
+	/* Print the install code. */
+	zb_cli_print_hexdump(ic_list_ctx.shell,
+			     ic->installcode,
+			     (ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE),
+			     false);
+	/* Print space to separate install code and options fields. */
+	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, " ");
+	/* Print options with additional newline character. */
+	shell_print(ic_list_ctx.shell, "%#02x", ic->options);
+}
+
+/**@brief Callback function called when install codes are read and ready to be printed.
+ *        To be executed in Zigbee thread context.
+ *
+ * @param[in] buffer        Buffer ID.
+ */
+static void zb_install_code_list_read_cb(zb_uint8_t buffer)
+{
+	zb_uint8_t ic_entries_left_to_read = 0;
+	struct zb_secur_ic_list_entry *ic = NULL;
+	zb_secur_ic_get_list_resp_t *ic_list_resp = NULL;
+
+	if (ic_list_ctx.taken == false) {
+		goto exit;
+	}
+
+	/* Check if buffer id is correct. */
+	if (buffer == ZB_BUF_INVALID) {
+		zb_cli_print_error(ic_list_ctx.shell, "Invalid buffer ID received in cb", ZB_FALSE);
+		goto exit;
+	}
+
+	ic_list_resp = ZB_BUF_GET_PARAM(buffer, zb_secur_ic_get_list_resp_t);
+
+	if (ic_list_resp->status != RET_OK) {
+		zb_cli_print_error(ic_list_ctx.shell,
+				   "Error status when reading IC list.",
+				   ZB_FALSE);
+		goto exit;
+	}
+
+	/* Set pointer to first ic struct in the buffer. */
+	ic = zb_buf_begin(buffer);
+
+	/* If zero index row is to be printed, print table header first. */
+	if (ic_list_resp->start_index == 0) {
+		zb_install_code_list_print_header();
+	}
+
+	/* Print every ic in the separate row. */
+	for (zb_uint8_t id = 0; id < ic_list_resp->ic_table_list_count; id++) {
+		zb_install_code_list_print_row((ic + id), (ic_list_resp->start_index + id));
+	}
+
+	/* Calculate how many entries left to be read. */
+	ic_entries_left_to_read = ic_list_resp->ic_table_entries;
+	ic_entries_left_to_read -= (ic_list_resp->start_index + ic_list_resp->ic_table_list_count);
+
+	if (ic_entries_left_to_read > 0) {
+		zb_uint8_t new_start_index = (ic_list_resp->ic_table_entries
+						- ic_entries_left_to_read);
+
+		/* Reuse the same buffer to read remaining install codes. */
+		zb_buf_reuse(buffer);
+		zb_install_code_list_read(buffer, new_start_index);
+		return;
+	}
+
+	/* All install codes have been read, print summary and done msg and clean up. */
+	zb_install_code_list_print_summary(ic_list_resp->ic_table_entries);
+	zb_cli_print_done(ic_list_ctx.shell, ZB_FALSE);
+
+exit:
+	ic_list_ctx.taken = false;
+	if (buffer != ZB_BUF_INVALID) {
+		zb_buf_free(buffer);
+	}
+}
+
+/**@brief Function to start reading install codes stored at the device.
+ *        To be executed in Zigbee thread context.
+ *
+ * @param[in] buffer        Buffer ID.
+ * @param[in] start_index   Index of IC list to start reading install codes from.
+ */
+static void zb_install_code_list_read(zb_uint8_t buffer, zb_uint16_t start_index)
+{
+	zb_secur_ic_get_list_req_t *ic_list_req = NULL;
+
+	/* Check if buffer id is correct. */
+	if (buffer == ZB_BUF_INVALID) {
+		zb_cli_print_error(ic_list_ctx.shell, "Invalid buffer ID received", ZB_FALSE);
+		ic_list_ctx.taken = false;
+		return;
+	}
+
+	/* Fill request data in the param. */
+	ic_list_req = ZB_BUF_GET_PARAM(buffer, zb_secur_ic_get_list_req_t);
+	ic_list_req->start_index = start_index;
+	ic_list_req->response_cb = zb_install_code_list_read_cb;
+
+	/* Call API to request IC list. */
+	zb_secur_ic_get_list_req(buffer);
+}
+#endif /* !defined ZB_ED_ROLE */
 
 /**@brief Set install code on the device, add information about the install code
  *  on the trust center, set the trust center install code policy.
@@ -615,9 +774,10 @@ void zb_install_code_add(zb_uint8_t param)
  * bdb ic add <h:install_code> <h:eui64>
  * bdb ic set <h:install_code>
  * bdb ic policy <enable|disable>
+ * bdb ic list
  * @endcode
  *
- * @pre Adding install codes only after @ref start "bdb start".
+ * @pre Adding and reading install codes only after @ref start "bdb start".
  *
  * <tt>bdb ic set</tt> must only be used on a joining device.
  *
@@ -626,6 +786,8 @@ void zb_install_code_add(zb_uint8_t param)
  *                     of the joining device.
  *
  * <tt>bdb ic policy</tt> must only be used on a coordinator.
+ *
+ * <tt>bdb ic list</tt> must only be used on a coordinator.
  *
  * Provide the install code as an ASCII-encoded hex including CRC16.
  *
@@ -643,10 +805,10 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 			       char **argv)
 {
 	const char *err_msg = NULL;
-	/* +2 for CRC16. */
-	zb_uint8_t ic[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
 
 	if ((argc == 2) && (strcmp(argv[0], "set") == 0)) {
+		zb_uint8_t ic[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
+
 		if (zb_cli_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 			zb_cli_print_error(shell, "Device can't be a coordinator",
 					   ZB_FALSE);
@@ -731,6 +893,41 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 			err_msg = "Syntax error";
 			goto exit;
 		}
+	} else if ((argc == 1) && (strcmp(argv[0], "list") == 0)) {
+		zb_ret_t ret_val = RET_OK;
+
+		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+			zb_cli_print_error(shell, "Device must be a coordinator", ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		if (!zigbee_is_stack_started()) {
+			zb_cli_print_error(shell, "Stack not started", ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		if (ic_list_ctx.taken == true) {
+			zb_cli_print_error(shell,
+					   "Can't start reading IC list - already in progress.",
+					   ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		ic_list_ctx.taken = true;
+		ic_list_ctx.shell = shell;
+
+		/* Schedule reading IC list immediately, start from index 0. */
+		ret_val = zb_buf_get_out_delayed_ext(zb_install_code_list_read, 0, 0);
+
+		if (ret_val != RET_OK) {
+			ic_list_ctx.taken = false;
+			zb_cli_print_error(shell,
+					   "Couldn't get buffer for reading IC list.",
+					   ZB_FALSE);
+			return -ENOEXEC;
+		}
+
+		return 0;
 #endif
 	} else {
 		err_msg = "Syntax error";
@@ -981,11 +1178,12 @@ static int cmd_child_max(const struct shell *shell, size_t argc, char **argv)
 #endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_ic,
-	SHELL_CMD_ARG(set, NULL, IC_SET_POLICY_HELP, cmd_zb_install_code, 2, 0),
 #ifndef ZB_ED_ROLE
 	SHELL_CMD_ARG(add, NULL, IC_ADD_HELP, cmd_zb_install_code, 3, 0),
+	SHELL_CMD_ARG(list, NULL, IC_LIST_HELP, cmd_zb_install_code, 1, 0),
 	SHELL_CMD_ARG(policy, NULL, IC_POLICY_HELP, cmd_zb_install_code, 2, 0),
 #endif
+	SHELL_CMD_ARG(set, NULL, IC_SET_HELP, cmd_zb_install_code, 2, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_legacy,
