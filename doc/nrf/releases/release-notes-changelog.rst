@@ -162,6 +162,10 @@ nRF9160 samples
 
   * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
 
+* :ref:`gnss_sample` sample:
+
+  * Renamed from GPS sample.
+
 Zigbee samples
 --------------
 

@@ -349,7 +349,7 @@ Following is a list of the samples and applications with some information about 
 * :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS  or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
 * :ref:`serial_lte_modem` application - Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. The application displays tracking and GNSS fix information in the serial console.
 * :ref:`agps_sample` sample - Uses nRF Cloud for A-GPS by default and can be configured to use SUPL. The sample obtains GNSS fixes and transmits them to nRF Cloud.
-* :ref:`gps_with_supl_support_sample` sample - Does not use A-GPS by default but can be configured to use SUPL. The sample displays tracking, fix information, and NMEA strings in the serial console.
+* :ref:`gnss_sample` sample - Does not use A-GPS by default but can be configured to use SUPL. The sample displays tracking, fix information, and NMEA strings in the serial console.
 
 .. _nrf9160_gps_lte:
 

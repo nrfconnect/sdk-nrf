@@ -17,7 +17,7 @@
 #endif
 
 #define AT_XSYSTEMMODE      "AT\%XSYSTEMMODE=0,0,1,0"
-#define AT_ACTIVATE_GPS     "AT+CFUN=31"
+#define AT_ACTIVATE_GNSS    "AT+CFUN=31"
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
@@ -26,9 +26,9 @@ static const char *const at_commands[] = {
 #if !defined(CONFIG_SUPL_CLIENT_LIB)
 	AT_XSYSTEMMODE,
 #endif
-	CONFIG_GPS_SAMPLE_AT_MAGPIO,
-	CONFIG_GPS_SAMPLE_AT_COEX0,
-	AT_ACTIVATE_GPS
+	CONFIG_GNSS_SAMPLE_AT_MAGPIO,
+	CONFIG_GNSS_SAMPLE_AT_COEX0,
+	AT_ACTIVATE_GNSS
 };
 
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
@@ -361,7 +361,7 @@ int main(void)
 	uint64_t fix_timestamp = 0;
 	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
 
-	printk("Starting GPS sample\n");
+	printk("Starting GNSS sample\n");
 
 	if (init_app() != 0) {
 		return -1;
@@ -376,7 +376,7 @@ int main(void)
 		    k_sem_take(events[0].sem, K_NO_WAIT) == 0) {
 			/* New PVT data available */
 
-			if (!IS_ENABLED(CONFIG_GPS_SAMPLE_NMEA_ONLY) &&
+			if (!IS_ENABLED(CONFIG_GNSS_SAMPLE_NMEA_ONLY) &&
 			    !agps_data_download_ongoing()) {
 				printk("\033[1;1H");
 				printk("\033[2J");
