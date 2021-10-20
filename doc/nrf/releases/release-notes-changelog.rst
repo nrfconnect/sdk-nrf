@@ -282,6 +282,7 @@ Libraries for Zigbee
 --------------------
 
 * Added ZCL commands to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
+* Added :ref:`command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 
 Scripts
 =======
