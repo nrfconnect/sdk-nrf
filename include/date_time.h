@@ -62,7 +62,8 @@ int date_time_set(const struct tm *new_date_time);
 
 /** @brief Get the date time UTC when the passing variable uptime was set.
  *         This function requires that k_uptime_get() has been called on the
- *         passing variable uptime prior to the function call.
+ *         passing variable uptime prior to the function call. In that case the uptime
+ *         will not be too large or negative.
  *
  *  @warning If the function fails, the passed in variable retains its
  *           old value.
@@ -72,7 +73,7 @@ int date_time_set(const struct tm *new_date_time);
  *  @return 0        If the operation was successful.
  *  @return -ENODATA If the library does not have a valid date time UTC.
  *  @return -EINVAL  If the passed in pointer is NULL, dereferenced value is too large,
- *		     or already converted.
+ *		     already converted or if uptime is negative.
  */
 int date_time_uptime_to_unix_time_ms(int64_t *uptime);
 
