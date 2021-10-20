@@ -108,11 +108,6 @@ The following LwM2M objects are implemented in this sample:
       - Yes
 
 
-.. note::
-
-   The level resource on the Buzzer object does not work properly.
-   This is due to an error in Zephyr’s float handling, which will be fixed soon.
-
 .. _dtls_support:
 
 DTLS Support
