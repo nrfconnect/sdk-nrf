@@ -1,13 +1,13 @@
-.. _gps_with_supl_support_sample:
+.. _gnss_sample:
 
-nRF9160: GPS with SUPL client library
-#####################################
+nRF9160: GNSS
+#############
 
 .. contents::
    :local:
    :depth: 2
 
-The GPS sample demonstrates how to retrieve `GNSS`_ data.
+The GNSS sample demonstrates how to retrieve `GNSS`_ data.
 If Secure User-Plane Location (SUPL) support is enabled, it also shows how to improve the fix accuracy and fix speed with `A-GPS`_ data from a SUPL server.
 See :ref:`supl_client` for information on enabling SUPL support for the sample.
 
