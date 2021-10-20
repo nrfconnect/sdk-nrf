@@ -418,6 +418,11 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 		return -EINVAL;
 	}
 
+	if (*uptime < 0) {
+		LOG_ERR("Uptime cannot be negative");
+		return -EINVAL;
+	}
+
 	uptime_prev = *uptime;
 
 	if (!initial_valid_time) {
