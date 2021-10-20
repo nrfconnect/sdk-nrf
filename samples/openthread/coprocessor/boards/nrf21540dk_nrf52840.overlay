@@ -25,5 +25,6 @@
 	*/
 	chosen {
 		zephyr,entropy = &rng;
+		zephyr,ot-uart = &uart0;
 	};
 };
