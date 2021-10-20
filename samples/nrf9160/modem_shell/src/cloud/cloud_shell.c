@@ -23,6 +23,10 @@ BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) &&
 	IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD));
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static struct k_work notify_pgps_work;
+#endif
+
 static const char cloud_shell_cmd_usage_str[] =
 	"MQTT connection to nRFCloud\n"
 	"Usage: cloud <subcommand>\n"
@@ -77,8 +81,23 @@ static int send_service_info(void)
 }
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS) */
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void notify_pgps(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	int err;
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		mosh_error("Error requesting notification of prediction availability: %d", err);
+	}
+}
+#endif /* defined(CONFIG_NRF_CLOUD_PGPS) */
+
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
+	int err = 0;
+
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
 		mosh_print("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
@@ -89,7 +108,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_READY:
 		mosh_print("NRF_CLOUD_EVT_READY");
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-		int err = send_service_info();
+		err = send_service_info();
 
 		if (err) {
 			mosh_error("Failed to send nRF Cloud service information");
@@ -123,7 +142,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 			mosh_print("A-GPS data processed");
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 			/* call us back when prediction is ready */
-			nrf_cloud_pgps_notify_prediction();
+			k_work_submit(&notify_pgps_work);
 #endif
 			/* data was valid; no need to pass to other handlers */
 			break;
@@ -167,6 +186,11 @@ static void cloud_connect(void)
 	} else if (err) {
 		mosh_error("nrf_cloud_init, error: %d", err);
 		return;
+	} else { /* Cloud module successfully initialized */
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+		/* Done here, the work structure only gets initialized once */
+		k_work_init(&notify_pgps_work, notify_pgps);
+#endif
 	}
 
 	err = nrf_cloud_connect(NULL);
@@ -180,7 +204,6 @@ static void cloud_connect(void)
 		mosh_print(" Endpoint:    %s", CONFIG_NRF_CLOUD_HOST_NAME);
 		mosh_print("********************************************");
 	}
-
 }
 
 static void cloud_disconnect(void)
