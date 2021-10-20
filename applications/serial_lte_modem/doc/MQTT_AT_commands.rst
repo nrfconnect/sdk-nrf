@@ -299,6 +299,7 @@ Syntax
 * The ``<msg>`` parameter is a string.
   It contains the payload on the topic being published.
   The max ``NET_IPV4_MTU`` is 576 bytes.
+  When this parameter is not specified, SLM enters ``slm_data_mode``.
 * The ``<qos>`` parameter is an integer.
   It indicates the MQTT Quality of Service types.
   It can accept the following values:
@@ -348,6 +349,17 @@ Examples
    nrf91/slm/mqtt/topic0
    Test message with QoS 0
    #XMQTTEVT: 2,0
+
+::
+
+   AT#XMQTTPUB="nrf91/slm/mqtt/topic0"
+   {"msg":"Test Json publish"}
+   #XMQTTMSG: 21,27
+   nrf91/slm/mqtt/topic0
+   {"msg":"Test Json publish"}
+   #XMQTTEVT: 2,0
+   +++
+   OK
 
 ::
 

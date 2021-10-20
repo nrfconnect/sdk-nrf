@@ -560,30 +560,30 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 			return err;
 		}
 		pub_msg[0] = '\0';
-		if (at_params_type_get(&at_param_list, 3) == AT_PARAM_TYPE_STRING) {
-			err = util_string_get(&at_param_list, 3, pub_msg, &msg_sz);
+		if (at_params_type_get(&at_param_list, 2) == AT_PARAM_TYPE_STRING) {
+			err = util_string_get(&at_param_list, 2, pub_msg, &msg_sz);
 			if (err) {
 				return err;
 			}
-			if (param_count > 4) {
-				err = at_params_unsigned_short_get(&at_param_list, 4, &qos);
+			if (param_count > 3) {
+				err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
 				if (err) {
 					return err;
 				}
-			}
-			if (param_count > 5) {
-				err = at_params_unsigned_short_get(&at_param_list, 5, &retain);
-				if (err) {
-					return err;
-				}
-			}
-		} else if (at_params_type_get(&at_param_list, 3) == AT_PARAM_TYPE_NUM_INT) {
-			err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
-			if (err) {
-				return err;
 			}
 			if (param_count > 4) {
 				err = at_params_unsigned_short_get(&at_param_list, 4, &retain);
+				if (err) {
+					return err;
+				}
+			}
+		} else if (at_params_type_get(&at_param_list, 2) == AT_PARAM_TYPE_NUM_INT) {
+			err = at_params_unsigned_short_get(&at_param_list, 2, &qos);
+			if (err) {
+				return err;
+			}
+			if (param_count > 3) {
+				err = at_params_unsigned_short_get(&at_param_list, 3, &retain);
 				if (err) {
 					return err;
 				}
