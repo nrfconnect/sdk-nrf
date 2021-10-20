@@ -10,14 +10,13 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 
-#define ADP536X_I2C_DEV_NAME	DT_LABEL(DT_NODELABEL(i2c2))
 #define LC_MAX_READ_LENGTH	128
 
 static int power_mgmt_init(void)
 {
 	int err;
 
-	err = adp536x_init(ADP536X_I2C_DEV_NAME);
+	err = adp536x_init(CONFIG_ADP536X_BUS_NAME);
 	if (err) {
 		LOG_ERR("ADP536X failed to initialize, error: %d\n", err);
 		return err;
