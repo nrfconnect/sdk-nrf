@@ -26,11 +26,11 @@
 #endif
 
 #define TEST_FPROTECT_WRITE_ADDR ROUND_UP( \
-		(uint32_t)_image_rom_start + (uint32_t)_flash_used, \
+		(uint32_t)__rom_region_start + (uint32_t)_flash_used, \
 		CONFIG_FPROTECT_BLOCK_SIZE)
 
 #define TEST_FPROTECT_READ_ADDR \
-		(ROUND_UP((uint32_t)_image_rom_start + (uint32_t)_flash_used, \
+		(ROUND_UP((uint32_t)__rom_region_start + (uint32_t)_flash_used, \
 		CONFIG_FPROTECT_BLOCK_SIZE) \
 	+ CONFIG_FPROTECT_BLOCK_SIZE)
 
