@@ -18,9 +18,15 @@ choice GPS_MODULE_DATA_FORMAT
 
 config GPS_MODULE_PVT
 	bool "Include PVT data in GNSS fix event"
+	help
+	  PVT stands for position, velocity, and time.
+	  The GPS data will be included as a struct in the GPS_EVT_DATA_READY event propagated by this module upon a fix.
 
 config GPS_MODULE_NMEA
 	bool "Include NMEA data in GNSS fix event"
+	help
+	  NMEA is a defined ASCII representation of GPS data.
+	  The GPS data will be included as a string in the GPS_EVT_DATA_READY event.
 
 endchoice
 
