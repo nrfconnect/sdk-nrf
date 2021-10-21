@@ -59,15 +59,12 @@ static void test_subs_order(void)
 	test_start(TEST_SUBSCRIBER_ORDER);
 }
 
-static void test_oom_reset(void)
-{
-	test_start(TEST_OOM_RESET);
-}
-
 static void test_multicontext(void)
 {
 	test_start(TEST_MULTICONTEXT);
 }
+
+void test_oom_reset(void);
 
 void test_main(void)
 {
