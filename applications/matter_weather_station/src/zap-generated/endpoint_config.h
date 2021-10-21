@@ -163,11 +163,9 @@
 			/* Endpoint: 0, Cluster: General Commissioning (server), big-endian */      \
                                                                                                     \
 			/* 1249 - Breadcrumb, */                                                    \
-			0x6F,                                                                       \
-			0x00                                                                        \
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                             \
                                                                                                     \
 			/* 1257 - BasicCommissioningInfoList, */                                    \
-			0x00,                                                                       \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
@@ -189,7 +187,7 @@
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     \
-			0x00,                                                                       \
+			0x00, 0x00,                                                                 \
                                                                                                     \
 			/* Endpoint: 0, Cluster: General Diagnostics (server), big-endian */        \
                                                                                                     \
@@ -909,11 +907,9 @@
 			/* Endpoint: 0, Cluster: General Commissioning (server), little-endian */      \
                                                                                                        \
 			/* 1249 - Breadcrumb, */                                                       \
-			0x6F,                                                                          \
-			0x00,                                                                          \
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                \
                                                                                                        \
 			/* 1257 - BasicCommissioningInfoList, */                                       \
-			0x00,                                                                          \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
@@ -935,7 +931,7 @@
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        \
-			0x00,                                                                          \
+			0x00, 0x00,                                                                    \
                                                                                                        \
 			/* Endpoint: 0, Cluster: General Diagnostics (server), little-endian */        \
                                                                                                        \
@@ -1773,7 +1769,7 @@
 			{ 0x0002, ZAP_TYPE(INT16S), 2, 0,                                          \
 			  ZAP_SIMPLE_DEFAULT(8500) }, /* max measured value */                     \
 			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0,                                          \
-			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
+			  ZAP_SIMPLE_DEFAULT(0x0004) }, /* ClusterRevision */                      \
                                                                                                    \
 			/* Endpoint: 2, Cluster: Descriptor (server) */                            \
 			{ 0x0000, ZAP_TYPE(ARRAY), 254, 0,                                         \
@@ -2070,20 +2066,29 @@
 #define ZAP_REPORT_DIRECTION(x) ZRD(x)
 
 // User options for plugin Reporting
-#define EMBER_AF_PLUGIN_REPORTING_TABLE_SIZE (2)
+#define EMBER_AF_PLUGIN_REPORTING_TABLE_SIZE (3)
 #define EMBER_AF_PLUGIN_REPORTING_ENABLE_GROUP_BOUND_REPORTS
 
-#define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS_TABLE_SIZE (2)
+#define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS_TABLE_SIZE (3)
 #define EMBER_AF_GENERATED_REPORTING_CONFIG_DEFAULTS                                               \
 	{                                                                                          \
-		/* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */                 \
+		/* Endpoint: 1, Cluster: Temperature Measurement (server) */                       \
 		{ ZAP_REPORT_DIRECTION(REPORTED),                                                  \
-		  0x0002,                                                                          \
-		  0x0405,                                                                          \
+		  0x0001,                                                                          \
+		  0x0402,                                                                          \
 		  0x0000,                                                                          \
 		  ZAP_CLUSTER_MASK(SERVER),                                                        \
 		  0x0000,                                                                          \
 		  { { 0, 65344, 0 } } }, /* measured value */                                      \
+                                                                                                   \
+			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */         \
+			{ ZAP_REPORT_DIRECTION(REPORTED),                                          \
+			  0x0002,                                                                  \
+			  0x0405,                                                                  \
+			  0x0000,                                                                  \
+			  ZAP_CLUSTER_MASK(SERVER),                                                \
+			  0x0000,                                                                  \
+			  { { 0, 65344, 0 } } }, /* measured value */                              \
                                                                                                    \
 			/* Endpoint: 3, Cluster: Pressure Measurement (server) */                  \
 			{ ZAP_REPORT_DIRECTION(REPORTED),                                          \
