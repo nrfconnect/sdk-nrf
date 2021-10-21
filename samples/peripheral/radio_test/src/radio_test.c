@@ -686,10 +686,10 @@ int radio_test_init(struct radio_test_config *config)
 #endif /* CONFIG_NRF21540_FEM */
 
 	timer_init(config);
-	IRQ_CONNECT(TIMER0_IRQn, NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
+	IRQ_CONNECT(TIMER0_IRQn, IRQ_PRIO_LOWEST,
 		nrfx_timer_0_irq_handler, NULL, 0);
 
-	irq_connect_dynamic(RADIO_IRQn, 7, radio_handler, config, 0);
+	irq_connect_dynamic(RADIO_IRQn, IRQ_PRIO_LOWEST, radio_handler, config, 0);
 	irq_enable(RADIO_IRQn);
 
 	return 0;
