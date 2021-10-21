@@ -70,21 +70,6 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-static int method_cellular_ncellmeas_start(void)
-{
-	int err;
-
-	LOG_DBG("Triggering start of cell measurements");
-	err = lte_lc_neighbor_cell_measurement();
-	if (err) {
-		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
-		loc_core_event_cb_error();
-		running = false;
-		return err;
-	}
-	return 0;
-}
-
 static void method_cellular_positioning_work_fn(struct k_work *work)
 {
 	struct multicell_location location;
@@ -95,22 +80,23 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 
 	loc_core_timer_start(cellular_config.timeout);
 
-	ret = method_cellular_ncellmeas_start();
+	LOG_DBG("Triggering neighbor cell measurements");
+	ret = lte_lc_neighbor_cell_measurement();
 	if (ret) {
-		LOG_WRN("Cannot start cell measurements - cannot fetch location");
+		LOG_WRN("Cannot start neighbor cell measurements");
 		loc_core_event_cb_error();
 		running = false;
 		return;
 	}
 
-	ret = k_sem_take(&cellmeas_data_ready, K_SECONDS(60)); /* TODO: timeout to params? */
+	ret = k_sem_take(&cellmeas_data_ready, K_FOREVER);
 	if (ret) {
-		LOG_WRN("Timeout for waiting cell measurements - cannot fetch location");
+		LOG_WRN("Timeout for waiting neighbor cell measurements");
 		loc_core_event_cb_error();
 		running = false;
 	} else if (running) {
 		if (cell_data.current_cell.id == 0) {
-			LOG_WRN("No cells were found - cannot fetch location");
+			LOG_WRN("No cells were found");
 			loc_core_event_cb_error();
 			running = false;
 			return;
@@ -129,7 +115,6 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_result.latitude = location.latitude;
 			location_result.longitude = location.longitude;
 			location_result.accuracy = location.accuracy;
-			(void)lte_lc_neighbor_cell_measurement_cancel();
 			if (running) {
 				loc_core_event_cb(&location_result);
 				running = false;
@@ -142,10 +127,6 @@ int method_cellular_location_get(const struct loc_method_config *config)
 {
 	const struct loc_cellular_config cellular_config = config->cellular;
 
-	if (running) {
-		LOG_ERR("Previous operation on going.");
-		return -EBUSY;
-	}
 	/* Note: LTE status not checked, let it fail in NCELLMEAS if no connection */
 
 	method_cellular_positioning_work.cellular_config = cellular_config;
