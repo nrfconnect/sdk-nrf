@@ -63,7 +63,6 @@ void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_el
  */
 bool nrf_cloud_agps_request_in_progress(void);
 
-
 /** @} */
 
 #ifdef __cplusplus
