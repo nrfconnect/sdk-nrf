@@ -37,6 +37,9 @@ extern "C" {
 
 #define NRF_CLOUD_JSON_FULFILL_KEY		"fulfilledWith"
 
+#define NRF_CLOUD_JSON_FILTERED_KEY		"filtered"
+#define NRF_CLOUD_JSON_ELEVATION_MASK_KEY	"mask"
+
 /* Modem info key text */
 #define NRF_CLOUD_JSON_MCC_KEY			"mcc"
 #define NRF_CLOUD_JSON_MNC_KEY			"mnc"

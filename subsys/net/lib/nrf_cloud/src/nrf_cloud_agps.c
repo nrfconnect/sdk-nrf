@@ -33,6 +33,15 @@ static bool agps_print_enabled;
 static struct nrf_modem_gnss_agps_data_frame processed;
 static atomic_t request_in_progress;
 
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+/** In filtered ephemeris mode, request A-GPS data no more often than
+ *  every 2 hours (time in milliseconds).
+ */
+#define AGPS_UPDATE_PERIOD (2 * 60 * 60 * MSEC_PER_SEC)
+
+static int64_t last_request_timestamp;
+#endif
+
 void agps_print_enable(bool enable)
 {
 	agps_print_enabled = enable;
@@ -86,6 +95,7 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	size_t type_count = 0;
 	cJSON *data_obj;
 	cJSON *agps_req_obj;
+	uint32_t ephem;
 
 	atomic_set(&request_in_progress, 0);
 	memset(&processed, 0, sizeof(processed));
@@ -94,7 +104,21 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 		types[type_count++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
 	}
 
-	if (request->sv_mask_ephe) {
+	ephem = request->sv_mask_ephe;
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+	/**
+	 * Determine if we processed ephemerides assistance less than 2 hours ago; if so,
+	 * we can skip this.
+	 */
+	if (ephem &&
+	    (last_request_timestamp != 0) &&
+	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
+		LOG_WRN("A-GPS request was sent less than 2 hours ago");
+		ephem = 0;
+	}
+#endif
+
+	if (ephem) {
 		types[type_count++] = NRF_CLOUD_AGPS_EPHEMERIDES;
 	}
 
@@ -137,6 +161,28 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 		err = -ENOMEM;
 		goto cleanup;
 	}
+
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+	cJSON *filtered;
+
+	filtered = cJSON_AddTrueToObjectCS(data_obj, NRF_CLOUD_JSON_FILTERED_KEY);
+	if (!filtered) {
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	cJSON *mask;
+
+	mask = cJSON_AddNumberToObjectCS(data_obj,
+					 NRF_CLOUD_JSON_ELEVATION_MASK_KEY,
+					 CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+	if (!mask) {
+		err = -ENOMEM;
+		goto cleanup;
+	}
+	LOG_DBG("Requesting filtered ephemerides with elevation mask angle = %u degrees",
+		CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+#endif
 
 	/* Add modem info and A-GPS types to the data object */
 	err = nrf_cloud_json_add_modem_info(data_obj);
@@ -513,6 +559,9 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 	uint32_t sv_mask = 0;
 	size_t parsed_len = 0;
 	uint8_t version;
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+	bool ephemerides_processed = false;
+#endif
 
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];
 	parsed_len += NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE;
@@ -564,6 +613,10 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 			LOG_DBG("TOWs copied, bitmask: 0x%08x",
 				sys_time.sv_mask);
 			element.time_and_tow = &sys_time;
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+		} else if (element.type == NRF_CLOUD_AGPS_EPHEMERIDES) {
+			ephemerides_processed = true;
+#endif
 		}
 
 		err = agps_send_to_modem(&element);
@@ -572,6 +625,17 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 			break;
 		}
 	}
+
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+	/**
+	 * In filtered mode, because fewer than the full set of ephemerides is sent to
+	 * the modem, determine here if we correctly received them from the cloud and
+	 * sent them to the modem.
+	 */
+	if (!err && ephemerides_processed) {
+		last_request_timestamp = k_uptime_get();
+	}
+#endif
 
 	LOG_DBG("A-GPS_inject_active UNLOCKED");
 	k_sem_give(&agps_injection_active);
