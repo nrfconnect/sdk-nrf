@@ -59,8 +59,7 @@ struct k_work_args {
 };
 
 static struct k_work_args method_gnss_start_work;
-static struct k_work method_gnss_fix_work;
-static struct k_work method_gnss_timeout_work;
+static struct k_work method_gnss_pvt_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static struct k_work method_gnss_agps_request_work;
@@ -157,7 +156,7 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 		/* If the PSM becomes disabled e.g. due to network change, allow GNSS to be started
 		 * in case there was a pending position request waiting for the sleep to start.
 		 */
-		if ((evt->psm_cfg.tau == -1) || (evt->psm_cfg.active_time == -1)) {
+		if (evt->psm_cfg.active_time == -1) {
 			k_sem_give(&entered_psm_mode);
 		}
 		break;
@@ -379,20 +378,10 @@ static void method_gnss_request_assistance(void)
 void method_gnss_event_handler(int event)
 {
 	switch (event) {
-	case NRF_MODEM_GNSS_EVT_FIX:
-		LOG_DBG("GNSS: Got fix");
-		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_fix_work);
-		break;
-
 	case NRF_MODEM_GNSS_EVT_PVT:
-		LOG_DBG("GNSS: Got PVT event");
-		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_fix_work);
+		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_pvt_work);
 		break;
 
-	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
-		LOG_DBG("GNSS: Timeout");
-		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_timeout_work);
-		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 		method_gnss_request_assistance();
@@ -452,7 +441,7 @@ static bool method_gnss_entered_psm(void)
 		ret = lte_lc_psm_get(&tau, &active_time);
 		if (ret < 0) {
 			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
-		} else if ((tau >= 0) & (active_time >= 0)) {
+		} else if (active_time >= 0) {
 			LOG_INF("Waiting for LTE to enter PSM: tau %d active_time %d",
 				tau, active_time);
 
@@ -484,7 +473,38 @@ static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 }
 #endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
 
-static void method_gnss_fix_work_fn(struct k_work *item)
+static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	uint8_t tracked = 0;
+
+	/* Print number of tracked satellites */
+	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data->sv[i].sv == 0) {
+			break;
+		}
+
+		tracked++;
+	}
+
+	LOG_DBG("Tracked satellites: %d", tracked);
+
+	/* Print details for each satellite */
+	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data->sv[i].sv == 0) {
+			break;
+		}
+
+		const struct nrf_modem_gnss_sv *sv_data = &pvt_data->sv[i];
+
+		LOG_DBG("PRN: %3d, C/N0: %4.1f, in fix: %d, unhealthy: %d",
+			sv_data->sv,
+			sv_data->cn0 / 10.0,
+			sv_data->flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
+			sv_data->flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
+	}
+}
+
+static void method_gnss_pvt_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 	static struct loc_location location_result = { 0 };
@@ -493,6 +513,8 @@ static void method_gnss_fix_work_fn(struct k_work *item)
 		LOG_ERR("Failed to read PVT data from GNSS");
 		return;
 	}
+
+	method_gnss_print_pvt(&pvt_data);
 
 	/* Store fix data only if we get a valid fix. Thus, the last valid data is always kept
 	 * in memory and it is not overwritten in case we get an invalid fix.
@@ -523,13 +545,6 @@ static void method_gnss_fix_work_fn(struct k_work *item)
 			fix_attempts_remaining--;
 		}
 	}
-}
-
-static void method_gnss_timeout_work_fn(struct k_work *item)
-{
-	loc_core_event_cb_timeout();
-
-	method_gnss_cancel();
 }
 
 static void method_gnss_positioning_work_fn(struct k_work *work)
@@ -689,8 +704,7 @@ int method_gnss_init(void)
 		return -err;
 	}
 
-	k_work_init(&method_gnss_fix_work, method_gnss_fix_work_fn);
-	k_work_init(&method_gnss_timeout_work, method_gnss_timeout_work_fn);
+	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	k_work_init(&method_gnss_agps_request_work, method_gnss_agps_request_work_fn);
 #endif
