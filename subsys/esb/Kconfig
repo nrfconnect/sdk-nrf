@@ -43,6 +43,18 @@ config ESB_PIPE_COUNT
 	  accidental use of additional pipes, but it's not a problem leaving
 	  this at 8 even if fewer pipes are used.
 
+config ESB_RADIO_IRQ_PRIORITY
+	int "Radio interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 1
+
+config ESB_EVENT_IRQ_PRIORITY
+	int "Event interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 2
+
 menu "Hardware selection (alter with care)"
 
 choice ESB_SYS_TIMER
