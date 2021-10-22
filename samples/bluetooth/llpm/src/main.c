@@ -421,8 +421,7 @@ void main(void)
 	};
 
 #if defined(CONFIG_USB_DEVICE_STACK)
-	const struct device *uart_dev = device_get_binding(
-			CONFIG_UART_CONSOLE_ON_DEV_NAME);
+	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	uint32_t dtr = 0;
 
 	if (usb_enable(NULL)) {
