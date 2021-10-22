@@ -28,6 +28,13 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+Application development
+=======================
+
+* Build system:
+
+  * Fixed the NCSIDB-581 bug where application signing and file conversion for Device Firmware Update (DFU) could fail in SEGGER Embedded Studio during a build.
+
 Protocols
 =========
 
@@ -96,6 +103,8 @@ Bluetooth samples
 -----------------
 
 * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+* :ref:`ble_llpm` sample - Added role selection.
+  The user now selects the role for each board by typing "m" or "s" in the terminal emulator.
 
 Bluetooth mesh samples
 ----------------------
@@ -114,7 +123,6 @@ nRF9160 samples
 * :ref:`https_client` sample:
 
   * Added a possibility to use TF-M and Zephyr Mbed TLS instead of using the offloaded TLS stack in modem.
-  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
 
 * :ref:`lwm2m_client` sample:
 
@@ -130,6 +138,7 @@ Matter samples
 * Added:
 
   * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
+  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
 
 Zigbee samples
 --------------
@@ -148,6 +157,8 @@ Other samples
     * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
     * The bootloader now allows a single boot with no key present, to allow the app to write a key.
       After the first boot, the key must be present or the bootloader won't boot the app.
+
+* Added the :ref:`hw_unique_key_usage` sample.
 
 Drivers
 =======
@@ -251,8 +262,8 @@ Other libraries
 
 * :ref:`lib_hw_unique_key` library:
 
-  * Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
-  * Refactored the HUK_HAS_* macros to be defined/undefined instead of 1/0.
+  * Make the checking for ``hw_unique_key_write_random()`` more strict; panic if any key is unwritten after writing random keys.
+  * Refactored the ``HUK_HAS_*`` macros to be defined/undefined instead of 1/0.
   * Added a new sample :ref:`hw_unique_key_usage` showing how to use a hardware unique key to derive an encryption key.
     The sample can be run with or without TF-M.
   * Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
