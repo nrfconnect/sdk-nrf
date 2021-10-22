@@ -378,3 +378,7 @@ In addition to documentation related to the changes listed above, the following 
 * Libraries:
 
   * Added the documentation page for :ref:`lib_fatal_error`.
+
+* Samples
+
+  * :ref:`radio_test` - clarified units for numerical parameters in shell commands.

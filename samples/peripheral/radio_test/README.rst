@@ -81,7 +81,7 @@ User interface
      - Set the data rate.
    * - end_channel
      - <channel>
-     - End the channel for the sweep.
+     - End channel for the sweep (in MHz, as difference from 2400 MHz).
    * - nRF21540
      - <sub_cmd>
      - Set nRF21540 Front-End-Module parameters.
@@ -96,7 +96,7 @@ User interface
      - Print the received RX payload.
    * - start_channel
      - <channel>
-     - Start the channel for the sweep or the channel for the constant carrier.
+     - Start channel for the sweep or the channel for the constant carrier (in MHz, as difference from 2400 MHz).
    * - start_duty_cycle_modulated_tx
      - <duty_cycle>
      - Duty cycle in percent (two decimal digits, between 01 and 99).
@@ -117,7 +117,7 @@ User interface
      - Start the TX sweep.
    * - time_on_channel
      - <time>
-     - Time on each channel (between 1 ms and 99 ms).
+     - Time on each channel in ms (between 1 and 99).
    * - toggle_dcdc_state
      - <state>
      - Toggle DC/DC converter state.
