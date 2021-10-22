@@ -204,6 +204,7 @@ int here_rest_wifi_pos_get(
 	rest_ctx.header_fields = (const char **)headers;
 	rest_ctx.resp_buff = rcv_buf;
 	rest_ctx.resp_buff_len = rcv_buf_len;
+	rest_ctx.timeout_ms = request->timeout_ms;
 
 	/* Get the body/payload to request: */
 	ret = here_rest_format_wifi_pos_req_body(

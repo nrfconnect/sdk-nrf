@@ -267,6 +267,7 @@ int skyhook_rest_wifi_pos_get(
 	rest_ctx.header_fields = (const char **)headers;
 	rest_ctx.resp_buff = rcv_buf;
 	rest_ctx.resp_buff_len = rcv_buf_len;
+	rest_ctx.timeout_ms = request->timeout_ms;
 
 	ret = rest_client_request(&rest_ctx);
 	if (ret) {

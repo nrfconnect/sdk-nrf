@@ -34,6 +34,8 @@ extern struct loc_event_data current_event_data;
 struct k_work_args {
 	struct k_work work_item;
 	struct loc_wifi_config wifi_config;
+	int64_t starting_uptime_ms;
+
 };
 
 static struct net_if *wifi_iface;
@@ -153,6 +155,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	struct loc_location location_result = { 0 };
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_wifi_config wifi_config = work_data->wifi_config;
+	int64_t starting_uptime_ms = work_data->starting_uptime_ms;
 	int err;
 
 	loc_core_timer_start(wifi_config.timeout);
@@ -180,6 +183,18 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		if (latest_scan_result_count > 1) {
 			/* Fill scanning results: */
 			request.wifi_scanning_result_count = latest_scan_result_count;
+
+			/* Calculate remaining time as a REST timeout (in mseconds): */
+			request.timeout_ms = ((wifi_config.timeout * 1000) -
+					   (k_uptime_get() - starting_uptime_ms));
+			if (request.timeout_ms < REST_WIFI_MIN_TIMEOUT_MS) {
+				if (request.timeout_ms < 0) {
+					/* No remaining time at all */
+					LOG_WRN("No remaining time left for requesting a position");
+					goto return_error;
+				}
+				request.timeout_ms = REST_WIFI_MIN_TIMEOUT_MS;
+			}
 
 			for (int i = 0; i < latest_scan_result_count; i++) {
 				strcpy(request.scanning_results[i].mac_addr_str,
@@ -275,6 +290,7 @@ int method_wifi_location_get(const struct loc_method_config *config)
 
 	k_work_init(&method_wifi_start_work.work_item, method_wifi_positioning_work_fn);
 	method_wifi_start_work.wifi_config = wifi_config;
+	method_wifi_start_work.starting_uptime_ms = k_uptime_get();
 	k_work_submit_to_queue(loc_core_work_queue_get(), &method_wifi_start_work.work_item);
 
 	running = true;

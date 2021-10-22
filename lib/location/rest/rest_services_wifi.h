@@ -17,6 +17,7 @@
 #include <net/wifi.h>
 #include <modem/location.h>
 
+#define REST_WIFI_MIN_TIMEOUT_MS 1500
 #define WIFI_MAC_ADDR_STR_LEN 17
 
 /** @brief Item for passing a WiFi scanning result */
@@ -32,7 +33,8 @@ struct rest_wifi_pos_request {
 	/** Scanning results */
 	struct wifi_scanning_result_info
 		scanning_results[CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT];
-	uint8_t wifi_scanning_result_count;
+	uint8_t wifi_scanning_result_count; /* Count of wifi access points returned in scanning */
+	int32_t timeout_ms; /* REST request timeout (in mseconds) */
 };
 
 /** @brief WiFi positioning request result */
