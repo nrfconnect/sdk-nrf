@@ -10,3 +10,10 @@
 &uart1 {
 	status = "okay";
 };
+
+/ {
+	chosen {
+		zephyr,console = &uart1;
+		zephyr,shell-uart = &uart1;
+	};
+};
