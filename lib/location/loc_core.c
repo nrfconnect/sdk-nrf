@@ -461,8 +461,11 @@ void loc_core_timer_start(uint16_t timeout)
 {
 	if (timeout > 0) {
 		LOG_DBG("Starting timer with timeout=%d", timeout);
-		k_work_schedule_for_queue(
-			loc_core_work_queue_get(),
+
+		/* Using different work queue that the actual methods are using.
+		 * In this case using system work queue.
+		 */
+		k_work_schedule(
 			&loc_timeout_work,
 			K_SECONDS(timeout));
 	}
