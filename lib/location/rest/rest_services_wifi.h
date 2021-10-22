@@ -52,7 +52,7 @@ struct rest_wifi_pos_result {
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int rest_services_wifi_location_get(enum loc_wifi_service service,
+int rest_services_wifi_location_get(enum loc_service service,
 			   const struct rest_wifi_pos_request *request,
 			   struct rest_wifi_pos_result *result);
 

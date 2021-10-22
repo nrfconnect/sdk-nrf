@@ -250,18 +250,21 @@ int method_wifi_location_get(const struct loc_method_config *config)
 	}
 
 	/* Validate requested service: */
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD)
+	if (wifi_config.service == LOC_SERVICE_NRF_CLOUD ||
+	    wifi_config.service == LOC_SERVICE_ANY) {
+		service_ok = true;
+	}
+#endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
-	if (wifi_config.service == LOC_WIFI_SERVICE_HERE) {
+	if (wifi_config.service == LOC_SERVICE_HERE ||
+	    wifi_config.service == LOC_SERVICE_ANY) {
 		service_ok = true;
 	}
 #endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK)
-	if (wifi_config.service == LOC_WIFI_SERVICE_SKYHOOK) {
-		service_ok = true;
-	}
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD)
-	if (wifi_config.service == LOC_WIFI_SERVICE_NRF_CLOUD) {
+	if (wifi_config.service == LOC_SERVICE_SKYHOOK ||
+	    wifi_config.service == LOC_SERVICE_ANY) {
 		service_ok = true;
 	}
 #endif
