@@ -90,11 +90,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	}
 
 	ret = k_sem_take(&cellmeas_data_ready, K_FOREVER);
-	if (ret) {
-		LOG_WRN("Timeout for waiting neighbor cell measurements");
-		loc_core_event_cb_error();
-		running = false;
-	} else if (running) {
+	if (running) {
 		if (cell_data.current_cell.id == 0) {
 			LOG_WRN("No cells were found");
 			loc_core_event_cb_error();
