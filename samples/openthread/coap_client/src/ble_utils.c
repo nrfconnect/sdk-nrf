@@ -33,7 +33,6 @@ static void connected(struct bt_conn *conn, uint8_t err);
 static void disconnected(struct bt_conn *conn, uint8_t reason);
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey);
 static void auth_cancel(struct bt_conn *conn);
-static void pairing_confirm(struct bt_conn *conn);
 static void pairing_complete(struct bt_conn *conn, bool bonded);
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason);
 static void __attribute__((unused))
@@ -43,7 +42,6 @@ security_changed(struct bt_conn *conn, bt_security_t level,
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.cancel = auth_cancel,
-	.pairing_confirm = pairing_confirm,
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -129,15 +127,6 @@ static void auth_cancel(struct bt_conn *conn)
 	char *addr = ble_addr(conn);
 
 	LOG_INF("Pairing cancelled: %s", log_strdup(addr));
-}
-
-static void pairing_confirm(struct bt_conn *conn)
-{
-	char *addr = ble_addr(conn);
-
-	bt_conn_auth_pairing_confirm(conn);
-
-	LOG_INF("Pairing confirmed: %s", log_strdup(addr));
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
