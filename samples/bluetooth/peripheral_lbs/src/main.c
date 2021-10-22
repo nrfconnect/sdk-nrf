@@ -112,17 +112,6 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
-static void pairing_confirm(struct bt_conn *conn)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	bt_conn_auth_pairing_confirm(conn);
-
-	printk("Pairing confirmed: %s\n", addr);
-}
-
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -144,7 +133,6 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.cancel = auth_cancel,
-	.pairing_confirm = pairing_confirm,
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
