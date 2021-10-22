@@ -10,7 +10,7 @@
 #include <sys/util.h>
 
 #include <usb/usb_device.h>
-#include <usb/usb_common.h>
+#include <usb/usb_ch9.h>
 #include <usb/class/usb_hid.h>
 
 

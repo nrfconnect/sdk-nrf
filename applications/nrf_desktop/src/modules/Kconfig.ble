@@ -260,7 +260,7 @@ config DESKTOP_BLE_QOS_STACK_SIZE
 config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
 	bool "Enable BLE QoS statistics printout"
 	depends on DESKTOP_BLE_QOS_ENABLE
-	depends on USB
+	depends on USB_DEVICE_STACK
 	select USB_COMPOSITE_DEVICE
 	select USB_CDC_ACM
 	select SERIAL

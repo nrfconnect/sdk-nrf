@@ -34,7 +34,7 @@ The option selects :kconfig:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses
 
 You can use the :kconfig:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` option to enable real-time QoS information printouts through a virtual COM port (serial port emulated over USB).
 This option also enables and configures the COM port (USB CDC ACM).
-For this reason, the :kconfig:`CONFIG_USB` must be enabled.
+For this reason, the :kconfig:`CONFIG_USB_DEVICE_STACK` must be enabled.
 
 The QoS module creates additional thread for processing the QoS algorithm.
 You can define the following options:
