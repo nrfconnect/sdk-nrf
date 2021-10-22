@@ -8,7 +8,7 @@
 
 #include <logging/log.h>
 
-#ifdef CONFIG_USB
+#ifdef CONFIG_USB_DEVICE_STACK
 #include <usb/usb_device.h>
 #endif
 
@@ -25,7 +25,7 @@ int main()
 	int ret = 0;
 	CHIP_ERROR err = CHIP_NO_ERROR;
 
-#ifdef CONFIG_USB
+#ifdef CONFIG_USB_DEVICE_STACK
 	err = chip::System::MapErrorZephyr(usb_enable(NULL));
 	if (err != CHIP_NO_ERROR) {
 		goto exit;

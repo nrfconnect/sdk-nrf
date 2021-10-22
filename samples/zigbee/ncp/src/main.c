@@ -177,7 +177,7 @@ int main(void)
 {
 	LOG_INF("Starting Zigbee Network Co-processor sample");
 
-#ifdef CONFIG_USB
+#ifdef CONFIG_USB_DEVICE_STACK
 	/* Enable USB device. */
 	int ret = usb_enable(NULL);
 
@@ -217,7 +217,7 @@ int main(void)
 
 	/* Wait 1 sec for the host to do all settings */
 	k_sleep(K_SECONDS(1));
-#endif /* CONFIG_USB */
+#endif /* CONFIG_USB_DEVICE_STACK */
 
 	zb_osif_ncp_set_nvram_filter();
 

@@ -9,7 +9,7 @@
 #include <sys/printk.h>
 #include <zephyr/types.h>
 
-#if defined(CONFIG_USB)
+#if defined(CONFIG_USB_DEVICE_STACK)
 #include <usb/usb_device.h>
 #include <drivers/uart.h>
 #endif
@@ -420,7 +420,7 @@ void main(void)
 		.le_param_updated = le_param_updated,
 	};
 
-#if defined(CONFIG_USB)
+#if defined(CONFIG_USB_DEVICE_STACK)
 	const struct device *uart_dev = device_get_binding(
 			CONFIG_UART_CONSOLE_ON_DEV_NAME);
 	uint32_t dtr = 0;
