@@ -24,11 +24,12 @@ config LOCATION_METHOD_CELLULAR
 config LOCATION_METHOD_WIFI
 	bool "Allow WiFi positioning to be used for obtaining the location"
 	depends on WIFI
-	select SREST_CLIENT_LIB
+	select REST_CLIENT
 	select CJSON_LIB
 	select NET_MGMT
 	select NET_MGMT_EVENT
 	select NET_MGMT_EVENT_INFO
+	select NET_L2_WIFI_MGMT
 	default y if WIFI
 
 if LOCATION_METHOD_WIFI
