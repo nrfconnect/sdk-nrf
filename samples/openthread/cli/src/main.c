@@ -41,7 +41,7 @@ void main(void)
 		return;
 	}
 
-	dev = device_get_binding(CONFIG_UART_SHELL_ON_DEV_NAME);
+	dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
 	if (dev == NULL) {
 		LOG_ERR("Failed to find specific UART device");
 		return;
