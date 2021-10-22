@@ -10,13 +10,3 @@
 &pwm3 {
 	status = "okay";
 };
-
-&uart0 {
-	status = "okay";
-
-	spm_uart: nrf-spm-uart {
-		compatible = "nordic,nrf-spm-uart";
-		status = "okay";
-		label = "SPM_UART";
-	};
-};

@@ -65,7 +65,7 @@ static int spm_uart_init(const struct device *dev)
 	return 0;
 }
 
-DEVICE_DEFINE(spm_uart, DT_PROP(DT_NODELABEL(spm_uart), label), spm_uart_init,
-	      NULL, NULL, &spm_uart_config,
-	      PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
-	      &spm_uart_api);
+DEVICE_DT_DEFINE(DT_NODELABEL(spm_uart), spm_uart_init,
+		 NULL, NULL, &spm_uart_config,
+		 PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
+		 &spm_uart_api);

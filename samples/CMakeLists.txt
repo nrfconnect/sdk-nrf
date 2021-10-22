@@ -24,6 +24,11 @@ if (CONFIG_SPM)
         spm
         ${NRF_DIR}/samples/spm/spm_ns_handler_from_spm_fault.conf
         )
+
+      add_overlay_dts(
+        mcuboot
+        ${NRF_DIR}/samples/spm/spm_uart.overlay
+      )
   endif()
 
   if (CONFIG_BOARD_ENABLE_CPUNET)
