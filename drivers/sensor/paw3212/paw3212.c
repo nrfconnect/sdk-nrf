@@ -101,6 +101,10 @@ LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 
 #define SPI_WRITE_BIT			BIT(7)
 
+/* Helper macros used to convert sensor values. */
+#define PAW3212_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
+#define PAW3212_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
+#define PAW3212_SVALUE_TO_BOOL(svalue) ((svalue).val1 != 0)
 
 enum async_init_step {
 	ASYNC_INIT_STEP_POWER_UP,
