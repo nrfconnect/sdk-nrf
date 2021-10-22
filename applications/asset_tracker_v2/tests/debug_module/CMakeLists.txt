@@ -26,7 +26,6 @@ cmock_handle(${MEMFAULT_SDK_DIR}/ports/include/memfault/ports/watchdog.h memfaul
 
 # Create mock for nRF SDK
 cmock_handle(${NRF_SDK_DIR}/include/event_manager.h)
-cmock_handle(${ZEPHYR_BASE}/include/sys/reboot.h)
 
 # Create mock for Asset Tracker v2 application source files
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/modules/modules_common.h)
