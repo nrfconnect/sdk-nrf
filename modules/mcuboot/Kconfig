@@ -34,4 +34,8 @@ config DT_FLASH_WRITE_BLOCK_SIZE
 	int
 	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),write-block-size)
 
+config MCUBOOT_USB_SUPPORT
+	bool
+	default y if "$(dt_nodelabel_enabled,zephyr_udc0)"
+
 endmenu
