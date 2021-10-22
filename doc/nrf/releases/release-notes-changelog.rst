@@ -147,6 +147,10 @@ Zigbee samples
 
    * :ref:`Zigbee shell <zigbee_shell_sample>` sample.
 
+* Updated:
+
+   * Fixed issue with cluster declaration in :ref:`Zigbee shell <zigbee_shell_sample>` sample and :ref:`Zigbee template <zigbee_template_sample>` sample.
+
 Other samples
 -------------
 
@@ -282,7 +286,9 @@ Libraries for Zigbee
 --------------------
 
 * Added ZCL commands to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
-* Added :ref:`command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
+* Fixes and improvements in :ref:`Zigbee Shell  <lib_zigbee_shell>` library.
+* Added :ref:`BDB command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
+* Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` library and :ref:`Zigbee Shell <lib_zigbee_shell>` library.
 
 Scripts
 =======
