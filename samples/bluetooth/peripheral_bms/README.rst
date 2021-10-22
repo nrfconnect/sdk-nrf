@@ -58,8 +58,9 @@ After programming the sample to your development kit, test it by performing the 
 
    a. Click the :guilabel:`Settings` button for the device in nRF Connect.
    b. Select :guilabel:`Pair`.
-   c. Check :guilabel:`Perform Bonding`.
-   d. Click :guilabel:`Pair`.
+   c. Select :guilabel:`Keyboard and display` in the IO capabilities setting.
+   d. Select :guilabel:`Perform Bonding`.
+   e. Click :guilabel:`Pair`.
 
 #. Check the logs to verify that the connection security is updated.
 #. Disconnect the device in nRF Connect.
