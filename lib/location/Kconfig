@@ -42,13 +42,13 @@ config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 
 config LOCATION_METHOD_WIFI_SERVICE_HERE
 	bool "WiFi positioning using Here service"
-	default y
+	default n
 	help
 	  Use HERE location service
 
 config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
 	bool "WiFi positioning using Skyhook service"
-	default y
+	default n
 	depends on MODEM_JWT
 	help
 	  Use Skyhook location service
