@@ -23,10 +23,6 @@ enum paw3212_attribute {
 	PAW3212_ATTR_SLEEP3_SAMPLE_TIME,
 };
 
-#define PAW3212_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
-#define PAW3212_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
-#define PAW3212_SVALUE_TO_BOOL(svalue) ((svalue).val1 != 0)
-
 #ifdef __cplusplus
 }
 #endif
