@@ -89,7 +89,7 @@ static void nmos_pwm_disable(uint32_t nmos_idx)
 		return;
 	}
 
-	int err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_SUSPEND);
+	int err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_SUSPENDED);
 	if (err) {
 		LOG_WRN("PWM disable failed");
 	}

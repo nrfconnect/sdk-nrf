@@ -237,7 +237,7 @@ static int disable_qdec(enum state next_state)
 		return err;
 	}
 
-	err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_SUSPEND);
+	err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_SUSPENDED);
 	if (err) {
 		LOG_ERR("Cannot suspend QDEC");
 	} else {
