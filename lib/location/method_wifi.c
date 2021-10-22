@@ -66,17 +66,21 @@ static int method_wifi_scanning_start(void)
 	int ret;
 
 	LOG_DBG("Triggering start of WiFi scanning");
-	assert(wifi_iface != NULL);
 
 	latest_scan_result_count = 0;
 	current_scan_result_count = 0;
 
-	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
-	if (ret) {
-		LOG_ERR("Failed to initiate WiFi scanning: %d", ret);
-		return ret;
+	if (wifi_iface != NULL) {
+		ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
+		if (ret) {
+			LOG_ERR("Failed to initiate WiFi scanning: %d", ret);
+			ret = -1;
+		}
+	} else {
+		LOG_ERR("Failed to initiate WiFi scanning: no wifi device");
+		ret = -1;
 	}
-	return 0;
+	return ret;
 }
 
 /******************************************************************************/
@@ -301,6 +305,10 @@ int method_wifi_location_get(const struct loc_method_config *config)
 
 int method_wifi_init(void)
 {
+	running = false;
+	current_scan_result_count = 0;
+	latest_scan_result_count = 0;
+
 	wifi_iface = net_if_get_default();
 	if (wifi_iface == NULL) {
 		LOG_ERR("Could not get the default interface");
@@ -312,12 +320,9 @@ int method_wifi_init(void)
 	 */
 	if (!net_if_is_ip_offloaded(wifi_iface)) {
 		LOG_ERR("Given interface not overloaded");
+		wifi_iface = NULL;
 		return -1;
 	}
-
-	running = false;
-	current_scan_result_count = 0;
-	latest_scan_result_count = 0;
 
 	net_mgmt_init_event_callback(&method_wifi_net_mgmt_cb, method_wifi_net_mgmt_event_handler,
 				     (NET_EVENT_WIFI_SCAN_RESULT | NET_EVENT_WIFI_SCAN_DONE));
