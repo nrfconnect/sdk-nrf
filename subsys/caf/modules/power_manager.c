@@ -72,7 +72,7 @@ static void power_down_counter_reset(void)
 static void power_down_counter_abort(void)
 {
 	k_work_cancel_delayable(&power_down_trigger);
-	LOG_INF("Power down timer aborted");
+	LOG_DBG("Power down timer aborted");
 }
 
 static void set_power_state(enum power_state state)
