@@ -76,8 +76,7 @@ static struct nrf_cloud_pgps_prediction *prediction;
 static struct gps_pgps_request pgps_request;
 #endif
 
-static int fix_attempts_remaining;
-static bool first_fix_obtained;
+static int fixes_remaining;
 static bool running;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 
@@ -96,7 +95,7 @@ static void method_gnss_manage_pgps(struct k_work *work)
 	ARG_UNUSED(work);
 	int err;
 
-	LOG_INF("Sending prediction to modem...");
+	LOG_DBG("Sending prediction to modem...");
 
 	err = nrf_cloud_pgps_inject(prediction, &agps_request);
 
@@ -113,7 +112,7 @@ static void method_gnss_manage_pgps(struct k_work *work)
 void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	/* GPS unit asked for it, but we didn't have it; check now */
-	LOG_INF("P-GPS event type: %d", event->type);
+	LOG_DBG("P-GPS event type: %d", event->type);
 
 	if (event->type == PGPS_EVT_AVAILABLE) {
 		prediction = event->prediction;
@@ -171,11 +170,12 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 static void method_gnss_agps_request_work_fn(struct k_work *item)
 {
 	int err = nrf_cloud_agps_request(&agps_request);
-
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return;
 	}
+
+	LOG_DBG("A-GPS data requested");
 }
 
 #else // defined(CONFIG_NRF_CLOUD_MQTT)
@@ -266,8 +266,21 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 
 	struct nrf_cloud_rest_agps_result result = {agps_data_buf, sizeof(agps_data_buf), 0};
 
-	nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
-	nrf_cloud_agps_process(result.buf, result.agps_sz);
+	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+	if (err) {
+		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("A-GPS data requested");
+
+	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
+	if (err) {
+		LOG_ERR("A-GPS data processing failed, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("A-GPS data processed");
 }
 #endif // defined(CONFIG_NRF_CLOUD_MQTT)
 #endif // defined(CONFIG_NRF_CLOUD_AGPS)
@@ -296,8 +309,21 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 		.pgps_req = &pgps_request
 	};
 
-	nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
-	nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
+	if (err) {
+		LOG_ERR("nRF Cloud P-GPS request failed, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("P-GPS data requested");
+
+	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+	if (err) {
+		LOG_ERR("P-GPS data processing failed, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("P-GPS data processed");
 }
 #endif
 
@@ -336,7 +362,7 @@ bool method_gnss_agps_required(struct nrf_modem_gnss_agps_data_frame *request)
 	}
 
 	if (type_count == 0) {
-		LOG_INF("No A-GPS data types requested");
+		LOG_DBG("No A-GPS data types requested");
 		return false;
 	} else {
 		return true;
@@ -355,7 +381,7 @@ static void method_gnss_request_assistance(void)
 		return;
 	}
 
-	LOG_INF("A-GPS request from modem: emask:0x%08X amask:0x%08X flags:%d",
+	LOG_DBG("A-GPS request from modem (ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
 		agps_request.sv_mask_ephe,
 		agps_request.sv_mask_alm,
 		agps_request.data_flags);
@@ -395,13 +421,11 @@ int method_gnss_cancel(void)
 	int err = nrf_modem_gnss_stop();
 	int sleeping;
 
-	if (!err) {
-		LOG_DBG("GNSS stopped");
-	} else if (err == NRF_EPERM) {
+	if (err == NRF_EPERM) {
 		/* Let's convert NRF_EPERM to EPERM to make sure loc_core works properly */
 		err = EPERM;
 		/* NRF_EPERM is logged in loc_core */
-	} else {
+	} else if (err) {
 		LOG_ERR("Failed to stop GNSS");
 	}
 
@@ -419,9 +443,6 @@ int method_gnss_cancel(void)
 	if (!sleeping) {
 		k_sem_reset(&entered_psm_mode);
 	}
-
-	fix_attempts_remaining = 0;
-	first_fix_obtained = false;
 
 	return -err;
 }
@@ -441,9 +462,13 @@ static bool method_gnss_entered_psm(void)
 		ret = lte_lc_psm_get(&tau, &active_time);
 		if (ret < 0) {
 			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
-		} else if (active_time >= 0) {
-			LOG_INF("Waiting for LTE to enter PSM: tau %d active_time %d",
-				tau, active_time);
+			return true;
+		}
+
+		LOG_DBG("LTE active time: %d seconds", active_time);
+
+		if (active_time >= 0) {
+			LOG_DBG("Waiting for LTE to enter PSM");
 
 			/* Wait for the PSM to start. If semaphore is reset during the waiting
 			 * period, the position request was canceled.
@@ -486,7 +511,9 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 		tracked++;
 	}
 
-	LOG_DBG("Tracked satellites: %d", tracked);
+	LOG_DBG("Tracked satellites: %d, fix valid: %s",
+		tracked,
+		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false");
 
 	/* Print details for each satellite */
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
@@ -509,6 +536,11 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 	static struct loc_location location_result = { 0 };
 
+	if (!running) {
+		/* Cancel has already been called, so ignore the notification. */
+		return;
+	}
+
 	if (nrf_modem_gnss_read(&pvt_data, sizeof(pvt_data), NRF_MODEM_GNSS_DATA_PVT) != 0) {
 		LOG_ERR("Failed to read PVT data from GNSS");
 		return;
@@ -520,7 +552,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 	 * in memory and it is not overwritten in case we get an invalid fix.
 	 */
 	if (pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
-		first_fix_obtained = true;
+		fixes_remaining--;
 
 		location_result.latitude = pvt_data.latitude;
 		location_result.longitude = pvt_data.longitude;
@@ -535,15 +567,10 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 		location_result.datetime.ms = pvt_data.datetime.ms;
 	}
 
-	/* Start countdown of remaining fix attempts only once we get the first valid fix. */
-	if (first_fix_obtained) {
-		if (!fix_attempts_remaining) {
-			/* We are done, stop GNSS and publish the fix */
-			method_gnss_cancel();
-			loc_core_event_cb(&location_result);
-		} else {
-			fix_attempts_remaining--;
-		}
+	if (fixes_remaining <= 0) {
+		/* We are done, stop GNSS and publish the fix. */
+		method_gnss_cancel();
+		loc_core_event_cb(&location_result);
 	}
 }
 
@@ -563,6 +590,9 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
 
+	/* By default we take the first fix. */
+	fixes_remaining = 1;
+
 	uint8_t use_case;
 
 	switch (gnss_config.accuracy) {
@@ -580,9 +610,9 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	case LOC_ACCURACY_HIGH:
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 		err |= nrf_modem_gnss_use_case_set(use_case);
-		if (!err) {
-			fix_attempts_remaining = gnss_config.num_consecutive_fixes;
-		}
+
+		/* In high accuracy mode, use the configured fix count. */
+		fixes_remaining = gnss_config.num_consecutive_fixes;
 		break;
 	}
 
@@ -590,6 +620,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 		LOG_ERR("Failed to configure GNSS");
 		loc_core_event_cb_error();
 		running = false;
+		return;
 	}
 
 	err = nrf_modem_gnss_start();
@@ -597,11 +628,10 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 		LOG_ERR("Failed to start GNSS");
 		loc_core_event_cb_error();
 		running = false;
+		return;
 	}
 
 	loc_core_timer_start(gnss_config.timeout);
-
-	LOG_INF("GNSS started");
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -609,16 +639,16 @@ static void method_gnss_date_time_event_handler(const struct date_time_evt *evt)
 {
 	switch (evt->type) {
 	case DATE_TIME_OBTAINED_MODEM:
-		LOG_INF("DATE_TIME_OBTAINED_MODEM");
+		LOG_DBG("DATE_TIME_OBTAINED_MODEM");
 		break;
 	case DATE_TIME_OBTAINED_NTP:
-		LOG_INF("DATE_TIME_OBTAINED_NTP");
+		LOG_DBG("DATE_TIME_OBTAINED_NTP");
 		break;
 	case DATE_TIME_OBTAINED_EXT:
-		LOG_INF("DATE_TIME_OBTAINED_EXT");
+		LOG_DBG("DATE_TIME_OBTAINED_EXT");
 		break;
 	case DATE_TIME_NOT_OBTAINED:
-		LOG_INF("DATE_TIME_NOT_OBTAINED");
+		LOG_DBG("DATE_TIME_NOT_OBTAINED");
 		break;
 	default:
 		break;

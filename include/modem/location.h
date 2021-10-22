@@ -143,9 +143,9 @@ struct loc_gnss_config {
 	enum loc_accuracy accuracy;
 
 	/**
-	 * @brief If accuracy is set to LOC_ACCURACY_HIGH, allow GNSS to attempt
-	 * num_consecutive_fixes fixes after the first successful fix before outputting the
-	 * current location.
+	 * @brief If accuracy is set to LOC_ACCURACY_HIGH, instead of using the first fix, GNSS
+	 * is allowed to run for a longer time and produce the configured number fixes before the
+	 * library outputs the current location.
 	 *
 	 * @details This typically improves the location accuracy. If accuracy is set to
 	 * LOC_ACCURACY_NORMAL or LOC_ACCURACY_LOW this parameter has no effect.
