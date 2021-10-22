@@ -1282,14 +1282,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_nrf21540,
 #endif /* CONFIG_NRF21540_FEM */
 
 SHELL_CMD_REGISTER(start_channel, NULL,
-		   "Start the channel for the sweep or the channel for"
-		   " the constant carrier <channel>",
+		   "Start channel for the sweep or the channel for"
+		   " the constant carrier (in MHz as difference from 2400 MHz) <channel>",
 		    cmd_start_channel_set);
 SHELL_CMD_REGISTER(end_channel, NULL,
-		   "End the channel for the sweep <channel>",
+		   "End channel for the sweep (in MHz as difference from 2400 MHz) <channel>",
 		   cmd_end_channel_set);
 SHELL_CMD_REGISTER(time_on_channel, NULL,
-		   "Time on each channel (between 1 ms and 99 ms) <time>",
+		   "Time on each channel in ms (between 1 and 99) <time>",
 		   cmd_time_set);
 SHELL_CMD_REGISTER(cancel, NULL, "Cancel the sweep or the carrier",
 		   cmd_cancel);
