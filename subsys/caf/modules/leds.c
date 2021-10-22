@@ -225,7 +225,7 @@ static void leds_stop(void)
 		/* Zephyr power management API is not implemented for GPIO LEDs.
 		 * LEDs are turned off by CAF LEDs module.
 		 */
-		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_SUSPEND);
+		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_SUSPENDED);
 
 		if (err) {
 			LOG_ERR("Failed to set LED driver into suspend state (err: %d)", err);

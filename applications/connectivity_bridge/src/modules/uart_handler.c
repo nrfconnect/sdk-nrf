@@ -246,7 +246,7 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 	enum pm_device_state current_state;
 	enum pm_device_state target_state;
 
-	target_state = active ? PM_DEVICE_STATE_ACTIVE : PM_DEVICE_STATE_SUSPEND;
+	target_state = active ? PM_DEVICE_STATE_ACTIVE : PM_DEVICE_STATE_SUSPENDED;
 
 	err = pm_device_state_get(dev, &current_state);
 	if (err) {
