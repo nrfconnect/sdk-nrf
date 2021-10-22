@@ -7,3 +7,11 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
     tags: ci_build
+  samples.nrf9160.modem_shell.ppp:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-ppp.conf
+                DTC_OVERLAY_FILE="ppp.overlay"
+    tags: ci_build
