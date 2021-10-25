@@ -27,9 +27,9 @@ extern "C" {
 /** @brief AWS IoT shadow topics, used in messages to specify which shadow
  *         topic that will be published to.
  */
-enum aws_iot_topic_type {
-	/** Unknown device shadow topic. */
-	AWS_IOT_SHADOW_TOPIC_UNKNOWN = 0x0,
+enum aws_iot_shadow_topic_type {
+	/** Unused default value. */
+	AWS_IOT_SHADOW_TOPIC_NONE,
 	/** This topic type corresponds to
 	 *  $aws/things/<thing-name>/shadow/get, publishing an empty message
 	 *  to this topic requests the device shadow document.
@@ -109,8 +109,11 @@ enum aws_iot_evt_type {
 
 /** @brief AWS IoT topic data. */
 struct aws_iot_topic_data {
-	/** Type of shadow topic that will be published to. */
-	enum aws_iot_topic_type type;
+	/** Optional: type of shadow topic that will be published to.
+	 *  When publishing to a shadow topic this can be set instead of the
+	 *  application specific topic below.
+	 */
+	enum aws_iot_shadow_topic_type type;
 	/** Pointer to string of application specific topic. */
 	const char *str;
 	/** Length of application specific topic. */
