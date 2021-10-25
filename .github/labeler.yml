@@ -1,7 +1,7 @@
 # https://github.com/actions/labeler/blob/main/README.md
 
 # When extending this, remember that in the PR, the labeler will run against
-# the labeler.yml in master, more info:
+# the labeler.yml in main, more info:
 # https://github.com/actions/labeler/issues/12
 # This means your changes won't be tested. To test your branch, make a second
 # branch with dummy changes, and open a PR on your own fork, against the

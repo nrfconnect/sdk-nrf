@@ -52,13 +52,13 @@
 
 .. _`Alexa Gadgets Github color cycler`: https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples/tree/v2.0.0/src/examples/color_cycler#user-content-step-4-create-your-custom-skill
 
-.. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
+.. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
 
-.. _`west manifest file`: https://github.com/nrfconnect/sdk-nrf/blob/master/west.yml
+.. _`west manifest file`: https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml
 
-.. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/master/tests/unity/example_test/CMakeLists.txt
+.. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/main/tests/unity/example_test/CMakeLists.txt
 
-.. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
+.. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/main/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
 
 .. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/main/src/cli/README.md
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
@@ -132,7 +132,7 @@
 .. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
-.. _`known issues page on the master branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
+.. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
 .. _`known issues for nRF Connect SDK v1.7.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-7-0
 .. _`known issues for nRF Connect SDK v1.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-6-1
 .. _`known issues for nRF Connect SDK v1.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-6-0

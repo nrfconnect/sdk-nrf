@@ -7,7 +7,7 @@ Changelog for |NCS| v1.7.99
    :local:
    :depth: 2
 
-The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest official release, are tracked in this file.
+The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
 
 .. note::
    This file is a work in progress and might not cover all relevant changes.
@@ -342,7 +342,7 @@ For a complete list of |NCS| specific commits, run:
 
    git log --oneline manifest-rev ^14f09a3b00
 
-The current |NCS| master branch is based on the Zephyr v2.7 development branch.
+The current |NCS| main branch is based on the Zephyr v2.7 development branch.
 
 Matter (Project CHIP)
 =====================

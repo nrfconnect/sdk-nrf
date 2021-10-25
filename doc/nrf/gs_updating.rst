@@ -83,7 +83,7 @@ To update to a particular revision (SHA), make sure that you have that particula
 To switch to the latest state of development, enter the following commands::
 
    git fetch origin
-   git checkout origin/master
+   git checkout origin/main
    west update
 
 .. note::

@@ -63,7 +63,7 @@ repositories (i.e. the west projects).
 This means that the linear Git history of this manifest repository also determines the history of the repository set in its entirety, thanks to the :file:`west.yml` `west manifest file`_ being part of the manifest repository.
 West reads the contents of the manifest file to find out which revisions of the project repositories are to be checked out every time ``west update`` is run.
 In this way, you can decide to work with a specific |NCS| release either by initializing a new west installation at a particular tag or by checking out the corresponding tag for a release in an existing installation and then updating your project repositories to the corresponding state with ``west update``.
-Alternatively, you can work with the latest state of development by using the master branch of the `sdk-nrf`_ repository, updating it with Git regularly and using ``west update`` to update the project repositories every time the manifest repository changes.
+Alternatively, you can work with the latest state of development by using the main branch of the `sdk-nrf`_ repository, updating it with Git regularly and using ``west update`` to update the project repositories every time the manifest repository changes.
 More information about manifests can be found in the :ref:`west manifest section <zephyr:west-manifests>` of the Zephyr documentation.
 
 Revisions
@@ -71,12 +71,12 @@ Revisions
 
 There are two fundamental revisions that are relevant to most |NCS| users:
 
-* The ``master`` branch of the `sdk-nrf`_ repository
+* The ``main`` branch of the `sdk-nrf`_ repository
 * Any Git tag (i.e. release) of the `sdk-nrf`_ repository
 
 As discussed above, the revision of the manifest repository, `sdk-nrf`_, uniquely determines the revisions of all other repositories, so a discussion about |NCS| revisions can be essentially limited to the manifest repository revision.
 
-The ``master`` branch of the `sdk-nrf`_ repository always contains the latest development state of the |NCS|.
+The ``main`` branch of the `sdk-nrf`_ repository always contains the latest development state of the |NCS|.
 Since all development is done openly, you can use it if you are not particularly concerned about stability and want to track the latest changes that are being merged continuously into the different repositories.
 
 The Git tags correspond to official releases tested and signed by the Nordic engineers.
