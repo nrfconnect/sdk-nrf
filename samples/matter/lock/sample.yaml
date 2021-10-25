@@ -18,3 +18,11 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: ci_build
     extra_args: "BUILD_WITH_DFU=1"
+  matter.lock.low_power:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: "OVERLAY_CONFIG=overlay-low_power.conf"
