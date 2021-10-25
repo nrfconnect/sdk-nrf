@@ -409,6 +409,7 @@ In addition to documentation related to the changes listed above, the following 
 * Libraries:
 
   * Added the documentation page for :ref:`lib_fatal_error`.
+  * Added the documentation page for :ref:`lib_mpsl_multithreading_lock`
 
 * Samples
 
