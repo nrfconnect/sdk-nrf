@@ -383,7 +383,9 @@ static void bt_mesh_silvair_enocean_srv_reset(struct bt_mesh_model *model)
 		decommission_device(srv);
 	}
 
+#if defined(CONFIG_ZTEST)
 	sys_slist_find_and_remove(&models_list, &srv->entry);
+#endif
 
 	for (int i = 0; i < BT_MESH_SILVAIR_ENOCEAN_PROXY_BUTTONS; i++) {
 		/* If cancel fails, the handler will do nothing because the
