@@ -1046,6 +1046,10 @@ static int connection_poll_start(void)
 
 int aws_iot_ping(void)
 {
+	if (client.unacked_ping) {
+		LOG_DBG("Previous MQTT ping not acknowledged");
+		return -ECONNRESET;
+	}
 	return mqtt_ping(&client);
 }
 
@@ -1266,7 +1270,12 @@ start:
 
 		/* If poll returns 0 the timeout has expired. */
 		if (err == 0) {
-			aws_iot_ping();
+			err = aws_iot_ping();
+			if (err) {
+				LOG_ERR("Cloud MQTT keepalive ping failed: %d", err);
+				aws_iot_evt.data.err = AWS_IOT_DISCONNECT_MISC;
+				break;
+			}
 			continue;
 		}
 
