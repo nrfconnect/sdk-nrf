@@ -45,7 +45,7 @@ static pdn_event_handler_t default_callback;
  * between the different type of events later (ME, IPV6, etc).
  */
 AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
-AT_MONITOR(pdn_cnec_esm, "+CNEC ESM", on_cnec_esm);
+AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
 
 static struct pdn *pdn_find(int cid)
 {
@@ -67,16 +67,19 @@ static struct pdn *pdn_avail_get(void)
 
 static void on_cnec_esm(const char *notif)
 {
-	int match;
+	char *p;
 	uint32_t cid;
 	uint32_t esm_err;
 	struct pdn *pdn;
 
 	/* +CNEC_ESM: <cause>,<cid> */
-	match = sscanf(notif, "+CNEC_ESM: %u,%u", &esm_err, &cid);
-	if (match != 2) {
+	esm_err = strtoul(notif + strlen("+CNEC_ESM: "), &p, 10);
+
+	if (!p || *p != ',') {
 		return;
 	}
+
+	cid = strtoul(p + 1, NULL, 10);
 
 	pdn = pdn_find(cid);
 	if (!pdn) {
