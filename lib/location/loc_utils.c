@@ -10,9 +10,7 @@
 
 #include <assert.h>
 
-#include <modem/at_cmd.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
+#include <nrf_modem_at.h>
 
 #include <logging/log.h>
 
@@ -27,7 +25,7 @@ bool loc_utils_is_default_pdn_active(void)
 	int err;
 	bool is_active = false;
 
-	err = at_cmd_write(AT_CMD_PDP_ACT_READ, at_response_str, sizeof(at_response_str), NULL);
+	err = nrf_modem_at_cmd(at_response_str, sizeof(at_response_str), "%s", AT_CMD_PDP_ACT_READ);
 	if (err) {
 		LOG_ERR("Cannot get PDP contexts activation states, err: %d", err);
 		return false;
