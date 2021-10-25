@@ -32,6 +32,17 @@ config LOCATION_METHOD_WIFI
 	select NET_L2_WIFI_MGMT
 	default y if WIFI
 
+if LOCATION_METHOD_GNSS
+config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
+	bool "Requesting A-GPS data is handled by the application outside of Location library."
+	depends on NRF_CLOUD_AGPS
+	default n
+	help
+	  Allow application to download the A-GPS data and merely feed it to Location library for
+	  processing. If enabled, Location library throws event LOC_EVT_GNSS_ASSISTANCE_REQUEST when
+	  assistance is needed.
+endif # LOCATION_METHOD_GNSS
+
 if LOCATION_METHOD_WIFI
 
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD

@@ -35,6 +35,10 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(IS_ENABLED(CONFIG_DATE_TIME));
 #endif
 
+/* Max waiting time for modem to enter the PSM in minutes. This prevents Location lib from getting
+ * stuck indefinitely if e.g. the application keeps modem constantly awake.
+ */
+#define PSM_WAIT_BACKSTOP 5
 #if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
@@ -43,7 +47,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_DATE_TIME));
 #endif
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 #define AGPS_REQUEST_RECV_BUF_SIZE 3500
-#define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 500
+#define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #define NUM_PREDICTIONS CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS
@@ -87,6 +91,11 @@ static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
 static char jwt_buf[600];
 #endif
+#endif
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+static struct k_work method_gnss_agps_cb_work;
+static void method_gnss_agps_cb_work_fn(struct k_work *item);
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -152,11 +161,15 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 		k_sem_reset(&entered_psm_mode);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
-		/* If the PSM becomes disabled e.g. due to network change, allow GNSS to be started
-		 * in case there was a pending position request waiting for the sleep to start.
+		/* If PSM becomes disabled e.g. due to network change, allow GNSS to be started
+		 * in case there was a pending position request waiting for the sleep to start. If
+		 * PSM becomes enabled, block GNSS until the modem enters PSM by taking the
+		 * semaphore.
 		 */
 		if (evt->psm_cfg.active_time == -1) {
 			k_sem_give(&entered_psm_mode);
+		} else if (evt->psm_cfg.active_time > 0) {
+			k_sem_take(&entered_psm_mode, K_NO_WAIT);
 		}
 		break;
 	default:
@@ -385,6 +398,9 @@ static void method_gnss_request_assistance(void)
 		agps_request.sv_mask_ephe,
 		agps_request.sv_mask_alm,
 		agps_request.data_flags);
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+	k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_agps_cb_work);
+#else
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	/* Check the request. If no A-GPS data types except ephemeris or almanac are requested,
 	 * jump to P-GPS (if enabled)
@@ -398,6 +414,7 @@ static void method_gnss_request_assistance(void)
 		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_notify_pgps_work);
 #endif
 	}
+#endif // defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 }
 #endif // defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 
@@ -473,8 +490,15 @@ static bool method_gnss_entered_psm(void)
 			/* Wait for the PSM to start. If semaphore is reset during the waiting
 			 * period, the position request was canceled.
 			 */
-			if (k_sem_take(&entered_psm_mode, K_FOREVER) == -EAGAIN) {
-				return false;
+			if (k_sem_take(&entered_psm_mode, K_MINUTES(PSM_WAIT_BACKSTOP))
+			    == -EAGAIN) {
+				if (!running) { /* Request was cancelled */
+					return false;
+				}
+				/* We're still running, i.e., the wait for PSM timed out */
+				LOG_ERR("PSM is configured, but modem did not enter PSM ");
+				LOG_ERR("in %d minutes. Starting GNSS anyway.",
+					PSM_WAIT_BACKSTOP);
 			}
 			k_sem_give(&entered_psm_mode);
 		}
@@ -573,6 +597,12 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 		loc_core_event_cb(&location_result);
 	}
 }
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+static void method_gnss_agps_cb_work_fn(struct k_work *item)
+{
+	loc_core_event_cb_assistance_request(&agps_request);
+}
+#endif
 
 static void method_gnss_positioning_work_fn(struct k_work *work)
 {
@@ -734,6 +764,9 @@ int method_gnss_init(void)
 		return -err;
 	}
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+	k_work_init(&method_gnss_agps_cb_work, method_gnss_agps_cb_work_fn);
+#endif
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	k_work_init(&method_gnss_agps_request_work, method_gnss_agps_request_work_fn);

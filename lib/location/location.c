@@ -9,6 +9,9 @@
 #include <assert.h>
 #include <logging/log.h>
 #include <modem/location.h>
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#include <net/nrf_cloud_agps.h>
+#endif
 
 #include "loc_core.h"
 
@@ -125,3 +128,18 @@ void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_m
 		method->wifi.timeout = 30;
 	}
 }
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+int location_agps_data_process(const char *buf, size_t buf_len)
+{
+	if (!buf) {
+		LOG_ERR("A-GPS data buffer cannot be a NULL pointer.");
+		return -EINVAL;
+	}
+	if (!buf_len) {
+		LOG_ERR("A-GPS data buffer length cannot be zero.");
+		return -EINVAL;
+	}
+	return nrf_cloud_agps_process(buf, buf_len);
+}
+#endif

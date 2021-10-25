@@ -182,6 +182,14 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 	case LOC_EVT_ERROR:
 		mosh_error("An error happened during getting a location");
 		break;
+	case LOC_EVT_GNSS_ASSISTANCE_REQUEST:
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+		mosh_print("MoSh: A-GPS request from modem: emask:0x%08X amask:0x%08X flags:%d",
+		event_data->request.sv_mask_ephe,
+		event_data->request.sv_mask_alm,
+		event_data->request.data_flags);
+#endif
+		break;
 	}
 }
 

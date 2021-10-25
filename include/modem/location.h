@@ -17,6 +17,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+#include <nrf_modem_gnss.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +44,9 @@ enum loc_event_id {
 	/** Getting location timed out. */
 	LOC_EVT_TIMEOUT,
 	/** An error occurred when trying to get the location. */
-	LOC_EVT_ERROR
+	LOC_EVT_ERROR,
+	/** GNSS is requesting A-GPS or P-GPS assistance data. */
+	LOC_EVT_GNSS_ASSISTANCE_REQUEST
 };
 
 /** Positioning accuracy enumerator. */
@@ -103,12 +108,6 @@ struct loc_location {
 	struct loc_datetime datetime;
 };
 
-/** Error cause. */
-struct loc_cause {
-	/* TODO: Error codes? */
-	uint8_t error;
-};
-
 /** Location event data. */
 struct loc_event_data {
 	/** Event ID. */
@@ -120,8 +119,12 @@ struct loc_event_data {
 	union {
 		/** Current location, used with event LOC_EVT_LOCATION. */
 		struct loc_location location;
-		/** Error cause, used with event LOC_EVT_ERROR. */
-		struct loc_cause cause;
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+		/** A-GPS notification data frame used by GNSS to let the application know it
+		 *  needs new assistance data.
+		 */
+		struct nrf_modem_gnss_agps_data_frame request;
+#endif
 	};
 };
 
@@ -269,6 +272,36 @@ void loc_config_defaults_set(struct loc_config *config, uint8_t methods_count,
  * @param[in] method_type Location method type.
  */
 void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_method method_type);
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+/**
+ * @brief Feed in A-GPS data to be processed by library.
+ *
+ * @details If A-GPS assistance data are received from a source other that nRF cloud, they can be
+ * handed over to Location library using this function. Note that the data must be nevertheless
+ * formatted similarly to nRF cloud A-GPS data, cf. nrf_cloud_agps_schema_v1.h.
+ *
+ * @param[in] buf Pointer to data received.
+ * @param[in] buf_len Buffer size of data to be processed.
+ *
+ * @return 0 if successful, otherwise a (negative) error code.
+ */
+int location_agps_data_process(const char *buf, size_t buf_len);
+
+/**
+ * @brief Feed in P-GPS data to be processed by library.
+ *
+ * @details If P-GPS prediction data are received from a source other that nRF cloud, they can be
+ * handed over to Location library using this function. Note that the data must be nevertheless
+ * formatted similarly to nRF cloud P-GPS data, cf. nrf_cloud_pgps_schema_v1.h.
+ *
+ * @param[in] buf Pointer to data received.
+ * @param[in] buf_len Buffer size of data to be processed.
+ *
+ * @return 0 if successful, otherwise a (negative) error code.
+ */
+int location_pgps_data_process(const char *buf, size_t buf_len);
+#endif
 
 /** @} */
 

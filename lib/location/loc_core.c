@@ -355,6 +355,17 @@ void loc_core_event_cb_timeout(void)
 	loc_core_event_cb(NULL);
 }
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
+void loc_core_event_cb_assistance_request(const struct nrf_modem_gnss_agps_data_frame *request)
+{
+	struct loc_event_data agps_request_event_data;
+
+	agps_request_event_data.id = LOC_EVT_GNSS_ASSISTANCE_REQUEST;
+	agps_request_event_data.request = *request;
+	event_handler(&agps_request_event_data);
+}
+#endif
+
 void loc_core_event_cb(const struct loc_location *location)
 {
 	char latitude_str[12];
