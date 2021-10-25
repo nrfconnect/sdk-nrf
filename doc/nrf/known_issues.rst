@@ -1033,7 +1033,7 @@ NCSDK-8232: Secure Partition Manager and application building together
 CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_ns``
    All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
 
-   **Workaround:** Use the master branch.
+   **Workaround:** Use the main branch.
 
 MCUboot
 *******
@@ -1357,7 +1357,7 @@ DRGN-15475: Samples might not initialize the SoftDevice Controller HCI driver co
 DRGN-15382: The SoftDevice Controller cannot be qualified on nRF52832
   The SoftDevice Controller cannot be qualified on nRF52832.
 
-  **Workaround:** Upgrade to v1.5.1 or use the master branch.
+  **Workaround:** Upgrade to v1.5.1 or use the main branch.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 

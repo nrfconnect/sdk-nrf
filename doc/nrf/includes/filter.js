@@ -38,9 +38,9 @@
           var versionName = className.replace(/v(\d+)-(\d+)-(\d+)/i, 'v$1.$2.$3');
           thisDl.children("dt").append('<a href="' + URL + '?v=' + className + '"><span class="versiontag" version="' + className + '">' + versionName + '</span></a>');
 
-        } else if (className === 'master') {
+        } else if (className === 'main') {
 
-          thisDl.children("dt").append('<a href="' + URL + '?v=master"><span class="versiontag" version="master">master</span></a>');
+          thisDl.children("dt").append('<a href="' + URL + '?v=main"><span class="versiontag" version="main">main</span></a>');
 
         };
 
@@ -78,7 +78,7 @@
         Otherwise, switch to the version that is selected in the dropdown.    **/
     var v = getUrlParameter('v');
 
-    if ((RegExp('v\\d+-\\d+-\\d+').test(v)) || v === 'master') {
+    if ((RegExp('v\\d+-\\d+-\\d+').test(v)) || v === 'main') {
 
       displayVersion(v);
 

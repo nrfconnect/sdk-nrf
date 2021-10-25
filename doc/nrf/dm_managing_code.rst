@@ -33,8 +33,8 @@ To obtain a fresh copy of the |NCS| at revision ``{revision}`` and place it in a
   west update
 
 Replace ``{revision}`` with any revision you wish to obtain.
-This can be ``master`` if you want the latest state, or any released version (e.g. |release_tt|).
-If you omit the ``--mr`` parameter, west defaults to ``master``.
+This can be ``main`` if you want the latest state, or any released version (e.g. |release_tt|).
+If you omit the ``--mr`` parameter, west defaults to ``main``.
 
 This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`gs_installing`.
 
@@ -47,8 +47,8 @@ If you already have a copy of the |NCS| and wish to update it or switch to a new
 
   cd ncs/nrf
   git fetch {remote}
-  # Check out the latest master branch
-  git checkout {remote}/master
+  # Check out the latest main branch
+  git checkout {remote}/main
   # or check out a release
   git checkout {revision}
   west update
@@ -63,10 +63,10 @@ Git offers several commands and mechanisms to set the current working copy of a 
 Depending on how you manage the branches of your local clone of the `sdk-nrf`_ repository, you can also replace the use of ``git checkout`` with, among many others::
 
   # If you have no changes of your own
-  git reset --hard {remote}/master
+  git reset --hard {remote}/main
   git reset --hard {revision}
   # If you have changes of your own
-  git rebase {remote}/master
+  git rebase {remote}/main
   git rebase {revision}
 
 Describing the exact differences between the commands above is outside the scope of this section.
@@ -137,4 +137,4 @@ Also, since a GitHub fork automatically initializes the forked repository with t
   # Rename the default remote from 'origin' to 'ncs'
   git remote rename origin ncs
   git remote add origin https://github.com/{username}/{repo}.git
-  git push origin master
+  git push origin main
