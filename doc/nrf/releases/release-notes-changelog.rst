@@ -256,6 +256,7 @@ Libraries for networking
   * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
     Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
   * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
+  * Added handling of MQTT ping failures and MQTT input failures.
 
 * :ref:`lib_nrf_cloud_agps` library:
 
@@ -275,8 +276,13 @@ Libraries for networking
 
   * Added REST client library for sending REST requests and receiving their responses.
 
+* :ref:`lib_aws_iot` library:
+
+  * Added handling of MQTT ping failures and MQTT input failures.
+
 * :ref:`lib_azure_iot_hub` library:
 
+  * Added handling of MQTT ping failures and MQTT input failures.
   * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
 
 Libraries for NFC
