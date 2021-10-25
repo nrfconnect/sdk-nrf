@@ -273,6 +273,29 @@ Missing :file:`CMakeLists.txt`
 Thread
 ======
 
+.. rst-class:: v1-7-0
+
+|NCS| v1.7.0 will not be certified for Thread
+   Due to the issues KRKNWK-11555: Devices lose connection after a long time running and KRKNWK-11264: Some boards assert during high traffic, |NCS| v1.7.0 will not undergo the certification process, and is not intended to be used in final Thread products.
+
+.. rst-class:: v1-7-0
+
+KRKNWK-11555: Devices lose connection after a long time running
+   Connection is sometimes lost after Key Sequence update.
+
+.. rst-class:: v1-7-0
+
+KRKNWK-11264: Some boards assert during high traffic
+   The issue appears when traffic is high during a corner case, and has been observed after running stress tests for a few hours.
+
+.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+Zephyr systems with OpenThread become unresponsive after some time
+   Systems become unresponsive after running around 49.7 days.
+
+   **Workaround:** Rebooting the system regularly avoids the issue.
+   To fix the error, cherry-pick commits from the upstream `Zephyr issue #39704 <https://github.com/zephyrproject-rtos/zephyr/issues/39704>`_.
+
 .. rst-class:: v1-6-1 v1-6-0
 
 KRKNWK-10633: Incorrect data when using ACK-based Probing with Link Metrics
