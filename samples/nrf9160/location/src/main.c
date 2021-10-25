@@ -9,6 +9,9 @@
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/location.h>
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <date_time.h>
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 static struct loc_config config;
 static struct loc_method_config methods[2];
@@ -33,6 +36,34 @@ static void antenna_configure(void)
 		}
 	}
 }
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+K_SEM_DEFINE(time_update_finished, 0, 1);
+
+static void date_time_evt_handler(const struct date_time_evt *evt)
+{
+	/* Don't care about the event, just indicate that we got it. */
+	k_sem_give(&time_update_finished);
+}
+
+static void current_time_get(void)
+{
+	int err;
+
+	/* If we wait for a while after LTE attach, it's more likely that modem has got the current
+	 * time from the LTE network and no NTP is needed.
+	 */
+	k_sleep(K_SECONDS(1));
+
+	err = date_time_update_async(date_time_evt_handler);
+	if (err) {
+		printk("Requesting the current time failed, error: %d\n", err);
+		return;
+	}
+
+	k_sem_take(&time_update_finished, K_MINUTES(1));
+}
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 static const char *method_string_get(enum loc_method method)
 {
@@ -203,6 +234,11 @@ int main(void)
 	lte_lc_connect();
 
 	printk("Connected to LTE\n\n");
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* P-GPS needs to know the current time. */
+	current_time_get();
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 	err = location_init(location_event_handler);
 	if (err) {
