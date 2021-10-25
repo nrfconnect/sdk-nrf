@@ -78,10 +78,11 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			"Connected" : "Idle");
 		break;
 	case LTE_LC_EVT_CELL_UPDATE: {
-		static uint32_t prev_cell_id;
-
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
+
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE)
+		static uint32_t prev_cell_id;
 
 		if (evt->cell.id != prev_cell_id) {
 			if (evt->cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
@@ -90,6 +91,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 			prev_cell_id = evt->cell.id;
 		}
+#endif
 		break;
 	}
 	case LTE_LC_EVT_LTE_MODE_UPDATE:
