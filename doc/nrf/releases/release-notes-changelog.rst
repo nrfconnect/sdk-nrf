@@ -280,6 +280,10 @@ Libraries for networking
 
     * Validation of bootloader FOTA updates.
 
+* :ref:`lib_aws_iot` library:
+
+  * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
+
 Modem libraries
 ---------------
 

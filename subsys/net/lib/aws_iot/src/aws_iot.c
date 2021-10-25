@@ -751,7 +751,6 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_evt.type = AWS_IOT_EVT_DATA_RECEIVED;
 		aws_iot_evt.data.msg.ptr = payload_buf;
 		aws_iot_evt.data.msg.len = p->message.payload.len;
-		aws_iot_evt.data.msg.topic.type = AWS_IOT_SHADOW_TOPIC_UNKNOWN;
 		aws_iot_evt.data.msg.topic.str = p->message.topic.topic.utf8;
 		aws_iot_evt.data.msg.topic.len = p->message.topic.topic.size;
 
