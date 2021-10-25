@@ -1108,6 +1108,10 @@ static void fota_evt_handler(struct azure_fota_event *fota_evt)
 
 int azure_iot_hub_ping(void)
 {
+	if (client.unacked_ping) {
+		LOG_DBG("Previous MQTT ping not acknowledged");
+		return -ECONNRESET;
+	}
 	return mqtt_live(&client);
 }
 
@@ -1365,7 +1369,14 @@ start:
 
 		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			azure_iot_hub_ping();
+			ret = azure_iot_hub_ping();
+			/* -EAGAIN indicates it is not time to ping; try later;
+			 * otherwise, connection was closed due to NAT timeout.
+			 */
+			if (ret && (ret != -EAGAIN)) {
+				LOG_ERR("Cloud MQTT keepalive ping failed: %d", ret);
+				break;
+			}
 			continue;
 		}
 
