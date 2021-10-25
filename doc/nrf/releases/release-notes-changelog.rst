@@ -131,6 +131,7 @@ nRF9160 samples
   * LwM2M sensor objects now uses the actual sensors available to the Thingy:91. If the nRF9160 DK is used, it uses simulated sensors instead.
   * Added support for polling sensors and notifying the server if the measured changes are large enough.
   * Added support for full modem firmware update.
+  * Increased the NB-IoT time (in seconds) before the registration timeout when the LwM2M Registration Update message is sent by the engine.
 
 Matter samples
 --------------
