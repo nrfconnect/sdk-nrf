@@ -18,7 +18,6 @@ choice
 
 config AGPS_SRC_NRF_CLOUD
 	bool "Use nRF Cloud as data source"
-	depends on NRF_CLOUD
 	imply NRF_CLOUD_AGPS
 	help
 	  To request A-GPS data from nRF Cloud via MQTT, CONFIG_NRF_CLOUD_MQTT

@@ -4,8 +4,9 @@
 #
 
 menuconfig NRF_CLOUD_REST
-	select HTTP_CLIENT
 	bool "nRF Cloud REST"
+	select HTTP_CLIENT
+	select CJSON_LIB
 
 if NRF_CLOUD_REST
 

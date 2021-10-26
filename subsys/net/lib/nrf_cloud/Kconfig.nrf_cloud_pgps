@@ -11,6 +11,7 @@ menuconfig NRF_CLOUD_PGPS
 	imply DOWNLOAD_CLIENT
 	select STREAM_FLASH_ERASE
 	select SETTINGS
+	select CJSON_LIB
 
 if NRF_CLOUD_PGPS
 

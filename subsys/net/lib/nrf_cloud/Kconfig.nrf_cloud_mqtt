@@ -8,6 +8,7 @@ menuconfig NRF_CLOUD_MQTT
 	select MQTT_LIB
 	select MQTT_LIB_TLS
 	select SETTINGS if !MQTT_CLEAN_SESSION
+	select CJSON_LIB
 
 if NRF_CLOUD_MQTT
 

@@ -18,7 +18,6 @@ Configuration
 
 Configure the following options to enable or disable the use of this library:
 
-* :kconfig:`CONFIG_NRF_CLOUD`
 * :kconfig:`CONFIG_NRF_CLOUD_CELL_POS`
 
 
