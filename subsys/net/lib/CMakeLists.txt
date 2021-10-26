@@ -4,8 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# The nRF Cloud library folder contains multiple services
+if (DEFINED CONFIG_NRF_CLOUD_MQTT OR
+    DEFINED CONFIG_NRF_CLOUD_AGPS OR
+    DEFINED CONFIG_NRF_CLOUD_PGPS OR
+    DEFINED CONFIG_NRF_CLOUD_REST OR
+    DEFINED CONFIG_NRF_CLOUD_FOTA OR
+    DEFINED CONFIG_NRF_CLOUD_CELL_POS)
+        add_subdirectory(nrf_cloud)
+endif()
+
 add_subdirectory_ifdef(CONFIG_CLOUD_API cloud)
-add_subdirectory_ifdef(CONFIG_NRF_CLOUD nrf_cloud)
 add_subdirectory_ifdef(CONFIG_REST_CLIENT rest_client)
 add_subdirectory_ifdef(CONFIG_DOWNLOAD_CLIENT download_client)
 add_subdirectory_ifdef(CONFIG_FOTA_DOWNLOAD fota_download)

@@ -54,7 +54,7 @@ config LOCATION_METHOD_WIFI_DEV_NAME
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	default y
-	depends on NRF_CLOUD
+	depends on NRF_CLOUD_REST
 	help
 	  Use nRF Cloud location service.
 

@@ -8,3 +8,4 @@ config NRF_CLOUD_CELL_POS
 	imply FPU
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
+	select CJSON_LIB

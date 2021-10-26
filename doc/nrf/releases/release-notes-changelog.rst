@@ -370,6 +370,7 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Removed the ``CONFIG_NRF_CLOUD`` Kconfig option.
   * Removed GNSS socket API support from A-GPS and P-GPS.
   * Added support for sending data to a new bulk endpoint topic that is supported in nRF Cloud.
     A message published to the bulk topic is typically a combination of multiple messages.

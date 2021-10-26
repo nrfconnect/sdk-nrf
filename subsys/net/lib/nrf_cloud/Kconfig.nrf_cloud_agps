@@ -7,3 +7,4 @@ config NRF_CLOUD_AGPS
 	bool "nRF Cloud Assisted GPS (A-GPS)"
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
+	select CJSON_LIB

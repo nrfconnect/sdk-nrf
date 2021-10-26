@@ -10,6 +10,7 @@ menuconfig NRF_CLOUD_FOTA
 	select DFU_TARGET
 	select DOWNLOAD_CLIENT
 	select REBOOT
+	select CJSON_LIB
 	depends on SETTINGS
 	default y if NRF_CLOUD_MQTT
 

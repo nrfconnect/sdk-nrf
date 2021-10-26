@@ -23,7 +23,6 @@ Configuration
 
 Configure the following options to enable or disable the use of this library:
 
-* :kconfig:`CONFIG_NRF_CLOUD`
 * :kconfig:`CONFIG_NRF_CLOUD_AGPS`
 * :kconfig:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:`CONFIG_NRF_CLOUD_REST`
 
