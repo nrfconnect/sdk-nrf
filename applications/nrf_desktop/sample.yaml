@@ -44,9 +44,10 @@ tests:
     extra_args: "CMAKE_BUILD_TYPE=ZDebugMCUBootQSPI"
   applications.nrf_desktop.zdebug_mcuboot_smp:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf52840gmouse_nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
+      - nrf52840gmouse_nrf52840
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZDebugMCUBootSMP"
   applications.nrf_desktop.zdebugwithshell:
