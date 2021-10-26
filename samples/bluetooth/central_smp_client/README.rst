@@ -59,7 +59,11 @@ After programming the sample to your development kit, test it by performing the 
 #. Reset the kit.
 #. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
 #. Program the :ref:`smp_svr_sample` to another development kit.
-   See the documentation for that sample for more information.
+   See the documentation for that sample only in the section "Building the sample application".
+   When you finish building the :ref:`smp_svr_sample`, you can program it to the kit by calling::
+
+      west flash
+
 #. Observe that the kits connect.
    When service discovery is completed, the event logs are printed on the Central's terminal.
    If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
