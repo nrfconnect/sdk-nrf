@@ -16,6 +16,7 @@
 
 #include <zephyr.h>
 #include <bluetooth/mesh/time_srv.h>
+#include <bluetooth/mesh/scene_srv.h>
 #include <bluetooth/mesh/scheduler.h>
 
 #ifdef __cplusplus
