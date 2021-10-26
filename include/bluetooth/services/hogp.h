@@ -661,9 +661,16 @@ enum bt_hids_report_type bt_hogp_rep_type(const struct bt_hogp_rep_info *rep);
 /**
  * @brief Get report size.
  *
+ * @note You can rely on this function after completing the read procedure for
+ *       your target HID report with the @ref bt_hogp_rep_read API. The completion
+ *       is reported by the appropriate callback. Alternatively, you can subscribe
+ *       to your target report with @ref bt_hogp_rep_subscribe API and start
+ *       using the function below once you receive the first notification. In
+ *       all other cases, the size information is not available.
+ *
  * @param rep Report object.
  *
- * @return The size of the report.
+ * @return The size of the report or 0 if not available.
  */
 size_t bt_hogp_rep_size(const struct bt_hogp_rep_info *rep);
 
