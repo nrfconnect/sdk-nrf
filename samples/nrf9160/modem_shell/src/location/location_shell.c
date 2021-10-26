@@ -55,7 +55,7 @@ static const char location_get_usage_str[] =
 	"                      'any' (default), 'nrf', 'skyhook' or 'here'\n"
 	"  --wifi_timeout,     WiFi timeout in seconds\n"
 	"  --wifi_service,     Used WiFi positioning service:\n"
-	"                      'nrf' (default), 'skyhook' or 'here'\n";
+	"                      'any' (default), 'nrf', 'skyhook' or 'here'\n";
 
 /******************************************************************************/
 
@@ -221,7 +221,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	int wifi_timeout = 0;
 	bool wifi_timeout_set = false;
-	enum loc_service wifi_service = LOC_SERVICE_NRF_CLOUD;
+	enum loc_service wifi_service = LOC_SERVICE_ANY;
 
 	enum loc_method method_list[LOC_MAX_METHODS] = { 0 };
 	int method_count = 0;
@@ -297,13 +297,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LOCATION_SHELL_OPT_WIFI_SERVICE:
-			if (strcmp(optarg, "nrf") == 0) {
-				wifi_service = LOC_SERVICE_NRF_CLOUD;
-			} else if (strcmp(optarg, "here") == 0) {
-				wifi_service = LOC_SERVICE_HERE;
-			} else if (strcmp(optarg, "skyhook") == 0) {
-				wifi_service = LOC_SERVICE_SKYHOOK;
-			} else {
+			wifi_service = location_shell_service_to_string(optarg);
+			if (wifi_service == MOSH_LOC_SERVICE_NONE) {
 				mosh_error("Unknown WiFi positioning service. See usage:");
 				goto show_usage;
 			}
