@@ -7,26 +7,29 @@ Location
    :local:
    :depth: 2
 
-Location library provides functionality for retriving device's location  utilizing different positioning methods such as GNSS, cellular positioning or WiFi positioning.
-The client can determine the preference order of the methods to be used along with some other configuration information.
+Location library provides functionality for retrieving device's location utilizing different positioning methods
+such as GNSS satellite positioning including Assisted GPS (A-GPS) and predicted GPS (P-GPS) data, cellular positioning or WiFi positioning.
 
-Available location methods are GNSS satellite positioning, cellular and WiFi positioning.
+Overview
+********
+
+Location library provides a convenient API for clients to request devices location.
+The client can determine the preference order of the positioning methods to be used along with some other configuration information.
+Once a method fails to provide location, Location library will perform fallback to the next preferred method.
+
+Supported positioning methods are GNSS, cellular and WiFi positioning.
 Both cellular and WiFi positioning take advantage of the base stations seen with corresponding technology, and then utilizing web services for retrieving the location.
-
-Location library can be configured to utilize Assisted GPS (A-GPS) and predicted GPS (P-GPS) data.
-
-Overview*
-*********
-
-.. note::
-   Use this section to give a general overview of the library.
-   This is optional if the library is so small the the initial short description also gives an overview of the library.
+GNSS positioning uses satellites to compute the location of the device. Location library can utilize assistance data (A-GPS and P-GPS) to find the satellites faster.
 
 Implementation
 ==============
 
-.. note::
-   Use this section to describe the library architecture and implementation.
+Location library has a compact API and then location core that handles location method independent part of the functionality such as fallback to the next preferred method and timeouts.
+Each location method has its own implementation for the location retrieval:
+
+* GNSS method utilizes :ref:`gnss_interface`
+* Cellular positioning utilizes :ref:`lte_lc_readme` for getting visible cellular base stations and :ref:`lib_multicell_location` for sending cell information to the selected service and getting calculated location back to the device.
+* WiFi positioning uses Zephyr's WiFi API (TODO: link) for getting visible WiFi access points. Location library has then implementation for WiFi services where access point information is sent and calculated location is received back to the device.
 
 Supported features
 ==================
@@ -34,19 +37,13 @@ Supported features
 .. note::
    Use this section to describe the features supported by the library.
 
-Supported backends*
-===================
+Requirements
+************
 
-.. note::
-   Use this section to describe the backends supported by the library, if applicable.
-   This is optional.
-
-Requirements*
-*************
-
-.. note::
-   Use this section to list the requirements needed to use the library.
-   This is not required if there are no specific requirements to use the library. It is a mandatory section if there are specific requirements that have to be met to use the library.
+* TODO: certs
+* TODO: service accounts
+* TODO: nrf9160?
+* TODO: WiFi chip
 
 Library files
 *************
@@ -67,15 +64,21 @@ Configure the following Kconfig options when using this library:
 * :kconfig:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 
-TODO: multicell part
-TODO: rest client part
+* TODO: multicell part
+* TODO: rest client part
+* TODO: nrf cloud rest
+* TODO: nrf cloud agps / pgps
 
-Usage*
-******
+Usage
+*****
 
-.. note::
-   Use this section to explain how to use the library.
-   This is optional if the library is so small the the initial short description also gives information about how to use the library.
+Using Location library is rather easy. First you need to initialize the library with :c:func:`location_init`.
+
+Secondly, you need to set configuration (:c:struct:`loc_config`) including location method configurations (:c:struct:`loc_method_config`).
+This is achieved easily by setting first default values by using :c:func:`loc_config_defaults_set` and c:func:`loc_config_method_defaults_set`,
+and then setting any required non-default values to the structures.
+
+Once the configuration is set up properly, you just need to call c:func:`location_request` with the configuration.
 
 Samples using the library
 *************************
@@ -109,8 +112,9 @@ Dependencies
 
 This library uses the following |NCS| libraries:
 
-* :ref:`lte_lc_readme`
 * :ref:`nrf_modem_lib_readme`
+* :ref:`gnss_interface`
+* :ref:`lte_lc_readme`
 * :ref:`lib_multicell_location`
 * :ref:`lib_rest_client`
 * :ref:`_lib_nrf_cloud`
