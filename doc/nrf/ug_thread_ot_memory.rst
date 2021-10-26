@@ -26,7 +26,6 @@ Moreover, take into account the following considerations:
 * To enable the multiprotocol support, the following options were used:
 
   * :kconfig:`CONFIG_MPSL` set to ``y`` (default setting for all samples)
-  * :kconfig:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT` set to ``y``
   * :kconfig:`CONFIG_BT` set to ``y``
   * :kconfig:`CONFIG_BT_PERIPHERAL` set to ``y``
   * :kconfig:`CONFIG_BT_DEVICE_NAME` set to ``"NCS DUT"``

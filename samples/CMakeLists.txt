@@ -133,14 +133,6 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE)
       )
     endif()
 
-    # Softdevice controller-specific configuration overlay
-    if(CONFIG_BT_RPMSG_NRF53 AND CONFIG_BT_LL_SOFTDEVICE_DEFAULT)
-      add_overlay_config(
-        ${CHILD_IMAGE_NAME}
-        "${NRF_DIR}/subsys/bluetooth/controller/bt_ll_softdevice_hci_rpmsg.conf"
-      )
-    endif()
-
     add_child_image(
       NAME ${CHILD_IMAGE_NAME}
       SOURCE_DIR ${CHILD_IMAGE_PATH}
