@@ -442,8 +442,6 @@ For a complete list of |NCS| specific commits, run:
 
    git log --oneline manifest-rev ^14f09a3b00
 
-The current |NCS| master branch is based on the Zephyr v2.7 development branch.
-
 Matter (Project CHIP)
 =====================
 
