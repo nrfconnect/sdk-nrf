@@ -19,7 +19,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
-     <option value="v1-7-0" selected>v1.7.0</option>
+     <option value="v1-7-1" selected>v1.7.1</option>
+     <option value="v1-7-0">v1.7.0</option>
      <option value="v1-6-1">v1.6.1</option>
      <option value="v1-6-0">v1.6.0</option>
      <option value="v1-5-1">v1.5.1</option>
@@ -62,7 +63,7 @@ nRF9160
 Asset tracker
 =============
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 CIA-351: FOTA image download issues with Azure
   If a Device Firmware Upgrade (FOTA) is scheduled when the device is in the LTE Power Saving Mode, there is the likelihood of the firmware image being downloaded twice.
@@ -75,7 +76,7 @@ NCSDK-6898: Setting :kconfig:`CONFIG_SECURE_BOOT` does not work
 
   **Workaround:** Set :kconfig:`CONFIG_FW_INFO` in MCUboot.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 External antenna performance setting
   The preprogrammed Asset Tracker does not come with the best external antenna performance.
@@ -113,7 +114,7 @@ IRIS-2676: Missing support for FOTA on nRF Cloud
 Other issues
 ============
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 NCSDK-11684: Failure loading KMU registers on nRF9160 devices
   Certain builds will experience problems loading HUK to KMU due to a bug in nrf_cc3xx_platform library prior to version 0.9.12.
@@ -122,7 +123,7 @@ NCSDK-11684: Failure loading KMU registers on nRF9160 devices
 
   **Workaround**: Update to nrf_cc3xx_platform/nrf_cc3xx_mbedcrypto v0.9.12 or newer versions if KMU is needed.
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11033: Dial-up usage not working
   Dial-up usage with MoSh PPP does not work and causes the nRF9160 DK to crash when it is connected to a PC.
@@ -144,7 +145,7 @@ NCSDK-7914: The ``nrf_cc3xx`` RSA implementation does not deduce missing paramet
 
   **Workaround:** Calculate the missing parameters outside of this function or update to ``nrf_cc3xx`` v0.9.7 or later.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 NCSDK-8075: Invalid initialization of ``mbedtls_entropy_context`` mutex type
   The calls to :cpp:func:`mbedtls_entropy_init` do not zero-initialize the member variable ``mutex`` when ``nrf_cc3xx`` is enabled.
@@ -190,7 +191,7 @@ Problems with RTT Viewer/Logger
   **Workaround:** Set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the :file:`builddir/zephyr/zephyr.map` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 Receive error with large packets
   nRF91 fails to receive large packets (over 4000 bytes).
@@ -201,14 +202,14 @@ Modem FW reset on debugger connection through SWD
   If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
   Full modem serial update does not work on development kit with debugger chip version delivered with J-Link software > 6.88a
 
   **Workaround:** Downgrade the debugger chip to the firmware released with J-Link 6.88a or use another way of transferring serial data to the chip.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-10106: Elevated current consumption when using applications without :ref:`nrfxlib:nrf_modem` on nRF9160
   When running applications that do not enable :ref:`nrfxlib:nrf_modem` on nRF9160 with build code B1A, current consumption will stay at 3 mA when in sleep.
@@ -221,7 +222,7 @@ nRF5
 nRF5340
 =======
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11432: DFU: Erasing secondary slot returns error response
   Trying to erase secondary slot results in an error response.
@@ -243,7 +244,7 @@ NCSDK-9786: Wrong FLASH_PAGE_ERASE_MAX_TIME_US for the nRF53 network core
 NCSDK-7234: UART output is not received from the network core
   The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target).
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 KRKNWK-6756: 802.15.4 Service Layer (SL) library support for the nRF53
   The binary variant of the 802.15.4 Service Layer (SL) library for the nRF53 does not support such features as synchronization of **TIMER** with **RTC** or timestamping of received frames.
@@ -297,14 +298,14 @@ KRKNWK-11037:  ``Udp::GetEphemeralPort`` can cause infinite loop
 KRKNWK-9461 / KRKNWK-9596 : Multiprotocol sample crashes with some smartphones
   With some smartphones, the multiprotocol sample crashes on the nRF5340 due to timer timeout inside the 802.15.4 radio driver logic.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-9094: Possible deadlock in shell subsystem
   Issuing OpenThread commands too fast might cause a deadlock in the shell subsystem.
 
   **Workaround:** If possible, avoid invoking a new command before execution of the previous one has completed.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-6848: Reduced throughput
   Performance testing for the :ref:`ot_coprocessor_sample` sample shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
@@ -331,7 +332,7 @@ KRKNWK-7721: MAC counter updating issue
 
   **Workaround:** To fix the error, cherry-pick commits from the upstream `Zephyr PR #29226 <https://github.com/zephyrproject-rtos/zephyr/pull/29226>`_.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7962: Logging interferes with shell output
   :kconfig:`CONFIG_LOG_MINIMAL` is configured by default for most OpenThread samples.
@@ -339,7 +340,7 @@ KRKNWK-7962: Logging interferes with shell output
 
   **Workaround:** Disable logging or enable a more advanced logging option.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
   When building OpenThread libraries using a different sample than the :ref:`ot_coprocessor_sample` sample, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
@@ -372,7 +373,7 @@ Zigbee
 KRKNWK-8211: Leave signal generated twice
   The ``ZB_ZDO_SIGNAL_LEAVE`` signal is generated twice during Zigbee Coordinator factory reset.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-9714: Device association fails if the Request Key packet is retransmitted
   If the Request Key packet for the TCLK is retransmitted and the coordinator sends two new keys that are different, a joiner logic error happens that leads to unsuccessful key verification.
@@ -447,7 +448,7 @@ KRKNWK-8200: Successful signal on commissioning fail
 KRKNWK-9461 / KRKNWK-9596: Multiprotocol sample crashes with some smartphones
   With some smartphones, the multiprotocol sample crashes on the nRF5340 due to timer timeout inside the 802.15.4 radio driver logic.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1
 
 KRKNWK-6348: ZCL Occupancy Sensing cluster is not complete
   The ZBOSS stack provides only definitions of constants and an abstract cluster definition (sensing cluster without sensors).
@@ -469,12 +470,12 @@ KRKNWK-7831: Factory reset broken on coordinator with Zigbee shell
 
   **Workaround:** Call the ``bdb_reset_via_local_action`` function twice to remove all the network information.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7723: OTA upgrade process restarting after client reset
   After the reset of OTA Upgrade Client, the client will start the OTA upgrade process from the beginning instead of continuing the previous process.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-6318: Device assert after multiple Leave requests
   If a device that rejoins the network receives Leave requests several times in a row, the device could assert.
@@ -518,7 +519,7 @@ KRKNWK-6073: Potential delay during FOTA
 Matter (Project CHIP)
 =====================
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 KRKNWK-11225: Android CHIPTool cannot communicate with a Matter device after the device reboots
   Android CHIPTool does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
@@ -526,7 +527,7 @@ KRKNWK-11225: Android CHIPTool cannot communicate with a Matter device after the
 
   **Workaround** Do not reboot the device after commissioning it with Android CHIPTool.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
   In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth® LE.
@@ -571,7 +572,7 @@ More information on HomeKit known issues is available in the HomeKit documentati
 nRF Desktop
 ===========
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
   The HID keyboard LEDs, indicating among others state of Caps Lock and Num Lock, may not be updated after host disconnection.
@@ -579,7 +580,7 @@ NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
 
   **Workaround**: Do not use HID keyboard LEDs.
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11378: Empty HID boot report forwarding issue
   An empty HID boot report is not forwarded to the host computer by the nRF Desktop dongle upon peripheral disconnection.
@@ -587,7 +588,7 @@ NCSDK-11378: Empty HID boot report forwarding issue
 
   **Workaround**: Do not enable HID boot protocol on the nRF Desktop dongle.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® LE to Linux host
   Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE may result in receiving improper HID feature report ID.
@@ -853,7 +854,7 @@ The combination of nRF Secure Immutable Bootloader and MCUBoot fails to upgrade 
 Build system
 ============
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 NCSDK-10672: :file:`dfu_application.zip` is not updated during build
   In the configuration with MCUboot, the :file:`dfu_application.zip` might not be properly updated after code or configuration changes, because of missing dependencies.
@@ -904,7 +905,7 @@ KRKNWK-7827: Application build system is not aware of the settings partition
     Set :kconfig:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
     Make sure that the code partition is defined and chosen correctly (``offset`` and ``size``).
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-6117: Build configuration issues
   The build configuration consisting of :ref:`bootloader`, :ref:`secure_partition_manager`, and application does not work.
@@ -918,7 +919,7 @@ Flash commands only program one core
 
   **Workaround:** Execute the flash command from inside the build directory of the child image that is placed on the other core (for example, :file:`build/hci_rpmsg`).
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11234: Statically definied "pcd_sram" partition may cause ARM usage fault
   Inconsistency between SRAM memory partitions in Partition Manager and DTS could lead to improper memory usage.
@@ -937,7 +938,7 @@ NCSDK-7982: Partition manager: Incorrect partition size linkage from name confli
 DFU and FOTA
 ============
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-11308: Powering off device immediately after serial recovery of the nRF53 network core firmware results in broken firmware
   The network core will not be able to boot if the device is powered off too soon after completing a serial recovery update procedure of the network core firmware.
@@ -948,7 +949,7 @@ NCSDK-11308: Powering off device immediately after serial recovery of the nRF53 
   * Wait for 30 seconds before powering off the device after performing serial recovery of the nRF53 network core firmware.
   * Re-upload the network core firmware with a new serial recovery procedure if the device was powered off too soon in a previous procedure.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6238: Socket API calls may hang when using Download client
   When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
@@ -1015,7 +1016,7 @@ Unstable NFC tag samples
 Secure Partition Manager (SPM)
 ==============================
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
   Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
@@ -1105,7 +1106,7 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 DRGN-15979: :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set.
   MPSL requires RC clock calibration to be enabled when the RC clock is used as the Low Frequency clock source.
@@ -1129,12 +1130,12 @@ DRGN-15064: External Full swing and External Low swing not working
   Even though the MPSL Clock driver accepts a Low Frequency Clock source configuration for External Full swing and External Low swing, the clock control system is not configured correctly.
   For this reason, do not use :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING` and :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING`.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-6362: Do not use the synthesized low frequency clock source
   The synthesized low frequency clock source is neither tested nor intended for usage with MPSL.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-14153: Radio Notification power performance penalty
   The Radio Notification feature has a power performance penalty proportional to the notification distance.
@@ -1146,7 +1147,7 @@ DRGN-11059: Front-end module API not implemented for SoftDevice Controller
   Front-end module API is currently not implemented for SoftDevice Controller.
   It is only available for 802.15.4.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-8842: MPSL does not support nRF21540 revision 1 or older
   The nRF21540 revision 1 or older is not supported by MPSL.
@@ -1157,19 +1158,19 @@ KRKNWK-8842: MPSL does not support nRF21540 revision 1 or older
 802.15.4 Radio driver
 =====================
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 KRKNWK-11384: Assertion with Bluetooth® LE and multiprotocol usage
   The device might assert on rare occasions during the use of Bluetooth® LE and 802.15.4 multiprotocol.
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 KRKNWK-11204:
   Transmitting the 802.15.4 frame with improperly populated Auxiliary Security Header field might result in assert.
 
   **Workaround:** Make sure that you populate the Auxiliary Security Header field according to the IEEE Std 802.15.4-2015 specification, section 9.4.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 KRKNWK-8133: CSMA-CA issues
   Using CSMA-CA with the open-source variant of the 802.15.4 Service Layer (SL) library causes an assertion fault.
@@ -1186,7 +1187,7 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
 SoftDevice Controller
 =====================
 
-.. rst-class:: v1-7-0
+.. rst-class:: v1-7-1 v1-7-0
 
 DRGN-16317: The SoftDevice Controller can discard LE Extended Advertising Reports
   If there is insufficient memory available or the Host is not able to process HCI events in time, the SoftDevice Controller can discard LE Extended Advertising Reports.
@@ -1194,17 +1195,19 @@ DRGN-16317: The SoftDevice Controller can discard LE Extended Advertising Report
 
   **Workaround:** Increase :kconfig:`CONFIG_BT_BUF_EVT_RX_COUNT` until events are no longer discarded.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-16341: The Sofdevice Controller can discard LE Extended Advertising Reports
   Extended Advertising Reports with data length of 228 are discarded.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15903: :kconfig:`BT_CTLR_TX_PWR` is ignored by the SoftDevice Controller
   Using :kconfig:`BT_CTLR_TX_PWR` does not set TX power.
 
   **Workaround:** Use the HCI command Zephyr Write Tx Power Level to dynamically set TX power.
+
+.. rst-class:: v1-7-1 v1-7-0
 
 DRGN-16113: Active scanner assert when performing extended scanning
   The active scanner might assert when performing extended scanning on Coded PHY with a full whitelist.
@@ -1254,7 +1257,7 @@ DRGN-15586: "HCI LE Set Scan Parameters" accepts a scan window greater than the 
 
   **Workaround:** The application should make sure the scan window is set to less than or equal to the scan interval.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15547: Assertion when updating PHY and the event length is configured too low
   The SoftDevice Controller may assert if:
@@ -1570,7 +1573,7 @@ Counter Alarm sample does not work
 USB Mass Storage Sample Application compilation issues
   :ref:`zephyr:usb_mass` does not compile.
 
-.. rst-class:: v1-7-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6832: SMP Server sample fails upon initialization
   The :ref:`zephyr:smp_svr_sample` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
@@ -1588,7 +1591,7 @@ NCSDK-6852: Extra CMake options might not be applied in version 5.10d
 
   **Workaround:** Select ``NONE (Use SES settings / environment PATH)`` from the  :guilabel:`nRF Connect Toolchain Version` drop-down if you want to specify :guilabel:`Extra CMake Build Options`.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong project
   Some samples that are located in different folders use the same project name.
@@ -1600,7 +1603,7 @@ NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong p
   **Workaround:** If the path in :guilabel:`Build Directory` points to the wrong project, select the correct project by using the :guilabel:`...` button for :guilabel:`Projects` and navigating to the correct project location.
   The build directory will update automatically.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 NCSDK-9992: Multiple extra CMake options applied as single option.
   If you specify two or more :guilabel:`Extra CMake Build Options` in the :guilabel:`Open nRF Connect SDK Project` dialog, those will be incorrectly treated as one option where the second option becomes a value to the first.
@@ -1611,7 +1614,7 @@ NCSDK-9992: Multiple extra CMake options applied as single option.
 Toolchain
 *********
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
 Some versions of the GNU Arm Embedded toolchain do not work correctly when building samples based on TF-M
   The GNU Arm Embedded Toolchain, versions *9-2020-q2-update* and *10-2020-q4-major*, do not work correctly when compiling binaries for Cortex-M Secure Extensions.
