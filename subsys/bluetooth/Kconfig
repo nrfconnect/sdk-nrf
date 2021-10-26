@@ -17,9 +17,9 @@ config BT_MAX_CONN
 	range 1 20 if BT_LL_SOFTDEVICE
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 
-if BT_LL_SOFTDEVICE
+if BT_CTLR
 rsource "controller/Kconfig"
-endif # CONFIG_BT_LL_SOFTDEVICE
+endif
 
 comment "BLE Libraries"
 rsource "Kconfig.pool"

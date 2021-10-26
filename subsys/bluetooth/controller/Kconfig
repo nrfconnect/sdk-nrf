@@ -4,7 +4,37 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Nordic BLE controller"
+choice BT_LL_CHOICE
+	prompt "Bluetooth Link Layer Selection"
+	default BT_LL_SOFTDEVICE
+
+config BT_LL_SOFTDEVICE
+	bool "SoftDevice Link Layer"
+	select MPSL
+	select ZERO_LATENCY_IRQS
+	select BT_CTLR_LE_ENC_SUPPORT
+	select BT_CTLR_EXT_REJ_IND_SUPPORT
+	select BT_CTLR_PRIVACY_SUPPORT
+	select BT_CTLR_EXT_SCAN_FP_SUPPORT
+	select BT_CTLR_PHY_UPDATE_SUPPORT
+	select BT_CTLR_CHAN_SEL_2_SUPPORT
+	select BT_CTLR_CONN_RSSI_SUPPORT
+	select BT_CTLR_DATA_LEN_UPDATE_SUPPORT
+	select BT_CTLR_ADV_EXT_SUPPORT
+	select BT_CTLR_ADV_PERIODIC_SUPPORT
+	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
+	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
+	select BT_HAS_HCI_VS
+	# The SoftDevice Controller only supports nRF52 and nRF53, it does not support nRF51
+	# or nRF91 (nRF91 doesn't even have the physical HW needed for BLE).
+	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
+	help
+	  Use SoftDevice Link Layer implementation.
+
+endchoice
+
+if BT_LL_SOFTDEVICE
+menu "SoftDevice Controller"
 
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
@@ -35,6 +65,13 @@ config BT_RX_STACK_SIZE
 	  application needs to do advanced things in its callbacks that
 	  require extra stack space, this value can be increased to
 	  accommodate for that.
+
+config BT_CTLR_LLPM
+	bool "Enable Low Latency Packet Mode support"
+	depends on SOC_SERIES_NRF52X
+	help
+	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
+	  which lets the application use connection intervals down to 1 ms.
 
 # SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
 # time, because Central side Bluetooth sample needs a different workqueue size
@@ -86,13 +123,41 @@ config SDC_RX_STACK_SIZE
 	  Size of the receiving thread stack, used to retrieve HCI events and
 	  data from the controller.
 
-# The SoftDevice Controller library variants are defined in nrfxlib, here we redefine
-# the choice to 'import' them, so they appear in the same menu as the rest.
-
 choice SOFTDEVICE_CONTROLLER_VARIANT
 	prompt "SoftDevice Controller variant"
-	bool
+	default SOFTDEVICE_CONTROLLER_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
+						     BT_CTLR_LLPM || \
+						     BT_CTLR_ADV_EXT || \
+						     BT_CTLR_PHY_CODED || \
+						     BT_CTLR_ADV_PERIODIC || \
+						     SOC_NRF5340_CPUNET)
+	default SOFTDEVICE_CONTROLLER_CENTRAL if BT_OBSERVER
+	default SOFTDEVICE_CONTROLLER_PERIPHERAL if BT_BROADCASTER
+	help
+	  Select a SoftDevice Controller variant.
+
+config SOFTDEVICE_CONTROLLER_PERIPHERAL
+	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
+	depends on !BT_OBSERVER && !BT_CTLR_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	help
+	  The peripheral library variant is optimized for simpler applications only
+	  requiring the peripheral role.
+
+config SOFTDEVICE_CONTROLLER_CENTRAL
+	bool "SoftDevice Controller optimized for central role applications"
+	depends on !BT_BROADCASTER && !BT_CTLR_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	help
+	  The central library variant is optimized for simpler applications only
+	  requiring the central role.
+
+config SOFTDEVICE_CONTROLLER_MULTIROLE
+	bool "SoftDevice Controller optimized for multirole and other advanced configurations"
+	help
+	  The multirole library variant is contains all supported features and can be used
+	  for more advanced applications. Using this library may give slightly larger applications.
+	  However, the library is designed in such a way that unused functionality is removed
+	  by the linker.
 
 endchoice
-
 endmenu
+endif  # BT_LL_SOFTDEVICE

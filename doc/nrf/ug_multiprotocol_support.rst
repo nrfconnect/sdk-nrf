@@ -17,18 +17,6 @@ The multiprotocol solution available for Thread and Zigbee is dynamic.
 This means that it allows for running several radio protocols simultaneously without the time-expensive uninitialization and initialization in-between the switching.
 Switching between protocols requires only a reinitialization of the radio peripheral, since protocols may operate on different frequencies, modulations, etc.
 
-Enabling multiprotocol support
-******************************
-
-To enable the multiprotocol support for either Thread or Zigbee, set the following Kconfig option:
-
-* :kconfig:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT`
-
-This option activates the :ref:`nrfxlib:softdevice_controller`, which by default supports the multiprotocol features.
-Disabling the SoftDevice Controller also disables the multiprotocol support.
-
-After enabling this option, the application can start configuring Bluetooth® LE's API options alongside Thread's or Zigbee's in the respective :file:`.conf` file.
-
 Multiprotocol limitations in application development
 ****************************************************
 
