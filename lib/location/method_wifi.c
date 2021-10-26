@@ -262,35 +262,10 @@ int method_wifi_cancel(void)
 int method_wifi_location_get(const struct loc_method_config *config)
 {
 	const struct loc_wifi_config wifi_config = config->wifi;
-	bool service_ok = false;
 
 	if (running) {
 		LOG_ERR("Previous operation ongoing.");
 		return -EBUSY;
-	}
-
-	/* Validate requested service: */
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD)
-	if (wifi_config.service == LOC_SERVICE_NRF_CLOUD ||
-	    wifi_config.service == LOC_SERVICE_ANY) {
-		service_ok = true;
-	}
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
-	if (wifi_config.service == LOC_SERVICE_HERE ||
-	    wifi_config.service == LOC_SERVICE_ANY) {
-		service_ok = true;
-	}
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK)
-	if (wifi_config.service == LOC_SERVICE_SKYHOOK ||
-	    wifi_config.service == LOC_SERVICE_ANY) {
-		service_ok = true;
-	}
-#endif
-	if (!service_ok) {
-		LOG_ERR("Requested WiFi positioning service not configured on.");
-		return -EINVAL;
 	}
 
 	k_work_init(&method_wifi_start_work.work_item, method_wifi_positioning_work_fn);

@@ -31,28 +31,32 @@ int rest_services_wifi_location_get(enum loc_service service,
 			   const struct rest_wifi_pos_request *request,
 			   struct rest_wifi_pos_result *result)
 {
-	int ret = -EINVAL;
+	int ret;
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
-	if (service == LOC_SERVICE_HERE) {
-		ret = here_rest_wifi_pos_get(loc_wifi_receive_buffer,
-					     CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE,
-					     request, result);
-	}
-#endif
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK)
-	if (service == LOC_SERVICE_SKYHOOK) {
-		ret = skyhook_rest_wifi_pos_get(loc_wifi_receive_buffer,
-						CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE,
-						request, result);
-	}
-#endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD)
-	if (service == LOC_SERVICE_NRF_CLOUD) {
+	if (service == LOC_SERVICE_NRF_CLOUD || service == LOC_SERVICE_ANY) {
 		ret = nrf_cloud_rest_wifi_pos_get(loc_wifi_receive_buffer,
 						CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE,
 						request, result);
+		return ret;
 	}
 #endif
-	return ret;
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE)
+	if (service == LOC_SERVICE_HERE || service == LOC_SERVICE_ANY) {
+		ret = here_rest_wifi_pos_get(loc_wifi_receive_buffer,
+					     CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE,
+					     request, result);
+		return ret;
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK)
+	if (service == LOC_SERVICE_SKYHOOK || service == LOC_SERVICE_ANY) {
+		ret = skyhook_rest_wifi_pos_get(loc_wifi_receive_buffer,
+						CONFIG_LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE,
+						request, result);
+		return ret;
+	}
+#endif
+	LOG_ERR("Requested WiFi positioning service not configured on.");
+	return -EINVAL;
 }
