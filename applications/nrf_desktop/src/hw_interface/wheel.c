@@ -199,7 +199,13 @@ static int enable_qdec(enum state next_state)
 {
 	__ASSERT_NO_MSG(next_state == STATE_ACTIVE);
 
-	int err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_ACTIVE);
+	int err = 0;
+
+	/* QDEC device driver starts in PM_DEVICE_STATE_ACTIVE state. */
+	if (state != STATE_DISABLED) {
+		err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_ACTIVE);
+	}
+
 	if (err) {
 		LOG_ERR("Cannot activate QDEC");
 		return err;
