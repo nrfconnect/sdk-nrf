@@ -3,9 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from multiprocessing import Process, Event
+from multiprocessing import Process, Event, active_children
 import argparse
 import logging
+import os
+import signal
 from rtt2socket import Rtt2Socket
 from model_creator import ModelCreator
 from plot_nordic import PlotNordic
@@ -78,19 +80,33 @@ def main():
 
     try:
         processes = []
-        processes.append(Process(target=dynamic_plot,
-                                 args=(event_plot, log_lvl_number),
+        processes.append(Process(target=rtt2socket,
+                                 args=(event_plot, event_model_creator, log_lvl_number),
                                  daemon=True))
         processes.append(Process(target=model_creator,
                                  args=(event_model_creator, args.dataset_name, log_lvl_number),
                                  daemon=True))
-        processes.append(Process(target=rtt2socket,
-                                 args=(event_plot, event_model_creator, log_lvl_number),
+        processes.append(Process(target=dynamic_plot,
+                                 args=(event_plot, log_lvl_number),
                                  daemon=True))
         for p in processes:
             p.start()
+
+        is_waiting = True
+        while is_waiting:
+            for p in processes:
+                p.join(timeout=0.5)
+                # Terminate other processes if one of the processes is not active.
+                if len(processes) > len(active_children()):
+                    is_waiting = False
+                    break
+
         for p in processes:
-            p.join()
+            if p.is_alive():
+                os.kill(p.pid, signal.SIGINT)
+                # Ensure that we stop processes in order to prevent profiler data drop.
+                p.join()
+
     except KeyboardInterrupt:
         for p in processes:
             p.join()

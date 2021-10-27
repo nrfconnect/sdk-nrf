@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import os
-from multiprocessing import Process, Event
+from multiprocessing import Process, Event, active_children
 import argparse
 import signal
 import time
@@ -60,19 +60,36 @@ def main():
 
     try:
         processes = []
-        processes.append(Process(target=model_creator,
-                                 args=(event, args.dataset_name, log_lvl_number),
-                                 daemon=True))
         processes.append(Process(target=rtt2socket,
                                  args=(event, log_lvl_number),
                                  daemon=True))
+        processes.append(Process(target=model_creator,
+                                 args=(event, args.dataset_name, log_lvl_number),
+                                 daemon=True))
         for p in processes:
             p.start()
-        time.sleep(args.time)
+
+        start_time = time.time()
+        is_waiting = True
+        while is_waiting:
+            for p in processes:
+                p.join(timeout=0.5)
+                # Terminate other processes if one of the processes is not active.
+                if len(processes) > len(active_children()):
+                    is_waiting = False
+                    break
+
+                # Terminate every process on timeout.
+                if (time.time() - start_time) >= args.time:
+                    is_waiting = False
+                    break
+
         for p in processes:
-            os.kill(p.pid, signal.SIGINT)
-        for p in processes:
-            p.join()
+            if p.is_alive():
+                os.kill(p.pid, signal.SIGINT)
+                # Ensure that we stop processes in order to prevent profiler data drop.
+                p.join()
+
     except KeyboardInterrupt:
         for p in processes:
             p.join()
