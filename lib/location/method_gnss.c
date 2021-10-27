@@ -324,6 +324,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 
 	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
 	if (err) {
+		nrf_cloud_pgps_request_reset();
 		LOG_ERR("nRF Cloud P-GPS request failed, error: %d", err);
 		return;
 	}
@@ -332,6 +333,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 
 	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
 	if (err) {
+		nrf_cloud_pgps_request_reset();
 		LOG_ERR("P-GPS data processing failed, error: %d", err);
 		return;
 	}
