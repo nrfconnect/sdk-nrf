@@ -64,12 +64,15 @@ static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
 /* Work for continuous neighbor cell measurements: */
 static struct k_work continuous_ncellmeas_work;
 
-enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
+static enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
+static enum lte_lc_neighbor_search_type ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 
 static void link_continuous_ncellmeas(struct k_work *work)
 {
 	if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
-		link_ncellmeas_start(true, LINK_NCELLMEAS_MODE_CONTINUOUS);
+		link_ncellmeas_start(true,
+				     LINK_NCELLMEAS_MODE_CONTINUOUS,
+				     ncellmeas_search_type);
 	}
 }
 
@@ -278,13 +281,15 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 
 			mosh_print("  Current cell:");
 			mosh_print(
-				"    ID %d, phy ID %d, MCC %d MNC %d, RSRP %d : %ddBm, RSRQ %d, TAC %d, earfcn %d, meas time %lld, TA %s",
+				"    ID %d, phy ID %d, MCC %d MNC %d, RSRP %d : %ddBm, RSRQ %d, TAC %d, earfcn %d, meas time %lld\n"
+				"    TA %s, TA meas time %lld",
 				cur_cell.id, cur_cell.phys_cell_id,
 				cur_cell.mcc, cur_cell.mnc, cur_cell.rsrp,
 				cur_cell.rsrp - MODEM_INFO_RSRP_OFFSET_VAL,
 				cur_cell.rsrq, cur_cell.tac, cur_cell.earfcn,
 				cur_cell.measurement_time,
-				tmp_ta_str);
+				tmp_ta_str,
+				cur_cell.timing_advance_meas_time);
 		} else {
 			mosh_print("  No current cell information from modem.");
 		}
@@ -469,13 +474,15 @@ void link_rsrp_subscribe(bool subscribe)
 	}
 }
 
-void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode)
+void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode,
+			  enum lte_lc_neighbor_search_type search_type)
 {
 	int ret;
 
 	ncellmeas_mode = mode;
+	ncellmeas_search_type = search_type;
 	if (start) {
-		ret = lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+		ret = lte_lc_neighbor_cell_measurement(search_type);
 		if (ret) {
 			mosh_error("lte_lc_neighbor_cell_measurement() returned err %d", ret);
 			mosh_error("Cannot start neigbor measurements");

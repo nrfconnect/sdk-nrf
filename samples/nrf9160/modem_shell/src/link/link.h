@@ -21,7 +21,8 @@ enum link_ncellmeas_modes {
 void link_init(void);
 void link_ind_handler(const struct lte_lc_evt *const evt);
 void link_rsrp_subscribe(bool subscribe);
-void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode);
+void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode,
+			  enum lte_lc_neighbor_search_type search_type);
 void link_modem_sleep_notifications_subscribe(uint32_t warn_time_ms, uint32_t threshold_ms);
 void link_modem_sleep_notifications_unsubscribe(void);
 void link_modem_tau_notifications_subscribe(uint32_t warn_time_ms, uint32_t threshold_ms);
