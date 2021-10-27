@@ -1351,22 +1351,30 @@ void nct_process(void)
 {
 	int err;
 
-	mqtt_input(&nct.client);
-	if (nct.client.unacked_ping) {
+	err = mqtt_input(&nct.client);
+	if (err) {
+		LOG_ERR("MQTT input error: %d", err);
+		if (err != -ENOTCONN) {
+			return;
+		}
+	} else if (nct.client.unacked_ping) {
 		LOG_DBG("Previous MQTT ping not acknowledged");
 		err = -ECONNRESET;
 	} else {
 		err = mqtt_live(&nct.client);
-	}
-	if (err && (err != -EAGAIN)) {
-		struct nct_evt evt = { .status = err };
-
-		evt.type = NCT_EVT_DISCONNECTED;
-		LOG_ERR("MQTT ping error: %d", err);
-		err = nct_input(&evt);
-		if (err) {
-			LOG_ERR("Error sending event to application:%d", err);
+		if (err && (err != -EAGAIN)) {
+			LOG_ERR("MQTT ping error: %d", err);
+		} else {
+			return;
 		}
+	}
+
+	struct nct_evt evt = { .status = err };
+
+	evt.type = NCT_EVT_DISCONNECTED;
+	err = nct_input(&evt);
+	if (err) {
+		LOG_ERR("Error sending event to application:%d", err);
 	}
 }
 
