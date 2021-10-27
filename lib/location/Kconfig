@@ -112,8 +112,7 @@ config LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG
 	default 175
 	help
 	  Security tag where the required TLS certificates for the selected
-	  service will be stored. TODO: ??? This sec tag will also be used to provision
-	  certificates when multicell_location_provision_certificate() is called.
+	  service are stored.
 
 endif # LOCATION_METHOD_WIFI_SERVICE_HERE
 
@@ -135,8 +134,7 @@ config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG
 	default 176
 	help
 	  Security tag where the required TLS certificates for the selected
-	  service will be stored. TODO: ??? This sec tag will also be used to provision
-	  certificates when multicell_location_provision_certificate() is called.
+	  service are stored.
 
 endif # LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
 
