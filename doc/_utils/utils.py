@@ -2,6 +2,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Tuple, Optional
 
+from sphinx.application import Sphinx
 from sphinx.cmd.build import get_parser
 from west.manifest import Manifest
 
@@ -115,3 +116,14 @@ def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]:
         return
 
     return (str(Path("..") / docset), str(inventory))
+
+
+def add_google_analytics(app: Sphinx) -> None:
+    """Add Google Analytics to a docset.
+
+    Args:
+        app: Sphinx instance.
+    """
+
+    app.add_js_file("https://www.googletagmanager.com/gtag/js?id=G-4X57FZCTCL")
+    app.add_js_file("js/ga-tracker.js")
