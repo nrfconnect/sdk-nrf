@@ -89,6 +89,7 @@ config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
+	default y
 
 config NRF_CLOUD_MQTT_KEEPALIVE
 	int "Maximum number of keep alive time for MQTT (in seconds)"
