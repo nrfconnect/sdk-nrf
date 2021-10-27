@@ -62,6 +62,7 @@ struct link_shell_cmd_args_t {
 	enum link_shell_command command;
 	enum link_shell_common_options common_option;
 	enum link_ncellmeas_modes ncellmeasmode;
+	enum lte_lc_neighbor_search_type ncellmeas_search_type;
 	enum lte_lc_func_mode funmode_option;
 	enum lte_lc_system_mode sysmode_option;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option;
@@ -107,10 +108,12 @@ static const char link_usage_str[] =
 	"                supporting RAI. Effective when going to normal mode.\n";
 
 static const char link_settings_usage_str[] =
-	"Usage: link settings --read | --reset\n"
+	"Usage: link settings --read | --reset | --mreset_all | --mreset_user\n"
 	"Options:\n"
-	"  -r, --read,   Read and print current persistent settings\n"
-	"      --reset,  Reset all persistent settings as their defaults\n";
+	"  -r, --read,        Read and print current persistent settings\n"
+	"      --reset,       Reset all persistent settings to defaults\n"
+	"      --mreset_all,  Reset all modem settings to defaults\n"
+	"      --mreset_user, Reset modem user configurable settings to defaults\n";
 
 static const char link_defcont_usage_str[] =
 	"Usage: link defcont --enable [options] | --disable | --read\n"
@@ -234,11 +237,27 @@ static const char link_rsrp_usage_str[] =
 	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n";
 
 static const char link_ncellmeas_usage_str[] =
-	"Usage: link ncellmeas --single | --continuous |--cancel\n"
+	"Usage: link ncellmeas --single | --continuous | --cancel | [--search_type <type>]\n"
 	"Options:\n"
-	"      --single,     Start a neighbor cell measurement and report result\n"
-	"      --continuous, Start continuous neighbor cell measurement mode and report result\n"
-	"      --cancel,     Cancel/Stop neighbor cell measurement if still ongoing\n";
+	"      --single,       Start a neighbor cell measurement and report result\n"
+	"      --continuous,   Start continuous neighbor cell measurement mode and report result\n"
+	"      --cancel,       Cancel/Stop neighbor cell measurement if still ongoing\n"
+	"      --search_type,  Used search type:\n"
+	"                      'default', 'ext_light' or 'ext_comp.'\n"
+	"\n"
+	"                      Default: The modem searches the network it is registered to\n"
+	"                      based on previous cell history. For modem firmware\n"
+	"                      versions < 1.3.1, this is the only valid option.\n"
+	"\n"
+	"                      Extended light: the modem starts with the same\n"
+	"                      search method as the default type. If needed, it continues to\n"
+	"                      search by measuring the radio conditions and makes assumptions on\n"
+	"                      where networks might be deployed, i.e. a light search.\n"
+	"\n"
+	"                      Extended complete: the modem follows the same\n"
+	"                      procedure as for type_ext_light, but will continue to perform\n"
+	"                      a complete search instead of a light search, and the search is\n"
+	"                      performed for all supported bands.\n";
 
 static const char link_msleep_usage_str[] =
 	"Usage: link msleep --subscribe [options] | --unsubscribe\n"
@@ -298,6 +317,7 @@ enum {
 	LINK_SHELL_OPT_STOP,
 	LINK_SHELL_OPT_SINGLE,
 	LINK_SHELL_OPT_CONTINUOUS,
+	LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -349,6 +369,7 @@ static struct option long_options[] = {
 	{ "single", no_argument, 0, LINK_SHELL_OPT_SINGLE },
 	{ "continuous", no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
 	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
+	{ "search_type", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
 	{ 0, 0, 0, 0 }
 };
 
@@ -417,8 +438,9 @@ static void link_shell_cmd_defaults_set(struct link_shell_cmd_args_t *link_cmd_a
 	link_cmd_args->sysmode_lte_pref_option =
 		LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	link_cmd_args->lte_mode = LTE_LC_LTE_MODE_NONE;
-	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
 	link_cmd_args->common_option = LINK_COMMON_NONE;
+	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
+	link_cmd_args->ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 }
 
 /******************************************************************************/
@@ -459,6 +481,26 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 			"System mode set successfully to modem: %s",
 			link_shell_sysmode_to_string(sysmode, snum));
 	}
+}
+
+/******************************************************************************/
+
+#define MOSH_NCELLMEAS_SEARCH_TYPE_NONE 0xFF
+
+static enum lte_lc_neighbor_search_type
+	link_shell_string_to_ncellmeas_search_type(const char *search_type_str)
+{
+	enum lte_lc_neighbor_search_type search_type = MOSH_NCELLMEAS_SEARCH_TYPE_NONE;
+
+	if (strcmp(search_type_str, "default") == 0) {
+		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
+	} else if (strcmp(search_type_str, "ext_light") == 0) {
+		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT;
+	} else if (strcmp(search_type_str, "ext_comp") == 0) {
+		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
+	}
+
+	return search_type;
 }
 
 /******************************************************************************/
@@ -770,6 +812,15 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case LINK_SHELL_OPT_CONTINUOUS:
 			link_cmd_args.ncellmeasmode = LINK_NCELLMEAS_MODE_CONTINUOUS;
+			break;
+		case LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE:
+			link_cmd_args.ncellmeas_search_type =
+				link_shell_string_to_ncellmeas_search_type(optarg);
+			if (link_cmd_args.ncellmeas_search_type ==
+			    MOSH_NCELLMEAS_SEARCH_TYPE_NONE) {
+				mosh_error("Unknown search_type. See usage:");
+				goto show_usage;
+			}
 			break;
 		case LINK_SHELL_OPT_RESET:
 			link_cmd_args.common_option = LINK_COMMON_RESET;
@@ -1212,11 +1263,15 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		break;
 	case LINK_CMD_NCELLMEAS:
 		if (link_cmd_args.common_option == LINK_COMMON_STOP) {
-			link_ncellmeas_start(false, LINK_NCELLMEAS_MODE_NONE);
+			link_ncellmeas_start(false,
+					     LINK_NCELLMEAS_MODE_NONE,
+					     LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
 
 		} else if (link_cmd_args.ncellmeasmode != LINK_NCELLMEAS_MODE_NONE) {
 			mosh_print("Neighbor cell measurements and reporting starting");
-			link_ncellmeas_start(true, link_cmd_args.ncellmeasmode);
+			link_ncellmeas_start(true,
+					     link_cmd_args.ncellmeasmode,
+					     link_cmd_args.ncellmeas_search_type);
 		} else {
 			goto show_usage;
 		}
