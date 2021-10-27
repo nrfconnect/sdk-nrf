@@ -93,9 +93,10 @@ config NRF_CLOUD_CONNECTION_POLL_THREAD
 
 config NRF_CLOUD_MQTT_KEEPALIVE
 	int "Maximum number of keep alive time for MQTT (in seconds)"
-	default MQTT_KEEPALIVE
+	default 1200
 	help
-	  Keep alive time for MQTT (in seconds) connection to nRF Cloud,
-	  allow overwriting CONFIG_MQTT_KEEPALIVE value.
+	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
+	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
+	  for nRF Cloud.
 
 endif # NRF_CLOUD_MQTT
