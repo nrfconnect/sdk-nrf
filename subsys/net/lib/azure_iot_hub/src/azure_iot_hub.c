@@ -1381,7 +1381,13 @@ start:
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
-			azure_iot_hub_input();
+			ret = azure_iot_hub_input();
+			if (ret) {
+				LOG_ERR("Cloud MQTT input error: %d", ret);
+				if (ret == -ENOTCONN) {
+					break;
+				}
+			}
 
 			/* The connection might have changed during
 			 * call to azure_iot_hub_input(), as MQTT callbacks
