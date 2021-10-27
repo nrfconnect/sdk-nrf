@@ -287,20 +287,6 @@ void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_m
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int location_agps_data_process(const char *buf, size_t buf_len);
-
-/**
- * @brief Feed in P-GPS data to be processed by library.
- *
- * @details If P-GPS prediction data are received from a source other that nRF cloud, they can be
- * handed over to Location library using this function. Note that the data must be nevertheless
- * formatted similarly to nRF cloud P-GPS data, cf. nrf_cloud_pgps_schema_v1.h.
- *
- * @param[in] buf Pointer to data received.
- * @param[in] buf_len Buffer size of data to be processed.
- *
- * @return 0 if successful, otherwise a (negative) error code.
- */
-int location_pgps_data_process(const char *buf, size_t buf_len);
 #endif
 
 /** @} */
