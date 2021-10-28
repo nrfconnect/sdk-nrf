@@ -57,7 +57,7 @@ Follow the steps below to include the sample as a child image in a :ref:`multi-i
 
 #. Add MCUboot to the build by enabling the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` option in the application that runs on the application core.
    When doing so, the build system includes the sample in the build by automatically enabling the :kconfig:`CONFIG_SECURE_BOOT` option for the application that runs on the network core.
-#. Enable the :ref:`subsys_pcd` library for MCUboot by setting the :kconfig:`CONFIG_PCD` option when building its image.
+#. Enable the :ref:`subsys_pcd` library for MCUboot by setting the :kconfig:`CONFIG_PCD_APP` option when building its image.
 
 The build system generates a new set of firmware update files.
 These files match the ones described in :ref:`mcuboot:mcuboot_ncs`, except that they contain the network core application firmware and are prefixed with ``net_core_``.
