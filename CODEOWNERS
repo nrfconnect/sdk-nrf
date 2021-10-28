@@ -114,6 +114,7 @@ Kconfig*                                  @tejlmand
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/event_manager/                   @pdunaj @MarekPieta
+/samples/gazell/                          @leewkb4567
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
 /samples/mpsl/                            @rugeGerritsen
 /samples/nfc/                             @grochu
