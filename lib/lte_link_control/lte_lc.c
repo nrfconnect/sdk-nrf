@@ -236,16 +236,17 @@ static void at_handler(const char *response)
 			return;
 		}
 
-		/* Set the network registration status to UNKNOWN if the cell ID is parsed to
-		 * UINT32_MAX (FFFFFFFF).
-		 */
-		if (!is_cellid_valid(cell.id)) {
-			reg_status = LTE_LC_NW_REG_UNKNOWN;
-		}
-
 		if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
 		    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			k_sem_give(&link);
+			/* Set the network registration status to UNKNOWN if the cell ID is parsed
+			 * to UINT32_MAX (FFFFFFFF) when the registration status is either home or
+			 * roaming.
+			 */
+			if (!is_cellid_valid(cell.id)) {
+				reg_status = LTE_LC_NW_REG_UNKNOWN;
+			} else {
+				k_sem_give(&link);
+			}
 		}
 
 		switch (reg_status) {
