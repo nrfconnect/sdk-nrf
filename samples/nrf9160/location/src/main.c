@@ -113,6 +113,12 @@ static void location_event_handler(const struct loc_event_data *event_data)
 	case LOC_EVT_ERROR:
 		printk("Getting location failed\n\n");
 		break;
+	case LOC_EVT_GNSS_ASSISTANCE_REQUEST:
+		printk("Getting location assistance requested. Not doing anything.\n\n");
+		break;
+	default:
+		printk("Getting location: Unknown event\n\n");
+		break;
 	}
 
 	k_sem_give(&location_event);
@@ -123,6 +129,12 @@ static void location_event_wait(void)
 	k_sem_take(&location_event, K_FOREVER);
 }
 
+/**
+ * @brief Retrieve location so that fallback is applied.
+ *
+ * @details This is achieved by setting GNSS as first priority method and giving it too short timeout.
+ * Then a fallback to next method, which is cellular in this example, occurs.
+ */
 static void location_with_fallback_get(void)
 {
 	int err;
@@ -133,8 +145,7 @@ static void location_with_fallback_get(void)
 	methods[0].gnss.timeout = 1;
 	loc_config_method_defaults_set(&methods[1], LOC_METHOD_CELLULAR);
 
-	printk("Requesting location with short GNSS timeout to trigger fallback to "
-		"cellular...\n");
+	printk("Requesting location with short GNSS timeout to trigger fallback to cellular...\n");
 
 	err = location_request(&config);
 	if (err) {
@@ -145,6 +156,11 @@ static void location_with_fallback_get(void)
 	location_event_wait();
 }
 
+/**
+ * @brief Retrieve location with default configuration.
+ *
+ * @details This is achieved by not passing configuration at all to location_request().
+ */
 static void location_default_get(void)
 {
 	int err;
@@ -160,6 +176,9 @@ static void location_default_get(void)
 	location_event_wait();
 }
 
+/**
+ * @brief Retrieve location with GNSS high accuracy.
+ */
 static void location_gnss_high_accuracy_get(void)
 {
 	int err;
@@ -181,6 +200,9 @@ static void location_gnss_high_accuracy_get(void)
 }
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
+/**
+ * @brief Retrieve location with WiFi positioning as first priority and cellular as second.
+ */
 static void location_wifi_get(void)
 {
 	int err;
@@ -201,6 +223,9 @@ static void location_wifi_get(void)
 }
 #endif
 
+/**
+ * @brief Retrieve location periodically with GNSS.
+ */
 static void location_gnss_periodic_get(void)
 {
 	int err;
