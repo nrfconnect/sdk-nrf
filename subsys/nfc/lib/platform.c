@@ -27,10 +27,6 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
 /* Number of NFC Tag Header registers in the FICR register space. */
 #define NFC_TAGHEADER_REGISTERS_NUM	3
-/* Default values of NFC Tag Header registers when they are not available
- * in the FICR space.
- */
-#define NFC_TAGHEADER_DEFAULT_VAL	{0x5F, 0x00, 0x00}
 
 static struct onoff_manager *hf_mgr;
 static struct onoff_client cli;
@@ -91,6 +87,9 @@ static nrfx_err_t nfc_platform_tagheader_get(uint8_t index,
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 	int err;
 
+	// TODO: Read all three headers at once to avoid the 300us IPC
+	// overhead and add support for the TF-M equivalent of
+	// spm_request_read
 	err = spm_request_read(tag_header, tag_header_addresses[index],
 			       sizeof(uint32_t));
 	if (err != 0) {
@@ -118,7 +117,6 @@ nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 		return NRFX_ERROR_INVALID_LENGTH;
 	}
 
-#if defined(FICR_NFC_TAGHEADER0_MFGID_Msk)
 	nrfx_err_t err;
 	uint32_t nfc_tag_header[NFC_TAGHEADER_REGISTERS_NUM];
 
@@ -128,10 +126,6 @@ nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 			return err;
 		}
 	}
-#else
-	const uint32_t nfc_tag_header[NFC_TAGHEADER_REGISTERS_NUM] =
-		NFC_TAGHEADER_DEFAULT_VAL;
-#endif
 
 	buf[0] = (uint8_t) (nfc_tag_header[0] >> 0);
 	buf[1] = (uint8_t) (nfc_tag_header[0] >> 8);
