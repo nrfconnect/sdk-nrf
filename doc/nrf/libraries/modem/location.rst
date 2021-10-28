@@ -27,12 +27,31 @@ Implementation
 Location library has a compact API and then location core that handles location method independent part of the functionality such as fallback to the next preferred method and timeouts.
 Each location method has its own implementation for the location retrieval:
 
-* GNSS method utilizes :ref:`gnss_interface`
-* Cellular positioning utilizes :ref:`lte_lc_readme` for getting visible cellular base stations and :ref:`lib_multicell_location` for sending cell information to the selected service and getting calculated location back to the device.
-* WiFi positioning uses Zephyr's WiFi API (TODO: link) for getting visible WiFi access points. Location library has then implementation for WiFi services where access point information is sent and calculated location is received back to the device.
+* GNSS positioning
+   * :ref:`gnss_interface` for getting satellite information
+   * A-GPS/P-GPS are managed either with
+      * :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`, or
+      * the application utilizes some other source for the data and uses :c:func:`location_agps_data_process` to pass the data to Location library
+   * A-GPS/P-GPS data format must be (TODO link to spec) in both alternatives
+   * A-GPS/P-GPS data transport for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`)
+* Cellular positioning
+   * :ref:`lte_lc_readme` for getting visible cellular base stations
+   * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting calculated location back to the device
+      * Service is selected in :c:struct:`loc_method_config` when requesting location
+      * Data transport for the service is REST
+      * Available services are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
+* WiFi positioning
+   * Zephyr's Network Management API :ref:`net_mgmt_interface` for getting visible WiFi access points
+   * Sending access point information to the selected location service and getting calculated location back to the device
+      * Location library has implementation for WiFi location services
+      * Service is selected in :c:struct:`loc_method_config` when requesting location
+      * Data transport for the service is REST
+      * Available services are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_
 
 Supported features
 ==================
+
+TODO: Not really sure what to put into this mandatory section given Implementation and Configuration sections has all the information.
 
 .. note::
    Use this section to describe the features supported by the library.
@@ -63,6 +82,8 @@ Configure the following Kconfig options when using this library:
 * :kconfig:`CONFIG_LOCATION_METHOD_WIFI` - Enables WiFi location method.
 * :kconfig:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
+* :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_.
+* :kconfig:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
 
 * TODO: multicell part
 * TODO: rest client part
@@ -88,20 +109,6 @@ The following |NCS| samples use this library:
 * :ref:`location_sample`
 * :ref:`modem_shell_application`
 
-Application integration*
-************************
-
-.. note::
-   Use this section to explain how to integrate the library in a custom application.
-   This is optional.
-
-Additional information*
-***********************
-
-.. note::
-   Use this section to describe any additional information relevant to the user.
-   This is optional.
-
 Limitations
 ***********
 
@@ -117,10 +124,10 @@ This library uses the following |NCS| libraries:
 * :ref:`lte_lc_readme`
 * :ref:`lib_multicell_location`
 * :ref:`lib_rest_client`
-* :ref:`_lib_nrf_cloud`
-* :ref:`_lib_nrf_cloud_agps`
-* :ref:`_lib_nrf_cloud_pgps`
-* :ref:`_lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud`
+* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_pgps`
+* :ref:`lib_nrf_cloud_rest`
 
 API documentation
 *****************
