@@ -64,6 +64,15 @@ config SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
 
+config SDC_SCAN_BUFFER_COUNT
+	int "Number of buffers available in the scanner"
+	default 3
+	range 2 20
+	help
+	  The buffers are used for processing incoming packets
+	  and storing advertising reports.
+	  It is recommended to support at least three buffers,
+	  otherwise the scan response report will likely not be generated.
 
 config SDC_RX_PRIO
 	# Hidden option to set the priority of the controller receive thread
