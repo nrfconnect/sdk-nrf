@@ -354,6 +354,10 @@ Other libraries
   * Increased number of supported Event Manager events.
   * Moved the Event Manager features responsible for profiling events into the new ``event_manager_profiler`` module.
 
+* :ref:`ei_wrapper` library:
+
+  * Expanded API to provide information about input data sampling frequency, every label used by the machine learning model, and results associated with every label.
+
 * :ref:`fprotect_readme` library:
 
   * Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.

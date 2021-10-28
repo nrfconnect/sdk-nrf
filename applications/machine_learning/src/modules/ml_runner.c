@@ -66,7 +66,6 @@ static void report_error(void)
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-
 static enum state current_active_state(void)
 {
 	return module_flags_check_zero(&active_listeners) ? STATE_READY : STATE_ACTIVE;
@@ -75,7 +74,12 @@ static enum state current_active_state(void)
 static void submit_result(void)
 {
 	struct ml_result_event *evt = new_ml_result_event();
-	int err = ei_wrapper_get_classification_results(&evt->label, &evt->value, &evt->anomaly);
+
+	int err = ei_wrapper_get_next_classification_result(&evt->label, &evt->value, NULL);
+
+	if (!err) {
+		err = ei_wrapper_get_anomaly(&evt->anomaly);
+	}
 
 	__ASSERT_NO_MSG(!err);
 	ARG_UNUSED(err);

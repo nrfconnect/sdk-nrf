@@ -58,6 +58,31 @@ size_t ei_wrapper_get_frame_size(void);
 size_t ei_wrapper_get_window_size(void);
 
 
+/** Get input data sampling frequency of the classifier.
+ *
+ * @return The sampling frequency in Hz.
+ */
+size_t ei_wrapper_get_classifier_frequency(void);
+
+
+/** Get number of labels used by the classifier.
+ *
+ * @return Number of labels.
+ */
+size_t ei_wrapper_get_classifier_label_count(void);
+
+
+/** Get classifier label with given index.
+ *
+ * Index can be number from 0 to number of labels used by classifier minus one.
+ *
+ * @param[in] idx       Index of the selected classification label.
+ *
+ * @return Classifier label or NULL if the index is out of range.
+ */
+const char *ei_wrapper_get_classifier_label(size_t idx);
+
+
 /** Add input data for the library.
  *
  * Size of the added data must be divisible by input frame size.
@@ -104,26 +129,39 @@ int ei_wrapper_clear_data(bool *cancelled);
 int ei_wrapper_start_prediction(size_t window_shift, size_t frame_shift);
 
 
-/** Get classification results.
+/** Get next classification result.
+ *
+ * Results are ordered based on descending classification value. If there are more results with the
+ * given value, they are ordered based on ascending index.
  *
  * This function can be executed only from the wrapper's callback context.
  * Otherwise it returns a (negative) error code.
  *
- * If calculating anomaly value is not supported, anomaly is set to value
- * of 0.0.
- *
  * @param[out] label   Pointer to the variable that is used to store the pointer
  *                     to the classification label.
- * @param[out] value   Pointer to the variable that is used to store the
- *                     classification value.
- * @param[out] anomaly Pointer to the variable that is used to store
- *                     the anomaly.
+ * @param[out] value   Pointer to the variable that is used to store the classification value.
+ * @param[out] idx     Pointer to the variable that is used to store the index of the classification
+ *                     label.
  *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       On success.
+ * @retval -EACCES If function is executed from other context that the wrapper's callback.
+ * @retval -ENOENT If no more results are available.
  */
-int ei_wrapper_get_classification_results(const char **label, float *value,
-					  float *anomaly);
+int ei_wrapper_get_next_classification_result(const char **label, float *value, size_t *idx);
+
+
+/** Get anomaly value.
+ *
+ * This function can be executed only from the wrapper's callback context.
+ * Otherwise it returns a (negative) error code.
+ *
+ * @param[out] anomaly Pointer to the variable that is used to store the anomaly.
+ *
+ * @retval 0        On success.
+ * @retval -EACCES  If function is executed from other context that the wrapper's callback.
+ * @retval -ENOTSUP If calculating anomaly value is not supported.
+ */
+int ei_wrapper_get_anomaly(float *anomaly);
 
 
 /** Get execution times for operations performed by the library.

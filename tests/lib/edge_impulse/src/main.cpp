@@ -50,24 +50,54 @@ static int add_input_data(const size_t pred_idx, const size_t frame_surplus)
 static void verify_result(const size_t pred_idx)
 {
 	int err;
+
 	const char *label;
 	float value;
+	float prev_value;
+	size_t idx;
+	size_t prev_idx;
+
 	float anomaly;
 
 	int dsp_time;
 	int classification_time;
 	int anomaly_time;
 
-	err = ei_wrapper_get_classification_results(&label, &value, &anomaly);
-	zassert_ok(err, "ei_wrapper_get_classification_results returned an error");
-	err = ei_wrapper_get_timing(&dsp_time, &classification_time, &anomaly_time);
-	zassert_ok(err, "ei_wrapper_get_timing returned an error");
+	for (size_t i = 0; i < ei_wrapper_get_classifier_label_count(); i++) {
+		err = ei_wrapper_get_next_classification_result(&label, &value, &idx);
+		zassert_ok(err, "ei_wrapper_get_next_classification_result returned an error");
+		zassert_not_null(label, "Returned label is NULL");
 
-	zassert_not_null(label, "Returned label is NULL");
-	zassert_false(strcmp(label, EI_MOCK_GEN_LABEL(pred_idx)), "Wrong label");
-	zassert_within(value, EI_MOCK_GEN_VALUE(pred_idx), FLOAT_CMP_EPSILON, "Wrong value");
+		if (i == 0) {
+			zassert_false(strcmp(label, EI_MOCK_GEN_LABEL(pred_idx)), "Wrong label");
+			zassert_within(value, EI_MOCK_GEN_VALUE(pred_idx), FLOAT_CMP_EPSILON,
+				       "Wrong value");
+		} else {
+			zassert_true(strcmp(label, EI_MOCK_GEN_LABEL(pred_idx)), "Wrong label");
+			zassert_false(strcmp(label, ei_classifier_inferencing_categories[idx]),
+				      "Wrong label");
+			zassert_within(value, EI_MOCK_GEN_VALUE_OTHERS(pred_idx), FLOAT_CMP_EPSILON,
+				       "Wrong value");
+			zassert_true(prev_value >= value, "Wrong order of results");
+			/* Other results have the same value, they should be returned in order. */
+			zassert_true((prev_value != value) || (prev_idx < idx),
+				     "Wrong order of results");
+		}
+
+		prev_value = value;
+		prev_idx = idx;
+	}
+
+	err = ei_wrapper_get_next_classification_result(&label, &value, &idx);
+	zassert_equal(err, -ENOENT, "Invalid error code");
+
+	err = ei_wrapper_get_anomaly(&anomaly);
+	zassert_ok(err, "ei_wrapper_get_anomaly returned an error");
 	zassert_within(anomaly, EI_MOCK_GEN_ANOMALY(pred_idx), FLOAT_CMP_EPSILON,
 		       "Wrong anomaly value");
+
+	err = ei_wrapper_get_timing(&dsp_time, &classification_time, &anomaly_time);
+	zassert_ok(err, "ei_wrapper_get_timing returned an error");
 
 	zassert_equal(dsp_time, EI_MOCK_GEN_DSP_TIME(pred_idx), "Wrong DSP time");
 	zassert_equal(classification_time, EI_MOCK_GEN_CLASSIFICATION_TIME(pred_idx),
@@ -118,6 +148,19 @@ static void test_init(void)
 	zassert_true(ei_wrapper_get_window_size() % ei_wrapper_get_frame_size() == 0,
 		     "Wrong window and frame size combination");
 	zassert_true(ei_wrapper_classifier_has_anomaly(), "Mocked library supports anomaly");
+	zassert_equal(ei_wrapper_get_classifier_frequency(), EI_CLASSIFIER_FREQUENCY,
+		      "Wrong classifier frequency");
+	zassert_equal(ei_wrapper_get_classifier_label_count(), EI_CLASSIFIER_LABEL_COUNT,
+		      "Wrong classifier label count");
+
+	for (size_t i = 0; i < ei_wrapper_get_classifier_label_count(); i++) {
+		zassert_equal(ei_wrapper_get_classifier_label(i),
+			      ei_classifier_inferencing_categories[i],
+			      "Wrong label");
+	}
+
+	zassert_is_null(ei_wrapper_get_classifier_label(ei_wrapper_get_classifier_label_count()),
+			"Wrong label returned for index out of range");
 
 	int err = ei_wrapper_init(result_ready_cb);
 
@@ -165,8 +208,10 @@ static void test_result_read_fail(void)
 	int anomaly_time;
 
 	/* Results cannot be read outside of ei_wrapper callback context. */
-	err = ei_wrapper_get_classification_results(&label, &value, &anomaly);
-	zassert_true(err, "No error for ei_wrapper_get_classification_results");
+	err = ei_wrapper_get_next_classification_result(&label, &value, NULL);
+	zassert_true(err, "No error for ei_wrapper_get_next_classification_result");
+	err = ei_wrapper_get_anomaly(&anomaly);
+	zassert_true(err, "No error for ei_wrapper_get_anomaly");
 	err = ei_wrapper_get_timing(&dsp_time, &classification_time, &anomaly_time);
 	zassert_true(err, "No error for ei_wrapper_get_timing");
 }
