@@ -56,7 +56,7 @@ static ext_sensor_handler_t evt_handler;
 static bool initial_trigger;
 
 static void accelerometer_trigger_handler(const struct device *dev,
-					  struct sensor_trigger *trig)
+					  const struct sensor_trigger *trig)
 {
 	int err = 0;
 	struct sensor_value data[ACCELEROMETER_CHANNELS];
