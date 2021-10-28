@@ -8,11 +8,14 @@
 #include <zephyr.h>
 #include <logging/log.h>
 
+#include <modem/modem_info.h>
 #include <modem/location.h>
 #include <modem/lte_lc.h>
+
 #include <net/multicell_location.h>
 
 #include "loc_core.h"
+#include "loc_utils.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -70,6 +73,40 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
+static int method_cellular_ncellmeas_start(void)
+{
+	struct loc_utils_modem_params_info modem_params = { 0 };
+	int err;
+
+	LOG_DBG("Triggering start of cell measurements");
+
+	err = lte_lc_neighbor_cell_measurement();
+	if (err) {
+		LOG_WRN("Failed to initiate neighbor cell measurements: %d, "
+			"next: fallback to get modem parameters",
+			err);
+
+		/* Doing fallback to get only the mandatory items manually:
+		 * cell id, mcc, mnc and tac
+		 */
+		err = loc_utils_modem_params_read(&modem_params);
+		if (err < 0) {
+			LOG_ERR("Could not obtain modem parameters");
+			return err;
+		}
+		memset(&cell_data, 0, sizeof(struct lte_lc_cells_info));
+
+		/* Filling only the mandatory parameters: */
+		cell_data.current_cell.mcc = modem_params.mcc;
+		cell_data.current_cell.mnc = modem_params.mnc;
+		cell_data.current_cell.tac = modem_params.tac;
+		cell_data.current_cell.id = modem_params.cell_id;
+		cell_data.current_cell.phys_cell_id = modem_params.phys_cell_id;
+		k_sem_give(&cellmeas_data_ready);
+	}
+	return 0;
+}
+
 static void method_cellular_positioning_work_fn(struct k_work *work)
 {
 	struct multicell_location location;
@@ -81,7 +118,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	loc_core_timer_start(cellular_config.timeout);
 
 	LOG_DBG("Triggering neighbor cell measurements");
-	ret = lte_lc_neighbor_cell_measurement();
+	ret = method_cellular_ncellmeas_start();
 	if (ret) {
 		LOG_WRN("Cannot start neighbor cell measurements");
 		loc_core_event_cb_error();
