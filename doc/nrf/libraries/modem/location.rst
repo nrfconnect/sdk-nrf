@@ -41,7 +41,7 @@ Each location method has its own implementation for the location retrieval:
       * Data transport for the service is REST
       * Available services are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
 * WiFi positioning
-   * Zephyr's Network Management API :ref:`net_mgmt_interface` for getting visible WiFi access points
+   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting visible WiFi access points
    * Sending access point information to the selected location service and getting calculated location back to the device
       * Location library has implementation for WiFi location services
       * Service is selected in :c:struct:`loc_method_config` when requesting location
@@ -58,17 +58,6 @@ TODO: Not really sure what to put into this mandatory section given Implementati
 
 Requirements
 ************
-
-Supported DKs
-=============
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
-
-.. include:: /includes/spm.txt
 
 nRF Cloud certificates
 ======================
@@ -171,7 +160,9 @@ The following |NCS| samples use this library:
 Limitations
 ***********
 
-Location library can only have one client registered at a time. If there is already a client handler registered, another initialization will override the existing handler.
+* Location library can only have one client registered at a time. If there is already a client handler registered, another initialization will override the existing handler.
+* Cellular neighbor information used for cellular positioning is more accurate on Modem FW (MFW) 1.3.0 compared to earlier MFW releases which do not have API for scanning the neighboring cells.
+  For older than MFW 1.3.0 releases, only serving cell information is provided and that information may be from hours or days ago, or even older, depending on modem sleep states.
 
 Dependencies
 ************
@@ -179,7 +170,6 @@ Dependencies
 This library uses the following |NCS| libraries:
 
 * :ref:`nrf_modem_lib_readme`
-* :ref:`gnss_interface`
 * :ref:`lte_lc_readme`
 * :ref:`lib_multicell_location`
 * :ref:`lib_rest_client`
@@ -187,6 +177,15 @@ This library uses the following |NCS| libraries:
 * :ref:`lib_nrf_cloud_agps`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_rest`
+
+It uses the following `sdk-nrfxlib`_ libraries:
+
+* :ref:`nrfxlib:gnss_interface`
+
+It uses the following Zephyr libraries:
+
+* :ref:`zephyr:net_mgmt_interface`
+* :ref:`zephyr:net_if_interface`
 
 API documentation
 *****************
