@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <date_time.h>
+#include <net/nrf_cloud_cell_pos.h>
 #include <cloud_codec.h>
 
 #include "cJSON.h"
@@ -229,11 +230,41 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells)
 {
+	int err;
+	char *buffer;
+	cJSON *root_obj = NULL;
+
 	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(neighbor_cells != NULL);
 
-	neighbor_cells->queued = false;
-	return -ENOTSUP;
+	struct lte_lc_cells_info info = neighbor_cells->cell_data;
+
+	info.neighbor_cells = neighbor_cells->neighbor_cells;
+
+	err = nrf_cloud_cell_pos_request_json_get(&info, false, &root_obj);
+	if (err) {
+		LOG_ERR("nrf_cloud_cell_pos_request_json_get, error: %d", err);
+		return -ENOMEM;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer == NULL) {
+		LOG_ERR("Failed to allocate memory for JSON string");
+
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
+		json_print_obj("Encoded message:\n", root_obj);
+	}
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+exit:
+	cJSON_Delete(root_obj);
+	return err;
 }
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
