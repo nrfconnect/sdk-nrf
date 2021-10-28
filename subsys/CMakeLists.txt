@@ -30,6 +30,7 @@ endif()
 add_subdirectory_ifdef(CONFIG_MPSL_CX mpsl/cx)
 add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
 add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
+add_subdirectory_ifdef(CONFIG_GAZELL gazell)
 
 if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_T4T_NRFXLIB OR

@@ -146,6 +146,7 @@ Kconfig*                                  @tejlmand
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
+/subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
