@@ -181,7 +181,7 @@ static int disable_trigger(void)
 	return err;
 }
 
-static void data_ready_handler(const struct device *dev, struct sensor_trigger *trig)
+static void data_ready_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 

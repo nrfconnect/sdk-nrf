@@ -165,7 +165,7 @@ static bool can_sensor_sleep(const struct sensor_config *sc,
 	return false;
 }
 
-static void trigger_handler(const struct device *dev, struct sensor_trigger *trigger)
+static void trigger_handler(const struct device *dev, const struct sensor_trigger *trigger)
 {
 	sensor_trigger_set(dev, trigger, NULL);
 
