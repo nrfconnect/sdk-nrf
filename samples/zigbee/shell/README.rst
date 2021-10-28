@@ -37,9 +37,18 @@ Overview
 The Zigbee shell sample takes the Zigbee Router role and implements two clusters: Basic and Identify.
 The Basic cluster provides attributes and commands for determining basic information about the node.
 The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
-The device also includes all Zigbee shell commands, that allow for discovering, controlling and testing other Zigbee devices.
-Additionally, log shell commands are enabled to configure logging, for example the logging level for each log module.
-The logger is configured to also log module name and timestamps for every message.
+The device also includes all Zigbee shell commands that allow for discovering, controlling and testing other Zigbee devices.
+
+Sample logging
+==============
+
+The Zigbee shell sample does not use the default logging settings for the |NCS| samples.
+Unlike the default sample logging in the |NCS|, the Zigbee shell sample's logger is configured to also log module name and timestamps for every message.
+The sample has log shell commands enabled for configuring logging, for example the logging level for each log module.
+
+The :ref:`lib_zigbee_shell` library also enables the :ref:`lib_zigbee_logger_endpoint` library by default.
+This library will log information about every ZCL packet received, which can be useful for debugging.
+You can enable or disable logging from the endpoint logger module by using the commands described in the `Enabling and disabling endpoint logging`_.
 
 Available shell interfaces
 ==========================
@@ -63,6 +72,36 @@ Button 4:
 All other interactions with the application can be handled using serial communication.
 See :ref:`zigbee_cli_reference` for available serial commands.
 
+Configuration
+*************
+
+|config|
+
+Enabling and disabling endpoint logging
+=======================================
+
+Zigbee shell sample has :ref:`Zigbee endpoint logger library <lib_zigbee_logger_endpoint>` enabled by default and will log every ZCL packet received.
+
+You can enable and disable logs from endpoint logger using the ``log enable`` and ``log disable`` shell commands with the appropriate log module instance name, respectively:
+
+* To disable the logs from Zigbee endpoint logger, use the following command:
+
+  .. code-block::
+
+     log disable zigbee.eprxzcl
+
+* To enable logs from Zigbee endpoint logger and set its logging to the info level (``inf``), use the following command:
+
+  .. code-block::
+
+     log enable inf zigbee.eprxzcl
+
+  You can also use the following command to see other available logging levels:
+
+  .. code-block::
+
+     log enable --help
+
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/zigbee/shell`
@@ -77,7 +116,7 @@ Testing
 =======
 
 In this testing procedure, both of the development kits are programmed with the Zigbee shell sample.
-One of these samples acts as Zibee Coordinator, the second one as Zigbee Router.
+One of these samples acts as Zigbee Coordinator, the second one as Zigbee Router.
 
 After building the sample and programming it to your development kits, test it by performing the following steps:
 
@@ -123,12 +162,35 @@ After building the sample and programming it to your development kits, test it b
 
       zcl ping 0x2485 10
 
-   The ping time response is returned when the ping is successful.
+   The ping time response is returned when the ping is successful, followed by the additional information from the endpoint logger.
    For example:
 
    .. code-block::
 
-      Ping time: 59 ms
+      Ping time: 20 ms
+      Done
+      [00:00:21.261,810] <inf> zigbee.eprxzcl: Received ZCL command (0): src_addr=0x2485(short) src_ep=64 dst_ep=64 cluster_id=0xbeef
+      profile_id=0x0104 cmd_dir=0 common_cmd=0 cmd_id=0x01 cmd_seq=0 disable_def_resp=1 manuf_code=void payload=[cdcdcdcdcdcdcdcdcdcd] (0)
+
+#. Disable the endpoint logger:
+
+   .. code-block::
+
+      log disable zigbee.eprxzcl
+
+#. Issuing another ping request:
+
+   .. code-block::
+
+      zcl ping 0x2485 10
+
+   The result does not include the endpoint logger information anymore.
+   For example:
+
+   .. code-block::
+
+      Ping time: 20 ms
+      Done
 
 Dependencies
 ************
