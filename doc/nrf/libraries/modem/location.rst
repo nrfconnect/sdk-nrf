@@ -32,7 +32,7 @@ Each location method has its own implementation for the location retrieval:
    * A-GPS/P-GPS are managed either with
       * :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`, or
       * the application utilizes some other source for the data and uses :c:func:`location_agps_data_process` to pass the data to Location library
-   * A-GPS/P-GPS data format must be (TODO link to spec) in both alternatives
+   * A-GPS/P-GPS data format must be as received from :ref:`lib_nrf_cloud_agps`
    * A-GPS/P-GPS data transport for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`)
 * Cellular positioning
    * :ref:`lte_lc_readme` for getting visible cellular base stations
@@ -51,7 +51,7 @@ Each location method has its own implementation for the location retrieval:
 Supported features
 ==================
 
-TODO: Not really sure what to put into this mandatory section given Implementation and Configuration sections has all the information.
+TODO: Not really sure what to put into this mandatory section given Implementation and Configuration sections has a lot of information and if something is missing, that can be added.
 
 .. note::
    Use this section to describe the features supported by the library.
@@ -59,10 +59,41 @@ TODO: Not really sure what to put into this mandatory section given Implementati
 Requirements
 ************
 
-* TODO: certs
-* TODO: service accounts
-* TODO: nrf9160?
-* TODO: WiFi chip
+Supported DKs
+=============
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
+
+.. include:: /includes/spm.txt
+
+nRF Cloud certificates
+======================
+
+If you use nRF Cloud for any location data, you must have the certificate provisioned.
+See `Updating the nRF Connect for Cloud certificate`_ for more information.
+
+Location service accounts
+=========================
+
+To use the location services that provide A-GPS/P-GPS, cellular positioning and WiFi positioning data, see the respective documentation for account setup and for getting the required credentials for authentication:
+
+* `nRF Cloud Location Services`_
+* `HERE Positioning`_
+* `Skyhook Precision Location`_
+* `Polte Location API`_
+
+The required credentials for the location services are configurable using Kconfig options.
+
+WiFi chip
+=========
+
+WiFi is not supported by the HW of the supported DKs. External WiFi chips can be used such as ESP32, which you can connect to the DKs.
+
+TODO: any links we should add?
 
 Library files
 *************
@@ -74,21 +105,49 @@ This library is found under |library path| in the |NCS| folder structure.
 Configuration
 *************
 
-Configure the following Kconfig options when using this library:
+Configure the following Kconfig option to enable this library:
 
 * :kconfig:`CONFIG_LOCATION` - Enables the Location library.
+
+Configure the following options to enable location methods of your choice:
+
 * :kconfig:`CONFIG_LOCATION_METHOD_GNSS` - Enables GNSS location method.
 * :kconfig:`CONFIG_LOCATION_METHOD_CELLULAR` - Enables cellular location method.
 * :kconfig:`CONFIG_LOCATION_METHOD_WIFI` - Enables WiFi location method.
+* :kconfig:`CONFIG_WIFI` - Enable WiFi for Zephyr.
+
+The following options control the use of GNSS assistance data:
+
+* :kconfig:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source which the application implements separately.
 * :kconfig:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
+
+The following options control the transport used with `nRF Cloud`_:
+
 * :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_.
 * :kconfig:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
+* :kconfig:`CONFIG_REST_CLIENT` - Enable :ref:`lib_rest_client` library.
 
-* TODO: multicell part
-* TODO: rest client part
-* TODO: nrf cloud rest
-* TODO: nrf cloud agps / pgps
+Both cellular and WiFi location services are selected utilizing runtime configuration but the available services must be configured first.
+For cellular location services, use at least one of the following sets of options and configure corresponding authentication parameters (more details and configuration options can be found from :ref:`lib_multicell_location`):
+
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY` (see below other authentication options)
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
+
+For WiFi location services, use at least one of the following sets of options and configure corresponding authentication parameters:
+
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` and :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK` and :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY`
+
+Following WiFi service related options can usually have default values:
+
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME`
+* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG`
 
 Usage
 *****
