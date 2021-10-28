@@ -56,7 +56,7 @@ static enum state state;
 static int enable_qdec(enum state next_state);
 
 
-static void data_ready_handler(const struct device *dev, struct sensor_trigger *trig)
+static void data_ready_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
 	if (IS_ENABLED(CONFIG_ASSERT)) {
 		k_spinlock_key_t key = k_spin_lock(&lock);
