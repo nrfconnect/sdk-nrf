@@ -62,7 +62,11 @@ Use the following Edge Impulse wrapper API:
 
 The Edge Impulse wrapper runs the machine learning model in a dedicated thread.
 Results are provided through a callback registered during the initialization of the wrapper.
-You can call :c:func:`ei_wrapper_get_classification_results` and :c:func:`ei_wrapper_get_timing` in the callback context to access the classification results and timings.
+You can call the following functions to access results:
+
+* :c:func:`ei_wrapper_get_next_classification_result`
+* :c:func:`ei_wrapper_get_anomaly`
+* :c:func:`ei_wrapper_get_timing`
 
 Refer to the API documentation for more detailed information about the API provided by the wrapper.
 

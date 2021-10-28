@@ -69,8 +69,10 @@ Complete the following steps to configure the building process:
 #. Enable and specify the Uniform Resource Identifier (URI) in the :kconfig:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
    You can set it to one of the following values:
 
-   * An absolute path to a file in the local file system.
+   * An absolute or relative path to a file in the local file system.
      For this variant, you must download the :file:`zip` file manually and place it under path defined by the Kconfig option.
+     The relative path is tracked from the application source directory (``APPLICATION_SOURCE_DIR``).
+     CMake variables that are part of the path are expanded.
    * Any downloadable URI supported by CMake's ``file(DOWNLOAD)`` command.
      For this variant, the |NCS| build system will download the :file:`zip` file automatically during build.
      The :file:`zip` file is downloaded into your application's :file:`build` directory.

@@ -303,6 +303,10 @@ Other libraries
 
   * Increased number of supported Event Manager events.
 
+* :ref:`ei_wrapper` library:
+
+  * Expanded API to provide information about input data sampling frequency, every label used by the machine learning model, and results associated with every label.
+
 * :ref:`fprotect_readme` library:
 
   * Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
