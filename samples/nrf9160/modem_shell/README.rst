@@ -441,6 +441,26 @@ Examples
 
      ppp uartconf --baudrate 460800
 
+----
+
+REST client
+===========
+
+MoSh command: ``rest``
+
+You can use the REST client for sending simple REST requests and receiving responses to them.
+
+Examples
+--------
+
+* Sending a HEAD request with custom dummy headers:
+
+  .. code-block:: console
+
+     rest -d example.com -l 1024 -m head -H "X-foo1: bar1\x0D\x0A" -H "X-foo2: bar2\x0D\x0A"
+
+----
+
 Requirements
 ************
 
