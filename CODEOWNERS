@@ -80,6 +80,7 @@ Kconfig*                                  @tejlmand
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
+/lib/location/                            @trantanen @hiltunent @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
@@ -120,6 +121,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
 /samples/spm/                             @lemrey @hakonfam @ioannisg
 /samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
