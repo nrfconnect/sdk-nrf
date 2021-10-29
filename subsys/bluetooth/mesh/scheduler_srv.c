@@ -24,28 +24,32 @@
 #define JANUARY           0
 #define DECEMBER         11
 
-static bool set_year(struct tm *sched_time,
-		     struct tm *current_local,
-		     struct bt_mesh_schedule_entry *entry);
-static bool set_month(struct tm *sched_time,
-		      struct tm *current_local,
-		      struct bt_mesh_schedule_entry *entry);
-static bool set_day(struct tm *sched_time,
-		    struct tm *current_local,
-		    struct bt_mesh_schedule_entry *entry,
-		    struct bt_mesh_time_srv *srv);
-static bool set_hour(struct tm *sched_time,
-		     struct tm *current_local,
-		     struct bt_mesh_schedule_entry *entry,
-		     struct bt_mesh_time_srv *srv);
-static bool set_minute(struct tm *sched_time,
-		       struct tm *current_local,
-		       struct bt_mesh_schedule_entry *entry,
-		       struct bt_mesh_time_srv *srv);
-static bool set_second(struct tm *sched_time,
-		       struct tm *current_local,
-		       struct bt_mesh_schedule_entry *entry,
-		       struct bt_mesh_time_srv *srv);
+enum {
+	YEAR_STAGE,
+	MONTH_STAGE,
+	DAY_STAGE,
+	HOUR_STAGE,
+	MINUTE_STAGE,
+	SECOND_STAGE,
+	PROTECTOR_STAGE,
+	FINAL_STAGE,
+	ERROR_STAGE
+};
+
+struct tm_converter {
+	bool consider_ovflw;
+	int start_year;
+	int start_month;
+	int start_day;
+	int start_hour;
+	int start_minute;
+	int start_second;
+};
+
+typedef int (*stage_handler_t)(struct tm *sched_time,
+		struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry,
+		struct tm_converter *info);
 
 static int store(struct bt_mesh_scheduler_srv *srv, uint8_t idx, bool store_ndel)
 {
@@ -63,126 +67,12 @@ static bool is_entry_defined(struct bt_mesh_scheduler_srv *srv, uint8_t idx)
 	return srv->sch_reg[idx].action != BT_MESH_SCHEDULER_NO_ACTIONS;
 }
 
-static bool revise_year(struct tm *sched_time,
-			struct tm *current_local,
-			struct bt_mesh_schedule_entry *entry,
-			int number_years)
+static int get_days_in_month(int year, int month)
 {
-	struct tm revised_time = *current_local;
-
-	revised_time.tm_year += number_years;
-	return set_year(sched_time, &revised_time, entry);
-}
-
-static bool revise_month(struct tm *sched_time,
-			 struct tm *current_local,
-			 struct bt_mesh_schedule_entry *entry,
-			 int number_days)
-{
-	int days[12] = {31,
-		is_leap_year(current_local->tm_year + TM_START_YEAR) ? 29 : 28,
+	int days[12] = {31, is_leap_year(year) ? 29 : 28,
 		31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	struct tm revised_time = *current_local;
-	bool is_year_revised = false;
 
-	revised_time.tm_mday += number_days;
-
-	if (revised_time.tm_mday > days[revised_time.tm_mon]) {
-		revised_time.tm_mday -= days[revised_time.tm_mon];
-		if (revised_time.tm_mon == DECEMBER) {
-			revised_time.tm_mon = JANUARY;
-			revised_time.tm_year++;
-			is_year_revised = true;
-		} else {
-			revised_time.tm_mon++;
-		}
-	}
-
-	if (is_year_revised) {
-		if (!revise_year(sched_time, current_local, entry, 1)) {
-			return false;
-		}
-	}
-
-	sched_time->tm_mday = revised_time.tm_mday;
-	if (revised_time.tm_mon != current_local->tm_mon) {
-		return set_month(sched_time, &revised_time, entry);
-	}
-
-	return true;
-}
-
-static bool revise_day(struct tm *sched_time,
-		       struct tm *current_local,
-		       struct bt_mesh_schedule_entry *entry,
-		       struct bt_mesh_time_srv *srv,
-		       int number_days)
-{
-	struct tm revised_time = *current_local;
-
-	revised_time.tm_mday += number_days;
-	return set_day(sched_time, &revised_time, entry, srv);
-}
-
-static bool revise_hour(struct tm *sched_time,
-			struct tm *current_local,
-			struct bt_mesh_schedule_entry *entry,
-			struct bt_mesh_time_srv *srv,
-			int number_hours)
-{
-	struct tm revised_time = *current_local;
-
-	revised_time.tm_hour += number_hours;
-	return set_hour(sched_time, &revised_time, entry, srv);
-}
-
-static bool revise_minute(struct tm *sched_time,
-			  struct tm *current_local,
-			  struct bt_mesh_schedule_entry *entry,
-			  struct bt_mesh_time_srv *srv,
-			  int number_minutes)
-{
-	struct tm revised_time = *current_local;
-
-	revised_time.tm_min += number_minutes;
-	return set_minute(sched_time, &revised_time, entry, srv);
-}
-
-static bool set_year(struct tm *sched_time,
-		     struct tm *current_local,
-		     struct bt_mesh_schedule_entry *entry)
-{
-	uint8_t current_year = current_local->tm_year % 100;
-	uint8_t diff = entry->year >= current_year ?
-		entry->year - current_year : 100 - current_year + entry->year;
-
-	sched_time->tm_year = entry->year == BT_MESH_SCHEDULER_ANY_YEAR ?
-			current_local->tm_year : current_local->tm_year + diff;
-	return true;
-}
-
-static bool set_month(struct tm *sched_time,
-		      struct tm *current_local,
-		      struct bt_mesh_schedule_entry *entry)
-{
-	int month = entry->month;
-
-	if (!month) {
-		return false;
-	}
-
-	if (sched_time->tm_year == current_local->tm_year) {
-		month &= (0xfff << current_local->tm_mon);
-		if (!month) {
-			if (!revise_year(sched_time, current_local, entry, 1)) {
-				return false;
-			}
-			month = entry->month;
-		}
-	}
-
-	sched_time->tm_mon = u32_count_trailing_zeros(month);
-	return true;
+	return days[month];
 }
 
 static int get_day_of_week(int year, int month, int day)
@@ -195,141 +85,297 @@ static int get_day_of_week(int year, int month, int day)
 		day_cnt += is_leap_year(i) ? DAYS_LEAP_YEAR : DAYS_YEAR;
 	}
 
-	int days[12] = {31,
-		is_leap_year(year) ? 29 : 28,
-		31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
 	for (int i = 0; i < month; i++) {
-		day_cnt += days[i];
+		day_cnt += get_days_in_month(year, i);
 	}
 
 	day_cnt += day;
 	return (day_cnt - 1) % WEEKDAY_CNT;
 }
 
-static bool set_day(struct tm *sched_time,
-		    struct tm *current_local,
-		    struct bt_mesh_schedule_entry *entry,
-		    struct bt_mesh_time_srv *srv)
+static bool day_validation(struct tm *sched_time, int day)
 {
-	if (entry->day < current_local->tm_mday &&
-			entry->day != BT_MESH_SCHEDULER_ANY_DAY) {
-		return false;
+	return day <= get_days_in_month(sched_time->tm_year + TM_START_YEAR,
+			sched_time->tm_mon);
+}
+
+static int year_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
+{
+	if (info->start_year != current_local->tm_year &&
+		entry->year != BT_MESH_SCHEDULER_ANY_YEAR) {
+		return ERROR_STAGE;
 	}
 
-	if (!entry->day_of_week) {
-		return false;
+	uint8_t current_year = info->start_year % 100;
+	uint8_t diff = entry->year >= current_year ?
+		entry->year - current_year : 100 - current_year + entry->year;
+
+	sched_time->tm_year = entry->year == BT_MESH_SCHEDULER_ANY_YEAR ?
+			info->start_year : info->start_year + diff;
+
+	info->start_month = sched_time->tm_year == current_local->tm_year ?
+			current_local->tm_mon : 0;
+
+	return MONTH_STAGE;
+}
+
+static int month_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
+{
+	int month = entry->month;
+	month &= (BIT_MASK(12) << info->start_month);
+	if (month == 0) {
+		info->start_year++;
+		return YEAR_STAGE;
 	}
 
-	sched_time->tm_mday = entry->day == BT_MESH_SCHEDULER_ANY_DAY ?
-			current_local->tm_mday : entry->day;
+	sched_time->tm_mon = u32_count_trailing_zeros(month);
+
+	info->consider_ovflw = sched_time->tm_mon == current_local->tm_mon &&
+			sched_time->tm_year == current_local->tm_year;
+	info->start_day = info->consider_ovflw ? current_local->tm_mday : 1;
+
+	return DAY_STAGE;
+}
+
+static int day_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
+{
+	bool day_ovflw = false;
+
+	if (entry->day == BT_MESH_SCHEDULER_ANY_DAY) {
+		if (!day_validation(sched_time, info->start_day)) {
+			day_ovflw = true;
+		}
+
+		sched_time->tm_mday = info->start_day;
+	} else {
+		entry->day = MIN(entry->day,
+			get_days_in_month(sched_time->tm_year + TM_START_YEAR,
+					sched_time->tm_mon));
+
+		sched_time->tm_mday = entry->day;
+		if (sched_time->tm_mday < current_local->tm_mday) {
+			day_ovflw = true;
+		}
+	}
+
+	if (day_ovflw && info->consider_ovflw) {
+		info->start_month++;
+		return MONTH_STAGE;
+	}
 
 	sched_time->tm_wday = get_day_of_week(sched_time->tm_year,
 			sched_time->tm_mon, sched_time->tm_mday);
 
-	if (entry->day_of_week & (1 << sched_time->tm_wday)) {
-		return true;
+	if (!(entry->day_of_week & (1 << sched_time->tm_wday))) {
+		if (entry->day == BT_MESH_SCHEDULER_ANY_DAY) {
+			int rest_wday = entry->day_of_week >> sched_time->tm_wday;
+			int delta = rest_wday ? u32_count_trailing_zeros(rest_wday) :
+				u32_count_trailing_zeros(entry->day_of_week) +
+				WEEKDAY_CNT - sched_time->tm_wday;
+
+			info->start_day += delta;
+			sched_time->tm_mday = info->start_day;
+
+			if (!day_validation(sched_time, info->start_day)) {
+				day_ovflw = true;
+			}
+		} else {
+			day_ovflw = true;
+		}
 	}
 
-	if (entry->day == BT_MESH_SCHEDULER_ANY_DAY) {
-		int rest_wday = entry->day_of_week >> sched_time->tm_wday;
-		int delta = rest_wday ? u32_count_trailing_zeros(rest_wday) :
-			u32_count_trailing_zeros(entry->day_of_week) +
-			6 - sched_time->tm_wday;
-		return revise_month(sched_time, current_local, entry, delta);
+	if (day_ovflw && info->consider_ovflw) {
+		info->start_month++;
+		return MONTH_STAGE;
 	}
 
-	return false;
+	info->consider_ovflw = info->consider_ovflw &&
+		sched_time->tm_mday == current_local->tm_mday;
+	info->start_hour = info->consider_ovflw ? current_local->tm_hour : 0;
+
+	return HOUR_STAGE;
 }
 
-static bool set_hour(struct tm *sched_time,
-		     struct tm *current_local,
-		     struct bt_mesh_schedule_entry *entry,
-		     struct bt_mesh_time_srv *srv)
+static int hour_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
 {
-	if (entry->hour < current_local->tm_hour) {
-		return false;
-	}
+	bool hour_ovflw = false;
 
 	if (entry->hour == BT_MESH_SCHEDULER_ONCE_A_DAY) {
 		sched_time->tm_hour = sys_rand32_get() % 24;
-		return revise_day(sched_time, current_local, entry, srv, 1);
+		hour_ovflw = true;
+	} else if (entry->hour == BT_MESH_SCHEDULER_ANY_HOUR) {
+		hour_ovflw = info->start_hour > 23;
+		sched_time->tm_hour = hour_ovflw ? 0 : info->start_hour;
+	} else {
+		hour_ovflw = entry->hour < info->start_hour;
+		sched_time->tm_hour = entry->hour;
 	}
 
-	sched_time->tm_hour = entry->hour == BT_MESH_SCHEDULER_ANY_HOUR ?
-			current_local->tm_hour : entry->hour;
+	if (hour_ovflw && info->consider_ovflw) {
+		info->start_day++;
+		if (day_validation(sched_time, info->start_day)) {
+			return DAY_STAGE;
+		}
 
-	return true;
+		info->start_month++;
+		return MONTH_STAGE;
+	}
+
+	info->consider_ovflw = info->consider_ovflw &&
+			sched_time->tm_hour == current_local->tm_hour;
+	info->start_minute = info->consider_ovflw ? current_local->tm_min : 0;
+
+	return MINUTE_STAGE;
 }
 
-static bool set_minute(struct tm *sched_time,
-		       struct tm *current_local,
-		       struct bt_mesh_schedule_entry *entry,
-		       struct bt_mesh_time_srv *srv)
+static int minute_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
 {
-	if (entry->minute < current_local->tm_min) {
-		return false;
-	}
-
-	bool ovflw = false;
+	bool minute_ovflw = false;
 
 	if (entry->minute == BT_MESH_SCHEDULER_EVERY_15_MINUTES) {
-		sched_time->tm_min =
-			15 * ceiling_fraction(current_local->tm_min + 1, 15);
-		ovflw = current_local->tm_min == 60 ? true : false;
+		info->start_minute = 15 * ceiling_fraction(current_local->tm_min + 1, 15);
+		minute_ovflw = info->start_minute == 60;
+		sched_time->tm_min = minute_ovflw ? 0 : info->start_minute;
 	} else if (entry->minute == BT_MESH_SCHEDULER_EVERY_20_MINUTES) {
-		sched_time->tm_min =
-			20 * ceiling_fraction(current_local->tm_min + 1, 20);
-		ovflw = current_local->tm_min == 60 ? true : false;
+		info->start_minute = 20 * ceiling_fraction(current_local->tm_min + 1, 20);
+		minute_ovflw = info->start_minute == 60;
+		sched_time->tm_min = minute_ovflw ? 0 : info->start_minute;
 	} else if (entry->minute == BT_MESH_SCHEDULER_ONCE_AN_HOUR) {
 		sched_time->tm_min = sys_rand32_get() % 60;
-		ovflw = true;
+		minute_ovflw = true;
+	} else if (entry->minute == BT_MESH_SCHEDULER_ANY_MINUTE) {
+		minute_ovflw = info->start_minute > 59;
+		sched_time->tm_min = minute_ovflw ? 0 : info->start_minute;
 	} else {
-		sched_time->tm_min =
-			entry->minute == BT_MESH_SCHEDULER_ANY_MINUTE ?
-				current_local->tm_min : entry->minute;
+		minute_ovflw = entry->minute < info->start_minute;
+		sched_time->tm_min = entry->minute;
 	}
 
-	if (ovflw) {
-		return revise_hour(sched_time, current_local, entry, srv, 1);
+	if (minute_ovflw && info->consider_ovflw) {
+		info->start_hour++;
+		return HOUR_STAGE;
 	}
 
-	return true;
+	info->consider_ovflw = info->consider_ovflw &&
+			sched_time->tm_min == current_local->tm_min;
+	info->start_second = info->consider_ovflw ? current_local->tm_sec : 0;
+
+	return SECOND_STAGE;
 }
 
-static bool set_second(struct tm *sched_time,
-		       struct tm *current_local,
-		       struct bt_mesh_schedule_entry *entry,
-		       struct bt_mesh_time_srv *srv)
+static int second_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
 {
-	if (entry->second < current_local->tm_sec) {
+	bool second_ovflw = false;
+
+	if (entry->second == BT_MESH_SCHEDULER_EVERY_15_SECONDS) {
+		info->start_second = 15 * ceiling_fraction(current_local->tm_sec + 1, 15);
+		second_ovflw = info->start_second == 60;
+		sched_time->tm_sec = second_ovflw ? 0 : info->start_second;
+	} else if (entry->second == BT_MESH_SCHEDULER_EVERY_20_SECONDS) {
+		info->start_second = 20 * ceiling_fraction(current_local->tm_sec + 1, 20);
+		second_ovflw = info->start_second == 60;
+		sched_time->tm_sec = second_ovflw ? 0 : info->start_second;
+	} else if (entry->second == BT_MESH_SCHEDULER_ONCE_A_MINUTE) {
+		sched_time->tm_sec = sys_rand32_get() % 60;
+		second_ovflw = true;
+	} else if (entry->second == BT_MESH_SCHEDULER_ANY_SECOND) {
+		second_ovflw = info->start_second > 59;
+		sched_time->tm_sec = second_ovflw ? 0 : info->start_second;
+	} else {
+		second_ovflw = entry->second < info->start_second;
+		sched_time->tm_sec = entry->second;
+	}
+
+	if (second_ovflw && info->consider_ovflw) {
+		info->start_minute++;
+		return MINUTE_STAGE;
+	}
+
+	return PROTECTOR_STAGE;
+}
+
+static int protector_handler(struct tm *sched_time, struct tm *current_local,
+		struct bt_mesh_schedule_entry *entry, struct tm_converter *info)
+{
+	/* prevent scheduling the fired action again */
+	if (current_local->tm_year == sched_time->tm_year &&
+		current_local->tm_mon == sched_time->tm_mon &&
+		current_local->tm_mday == sched_time->tm_mday &&
+		current_local->tm_hour == sched_time->tm_hour &&
+		current_local->tm_min == sched_time->tm_min &&
+		current_local->tm_sec == sched_time->tm_sec) {
+
+		info->consider_ovflw = true;
+
+		if (entry->second == BT_MESH_SCHEDULER_ANY_SECOND) {
+			info->start_second++;
+			return SECOND_STAGE;
+		}
+
+		if (entry->minute == BT_MESH_SCHEDULER_ANY_MINUTE) {
+			info->start_minute++;
+			return MINUTE_STAGE;
+		}
+
+		if (entry->hour == BT_MESH_SCHEDULER_ANY_HOUR) {
+			info->start_hour++;
+			return HOUR_STAGE;
+		}
+
+		if (entry->day == BT_MESH_SCHEDULER_ANY_DAY) {
+			info->start_day++;
+			return DAY_STAGE;
+		}
+
+		if (entry->year == BT_MESH_SCHEDULER_ANY_YEAR) {
+			info->start_year++;
+			return YEAR_STAGE;
+		}
+
+		return ERROR_STAGE;
+	}
+
+	return FINAL_STAGE;
+}
+
+static bool convert_scheduler_time_to_tm(struct tm *sched_time,
+					struct tm *current_local,
+					struct bt_mesh_schedule_entry *entry)
+{
+	int stage = YEAR_STAGE;
+	struct tm_converter conv_info;
+	const stage_handler_t handlers[] = {
+		year_handler,
+		month_handler,
+		day_handler,
+		hour_handler,
+		minute_handler,
+		second_handler,
+		protector_handler
+	};
+
+	if (entry->month == 0) {
 		return false;
 	}
 
-	bool ovflw = false;
-
-	if (entry->second == BT_MESH_SCHEDULER_EVERY_15_SECONDS) {
-		sched_time->tm_sec =
-			15 * ceiling_fraction(current_local->tm_sec + 1, 15);
-		ovflw = current_local->tm_sec == 60 ? true : false;
-	} else if (entry->second == BT_MESH_SCHEDULER_EVERY_20_SECONDS) {
-		sched_time->tm_sec =
-			20 * ceiling_fraction(current_local->tm_sec + 1, 20);
-		ovflw = current_local->tm_sec == 60 ? true : false;
-	} else if (entry->second == BT_MESH_SCHEDULER_ONCE_A_MINUTE) {
-		sched_time->tm_sec = sys_rand32_get() % 60;
-		ovflw = true;
-	} else {
-		sched_time->tm_sec =
-			entry->second == BT_MESH_SCHEDULER_ANY_SECOND ?
-				current_local->tm_sec : entry->second;
+	if (entry->day_of_week == 0) {
+		return false;
 	}
 
-	if (ovflw) {
-		return revise_minute(sched_time, current_local, entry, srv, 1);
+	memset(&conv_info, 0, sizeof(struct tm_converter));
+	conv_info.start_year = current_local->tm_year;
+
+	while (stage != FINAL_STAGE && stage != ERROR_STAGE) {
+		stage = handlers[stage](sched_time, current_local, entry, &conv_info);
 	}
 
-	return true;
+	return stage == FINAL_STAGE;
 }
 
 static uint8_t get_least_time_index(struct bt_mesh_scheduler_srv *srv)
@@ -363,7 +409,8 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 			&sched_time);
 	k_work_reschedule(&srv->delayed_work,
 			  K_MSEC(MAX(scheduled_uptime - current_uptime, 0)));
-	BT_DBG("Scheduler started. Target uptime: %lld", scheduled_uptime);
+	BT_DBG("Scheduler started. Target uptime: %lld. Current uptime: %lld.",
+			scheduled_uptime, current_uptime);
 }
 
 static void schedule_action(struct bt_mesh_scheduler_srv *srv,
@@ -386,34 +433,8 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 	BT_DBG("      minute: %d", current_local->tm_min);
 	BT_DBG("      second: %d", current_local->tm_sec);
 
-	if (!set_year(&sched_time, current_local, entry)) {
-		BT_DBG("Not accepted year %d", entry->year);
-		return;
-	}
-
-	if (!set_month(&sched_time, current_local, entry)) {
-		BT_DBG("Not accepted month %#2x", entry->month);
-		return;
-	}
-
-	if (!set_day(&sched_time, current_local, entry, srv->time_srv)) {
-		BT_DBG("Not accepted day %d or wday %#2x",
-				entry->day, entry->day_of_week);
-		return;
-	}
-
-	if (!set_hour(&sched_time, current_local, entry, srv->time_srv)) {
-		BT_DBG("Not accepted hour %d", entry->hour);
-		return;
-	}
-
-	if (!set_minute(&sched_time, current_local, entry, srv->time_srv)) {
-		BT_DBG("Not accepted minute %d", entry->minute);
-		return;
-	}
-
-	if (!set_second(&sched_time, current_local, entry, srv->time_srv)) {
-		BT_DBG("Not accepted second %d", entry->second);
+	if (!convert_scheduler_time_to_tm(&sched_time, current_local, entry)) {
+		BT_DBG("Cannot convert scheduled action time to struct tm");
 		return;
 	}
 
