@@ -554,6 +554,14 @@ void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 
 	new = sensor_cadence(&sensor->state.threshold, value);
 
+	/** Use Fast Cadence Period Divisor when publishing when the change exceeds the delta,
+	 * section 4.3.1.2.4.3, E15551 and E15886.
+	 */
+	if (new == BT_MESH_SENSOR_CADENCE_NORMAL) {
+		new = bt_mesh_sensor_delta_threshold(sensor, value) ?
+			BT_MESH_SENSOR_CADENCE_FAST : BT_MESH_SENSOR_CADENCE_NORMAL;
+	}
+
 	if (sensor->state.fast_pub != new) {
 		BT_DBG("0x%04x new cadence: %s", sensor->type->id,
 		       (new == BT_MESH_SENSOR_CADENCE_FAST) ? "fast" :
