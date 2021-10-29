@@ -40,6 +40,9 @@
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp/ppp_shell.h"
 #endif
+#if defined(CONFIG_MOSH_REST)
+#include "rest_shell.h"
+#endif
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
 
@@ -204,4 +207,11 @@ SHELL_CMD_REGISTER(sms, NULL, "Commands for sending and receiving SMS.", sms_she
 SHELL_CMD_REGISTER(ppp, NULL,
 	"Commands for controlling PPP.",
 	ppp_shell_cmd);
+#endif
+
+
+#if defined(CONFIG_MOSH_REST)
+SHELL_CMD_REGISTER(rest, NULL,
+	"REST client.",
+	rest_shell);
 #endif

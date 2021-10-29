@@ -137,6 +137,10 @@ nRF9160 samples
 
   * Modified to use runtime location service selection instead of compile-time configurations.
 
+* :ref:`modem_shell_application` sample:
+
+  * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
+
 Matter samples
 --------------
 
