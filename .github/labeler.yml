@@ -25,6 +25,17 @@
   - "lib/lte_link_control/**/*"
   - "lib/nrf_modem_lib/*"
 
+"CI-agps-test":
+  - "samples/nrf9160/gps/*"
+  - "samples/nrf9160/agps/*"
+  - "include/modem/agps.h"
+  - "include/net/cloud.h"
+  - "include/net/nrf_cloud.h"
+  - "include/net/nrf_cloud_agps.h"
+  - "include/net/nrf_cloud_pgps.h"
+  - "lib/agps/*"
+  - "lib/supl/*"
+
 "CI-boot-dfu-test":
   - "include/bl*"
   - "include/fprotect.h"

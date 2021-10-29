@@ -137,6 +137,10 @@ nRF9160 samples
 
   * Modified to use runtime location service selection instead of compile-time configurations.
 
+* Github label for GPS and AGPS automated testing
+
+  * Add Github label for GPS and AGPS samples and their dependencies to trigger automated testing
+
 Matter samples
 --------------
 
