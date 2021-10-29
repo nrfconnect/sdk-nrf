@@ -13,6 +13,7 @@
 
 #include <zephyr.h>
 #include <modem/lte_lc.h>
+#include <cJSON.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,6 +69,19 @@ struct nrf_cloud_cell_pos_result {
 int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
 			       const bool request_loc);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
+
+/**@brief Get the reference to a cJSON object containing a cell position request.
+ *
+ * @param cells_inf Pointer to cell info.
+ * @param request_loc If true, cloud will send location to the device.
+ *                    If false, cloud will not send location to the device.
+ * @param req_obj_out Pointer used to get the reference to the generated cJSON object.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const cells_inf,
+					const bool request_loc, cJSON **req_obj_out);
 
 /**@brief Processes cellular positioning data received from nRF Cloud via MQTT or REST.
  *
