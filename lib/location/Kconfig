@@ -1,0 +1,146 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LOCATION
+	bool "Location"
+	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+
+if LOCATION
+
+config LOCATION_METHOD_GNSS
+	bool "Allow GNSS to be used for obtaining the location"
+	default y
+
+config LOCATION_METHOD_CELLULAR
+	bool "Allow cellular positioning to be used for obtaining the location"
+	select MULTICELL_LOCATION
+	default y
+
+config LOCATION_METHOD_WIFI
+	bool "Allow Wi-Fi positioning to be used for obtaining the location"
+	depends on WIFI
+	select REST_CLIENT
+	select CJSON_LIB
+	select NET_MGMT
+	select NET_MGMT_EVENT
+	select NET_MGMT_EVENT_INFO
+	select NET_L2_WIFI_MGMT
+
+config LOCATION_METHODS_LIST_SIZE
+	int "Maximum number of location methods in configuration"
+	default 3
+	help
+	  Maximum number of location methods within location_config structure.
+
+if LOCATION_METHOD_GNSS
+config LOCATION_METHOD_GNSS_AGPS_EXTERNAL
+	bool "Requesting A-GPS data is handled by the application outside of Location library."
+	depends on NRF_CLOUD_AGPS
+	help
+	  Allow application to download the A-GPS data and merely feed it to Location library for
+	  processing.
+endif # LOCATION_METHOD_GNSS
+
+if LOCATION_METHOD_WIFI
+
+config LOCATION_METHOD_WIFI_DEV_NAME
+	string "Used Wi-Fi device name"
+	default "esp8266"
+
+config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
+	bool "nRF Cloud location service"
+	default y
+	depends on NRF_CLOUD
+	help
+	  Use nRF Cloud location service.
+
+config LOCATION_METHOD_WIFI_SERVICE_HERE
+	bool "Wi-Fi positioning using HERE service"
+	help
+	  Use HERE location service.
+
+config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
+	bool "Wi-Fi positioning using Skyhook service"
+	depends on MODEM_JWT
+	help
+	  Use Skyhook location service.
+
+config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
+	int "Max number of Wi-Fi scanning results"
+	default 10
+	help
+	  Maximum number of Wi-Fi scanning results to use when creating HTTP request.
+	  Increasing the max number will increase the library's RAM usage.
+
+config LOCATION_METHOD_WIFI_REST_RECV_BUF_SIZE
+	int "Receive buffer size"
+	default 1024
+	help
+	  Size of the buffer used to store the response from the Wi-Fi positioning
+	  service.
+
+if LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
+
+config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD_HOSTNAME
+	string "nRF Cloud REST API hostname"
+	default NRF_CLOUD_REST_HOST_NAME
+	help
+	  Server hostname to use when connecting to the nRF Cloud location service.
+
+endif # LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
+
+if LOCATION_METHOD_WIFI_SERVICE_HERE
+
+config LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME
+	string "HERE server hostname"
+	default "positioning.hereapi.com"
+	help
+	  Server hostname to use when connecting to the HERE location service.
+
+config LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY
+	string "HERE API key"
+	help
+	  HERE API key used for authentication.
+
+config LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG
+	int "Security tag for TLS certificates"
+	default 175
+	help
+	  Security tag where the required TLS certificates for the HERE location
+	  service are stored.
+
+endif # LOCATION_METHOD_WIFI_SERVICE_HERE
+
+if LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
+
+config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME
+	string "Skyhook server hostname"
+	default "global.skyhookwireless.com"
+	help
+	  Server hostname to use when connecting to the Skyhook location service.
+
+config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY
+	string "SKyhook API key"
+	help
+	  Skyhook API key used for authentication.
+
+config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG
+	int "Security tag for TLS certificates"
+	default 176
+	help
+	  Security tag where the required TLS certificates for the Skyhook location
+	  service are stored.
+
+endif # LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
+
+endif # LOCATION_METHOD_WIFI
+
+module = LOCATION
+module-str = Location
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LOCATION

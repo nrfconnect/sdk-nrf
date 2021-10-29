@@ -220,6 +220,12 @@ Updated:
 Modem libraries
 ---------------
 
+Added:
+
+* :ref:`lib_location`.
+
+Updated:
+
 * :ref:`lte_lc_readme` library:
 
   * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
