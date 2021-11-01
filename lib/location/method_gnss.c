@@ -35,11 +35,12 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 BUILD_ASSERT(IS_ENABLED(CONFIG_DATE_TIME));
 #endif
 
-/* Max waiting time for modem to enter the PSM in minutes. This prevents Location lib from getting
- * stuck indefinitely if e.g. the application keeps modem constantly awake.
+/* Maximun waiting time before GNSS is started regardless of RRC or PSM state. This prevents
+ * Location library from getting stuck indefinitely if the application keeps LTE connection
+ * constantly active.
  */
-#define PSM_WAIT_BACKSTOP 5
-#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+#define SLEEP_WAIT_BACKSTOP 5
+#if !defined(CONFIG_NRF_CLOUD_AGPS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
@@ -83,6 +84,7 @@ static struct gps_pgps_request pgps_request;
 static int fixes_remaining;
 static bool running;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
+static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
 
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
 static struct nrf_modem_gnss_agps_data_frame agps_request;
@@ -145,19 +147,18 @@ static void method_gnss_notify_pgps(struct k_work *work)
 }
 #endif
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
 void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
 	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
 		if (evt->modem_sleep.type == LTE_LC_MODEM_SLEEP_PSM) {
-			/* Signal to method_gnss_positioning_work_fn() that GNSS can be started. */
+			/* Allow GNSS operation once LTE modem is in power saving mode. */
 			k_sem_give(&entered_psm_mode);
 		}
 		break;
 
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
-		/* Prevent GNSS from starting while LTE is running. */
+		/* Prevent GNSS from starting while LTE is active. */
 		k_sem_reset(&entered_psm_mode);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
@@ -172,11 +173,19 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 			k_sem_take(&entered_psm_mode, K_NO_WAIT);
 		}
 		break;
+	case LTE_LC_EVT_RRC_UPDATE:
+		if (evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
+			/* Prevent GNSS from starting while RRC is in connected mode. */
+			k_sem_reset(&entered_rrc_idle);
+		} else if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			/* Allow GNSS operation once RRC is in idle mode. */
+			k_sem_give(&entered_rrc_idle);
+		}
+		break;
 	default:
 		break;
 	}
 }
-#endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -439,6 +448,7 @@ int method_gnss_cancel(void)
 {
 	int err = nrf_modem_gnss_stop();
 	int sleeping;
+	int rrc_idling;
 
 	if (err == NRF_EPERM) {
 		/* Let's convert NRF_EPERM to EPERM to make sure loc_core works properly */
@@ -463,10 +473,21 @@ int method_gnss_cancel(void)
 		k_sem_reset(&entered_psm_mode);
 	}
 
+	/* If we are currently in RRC connected mode, reset the semaphore to unblock
+	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
+	 * Otherwise, don't reset the semaphore in order not to lose information about the current
+	 * RRC state.
+	 */
+	rrc_idling = k_sem_count_get(&entered_rrc_idle);
+	if (!rrc_idling) {
+		k_sem_reset(&entered_rrc_idle);
+	}
+
+
 	return -err;
 }
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGPS)
 static bool method_gnss_entered_psm(void)
 {
 	int ret = 0;
@@ -487,20 +508,20 @@ static bool method_gnss_entered_psm(void)
 		LOG_DBG("LTE active time: %d seconds", active_time);
 
 		if (active_time >= 0) {
-			LOG_DBG("Waiting for LTE to enter PSM");
+			LOG_DBG("Waiting for LTE to enter PSM...");
 
 			/* Wait for the PSM to start. If semaphore is reset during the waiting
 			 * period, the position request was canceled.
 			 */
-			if (k_sem_take(&entered_psm_mode, K_MINUTES(PSM_WAIT_BACKSTOP))
+			if (k_sem_take(&entered_psm_mode, K_MINUTES(SLEEP_WAIT_BACKSTOP))
 			    == -EAGAIN) {
-				if (!running) { /* Request was cancelled */
+				if (!running) { /* Location request was cancelled */
 					return false;
 				}
 				/* We're still running, i.e., the wait for PSM timed out */
 				LOG_ERR("PSM is configured, but modem did not enter PSM ");
 				LOG_ERR("in %d minutes. Starting GNSS anyway.",
-					PSM_WAIT_BACKSTOP);
+					SLEEP_WAIT_BACKSTOP);
 			}
 			k_sem_give(&entered_psm_mode);
 		}
@@ -522,7 +543,32 @@ static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 		LOG_DBG("Subscribed to modem sleep notifications");
 	}
 }
-#endif // !CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_PGPS
+#endif // !CONFIG_NRF_CLOUD_AGPS
+
+static bool method_gnss_allowed_to_start(void)
+{
+	LOG_DBG("Waiting for the RRC connection release...");
+
+	/* If semaphore is reset during the waiting period, the position request was canceled.*/
+	if (k_sem_take(&entered_rrc_idle, K_MINUTES(SLEEP_WAIT_BACKSTOP)) == -EAGAIN) {
+		if (!running) { /* Location request was cancelled */
+			return false;
+		}
+		/* We're still running, i.e., the wait for RRC idle timed out */
+		LOG_ERR("RRC connection was not released in %d minutes. Starting GNSS anyway.",
+			SLEEP_WAIT_BACKSTOP);
+		return true;
+	}
+	k_sem_give(&entered_rrc_idle);
+
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	/* If A-GPS is used, a GNSS fix can be obtained fast even in RRC idle mode (without PSM). */
+	return true;
+#else
+	/* Without A-GPS, it's practical to wait for the modem to sleep before attempting a fix */
+	return method_gnss_entered_psm();
+#endif
+}
 
 static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
@@ -612,12 +658,10 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_gnss_config gnss_config = work_data->gnss_config;
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
-	if (!method_gnss_entered_psm()) {
-		/* Location request was cancelled while waiting for the PSM to start. Do nothing. */
+	if (!method_gnss_allowed_to_start()) {
+		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
 		return;
 	}
-#endif
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
@@ -781,10 +825,10 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_notify_pgps_work, method_gnss_notify_pgps);
 
 #endif
-#if !defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGPS)
 	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
 	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
-	lte_lc_register_handler(method_gnss_lte_ind_handler);
 #endif
+	lte_lc_register_handler(method_gnss_lte_ind_handler);
 	return 0;
 }
