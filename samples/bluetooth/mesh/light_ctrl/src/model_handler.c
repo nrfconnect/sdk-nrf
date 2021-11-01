@@ -92,8 +92,16 @@ static void periodic_led_work(struct k_work *work)
 
 	if ((l_ctx->rem_time <= l_ctx->time_per) ||
 	    (abs(l_ctx->target_lvl - l_ctx->current_lvl) <= PWM_SIZE_STEP)) {
+		struct bt_mesh_lightness_status status = {
+			.current = l_ctx->target_lvl,
+			.target = l_ctx->target_lvl,
+		};
+
 		l_ctx->current_lvl = l_ctx->target_lvl;
 		l_ctx->rem_time = 0;
+
+		bt_mesh_lightness_srv_pub(&l_ctx->lightness_srv, NULL, &status);
+
 		goto apply_and_print;
 	} else if (l_ctx->target_lvl > l_ctx->current_lvl) {
 		l_ctx->current_lvl += PWM_SIZE_STEP;
