@@ -173,7 +173,7 @@ NCSDK-6073: ``nrf_send`` is blocking
 .. rst-class:: v1-2-0
 
 GPS sockets and SUPL client library stops working
-  The :ref:`gps_with_supl_support_sample` sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
+  The `nRF9160: GPS with SUPL client library <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html>`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
 
   **Workaround:** Insert a delay (``k_sleep()``) of a few seconds after the ``printf`` on line 294 in :file:`main.c`.
 

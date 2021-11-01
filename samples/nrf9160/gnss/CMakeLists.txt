@@ -11,7 +11,5 @@ project(gnss_sample)
 
 zephyr_library_sources(src/main.c)
 
-zephyr_library_sources_ifdef(
-  CONFIG_SUPL_CLIENT_LIB
-  src/supl_support.c
-)
+zephyr_library_sources_ifdef(CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD src/assistance.c)
+zephyr_library_sources_ifdef(CONFIG_GNSS_SAMPLE_ASSISTANCE_SUPL src/assistance_supl.c)

@@ -120,8 +120,8 @@ API callback functions
 
 Callback functions are needed to achieve platform independence.
 If your application uses the SUPL client library, you must implement these callback functions.
-You can find an implementation example in the :ref:`gnss_sample` sample.
-The implementation is located in the :file:`samples\\nrf9160\\gnss\\src\\` files.
+For an example of the implementation, see the :ref:`gnss_sample` sample.
+The implementation is located in the :file:`samples/nrf9160/gnss/src/` directory.
 The various callback functions implemented in the SUPL client library and their purposes are listed below.
 
 AGPS handler
