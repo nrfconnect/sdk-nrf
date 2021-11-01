@@ -164,7 +164,9 @@ nRF9160 samples
 
 * :ref:`gnss_sample` sample:
 
-  * Renamed from GPS sample.
+  * Renamed. The previous name was nRF9160: GPS with SUPL client library.
+  * Added support for nRF Cloud A-GPS and P-GPS.
+  * LTE now remains connected to the network all the time when assistance is enabled. You can enable the old behavior with A-GPS using a Kconfig option.
 
 Zigbee samples
 --------------
