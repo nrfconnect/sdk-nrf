@@ -43,11 +43,6 @@ Provisioning is performed using the `nRF Mesh mobile app`_.
 This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the LEDs on the development kit from the app.
 
-.. note::
-   The Bluetooth mesh specification recommends that a status message is published at the end of transitions.
-   This behavior is not reflected in the light sample.
-   Make sure to implement the end-of-transition publication for your application.
-
 Provisioning
 ============
 
