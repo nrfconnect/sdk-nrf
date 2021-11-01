@@ -28,6 +28,13 @@ config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	bool "Auto request power saving features"
 	default y
 
+config MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB
+	bool "Convert RSRP and RSRQ values to dBm and dB, respectively"
+	default y if AWS_IOT || AZURE_IOT_HUB
+	help
+	  If this option is enabled, RSRP and RSRQ values are converted to dBm and dB before being
+	  sent out by the module.
+
 endif # MODEM_MODULE
 
 module = MODEM_MODULE
