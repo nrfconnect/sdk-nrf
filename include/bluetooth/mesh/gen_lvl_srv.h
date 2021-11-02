@@ -65,6 +65,12 @@ struct bt_mesh_lvl_srv_handlers {
 
 	/** @brief Set the level state.
 	 *
+	 * When a set message is received, the model publishes a status message, with the response
+	 * set to @c rsp. When an acknowledged set message is received, the model also sends a
+	 * response back to a client. If a state change is non-instantaneous, for example when
+	 * @ref bt_mesh_model_transition_time returns a nonzero value, the application is
+	 * responsible for publishing a value of the level state at the end of the transition.
+	 *
 	 * @note This handler is mandatory.
 	 *
 	 * @param[in] srv Level server to set the state of.

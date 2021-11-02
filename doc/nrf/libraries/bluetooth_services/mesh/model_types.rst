@@ -43,6 +43,20 @@ See :ref:`configure_application` for more information.
 
 The options related to each model configuration are listed in the respective documentation pages.
 
+.. _bt_mesh_models_transition:
+
+Transition
+**********
+
+States may support non-instantaneous changes.
+Such states make use of :c:struct:`bt_mesh_model_transition` to specify the time it should take a server to change a state to a new value.
+
+The transition to a new value can be postponed by the time defined in :c:member:`bt_mesh_model_transition.delay`, and the current value of a state remains unchanged until the transition starts.
+The delay should not be taken into account when calculating the remaining transition time.
+
+Server models are taking care of publishing of status messages, when receiving a state changing message, as well as sending a response back to a client, when an acknowledged message is received.
+If a state change is non-instantaneous, for example when :c:func:`bt_mesh_model_transition_time` returns a nonzero value, the application is responsible for publishing a new value of the state at the end of the transition.
+
 .. _bt_mesh_models_common_types:
 
 Common types for all models
