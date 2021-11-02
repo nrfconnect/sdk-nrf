@@ -61,6 +61,7 @@ enum link_shell_common_options {
 struct link_shell_cmd_args_t {
 	enum link_shell_command command;
 	enum link_shell_common_options common_option;
+	enum link_sett_modem_reset_type mreset_type;
 	enum link_ncellmeas_modes ncellmeasmode;
 	enum lte_lc_neighbor_search_type ncellmeas_search_type;
 	enum lte_lc_func_mode funmode_option;
@@ -298,6 +299,8 @@ enum {
 	LINK_SHELL_OPT_MEM_SLOT_2,
 	LINK_SHELL_OPT_MEM_SLOT_3,
 	LINK_SHELL_OPT_RESET,
+	LINK_SHELL_OPT_MRESET_ALL,
+	LINK_SHELL_OPT_MRESET_USER,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS,
 	LINK_SHELL_OPT_SYSMODE_PREF_AUTO,
@@ -356,6 +359,8 @@ static struct option long_options[] = {
 	{ "mem2", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_2 },
 	{ "mem3", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_3 },
 	{ "reset", no_argument, 0, LINK_SHELL_OPT_RESET },
+	{ "mreset_all", no_argument, 0, LINK_SHELL_OPT_MRESET_ALL },
+	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
 	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
 	{ "ltem_nbiot_gnss", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
 	{ "pref_auto", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
@@ -439,6 +444,7 @@ static void link_shell_cmd_defaults_set(struct link_shell_cmd_args_t *link_cmd_a
 		LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	link_cmd_args->lte_mode = LTE_LC_LTE_MODE_NONE;
 	link_cmd_args->common_option = LINK_COMMON_NONE;
+	link_cmd_args->mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_NONE;
 	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
 	link_cmd_args->ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 }
@@ -825,6 +831,12 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		case LINK_SHELL_OPT_RESET:
 			link_cmd_args.common_option = LINK_COMMON_RESET;
 			break;
+		case LINK_SHELL_OPT_MRESET_ALL:
+			link_cmd_args.mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_ALL;
+			break;
+		case LINK_SHELL_OPT_MRESET_USER:
+			link_cmd_args.mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG;
+			break;
 		case LINK_SHELL_OPT_START:
 			link_cmd_args.common_option = LINK_COMMON_START;
 			break;
@@ -1009,9 +1021,20 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	case LINK_CMD_SETTINGS:
 		if (link_cmd_args.common_option == LINK_COMMON_READ) {
 			link_sett_all_print();
-		} else if (link_cmd_args.common_option == LINK_COMMON_RESET) {
-			link_sett_defaults_set();
-			link_shell_sysmode_set(SYS_MODE_PREFERRED, CONFIG_LTE_MODE_PREFERENCE);
+		} else if (link_cmd_args.common_option == LINK_COMMON_RESET ||
+			   link_cmd_args.mreset_type != LINK_SHELL_MODEM_FACTORY_RESET_NONE) {
+			if (link_cmd_args.common_option == LINK_COMMON_RESET) {
+				link_sett_defaults_set();
+				link_shell_sysmode_set(SYS_MODE_PREFERRED,
+						       CONFIG_LTE_MODE_PREFERENCE);
+			}
+			if (link_cmd_args.mreset_type == LINK_SHELL_MODEM_FACTORY_RESET_ALL) {
+				link_sett_modem_factory_reset(LINK_SHELL_MODEM_FACTORY_RESET_ALL);
+			} else if (link_cmd_args.mreset_type ==
+					   LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG) {
+				link_sett_modem_factory_reset(
+					LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG);
+			}
 		} else {
 			goto show_usage;
 		}

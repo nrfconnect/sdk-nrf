@@ -7,6 +7,12 @@
 #ifndef MOSH_LINK_SETTINGS_H
 #define MOSH_LINK_SETTINGS_H
 
+enum link_sett_modem_reset_type {
+	LINK_SHELL_MODEM_FACTORY_RESET_ALL = 0,
+	LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG,
+	LINK_SHELL_MODEM_FACTORY_RESET_NONE = 99,
+};
+
 int link_sett_init(void);
 
 void link_sett_defaults_set(void);
@@ -48,5 +54,7 @@ void link_sett_normal_mode_at_cmds_shell_print(void);
 int link_sett_save_normal_mode_autoconn_enabled(bool enabled);
 bool link_sett_is_normal_mode_autoconn_enabled(void);
 void link_sett_normal_mode_autoconn_shell_print(void);
+
+void link_sett_modem_factory_reset(enum link_sett_modem_reset_type type);
 
 #endif /* MOSH_LINK_SETTINGS_H */
