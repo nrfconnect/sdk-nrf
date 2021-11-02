@@ -85,6 +85,7 @@ nRF Desktop
 
   * Updated information about custom build types.
   * Updated documentation for :ref:`nrf_desktop_usb_state`.
+  * Updated documentation for :ref:`nrf_desktop_config_channel` and added more detailed protocol description.
   * Updated documentation with information about forwarding boot reports.
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.

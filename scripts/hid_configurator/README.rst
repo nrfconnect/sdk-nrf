@@ -289,6 +289,10 @@ From the user perspective, the nRF Desktop device is handled in the same way, re
 During the device discovery, the script asks for the nRF Desktop peripherals connected through Bluetooth.
 If the currently discovered device has connected peripherals, they are discovered and prepared for configuration.
 
+The device discovery procedure is described on the :ref:`configuration channel documentation page <nrf_desktop_config_channel_device_discovery>`.
+An example of implementation is available in the :file:`scripts/hid_configurator/NrfHidDevice.py` file.
+The device discovery is implemented in the ``__init__`` function of the ``NrfHidDevice`` class.
+
 Dependencies
 ************
 
