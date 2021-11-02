@@ -474,6 +474,19 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	sensor->state.pub_div = period_div;
 	sensor->state.threshold = threshold;
 
+	/** Reschedule publication timer if the cadence increased. */
+	if (period_div > srv->pub.period_div) {
+		int period_ms;
+
+		srv->pub.period_div = period_div;
+		period_ms = bt_mesh_model_pub_period_get(srv->model);
+
+		if (period_ms > 0) {
+			BT_DBG("New publication interval: %u", period_ms);
+			k_work_reschedule(&srv->model->pub->timer, K_MSEC(period_ms));
+		}
+	}
+
 	cadence_store(srv);
 
 	err = sensor_cadence_encode(&rsp, sensor->type, sensor->state.pub_div,
@@ -824,20 +837,25 @@ static int update_handler(struct bt_mesh_model *model)
 	       bt_mesh_model_pub_period_get(model), period_div,
 	       srv->pub.fast_period ? "fast" : "normal");
 
+	/** Reset the publication divisor and the fast period divisor flag to get the actual
+	 * publication period.
+	 */
 	srv->pub.period_div = 0;
 	srv->pub.fast_period = 0;
 
 	uint32_t base_period = bt_mesh_model_pub_period_get(model);
 
+	srv->pub.fast_period = true;
+
 	SENSOR_FOR_EACH(&srv->sensors, s)
 	{
 		pub_msg_add(srv, s, period_div, base_period);
 
-		if (s->state.fast_pub) {
-			srv->pub.fast_period = true;
-			srv->pub.period_div =
-				MAX(srv->pub.period_div, s->state.pub_div);
-		}
+		/** Update the publication divisor to a new value. This is needed to take new
+		 * changes in a sensor cadence state, .e.g. when the cadence decreased.
+		 */
+		srv->pub.period_div =
+			MAX(srv->pub.period_div, s->state.pub_div);
 	}
 
 	if (period_div != srv->pub.period_div) {
@@ -893,6 +911,10 @@ static int sensor_srv_init(struct bt_mesh_model *model)
 
 	srv->pub.update = update_handler;
 	srv->pub.msg = &srv->pub_buf;
+
+	/** Always use fast period to make the server sample sensors with the fastests cadence. */
+	srv->pub.fast_period = true;
+
 	srv->setup_pub.msg = &srv->setup_pub_buf;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
@@ -916,6 +938,8 @@ static void sensor_srv_reset(struct bt_mesh_model *model)
 		s->state.min_int = 0;
 		memset(&s->state.threshold, 0, sizeof(s->state.threshold));
 	}
+
+	srv->pub.period_div = 0;
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL,
@@ -967,6 +991,11 @@ static int sensor_srv_settings_set(struct bt_mesh_model *model, const char *name
 		}
 
 		s->state.pub_div = pub_div;
+
+		/** Update the publication divisor so that the publication timer starts with
+		 * the fastest cadence after settings are loaded.
+		 */
+		srv->pub.period_div = MAX(srv->pub.period_div, s->state.pub_div);
 	}
 
 	if (err) {
