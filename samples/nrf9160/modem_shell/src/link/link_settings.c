@@ -9,6 +9,8 @@
 #include <shell/shell.h>
 #include <settings/settings.h>
 
+#include <nrf_modem_at.h>
+
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 
@@ -677,6 +679,19 @@ void link_sett_defaults_set(void)
 	link_sett_save_normal_mode_autoconn_enabled(true);
 
 	mosh_print("link settings reseted");
+}
+
+void link_sett_modem_factory_reset(enum link_sett_modem_reset_type type)
+{
+	int err;
+
+	/* Reset modem factory settings by type */
+	err = nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type);
+	if (err) {
+		mosh_error("Resetting modem factory settings failed, err %d", err);
+	} else {
+		mosh_print("link settings: modem factory reset done");
+	}
 }
 
 static struct settings_handler cfg = { .name = LINK_SETT_KEY,
