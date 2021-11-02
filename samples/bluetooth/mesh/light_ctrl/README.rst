@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
 
 The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
@@ -124,6 +124,11 @@ This sample is split into the following source files:
 * A :file:`main.c` file to handle initialization.
 * A file for handling mesh models, :file:`model_handler.c`.
 * A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
