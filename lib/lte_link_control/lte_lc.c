@@ -558,6 +558,10 @@ static int init_and_config(void)
 {
 	int err;
 
+	if (!IS_ENABLED(CONFIG_AT_MONITOR_SYS_INIT)) {
+		at_monitor_init();
+	}
+
 	if (is_initialized) {
 		return -EALREADY;
 	}
