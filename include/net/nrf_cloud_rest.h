@@ -60,14 +60,14 @@ struct nrf_cloud_rest_context {
 	 */
 	int connect_socket;
 	/** If the connection should remain after API call.
-	 * @note: A failed API call could result in the socket
+	 * @note A failed API call could result in the socket
 	 * being closed.
 	 */
 	bool keep_alive;
 	/** Timeout value, in milliseconds, for receiving response data.
 	 * Minimum timeout value specified by NRF_CLOUD_REST_TIMEOUT_MINIMUM.
 	 * For no timeout, set to NRF_CLOUD_REST_TIMEOUT_NONE.
-	 * @note: This parameter is currently not used; set
+	 * @note This parameter is currently not used; set
 	 * CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT instead.
 	 */
 	int32_t timeout_ms;
