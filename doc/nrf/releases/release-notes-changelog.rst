@@ -112,6 +112,7 @@ Bluetooth mesh samples
 * Added:
 
   * :ref:`bluetooth_ble_peripheral_lbs_coex` sample, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
+  * Support for :ref:`zephyr:nrf21540dk_nrf52840`.
 
 * Updated:
 

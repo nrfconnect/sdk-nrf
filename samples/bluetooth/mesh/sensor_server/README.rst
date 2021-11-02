@@ -99,6 +99,11 @@ This sample is split into the following source files:
 * A :file:`main.c` file to handle initialization.
 * One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
 
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 Building and running
 ********************
 

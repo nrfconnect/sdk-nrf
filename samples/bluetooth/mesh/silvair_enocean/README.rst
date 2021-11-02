@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 You need at least two development kits:
 
@@ -117,6 +117,11 @@ The Silvair EnOcean sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
 * One additional file for handling mesh models, :file:`model_handler.c`.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************

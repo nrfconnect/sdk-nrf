@@ -100,6 +100,11 @@ This sample is split into the following source files:
 * A file for handling the Chat Client model, :file:`chat_cli.c`.
 * A file for handling Bluetooth mesh models and communication with the :ref:`shell module <shell_api>`, :file:`model_handler.c`.
 
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 Building and running
 ********************
 
