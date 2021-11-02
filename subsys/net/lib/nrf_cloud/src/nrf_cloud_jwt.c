@@ -30,8 +30,10 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 		.jwt_sz = jwt_buf_sz
 	};
 
-	if ((time_valid_s == 0) || (time_valid_s > NRF_CLOUD_JWT_VALID_TIME_S_MAX)) {
+	if (time_valid_s > NRF_CLOUD_JWT_VALID_TIME_S_MAX) {
 		jwt.exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_MAX;
+	} else if (time_valid_s == 0) {
+		jwt.exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_DEF;
 	} else {
 		jwt.exp_delta_s = time_valid_s;
 	}
