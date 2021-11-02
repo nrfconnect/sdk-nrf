@@ -1210,6 +1210,9 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
 SoftDevice Controller
 =====================
 
+When working with the SoftDevice Controller, you should be aware of the following known issues.
+In addition, see :ref:`softdevice_controller_limitations` for permanent limitations.
+
 .. rst-class:: v1-7-1 v1-7-0
 
 DRGN-16317: The SoftDevice Controller can discard LE Extended Advertising Reports
