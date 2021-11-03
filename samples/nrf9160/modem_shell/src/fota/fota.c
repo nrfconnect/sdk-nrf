@@ -103,5 +103,5 @@ int fota_init(void)
 
 int fota_start(const char *host, const char *file)
 {
-	return fota_download_start(host, file, MOSH_FOTA_TLS_SECURITY_TAG, NULL, 0);
+	return fota_download_start(host, file, MOSH_FOTA_TLS_SECURITY_TAG, 0, 0);
 }

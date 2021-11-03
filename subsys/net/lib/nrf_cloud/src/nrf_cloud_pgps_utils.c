@@ -439,7 +439,7 @@ int npgps_download_init(npgps_buffer_handler_t handler)
 }
 
 int npgps_download_start(const char *host, const char *file, int sec_tag,
-			 const char *apn, size_t fragment_size)
+			 uint8_t pdn_id, size_t fragment_size)
 {
 	if (host == NULL || file == NULL) {
 		return -EINVAL;
@@ -458,7 +458,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
-		.apn = apn,
+		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
 		.set_tls_hostname = (sec_tag != -1),
 	};
