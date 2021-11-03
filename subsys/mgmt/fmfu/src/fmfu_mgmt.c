@@ -108,21 +108,6 @@ static int unpack(struct mgmt_ctxt *ctxt, struct firmware_packet *packet,
 	return offset + packet->data_len;
 }
 
-static int get_mgmt_err_from_modem_ret_err(int err)
-{
-	switch (err) {
-	case FMFU_ERR_COMMAND_FAILED:
-		LOG_ERR("RPC_COMMAND_FAILED");
-		return MGMT_ERR_EMODEM_INVALID_COMMAND;
-	case FMFU_ERR_COMMAND_FAULT:
-		LOG_ERR("RPC_COMMAND_FAULT");
-		return MGMT_ERR_EMODEM_FAULT;
-	default:
-		LOG_ERR("MODEM_BAD_STATE: %d", err);
-		return MGMT_ERR_EBADSTATE;
-	}
-}
-
 static int encode_response(struct mgmt_ctxt *ctx, uint32_t expected_offset)
 {
 	CborError err = 0;
@@ -162,7 +147,7 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 					packet.data);
 			if (rc != 0) {
 				LOG_ERR("Error in starting transfer");
-				return get_mgmt_err_from_modem_ret_err(rc);
+				return MGMT_ERR_EBADSTATE;
 			}
 		} else {
 			LOG_DBG("next_offset: 0x%x, target_address: 0x%x,"
@@ -174,10 +159,8 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 							 packet.data_len,
 							 packet.data);
 			if (rc != 0) {
-				LOG_ERR("Error in writing data, rc: %d,"
-					" errno: %d", rc, errno);
-				return get_mgmt_err_from_modem_ret_err(
-						rc);
+				LOG_ERR("Error in writing data, err: %d", rc);
+				return MGMT_ERR_EBADSTATE;
 			}
 		}
 	}
@@ -186,7 +169,7 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 		rc = nrf_modem_full_dfu_apply();
 		if (rc != 0) {
 			LOG_ERR("Error in transfer_end");
-			return get_mgmt_err_from_modem_ret_err(rc);
+			return MGMT_ERR_EBADSTATE;
 		}
 		bootloader = false;
 	}
@@ -230,9 +213,9 @@ static int fmfu_get_memory_hash(struct mgmt_ctxt *ctxt)
 	rc = nrf_modem_full_dfu_digest(start, end - start, &digest);
 
 	if (rc != 0) {
-		LOG_ERR("nrf_fmfu_hash_get failed, errno: %d.", errno);
+		LOG_ERR("nrf_fmfu_hash_get failed, err: %d.", rc);
 		LOG_ERR("start:%d end: %d\n.", (uint32_t)start, (uint32_t)end);
-		return get_mgmt_err_from_modem_ret_err(rc);
+		return MGMT_ERR_EBADSTATE;
 	}
 
 	/* Put the digest response in the response */
@@ -274,7 +257,7 @@ int fmfu_mgmt_init(void)
 	int err = nrf_modem_full_dfu_init(&digest);
 
 	if (err != 0) {
-		LOG_ERR("nrf_fmfu_init failed, errno: %d\n.", errno);
+		LOG_ERR("nrf_fmfu_init failed, err: %d\n.", err);
 		return err;
 	}
 	mgmt_register_group(&fmfu_mgmt_group);

@@ -277,34 +277,14 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		return (uint32_t)delta_t;
 	}
 	if (ping_argv.cid != MOSH_ARG_NOT_SET) {
-		/* Prefer PDN ID based binding: */
 		if (ping_argv.pdn_id_for_cid != MOSH_ARG_NOT_SET) {
 			/* Binding a data socket with PDN ID: */
 			ret = net_utils_socket_pdn_id_set(
 				fd, ping_argv.pdn_id_for_cid);
 			if (ret != 0) {
-				mosh_warn(
-					"Cannot bind socket to PDN ID %d, trying APN binding next",
-					ping_argv.pdn_id_for_cid);
-
-				/* Binding a data socket to an APN: */
-				ret = net_utils_socket_apn_set(
-					fd, ping_argv.current_apn_str);
-				if (ret != 0) {
-					mosh_error(
-						"Cannot bind socket to apn %s",
-						ping_argv.current_apn_str);
-					goto close_end;
-				}
-			}
-		} else {
-			/* Binding a data socket to an APN: */
-			ret = net_utils_socket_apn_set(
-				fd, ping_argv.current_apn_str);
-			if (ret != 0) {
 				mosh_error(
-					"Cannot bind socket to apn %s",
-					ping_argv.current_apn_str);
+					"Cannot bind socket to PDN ID %d",
+					ping_argv.pdn_id_for_cid);
 				goto close_end;
 			}
 		}

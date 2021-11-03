@@ -318,7 +318,6 @@ struct iperf_test
     int       timestamps;			/* --timestamps */
     char     *timestamp_format;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-    char     *apn_str;				/* -I or --interface option */
     char     *pdn_id_str;			/* --pdn_id option */
 #if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
     bool     curr_mdm_traces;        /* --curr-mdm-traces option */

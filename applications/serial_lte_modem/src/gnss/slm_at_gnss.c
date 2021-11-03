@@ -1037,11 +1037,6 @@ int slm_at_gnss_init(void)
 {
 	int err = 0;
 
-	err = nrf_modem_gnss_init();
-	if (err) {
-		LOG_ERR("Could not initialize GNSS, error: %d", err);
-		return err;
-	}
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
 		LOG_ERR("Could set GNSS event handler, error: %d", err);
@@ -1078,7 +1073,6 @@ int slm_at_gnss_uninit(void)
 	}
 	(void)cloud_uninit(nrf_cloud);
 	nrf_cloud = NULL;
-	(void)nrf_modem_gnss_deinit();
 
 	return 0;
 }

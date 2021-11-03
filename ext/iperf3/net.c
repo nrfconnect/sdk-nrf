@@ -163,15 +163,6 @@ netdial(int domain, int proto, const char *local, int local_port, const char *se
         hints.ai_flags = (AI_PDNSERV | AI_NUMERICSERV);
         snprintf(portstr, 12, "%d:%s", test->server_port, test->pdn_id_str);
     }
-    else if (test->apn_str != NULL) {
-        hints.ai_next = test->apn_str ?
-                &(struct addrinfo) {
-                    .ai_family    = AF_LTE,
-                    .ai_socktype  = SOCK_MGMT,
-                    .ai_protocol  = NPROTO_PDN,
-                    .ai_canonname = (char *)test->apn_str
-                } : NULL;
-    }
 #endif
     if ((gerror = getaddrinfo(
         server,
@@ -200,20 +191,14 @@ netdial(int domain, int proto, const char *local, int local_port, const char *se
     }
 
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-    /* Set PDN based on PDN ID or APN if requested */
+    /* Set PDN based on PDN ID if requested */
     if (test->pdn_id_str != NULL) {
         int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
         if (ret != 0) {
             printk("iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
             return -1;
         }				
-    } else if (test->apn_str != NULL) {
-		int ret = iperf_util_socket_apn_set(s, test->apn_str);
-		if (ret != 0) {
-			printk("netdial: cannot bind socket to apn %s\n", test->apn_str);
-			return -1;
-		}				
-	}
+    }
 #endif
 
     /* Bind the local address if given a name (with or without --cport) */
@@ -340,19 +325,10 @@ netannounce(int domain, int proto, const char *local, int port)
     hints.ai_flags = AI_PASSIVE;
 
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)    
-    /* Set PDN or APN to hints if requested: */
+    /* Set PDN to hints if requested: */
     if (test->pdn_id_str != NULL) {
         hints.ai_flags = (AI_PDNSERV | AI_NUMERICSERV);
         snprintf(portstr, 12, "%d:%s", port, test->pdn_id_str);
-    }
-    else if (test->apn_str != NULL) {
-        hints.ai_next = test->apn_str ?
-                &(struct addrinfo) {
-                    .ai_family    = AF_LTE,
-                    .ai_socktype  = SOCK_MGMT,
-                    .ai_protocol  = NPROTO_PDN,
-                    .ai_canonname = (char *)test->apn_str
-                } : NULL;
     }
 #endif    
 
@@ -369,20 +345,14 @@ netannounce(int domain, int proto, const char *local, int port)
         return -1;
     }
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-    /* Set PDN based on PDN ID or APN if requested */
+    /* Set PDN based on PDN ID if requested */
     if (test->pdn_id_str != NULL) {
         int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
         if (ret != 0) {
             printk("iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
             return -1;
         }				
-    } else if (test->apn_str != NULL) {
-		int ret = iperf_util_socket_apn_set(s, test->apn_str);
-		if (ret != 0) {
-			printk("netannounce: cannot bind socket to apn %s\n", test->apn_str);
-			return -1;
-		}				
-	}
+    }
 #endif
 
 #else /* not CONFIG_NRF_IPERF3_INTEGRATION: */

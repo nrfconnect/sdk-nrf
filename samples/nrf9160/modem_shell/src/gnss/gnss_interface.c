@@ -841,7 +841,6 @@ static void gnss_api_init(void)
 	}
 
 	/* Activate GNSS API v2 */
-	(void)nrf_modem_gnss_init();
 	(void)nrf_modem_gnss_event_handler_set(gnss_event_handler);
 
 	gnss_api_initialized = true;

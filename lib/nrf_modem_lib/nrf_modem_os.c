@@ -8,6 +8,7 @@
 #include <string.h>
 #include <init.h>
 #include <zephyr.h>
+#include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <nrf_modem_platform.h>
 #include <nrf.h>
@@ -23,22 +24,6 @@
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 #include <SEGGER_RTT.h>
-#endif
-
-#ifndef ENOKEY
-#define ENOKEY 2001
-#endif
-
-#ifndef EKEYEXPIRED
-#define EKEYEXPIRED 2002
-#endif
-
-#ifndef EKEYREVOKED
-#define EKEYREVOKED 2003
-#endif
-
-#ifndef EKEYREJECTED
-#define EKEYREJECTED 2004
 #endif
 
 #define UNUSED_FLAGS 0
@@ -236,133 +221,17 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	return 0;
 }
 
+/* Set OS errno from modem library.
+ *
+ * Note: The nrf_errnos are aligned with the libc minimal errnos used in Zephyr. Hence,
+ *       we set the errno directly to the error code. A translation table is required if
+ *       the os errnos does not align with the nrf_errnos. See @ref nrf_errno.h for a list
+ *       of all errnos required. When adding a translation table, the errno_sanity.c file
+ *       could be removed.
+ */
 void nrf_modem_os_errno_set(int err_code)
 {
-	switch (err_code) {
-	case NRF_EPERM:
-		errno = EPERM;
-		break;
-	case NRF_ENOENT:
-		errno = ENOENT;
-		break;
-	case NRF_EIO:
-		errno = EIO;
-		break;
-	case NRF_ENOEXEC:
-		errno = ENOEXEC;
-		break;
-	case NRF_EBADF:
-		errno = EBADF;
-		break;
-	case NRF_ENOMEM:
-		errno = ENOMEM;
-		break;
-	case NRF_EACCES:
-		errno = EACCES;
-		break;
-	case NRF_EFAULT:
-		errno = EFAULT;
-		break;
-	case NRF_EINVAL:
-		errno = EINVAL;
-		break;
-	case NRF_EMFILE:
-		errno = EMFILE;
-		break;
-	case NRF_EAGAIN:
-		errno = EAGAIN;
-		break;
-	case NRF_EDOM:
-		errno = EDOM;
-		break;
-	case NRF_EPROTOTYPE:
-		errno = EPROTOTYPE;
-		break;
-	case NRF_ENOPROTOOPT:
-		errno = ENOPROTOOPT;
-		break;
-	case NRF_EPROTONOSUPPORT:
-		errno = EPROTONOSUPPORT;
-		break;
-	case NRF_ESOCKTNOSUPPORT:
-		errno = ESOCKTNOSUPPORT;
-		break;
-	case NRF_EOPNOTSUPP:
-		errno = EOPNOTSUPP;
-		break;
-	case NRF_EAFNOSUPPORT:
-		errno = EAFNOSUPPORT;
-		break;
-	case NRF_EADDRINUSE:
-		errno = EADDRINUSE;
-		break;
-	case NRF_ENETDOWN:
-		errno = ENETDOWN;
-		break;
-	case NRF_ENETUNREACH:
-		errno = ENETUNREACH;
-		break;
-	case NRF_ENETRESET:
-		errno = ENETRESET;
-		break;
-	case NRF_ECONNRESET:
-		errno = ECONNRESET;
-		break;
-	case NRF_EISCONN:
-		errno = EISCONN;
-		break;
-	case NRF_ENOTCONN:
-		errno = ENOTCONN;
-		break;
-	case NRF_ETIMEDOUT:
-		errno = ETIMEDOUT;
-		break;
-	case NRF_ECONNREFUSED:
-		errno = ECONNREFUSED;
-		break;
-	case NRF_ENOBUFS:
-		errno = ENOBUFS;
-		break;
-	case NRF_EHOSTDOWN:
-		errno = EHOSTDOWN;
-		break;
-	case NRF_EINPROGRESS:
-		errno = EINPROGRESS;
-		break;
-	case NRF_EALREADY:
-		errno = EALREADY;
-		break;
-	case NRF_ECANCELED:
-		errno = ECANCELED;
-		break;
-	case NRF_ENOKEY:
-		errno = ENOKEY;
-		break;
-	case NRF_EKEYEXPIRED:
-		errno = EKEYEXPIRED;
-		break;
-	case NRF_EKEYREVOKED:
-		errno = EKEYREVOKED;
-		break;
-	case NRF_EKEYREJECTED:
-		errno = EKEYREJECTED;
-		break;
-	case NRF_EMSGSIZE:
-		errno = EMSGSIZE;
-		break;
-	case NRF_ECONNABORTED:
-		errno = ECONNABORTED;
-		break;
-	default:
-		/* Catch untranslated errnos.
-		 * Log the untranslated errno and return a magic value
-		 * to make sure this situation is clearly distinguishable.
-		 */
-		__ASSERT(false, "Untranslated errno %d set by nrf_modem_lib!", err_code);
-		LOG_ERR("Untranslated errno %d set by nrf_modem_lib!", err_code);
-		errno = 0xBAADBAAD;
-		break;
-	}
+	errno = err_code;
 }
 
 bool nrf_modem_os_is_in_isr(void)
@@ -370,7 +239,7 @@ bool nrf_modem_os_is_in_isr(void)
 	return k_is_in_isr();
 }
 
-#define NRF_MODEM_OS_SEM_MAX 2
+#define NRF_MODEM_OS_SEM_MAX 3
 static struct k_sem nrf_modem_os_sems[NRF_MODEM_OS_SEM_MAX];
 
 int nrf_modem_os_sem_init(void **sem,
@@ -438,7 +307,7 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	atomic_inc(&rpc_event_cnt);
 
-	nrf_modem_os_application_irq_handler();
+	nrf_modem_application_irq_handler();
 
 	struct sleeping_thread *thread;
 
@@ -459,7 +328,7 @@ ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 	 * Process traces.
 	 * The function has to be called even if UART traces are disabled.
 	 */
-	nrf_modem_os_trace_irq_handler();
+	nrf_modem_trace_irq_handler();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
@@ -629,6 +498,84 @@ static void diag_task(struct k_work *item)
 	}
 }
 #endif
+
+static uint8_t log_level_lu(uint8_t level)
+{
+	switch (level) {
+	case NRF_MODEM_LOG_LEVEL_NONE:
+		return LOG_LEVEL_NONE;
+	case NRF_MODEM_LOG_LEVEL_ERR:
+		return LOG_LEVEL_ERR;
+	case NRF_MODEM_LOG_LEVEL_WRN:
+		return LOG_LEVEL_WRN;
+	case NRF_MODEM_LOG_LEVEL_INF:
+		return LOG_LEVEL_INF;
+	case NRF_MODEM_LOG_LEVEL_DBG:
+		return LOG_LEVEL_DBG;
+	default:
+		return LOG_LEVEL_NONE;
+	}
+}
+
+const char *nrf_modem_os_log_strdup(const char *str)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		return log_strdup(str);
+	}
+
+	return str;
+}
+
+void nrf_modem_os_log(int level, const char *fmt, ...)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		uint16_t lev = log_level_lu(level);
+
+		va_list ap;
+
+		va_start(ap, fmt);
+
+		if (IS_ENABLED(CONFIG_LOG_MINIMAL)) {
+			/* Fallback to minimal implementation. */
+			/* Based on Zephyr's. */
+			printk("%c: ", z_log_minimal_level_to_char(lev));
+			vprintk(fmt, ap);
+			printk("\n");
+		} else {
+			struct log_msg_ids src_level = {
+				.level = lev,
+				.domain_id = CONFIG_LOG_DOMAIN_ID,
+				.source_id = LOG_CURRENT_MODULE_ID()
+			};
+
+			log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
+		}
+		va_end(ap);
+	}
+}
+
+void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t len)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		uint16_t lev = log_level_lu(level);
+
+		if (IS_ENABLED(CONFIG_LOG_MINIMAL)) {
+			/* Fallback to minimal implementation. */
+			/* Based on Zephyr's. */
+			printk("%c: %s\n",
+			       z_log_minimal_level_to_char(lev),
+			       str);
+			z_log_minimal_hexdump_print(lev, data, len);
+		} else {
+			struct log_msg_ids src_level = {
+				.level = lev,
+				.domain_id = CONFIG_LOG_DOMAIN_ID,
+				.source_id = LOG_CURRENT_MODULE_ID()
+			};
+			log_hexdump(str, data, len, src_level);
+		}
+	}
+}
 
 /* This function is called by nrf_modem_init() */
 void nrf_modem_os_init(void)

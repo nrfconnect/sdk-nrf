@@ -868,102 +868,11 @@ int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb)
 	return pdn_default_callback_set((pdn_event_handler_t)cb);
 }
 
-#ifndef ENOKEY
-#define ENOKEY 2001
-#endif
-
-#ifndef EKEYEXPIRED
-#define EKEYEXPIRED 2002
-#endif
-
-#ifndef EKEYREVOKED
-#define EKEYREVOKED 2003
-#endif
-
-#ifndef EKEYREJECTED
-#define EKEYREJECTED 2004
-#endif
-
 /* errno handling. */
 int lwm2m_os_errno(void)
 {
-	switch (errno) {
-	case 0:
-		return 0;
-	case EPERM:
-		return NRF_EPERM;
-	case ENOENT:
-		return NRF_ENOENT;
-	case EIO:
-		return NRF_EIO;
-	case ENOEXEC:
-		return NRF_ENOEXEC;
-	case EBADF:
-		return NRF_EBADF;
-	case ENOMEM:
-		return NRF_ENOMEM;
-	case EACCES:
-		return NRF_EACCES;
-	case EFAULT:
-		return NRF_EFAULT;
-	case EINVAL:
-		return NRF_EINVAL;
-	case EMFILE:
-		return NRF_EMFILE;
-	case EAGAIN:
-		return NRF_EAGAIN;
-	case EPROTOTYPE:
-		return NRF_EPROTOTYPE;
-	case ENOPROTOOPT:
-		return NRF_ENOPROTOOPT;
-	case EPROTONOSUPPORT:
-		return NRF_EPROTONOSUPPORT;
-	case ESOCKTNOSUPPORT:
-		return NRF_ESOCKTNOSUPPORT;
-	case EOPNOTSUPP:
-		return NRF_EOPNOTSUPP;
-	case EAFNOSUPPORT:
-		return NRF_EAFNOSUPPORT;
-	case EADDRINUSE:
-		return NRF_EADDRINUSE;
-	case ENETDOWN:
-		return NRF_ENETDOWN;
-	case ENETUNREACH:
-		return NRF_ENETUNREACH;
-	case ECONNREFUSED:
-		return NRF_ECONNREFUSED;
-	case ENETRESET:
-		return NRF_ENETRESET;
-	case ECONNRESET:
-		return NRF_ECONNRESET;
-	case EISCONN:
-		return NRF_EISCONN;
-	case ENOTCONN:
-		return NRF_ENOTCONN;
-	case ETIMEDOUT:
-		return NRF_ETIMEDOUT;
-	case ENOBUFS:
-		return NRF_ENOBUFS;
-	case EHOSTDOWN:
-		return NRF_EHOSTDOWN;
-	case EINPROGRESS:
-		return NRF_EINPROGRESS;
-	case ECANCELED:
-		return NRF_ECANCELED;
-	case ENOKEY:
-		return NRF_ENOKEY;
-	case EKEYEXPIRED:
-		return NRF_EKEYEXPIRED;
-	case EKEYREVOKED:
-		return NRF_EKEYREVOKED;
-	case EKEYREJECTED:
-		return NRF_EKEYREJECTED;
-	case EMSGSIZE:
-		return NRF_EMSGSIZE;
-	default:
-		__ASSERT(false, "Untranslated errno %d", errno);
-		return 0xDEADBEEF;
-	}
+	/* nrf_errno have the same values as newlibc errno */
+	return errno;
 }
 
 const char *lwm2m_os_strerror(void)
