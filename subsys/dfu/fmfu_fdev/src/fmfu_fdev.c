@@ -64,14 +64,13 @@ static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address,
 	if (is_bootloader) {
 		err = nrf_modem_full_dfu_bl_write(buf_len, buf);
 		if (err != 0) {
-			LOG_ERR("nrf_...dfu_bl_write failed, errno: %d", errno);
+			LOG_ERR("nrf_...dfu_bl_write failed, err: %d", err);
 			return err;
 		}
 	} else {
 		err = nrf_modem_full_dfu_fw_write(address, buf_len, buf);
 		if (err != 0) {
-			LOG_ERR("nrf...full_dfu_fw_write failed, err!: %d",
-				err);
+			LOG_ERR("nrf...full_dfu_fw_write failed, err: %d", err);
 			return err;
 		}
 	}
@@ -117,8 +116,7 @@ static int load_segment(const struct device *fdev, size_t seg_size,
 		 */
 		err = nrf_modem_full_dfu_apply();
 		if (err != 0) {
-			LOG_ERR("nrf_..._full_dfu_apply (bl) failed, errno: %d",
-				errno);
+			LOG_ERR("nrf_..._full_dfu_apply (bl) failed, err: %d", err);
 			return err;
 		}
 	}
@@ -160,9 +158,7 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 			err = nrf_modem_full_dfu_verify(wrapper_len,
 							(void *)meta_buf);
 			if (err != 0) {
-				LOG_ERR("nrf_fmfu_verify_signature failed, "
-					"errno: %d",
-					errno);
+				LOG_ERR("nrf_fmfu_verify_signature failed, err: %d", err);
 				return err;
 			}
 #else
@@ -175,7 +171,7 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 
 	err = nrf_modem_full_dfu_apply();
 	if (err != 0) {
-		LOG_ERR("nrf_..._full_dfu_apply (fw) failed, errno: %d", errno);
+		LOG_ERR("nrf_..._full_dfu_apply (fw) failed, err: %d", err);
 		return err;
 	}
 
@@ -206,7 +202,7 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 	/* Put modem in DFU/RPC state */
 	err = nrf_modem_full_dfu_init(NULL);
 	if (err != 0) {
-		LOG_ERR("nrf_modem_full_dfu_init failed, errno: %d.", errno);
+		LOG_ERR("nrf_modem_full_dfu_init failed, err: %d.", err);
 		return err;
 	}
 

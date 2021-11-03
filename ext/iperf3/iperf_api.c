@@ -1392,14 +1392,6 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->debug = 1;
 			break;
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-		case 'I':
-			test->apn_str = strdup(optarg);
-			if (test->apn_str == NULL) {
-				printk("strdup failed for setting the interface %s\n", optarg);
-                i_errno = IENOMEMORY;
-				return -1;
-            }
-			break;
 		case NRF_OPT_PDN_ID: {
 				int tmp = strtol(optarg, &endptr, 0);
 				if (endptr == optarg || tmp < 0) {
@@ -3294,7 +3286,6 @@ int iperf_defaults(struct iperf_test *testp)
 #endif /* HAVE_SCTP_H */
 
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-	testp->apn_str = NULL;
 	testp->pdn_id_str = NULL;
 #endif
 	testp->omit = OMIT;

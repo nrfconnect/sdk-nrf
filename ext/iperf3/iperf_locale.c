@@ -108,7 +108,6 @@ const char nrf_iperf3_usage_support_str[] =
                            "  -v, --version             show version information and quit\n"
                            "  -m, --manual              show this message and quit\n"
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)                           
-                           "  -I, --interface <apn>     use this option to bind to PDN with specific APN.\n"
                            "      --pdn_id <pdn_id>     use this option to bind to PDN with actual PDN ID.\n"
 #endif
                            "\nServer specific:\n"

@@ -280,12 +280,7 @@ static int sample_init(void)
 
 static int gnss_init_and_start(void)
 {
-	/* Initialize and start GNSS */
-	if (nrf_modem_gnss_init() != 0) {
-		LOG_ERR("Failed to initialize GNSS interface");
-		return -1;
-	}
-
+	/* Configure GNSS */
 	if (nrf_modem_gnss_event_handler_set(gnss_event_handler) != 0) {
 		LOG_ERR("Failed to set GNSS event handler");
 		return -1;

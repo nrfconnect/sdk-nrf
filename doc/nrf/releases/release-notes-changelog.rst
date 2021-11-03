@@ -538,6 +538,28 @@ Libraries for Zigbee
 * Added :ref:`BDB command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` library and :ref:`Zigbee Shell <lib_zigbee_shell>` library.
 
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
+
+Modem library
++++++++++++++
+
+* Updated:
+
+  * Updated :ref:`nrf_modem` to version 1.4.0.
+    See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
+  * nrf_errno values have been aligned with the errno values of newlibc C library.
+  * The :ref:`Modem API <nrf_modem_api>` (:file:`nrf_modem.h`) has been updated to return negative errno values on error.
+  * The :ref:`Full Modem DFU API <nrf_modem_full_dfu_api>` (:file:`nrf_modem_full_dfu.h`) has been updated to return negative errno values on error.
+  * The :ref:`GNSS API <nrf_modem_gnss_api>` (:file:`nrf_modem_gnss.h`) has been updated to return negative errno values on error.
+
+* Removed:
+
+  * The GNSS socket has been removed.
+  * The PDN socket has been removed.
+
 Scripts
 =======
 

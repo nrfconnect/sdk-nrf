@@ -261,7 +261,7 @@ See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
 
 .. note::
 
-   Starting from |NCS| v1.6.0 (Modem library v1.2.0), the :ref:`GNSS socket <nrfxlib:gnss_extension>` is deprecated and replaced with the :ref:`GNSS interface <gnss_interface>`.
+   Starting from |NCS| v1.6.0 (Modem library v1.2.0), the GNSS socket is deprecated and replaced with the :ref:`GNSS interface <gnss_interface>`.
 
 
 Obtaining a fix

@@ -14,32 +14,6 @@
 #include "net_utils.h"
 #include "mosh_print.h"
 
-int net_utils_socket_apn_set(int fd, const char *apn)
-{
-	int ret;
-	size_t len;
-	struct ifreq ifr = { 0 };
-
-	__ASSERT_NO_MSG(apn);
-
-	len = strlen(apn);
-	if (len >= sizeof(ifr.ifr_name)) {
-		mosh_error("Access point name is too long");
-		return -EINVAL;
-	}
-
-	memcpy(ifr.ifr_name, apn, len);
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
-	if (ret < 0) {
-		mosh_error(
-			"Failed to bind socket to APN %s, error: %d, %s",
-			apn, ret, strerror(ret));
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
 int net_utils_socket_pdn_id_set(int fd, uint32_t pdn_id)
 {
 	int ret;
