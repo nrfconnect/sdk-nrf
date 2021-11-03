@@ -77,7 +77,6 @@ ssize_t getline(char **buf, size_t *bufsiz, FILE *fp);
 #endif /* HAVE_GETLINE */
 
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-int iperf_util_socket_apn_set(int fd, const char *apn);
 int iperf_util_socket_pdn_id_set(int fd, const char *pdn_id_str);
 #endif
 #endif

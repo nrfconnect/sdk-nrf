@@ -683,12 +683,6 @@ static int init(const struct device *dev, gps_event_handler_t handler)
 		return err;
 	}
 
-	err = nrf_modem_gnss_init();
-	if (err) {
-		LOG_ERR("Failed to initialize GNSS API, error: %d", err);
-		return err;
-	}
-
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
 		LOG_ERR("Failed to set GNSS event handler, error: %d", err);

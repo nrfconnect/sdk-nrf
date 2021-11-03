@@ -105,30 +105,6 @@ int getrusage(int who, struct rusage *usage)
 #endif
 
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-int iperf_util_socket_apn_set(int fd, const char *apn)
-{
-	int ret;
-	size_t len;
-	struct ifreq ifr = {0};
-
-	__ASSERT_NO_MSG(apn);
-
-	len = strlen(apn);
-	if (len >= sizeof(ifr.ifr_name)) {
-		printk("Access point name is too long\n");
-		return -EINVAL;
-	}
-
-	memcpy(ifr.ifr_name, apn, len);
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
-	if (ret < 0) {
-		printk("Failed to bind socket, error: %d, %s\n",  ret, strerror(ret));
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
 int iperf_util_socket_pdn_id_set(int fd, const char *pdn_id_str)
 {
 	int ret;

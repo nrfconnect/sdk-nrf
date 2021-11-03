@@ -690,14 +690,8 @@ int method_gnss_location_get(const struct location_method_config *config)
 
 int method_gnss_init(void)
 {
+	int err;
 	running = false;
-
-	int err = nrf_modem_gnss_init();
-
-	if (err) {
-		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
-		return err;
-	}
 
 	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
 	if (err) {
