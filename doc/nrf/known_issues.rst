@@ -635,6 +635,12 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
 
   **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-12020: Current consumption for Gaming Mouse increased by 1400mA
+  When not in the sleep mode, the Gaming Mouse reference design has current consumption higher by 1400mA.
+
+  **Workaround:** Change ``pwm_pin_set_cycles`` to ``pwm_pin_set_usec`` in function :c:func:`led_pwm_set_brightness` in Zephyr's driver :file:`led_pwm.c` file.
 
 Pelion
 ======
