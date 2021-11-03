@@ -24,7 +24,6 @@ char buf[1024];
 #define S1 "s1"
 #define NO_SPACE "s0s1"
 #define NO_TLS -1
-#define DEFAULT_APN NULL
 
 /* Stubs and mocks */
 bool dfu_ctx_mcuboot_set_b1_file__s0_active;
@@ -186,7 +185,7 @@ static void test_fota_download_start(void)
 	/* Verify that correct argument for s0_active is given */
 	set_s0_active(false);
 	strcpy(buf, S0_S1);
-	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_equal(dfu_ctx_mcuboot_set_b1_file__s0_active,
 		      spm_s0_active_retval, "Incorrect param for s0_active");
@@ -194,7 +193,7 @@ static void test_fota_download_start(void)
 	err = fota_download_cancel();
 	zassert_equal(err, 0, NULL);
 	set_s0_active(true);
-	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_equal(dfu_ctx_mcuboot_set_b1_file__s0_active,
 		      spm_s0_active_retval, "Incorrect param for s0_active");
@@ -208,7 +207,7 @@ static void test_fota_download_start(void)
 	/* update set to null indicates to use original file param */
 	dfu_ctx_mcuboot_set_b1_file__update = NULL;
 	strcpy(buf, S0_S1);
-	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_true(strcmp(download_client_start_file, S0_S1) == 0, NULL);
 	err = fota_download_cancel();
@@ -217,12 +216,12 @@ static void test_fota_download_start(void)
 	/* update set to not null indicates to use update for file param */
 	dfu_ctx_mcuboot_set_b1_file__update = S1;
 	strcpy(buf, S0_S1);
-	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_true(strcmp(download_client_start_file, S1) == 0, NULL);
 
 	/* Check if double call returns EALREADY */
-	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, -EALREADY, "No failure for double call");
 }
 

@@ -728,7 +728,7 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 
 	err = fota_download_start(fota_object.host, fota_object.path,
 				  CONFIG_AZURE_FOTA_SEC_TAG,
-				  NULL, fota_object.fragment_size);
+				  0, fota_object.fragment_size);
 	if (err) {
 		LOG_ERR("Error (%d) when trying to start firmware download",
 			err);

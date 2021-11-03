@@ -13,13 +13,11 @@
 
 LOG_MODULE_DECLARE(download_client);
 
-static char apn[32];
 static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
 static char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
 static struct download_client downloader;
 static struct download_client_cfg config = {
-	.apn = apn,
 	.sec_tag = -1,
 };
 
@@ -66,21 +64,21 @@ static int download_shell_init(const struct device *d)
 
 static int cmd_dc_config(const struct shell *shell, size_t argc, char **argv)
 {
-	shell_warn(shell, "usage: dc config <apn>|<sec_tag>\n");
+	shell_warn(shell, "usage: dc config <pdn_id>|<sec_tag>\n");
 	return 0;
 }
 
-static int cmd_dc_config_apn(const struct shell *shell, size_t argc,
+static int cmd_dc_config_pdn_id(const struct shell *shell, size_t argc,
 			     char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc config apn <apn_name>\n");
+		shell_warn(shell, "usage: dc config pdn <pdn_id>\n");
 		return 0;
 	}
 
-	memcpy(apn, argv[1], MIN(strlen(argv[1]) + 1, sizeof(apn)));
+	config.pdn_id = atoi(argv[1]);
 
-	shell_print(shell, "APN set: %s\n", apn);
+	shell_print(shell, "PDN ID set: %d\n", config.pdn_id);
 	return 0;
 }
 
@@ -176,7 +174,7 @@ static int cmd_dc_disconnect(const struct shell *shell, size_t argc,
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
-	SHELL_CMD(apn, NULL, "Set APN", cmd_dc_config_apn),
+	SHELL_CMD(pdn_id, NULL, "Set PDN ID", cmd_dc_config_pdn_id),
 	SHELL_CMD(sec_tag, NULL, "Set security tag", cmd_dc_config_sec_tag),
 	SHELL_SUBCMD_SET_END
 );

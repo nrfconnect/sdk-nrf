@@ -91,12 +91,6 @@ struct download_client_cfg {
 	 *  Pass -1 to disable TLS.
 	 */
 	int sec_tag;
-	/** Access point name identifying a packet data network.
-	 *  Pass a null-terminated string with the APN
-	 *  or NULL to use the default APN.
-	 *  @deprecated Specify a PDN ID instead.
-	 */
-	const char *apn;
 	/**
 	 * PDN ID to be used for the download.
 	 * Zero is the default PDN.

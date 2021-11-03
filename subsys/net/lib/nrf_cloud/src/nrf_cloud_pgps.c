@@ -1451,7 +1451,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	}
 
 	return npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag,
-				    NULL, FRAGMENT_SIZE);
+				    0, FRAGMENT_SIZE);
 }
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)

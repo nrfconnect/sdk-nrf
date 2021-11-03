@@ -90,6 +90,7 @@ nRF Desktop
 nRF9160: Serial LTE modem
 -------------------------
 
+* Updated the ``#XFOTA`` command to accept an integer parameter to specify the PDN ID to be used for the download, instead of the APN name.
 * Added new AT commands related to the General Purpose Input/Output (GPIO).
 * Added the ``#XUUID`` command to read out the device UUID from the modem.
 * Added to the ``XNRFCLOUD`` command the following features:
@@ -271,6 +272,7 @@ Libraries for networking
   * Added :kconfig:`CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES`.
   * Changed :c:func:`nrf_cloud_pgps_init` to limit allowable :kconfig:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` to an even number,
     and limited :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` to this value minus 2.
+  * Updated the signature of :c:func:`npgps_download_start` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
 
 * :ref:`lib_rest_client` library:
 
@@ -284,6 +286,14 @@ Libraries for networking
 
   * Added handling of MQTT ping failures and MQTT input failures.
   * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
+
+* :ref:`lib_download_client` library:
+
+  * Removed the ``apn`` field in the ``download_client_cfg`` configuration structure.
+
+* :ref:`lib_fota_download` library:
+
+  * Updated the signature of :c:func:`fota_download_start_with_image_type` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
 
 Libraries for NFC
 -----------------

@@ -882,7 +882,7 @@ static int start_job(struct nrf_cloud_fota_job *const job)
 	}
 
 	ret = fota_download_start_with_image_type(job->info.host,
-		job->info.path, CONFIG_NRF_CLOUD_SEC_TAG, NULL,
+		job->info.path, CONFIG_NRF_CLOUD_SEC_TAG, 0,
 		CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		img_type);
 	if (ret) {

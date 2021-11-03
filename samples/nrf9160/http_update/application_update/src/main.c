@@ -35,10 +35,9 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 static void update_start(void)
 {
 	int err;
-	char *apn = NULL;
 
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_FILE,
-				  SEC_TAG, apn, 0);
+				  SEC_TAG, 0, 0);
 	if (err != 0) {
 		update_sample_done();
 		printk("fota_download_start() failed, err %d\n", err);

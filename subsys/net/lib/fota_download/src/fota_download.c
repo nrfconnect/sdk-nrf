@@ -277,14 +277,14 @@ static void download_with_offset(struct k_work *unused)
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
-	const char *apn, size_t fragment_size)
+	uint8_t pdn_id, size_t fragment_size)
 {
-	return fota_download_start_with_image_type(host, file, sec_tag, apn,
+	return fota_download_start_with_image_type(host, file, sec_tag, pdn_id,
 		fragment_size, DFU_TARGET_IMAGE_TYPE_ANY);
 }
 
 int fota_download_start_with_image_type(const char *host, const char *file,
-	int sec_tag, const char *apn, size_t fragment_size,
+	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
 	/* We need a static file buffer since the download client structure
@@ -298,7 +298,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
-		.apn = apn,
+		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
 		.set_tls_hostname = (sec_tag != -1),
 	};
