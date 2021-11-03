@@ -1779,14 +1779,14 @@ int bt_mesh_light_ctrl_srv_disable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_clear_bit(&srv->flags, FLAG_CTRL_SRV_MANUALLY_ENABLED);
 
-	/* Restart resume timer even if the server has already been disabled: */
-	schedule_resume_timer(srv);
-
 	if (!is_enabled(srv)) {
+		/* Restart resume timer even if the server has already been disabled: */
+		schedule_resume_timer(srv);
 		return -EALREADY;
 	}
 
 	ctrl_disable(srv);
+	schedule_resume_timer(srv);
 	store(srv, FLAG_STORE_STATE);
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_invalidate(srv->model);
