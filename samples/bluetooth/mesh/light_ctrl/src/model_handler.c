@@ -176,15 +176,22 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	int err;
-
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&my_ctx.per_work, periodic_led_work);
+
+	return &comp;
+}
+
+void model_handler_start(void)
+{
+	int err;
+
+	if (bt_mesh_is_provisioned()) {
+		return;
+	}
 
 	err = bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
 	if (!err) {
 		printk("Successfully enabled LC server\n");
 	}
-
-	return &comp;
 }

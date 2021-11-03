@@ -84,7 +84,7 @@ The models are used for the following purposes:
   The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
 * The three models in the second element are the product of a single instance of the Light Lightness Control (LC) Server.
   The Light LC Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
-  In this sample, the Light LC Server is enabled by default on startup.
+  In this sample, the Light LC Server is enabled by default at first boot.
 
 Other nodes can control the Light Lightness Server through the Light LC Server, by sending On/Off messages to the Light LC Server or to the Generic OnOff Server in the second element.
 

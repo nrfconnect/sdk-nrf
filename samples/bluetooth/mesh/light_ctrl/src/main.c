@@ -40,6 +40,8 @@ static void bt_ready(int err)
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
+
+	model_handler_start();
 }
 
 void main(void)
