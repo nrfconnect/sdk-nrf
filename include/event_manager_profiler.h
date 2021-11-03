@@ -13,8 +13,8 @@
 
 
 /**
- * @addtogroup event_manager Event Manager
- * @brief Event Manager
+ * @defgroup event_manager_profiler Event Manager Profiler
+ * @brief Event Manager Profiler
  *
  * @{
  */
