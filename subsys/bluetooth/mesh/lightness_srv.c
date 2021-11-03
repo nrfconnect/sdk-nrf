@@ -14,8 +14,8 @@
 #define LOG_MODULE_NAME bt_mesh_light_srv
 #include "common/log.h"
 
-#define LVL_TO_LIGHT(_lvl) (repr_to_light((_lvl) + 32768, ACTUAL))
-#define LIGHT_TO_LVL(_light) (light_to_repr((_light), ACTUAL) - 32768)
+#define LVL_TO_LIGHT(_lvl) (from_actual((_lvl) + 32768))
+#define LIGHT_TO_LVL(_light) (to_actual((_light)) - 32768)
 
 /** Persistent storage handling */
 struct bt_mesh_lightness_srv_settings_data {
@@ -300,7 +300,7 @@ static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 				 BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS);
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHTNESS_OP_LAST_STATUS);
 
-	net_buf_simple_add_le16(&rsp, light_to_repr(srv->last, ACTUAL));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->last));
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -315,8 +315,7 @@ static int handle_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 				 BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS);
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS);
 
-	net_buf_simple_add_le16(&rsp,
-				light_to_repr(srv->default_light, ACTUAL));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->default_light));
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -345,7 +344,7 @@ static int set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_lightness_srv *srv = model->user_data;
-	uint16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	uint16_t new = from_actual(net_buf_simple_pull_le16(buf));
 
 	lightness_srv_default_set(srv, ctx, new);
 	if (!ack) {
@@ -384,8 +383,8 @@ static int handle_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHTNESS_OP_RANGE_STATUS);
 
 	net_buf_simple_add_u8(&rsp, BT_MESH_MODEL_SUCCESS);
-	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.min, ACTUAL));
-	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.max, ACTUAL));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->range.min));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->range.max));
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
@@ -398,8 +397,8 @@ static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 	struct bt_mesh_lightness_range new;
 
-	new.min = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
-	new.max = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	new.min = from_actual(net_buf_simple_pull_le16(buf));
+	new.max = from_actual(net_buf_simple_pull_le16(buf));
 
 	/* The test specification doesn't accept changes to the status, even if
 	 * the parameters are wrong. Simply ignore messages with wrong
@@ -429,8 +428,8 @@ static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHTNESS_OP_RANGE_STATUS);
 
 	net_buf_simple_add_u8(&rsp, BT_MESH_MODEL_SUCCESS);
-	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.min, ACTUAL));
-	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.max, ACTUAL));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->range.min));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->range.max));
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
@@ -585,7 +584,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		/* Delta lvl is bound to the lightness actual state, so the
 		 * calculation must happen in that space:
 		 */
-		srv->delta_start = light_to_repr(status.current, ACTUAL);
+		srv->delta_start = to_actual(status.current);
 	}
 
 	/* Clamp the value to the lightness range before storing it in an
@@ -597,7 +596,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	struct bt_mesh_lightness_set set = {
 		/* Converting back to configured space: */
-		.lvl = repr_to_light(target_actual, ACTUAL),
+		.lvl = from_actual(target_actual),
 		.transition = delta_set->transition,
 	};
 
@@ -611,13 +610,12 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * set the "last" value to the value it was before the dimming was
 	 * started.
 	 */
-	if ((set.lvl == 0) &&
-	    (repr_to_light(srv->delta_start, ACTUAL) != 0) &&
-	    (repr_to_light(srv->delta_start, ACTUAL) != srv->last)) {
+	if ((set.lvl == 0) && (from_actual(srv->delta_start) != 0) &&
+	    (from_actual(srv->delta_start) != srv->last)) {
 		/* Recalulate it back to light state when overriding the "last"
 		 * value.
 		 */
-		srv->last = repr_to_light(srv->delta_start, ACTUAL);
+		srv->last = from_actual(srv->delta_start);
 		store_state(srv);
 	}
 
@@ -783,8 +781,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	struct bt_mesh_lightness_status status = { 0 };
 
 	srv->handlers->light_get(srv, NULL, &status);
-	sys_put_le16(status.remaining_time ? light_to_repr(status.target, ACTUAL) :
-		     light_to_repr(status.current, ACTUAL), &data[0]);
+	sys_put_le16(to_actual(status.remaining_time ? status.target : status.current), &data[0]);
 	return 2;
 }
 
@@ -795,7 +792,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 	struct bt_mesh_lightness_status dummy_status;
 	struct bt_mesh_lightness_set set = {
-		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
+		.lvl = from_actual(sys_get_le16(data)),
 		.transition = transition,
 	};
 
