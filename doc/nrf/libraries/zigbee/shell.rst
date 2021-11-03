@@ -100,6 +100,8 @@ For example, ``zdo help`` displays help for all ``zdo`` commands.
 
 Example:
 
+.. zigbee_help_output_start
+
 .. code-block::
 
    help
@@ -133,6 +135,8 @@ Example:
    zcl                :ZCL subsystem commands.
    zdo                :ZDO manipulation.
    zscheduler         :Zigbee scheduler manipulation.
+
+.. zigbee_help_output_end
 
 ----
 

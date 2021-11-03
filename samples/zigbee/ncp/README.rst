@@ -47,6 +47,11 @@ This means that you need at least two development kits for testing this sample.
 
    Zigbee NCP sample setup overview
 
+Requirements for DFU through MCUboot
+====================================
+
+If you opt for `MCUboot`_ when selecting the `Bootloader support`_, you will need the `dfu-util tool`_ to upload the new firmware image.
+
 Overview
 ********
 
@@ -162,8 +167,8 @@ This file can be used to upgrade a device.
 See :ref:`mcuboot_ncs` for more information about this and other automatically generated files.
 
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
-When booted to MCUboot, the new image can be uploaded with the dfu-util tool.
-See :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for a reference.
+When booted to MCUboot, the new image can be uploaded with the `dfu-util tool`_.
+See the Testing section of the :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for the list of required dfu-util commands.
 
 To learn more about configuring bootloader for an application in |NCS|, see the :ref:`ug_bootloader` page.
 
