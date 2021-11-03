@@ -758,3 +758,5 @@
 
 .. _`SPDX tool`: https://spdx.dev/
 .. _`SPDX identifier`: https://spdx.dev/ids/
+
+.. _`dfu-util tool`: http://dfu-util.sourceforge.net/

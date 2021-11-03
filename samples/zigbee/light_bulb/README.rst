@@ -46,6 +46,9 @@ FEM support
 User interface
 **************
 
+LED 1:
+    Blinks to indicate that the main application thread is running.
+
 LED 3:
     Turns on when the light bulb joins the network.
 

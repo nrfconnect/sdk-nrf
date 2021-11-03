@@ -108,7 +108,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
   Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
   .. note::
-     The :file:`overlay-fota.conf` file can be used only for nRF52840 DK.
+     The :file:`overlay-fota.conf` file can be used only with a development kit that contains the nRF52840 SoC.
 
 * For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
   Check :ref:`gs_programming_board_names` for the board name to use instead of the ``nrf52840dk_nrf52840``.
@@ -145,6 +145,13 @@ Button 2:
 
 .. note::
     If the brightness level is at the minimum level, the effect of turning on the light bulb might not be noticeable.
+
+FOTA behavior assignments
+=========================
+
+LED 2:
+    Indicates the OTA activity.
+    Used only if the FOTA support is enabled.
 
 Sleepy End Device behavior assignments
 ======================================
