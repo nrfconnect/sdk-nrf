@@ -77,7 +77,7 @@ static void start_new_light_trans(const struct bt_mesh_lightness_set *set,
 
 	ctx->target_lvl = set->lvl;
 	ctx->time_per = (step_cnt ? time / step_cnt : 0);
-	ctx->rem_time = bt_mesh_model_transition_time(set->transition);
+	ctx->rem_time = time;
 	k_work_reschedule(&ctx->per_work, K_MSEC(delay));
 
 	printk("New light transition-> Lvl: %d, Time: %d, Delay: %d\n",
@@ -126,7 +126,7 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 	start_new_light_trans(set, l_ctx);
 	rsp->current = l_ctx->current_lvl;
 	rsp->target = l_ctx->target_lvl;
-	rsp->remaining_time = bt_mesh_model_transition_time(set->transition);
+	rsp->remaining_time = set->transition ? set->transition->time : 0;
 }
 
 static void light_get(struct bt_mesh_lightness_srv *srv,
