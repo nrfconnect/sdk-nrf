@@ -2616,8 +2616,8 @@ static void light_lightness_linear_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	current = light_to_repr(status.current, LINEAR);
-	target = light_to_repr(status.target, LINEAR);
+	current = to_linear(status.current);
+	target = to_linear(status.target);
 
 	net_buf_simple_init(buf, 0);
 	net_buf_simple_add_le16(buf, current);
@@ -2676,8 +2676,8 @@ static void light_lightness_linear_set(uint8_t *data, uint16_t len)
 		err = lightness_cli_light_set(&lightness_cli, &ctx, LINEAR,
 					      &set, &status);
 
-		current = light_to_repr(status.current, LINEAR);
-		target = light_to_repr(status.target, LINEAR);
+		current = to_linear(status.current);
+		target = to_linear(status.target);
 
 		net_buf_simple_init(buf, 0);
 		net_buf_simple_add_le16(buf, current);

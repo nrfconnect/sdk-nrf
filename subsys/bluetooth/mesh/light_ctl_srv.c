@@ -19,13 +19,11 @@ static void ctl_encode_status(struct net_buf_simple *buf,
 			      struct bt_mesh_light_ctl_status *status)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_LIGHT_CTL_STATUS);
-	net_buf_simple_add_le16(buf,
-				light_to_repr(status->current_light, ACTUAL));
+	net_buf_simple_add_le16(buf, to_actual(status->current_light));
 	net_buf_simple_add_le16(buf, status->current_temp);
 
 	if (status->remaining_time) {
-		net_buf_simple_add_le16(buf, light_to_repr(status->target_light,
-							   ACTUAL));
+		net_buf_simple_add_le16(buf, to_actual(status->target_light));
 		net_buf_simple_add_le16(buf, status->target_temp);
 		net_buf_simple_add_u8(
 			buf, model_transition_encode(status->remaining_time));
@@ -67,7 +65,7 @@ static int ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_temp_set temp;
 	uint8_t tid;
 
-	light.lvl = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	light.lvl = from_actual(net_buf_simple_pull_le16(buf));
 	temp.params.temp = net_buf_simple_pull_le16(buf);
 	temp.params.delta_uv = net_buf_simple_pull_le16(buf);
 	tid = net_buf_simple_pull_u8(buf);
@@ -215,8 +213,7 @@ static void default_encode_status(struct net_buf_simple *buf,
 				  struct bt_mesh_light_ctl_srv *srv)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_LIGHT_CTL_DEFAULT_STATUS);
-	net_buf_simple_add_le16(
-		buf, light_to_repr(srv->lightness_srv.default_light, ACTUAL));
+	net_buf_simple_add_le16(buf, to_actual(srv->lightness_srv.default_light));
 	net_buf_simple_add_le16(buf, srv->temp_srv.dflt.temp);
 	net_buf_simple_add_le16(buf, srv->temp_srv.dflt.delta_uv);
 }
@@ -239,7 +236,7 @@ static int default_set(struct bt_mesh_model *model,
 	struct bt_mesh_light_temp temp;
 	uint16_t light;
 
-	light = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	light = from_actual(net_buf_simple_pull_le16(buf));
 	temp.temp = net_buf_simple_pull_le16(buf);
 	temp.delta_uv = net_buf_simple_pull_le16(buf);
 
@@ -344,8 +341,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	}
 
 	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, NULL, &light);
-	sys_put_le16(light_to_repr(light.remaining_time ? light.target : light.current, ACTUAL),
-		     &data[0]);
+	sys_put_le16(to_actual(light.remaining_time ? light.target : light.current), &data[0]);
 
 	return 2;
 }
@@ -363,7 +359,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 
 	struct bt_mesh_lightness_status dummy_light_status;
 	struct bt_mesh_lightness_set light = {
-		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
+		.lvl = from_actual(sys_get_le16(data)),
 		.transition = transition,
 	};
 

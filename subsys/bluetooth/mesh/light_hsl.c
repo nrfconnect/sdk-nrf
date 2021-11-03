@@ -61,7 +61,7 @@ uint16_t bt_mesh_light_hsl_to_rgb(const struct bt_mesh_light_hsl *hsl,
 {
 	uint16_t lightness, min, max;
 
-	lightness = light_to_repr(hsl->lightness, ACTUAL);
+	lightness = to_actual(hsl->lightness);
 
 	/* When the color is monochromatic, it's equivalent to lightness: */
 	if (!hsl->saturation) {
