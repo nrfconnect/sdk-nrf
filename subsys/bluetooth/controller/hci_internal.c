@@ -326,6 +326,12 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_PRIVACY)
 	cmds->hci_le_set_privacy_mode = 1;
 #endif
+
+#if defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)
+	cmds->hci_le_read_local_p256_public_key = 1;
+	cmds->hci_le_generate_dhkey_v1 = 1;
+	cmds->hci_le_generate_dhkey_v2 = 1;
+#endif
 }
 
 #if defined(CONFIG_BT_HCI_VS)
