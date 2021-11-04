@@ -86,6 +86,19 @@ nRF Desktop
   * Updated documentation with information about forwarding boot reports.
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
+  * The application switched to using generic configuration file scheme.
+    It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
+    When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
+    For example, ``CONF_FILE=prj_release.conf`` is now used instead of ``CMAKE_BUILD_TYPE=ZRelease``.
+
+Pelion client
+-------------
+
+* Updated:
+
+  * The application configuration files were switched to follow a generic scheme.
+    When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
+    E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
 
 nRF9160: Serial LTE modem
 -------------------------
