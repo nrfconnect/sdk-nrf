@@ -891,6 +891,10 @@ static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel ch
 
 	ARG_UNUSED(dev);
 
+	if (unlikely(chan != SENSOR_CHAN_ALL)) {
+		return -ENOTSUP;
+	}
+
 	if (unlikely(!dev_data->ready)) {
 		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
