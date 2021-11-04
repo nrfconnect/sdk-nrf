@@ -76,7 +76,12 @@ bool Curl_ipv6works(struct connectdata *conn)
   else {
     int ipv6_works = -1;
     /* probe to see if we have a working IPv6 stack */
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+    /* protocol with zero value not supported */
+    curl_socket_t s = socket(PF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+#else
     curl_socket_t s = socket(PF_INET6, SOCK_DGRAM, 0);
+#endif
     if(s == CURL_SOCKET_BAD)
       /* an IPv6 address was requested but we can't get/use one */
       ipv6_works = 0;
