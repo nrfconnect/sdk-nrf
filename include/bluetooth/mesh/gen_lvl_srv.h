@@ -48,9 +48,9 @@ struct bt_mesh_lvl_srv;
 						 _srv),                        \
 			 &_bt_mesh_lvl_srv_cb)
 
-/** Handler functions for the generic level server. */
+/** Handler functions for the Generic Level Server. */
 struct bt_mesh_lvl_srv_handlers {
-	/** @brief Get the current level state.
+	/** @brief Get the current Level state.
 	 *
 	 * @note This handler is mandatory.
 	 *
@@ -63,13 +63,13 @@ struct bt_mesh_lvl_srv_handlers {
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct bt_mesh_lvl_status *rsp);
 
-	/** @brief Set the level state.
+	/** @brief Set the Level state.
 	 *
 	 * When a set message is received, the model publishes a status message, with the response
 	 * set to @c rsp. When an acknowledged set message is received, the model also sends a
 	 * response back to a client. If a state change is non-instantaneous, for example when
 	 * @ref bt_mesh_model_transition_time returns a nonzero value, the application is
-	 * responsible for publishing a value of the level state at the end of the transition.
+	 * responsible for publishing a value of the Level state at the end of the transition.
 	 *
 	 * @note This handler is mandatory.
 	 *
@@ -86,7 +86,7 @@ struct bt_mesh_lvl_srv_handlers {
 			  struct bt_mesh_lvl_status *rsp);
 
 	/**
-	 * @brief Change the level state relative to its current value.
+	 * @brief Change the Level state relative to its current value.
 	 *
 	 * If @c delta_set::new_transaction is false, the state transition
 	 * should use the same start point as the previous delta_set message,
@@ -108,9 +108,9 @@ struct bt_mesh_lvl_srv_handlers {
 				const struct bt_mesh_lvl_delta_set *delta_set,
 				struct bt_mesh_lvl_status *rsp);
 
-	/** @brief Move the level state continuously at a given rate.
+	/** @brief Move the Level state continuously at a given rate.
 	 *
-	 * The level state should move @c move_set::delta units for every
+	 * The Level state should move @c move_set::delta units for every
 	 * @c move_set::transition::time milliseconds. For instance, if
 	 * delta is 5 and the transition time is 100ms, the state should move
 	 * at a rate of 50 per second.
@@ -156,9 +156,9 @@ struct bt_mesh_lvl_srv {
 	struct bt_mesh_tid_ctx tid;
 };
 
-/** @brief Publish the generic level state.
+/** @brief Publish the current Level state.
  *
- * @param[in] srv Server whose level state should be published.
+ * @param[in] srv Server whose Level state should be published.
  * @param[in] ctx Message context to publish with, or NULL to publish on the
  * configured publish parameters.
  * @param[in] status Current status.
