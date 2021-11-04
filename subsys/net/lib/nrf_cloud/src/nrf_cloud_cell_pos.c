@@ -12,6 +12,7 @@
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <net/nrf_cloud_cell_pos.h>
+#include "nrf_cloud_fsm.h"
 
 #include <logging/log.h>
 
@@ -28,13 +29,17 @@ int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const ce
 #define CELL_POS_JSON_CELL_LOC_KEY_DOREPLY	"doReply"
 
 int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info *const cells_inf,
-			       const bool request_loc)
+			       const bool request_loc, nrf_cloud_cell_pos_response_t cb)
 {
 	int err = 0;
 	cJSON *cell_pos_req_obj = NULL;
 
 	err = nrf_cloud_cell_pos_request_json_get(cells_inf, request_loc, &cell_pos_req_obj);
 	if (!err) {
+		if (request_loc) {
+			nfsm_set_cell_pos_response_cb(cb);
+		}
+
 		err = json_send_to_cloud(cell_pos_req_obj);
 	}
 

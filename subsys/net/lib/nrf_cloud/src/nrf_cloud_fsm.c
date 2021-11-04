@@ -103,6 +103,14 @@ BUILD_ASSERT(ARRAY_SIZE(state_event_handlers) == STATE_TOTAL);
 
 static bool persistent_session;
 
+#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
+static nrf_cloud_cell_pos_response_t cell_pos_cb;
+void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb)
+{
+	cell_pos_cb = cb;
+}
+#endif
+
 int nfsm_init(void)
 {
 	persistent_session = false;
@@ -484,6 +492,28 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 	return 0;
 }
 
+static int cell_pos_cb_send(const char *const rx_buf)
+{
+#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
+	if (cell_pos_cb) {
+		struct nrf_cloud_cell_pos_result res;
+		int ret = nrf_cloud_cell_pos_process(rx_buf, &res);
+
+		if (ret <= 0) {
+			if (ret == 0) {
+				/* Successfully parsed, send to callback */
+				cell_pos_cb(&res);
+			}
+			/* Clear the callback after use */
+			nfsm_set_cell_pos_response_cb(NULL);
+			return 0;
+		}
+		/* ret == 1 indicates that no cell pos data was found, send to app */
+	}
+#endif
+	return -EFTYPE;
+}
+
 static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 {
 	struct nrf_cloud_evt cloud_evt = {
@@ -492,7 +522,11 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 		.topic = nct_evt->param.dc->topic,
 	};
 
-	/* All data is forwared to the app */
+	/* All data is forwared to the app... unless a callback is registered */
+	if (cell_pos_cb_send(nct_evt->param.dc->data.ptr) == 0) {
+		return 0;
+	}
+
 	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
 
 	return 0;
