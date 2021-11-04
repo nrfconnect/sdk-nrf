@@ -23,9 +23,6 @@ enum pmw3360_attribute {
 	PMW3360_ATTR_REST3_SAMPLE_TIME,
 };
 
-#define PMW3360_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
-#define PMW3360_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
-#define PMW3360_SVALUE_TO_BOOL(svalue) ((svalue).val1 != 0)
 
 #ifdef __cplusplus
 }
