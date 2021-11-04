@@ -14,8 +14,6 @@ menuconfig ZIGBEE
 	select NET_PKT_TXTIME
 	select REBOOT
 	imply MPSL
-	imply COUNTER
-	imply COUNTER_TIMER2
 	imply ENTROPY_GENERATOR
 	imply POLL
 	imply FLASH
@@ -357,6 +355,31 @@ config ZIGBEE_USE_BUTTONS
 	bool "Buttons abstract for ZBOSS OSIF"
 	imply GPIO
 	imply DK_LIBRARY
+
+config ZIGBEE_NVRAM_PAGE_COUNT
+	int "The number of ZBOSS NVRAM pages"
+	default 2
+	range 2 16
+
+config ZIGBEE_NVRAM_PAGE_SIZE
+	depends on !FLASH_MAP
+	int "The size of a single ZBOSS NVRAM page"
+	default 512
+
+choice
+	prompt "ZBOSS time source"
+	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION
+	default ZIGBEE_TIME_KTIMER if ZIGBEE_LIBRARY_DEVELOPMENT
+
+config ZIGBEE_TIME_COUNTER
+	bool "Dedicated timer-based counter"
+	imply COUNTER
+	imply COUNTER_TIMER2
+
+config ZIGBEE_TIME_KTIMER
+	bool "Kernel (system) time"
+
+endchoice
 
 endmenu #menu "ZBOSS osif configuration"
 

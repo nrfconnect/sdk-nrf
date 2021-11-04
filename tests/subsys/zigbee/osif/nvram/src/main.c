@@ -11,9 +11,8 @@
 #include <zb_osif.h>
 
 #define PAGE_SIZE 0x400         /* Size for testing purpose */
-#define VIRTUAL_PAGE_COUNT 2    /* ZBOSS uses two virtual pages */
 
-#define ZBOSS_NVRAM_PAGE_SIZE (PM_ZBOSS_NVRAM_SIZE / VIRTUAL_PAGE_COUNT)
+#define ZBOSS_NVRAM_PAGE_SIZE (PM_ZBOSS_NVRAM_SIZE / CONFIG_ZIGBEE_NVRAM_PAGE_COUNT)
 
 #define PHYSICAL_PAGE_SIZE 0x1000 /* For nvram in nrf5 products */
 
@@ -37,20 +36,20 @@ static void test_zb_nvram_memory_size(void)
 	zassert_true(zb_get_nvram_page_length() == ZBOSS_NVRAM_PAGE_SIZE,
 		     "Page size fail");
 
-	zassert_true(zb_get_nvram_page_count() == VIRTUAL_PAGE_COUNT,
+	zassert_true(zb_get_nvram_page_count() == CONFIG_ZIGBEE_NVRAM_PAGE_COUNT,
 		     "Page count fail");
 }
 
 static void test_zb_nvram_erase(void)
 {
-	for (int page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
+	for (int page = 0; page < CONFIG_ZIGBEE_NVRAM_PAGE_COUNT; page++) {
 		int ret = zb_osif_nvram_erase_async(page);
 
 		zassert_true(ret == RET_OK, "Erasing failed");
 	}
 
 	/* Validate if flash memory is cleared */
-	for (uint8_t page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
+	for (uint8_t page = 0; page < CONFIG_ZIGBEE_NVRAM_PAGE_COUNT; page++) {
 
 		/* Validate all physical page offsets */
 		for (uint32_t offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;
@@ -72,7 +71,7 @@ static void test_zb_nvram_write(void)
 
 	memset(zb_nvram_buf, MEM_PATTERN, sizeof(zb_nvram_buf));
 
-	for (uint8_t page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
+	for (uint8_t page = 0; page < CONFIG_ZIGBEE_NVRAM_PAGE_COUNT; page++) {
 
 		/* Write to all physical page offsets */
 		for (uint32_t offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;

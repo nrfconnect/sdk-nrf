@@ -1,5 +1,5 @@
 tests:
-  zigbee.osif.timer:
+  zigbee.osif.timer.ktimer:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: zigbee_osif
     integration_platforms:

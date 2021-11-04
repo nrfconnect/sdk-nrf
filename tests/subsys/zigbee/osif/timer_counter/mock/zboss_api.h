@@ -33,3 +33,8 @@ typedef void (*zb_callback_t)(zb_uint8_t param);
 typedef void (*zb_callback2_t)(zb_uint8_t param, zb_uint16_t cb_param);
 
 void zb_osif_busy_loop_delay(zb_uint32_t count);
+
+/**
+ *  Get current transceiver time value in usec
+ */
+zb_time_t osif_transceiver_time_get(void);

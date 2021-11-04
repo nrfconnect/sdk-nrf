@@ -24,8 +24,10 @@ void zb_timer_enable_stop(void);
  */
 void zb_osif_sleep_init(void)
 {
+#ifdef CONFIG_COUNTER_TIMER2
 	/* Disable timer in inactivity periods on all device types. */
 	zb_timer_enable_stop();
+#endif /* CONFIG_COUNTER_TIMER2 */
 }
 
 /**@brief Function which tries to put the MMCU into sleep mode,

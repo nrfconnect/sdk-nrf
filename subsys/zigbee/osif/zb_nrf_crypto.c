@@ -23,10 +23,6 @@
 #define ECB_AES_KEY_SIZE   16
 #define ECB_AES_BLOCK_SIZE 16
 
-#if !defined(CONFIG_ENTROPY_HAS_DRIVER)
-#error Entropy driver required for secure random number support
-#endif
-
 #if CONFIG_CRYPTO_NRF_ECB
 static const struct device *dev;
 
@@ -94,7 +90,13 @@ zb_uint32_t zb_random_seed(void)
 	zb_uint32_t rnd_val = 0;
 	int err_code;
 
+#if defined(CONFIG_ENTROPY_HAS_DRIVER)
 	err_code = sys_csrand_get(&rnd_val, sizeof(rnd_val));
+#else
+#warning Entropy driver required to generate cryptographically secure random numbers
+	sys_rand_get(&rnd_val, sizeof(rnd_val));
+	err_code = 0;
+#endif /* CONFIG_ENTROPY_HAS_DRIVER */
 	__ASSERT_NO_MSG(err_code == 0);
 	return rnd_val;
 }

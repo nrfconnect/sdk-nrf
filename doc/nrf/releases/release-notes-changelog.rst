@@ -65,6 +65,15 @@ Thread
 Zigbee
 ------
 
+* Added:
+
+  * Zigbee timer implementation, based on Zephyr's system time.
+    This timer implementation is enabled by default in the :ref:`Zigbee NCP sample <zigbee_ncp_sample>` and when using ZBOSS development libraries.
+  * :kconfig:option:`CONFIG_ZIGBEE_NVRAM_PAGE_COUNT` Kconfig option to set the number of ZBOSS NVRAM virtual pages.
+  * RAM-based ZBOSS NVRAM implementation.
+    This implementation must not be used in production.
+    It is meant to be used only for debugging purposes.
+
 * Updated:
 
   * :ref:` Zigbee shell library <lib_zigbee_shell>`. For details, see `Libraries for Zigbee`_.

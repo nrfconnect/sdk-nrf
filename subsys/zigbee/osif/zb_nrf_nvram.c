@@ -12,10 +12,8 @@
 
 #ifdef ZB_USE_NVRAM
 
-/* ZBOSS uses two virtual pages in the same size. */
-#define ZBOSS_NVRAM_PAGE_COUNT 2
 /* Size of logical ZBOSS NVRAM page in bytes. */
-#define ZBOSS_NVRAM_PAGE_SIZE (PM_ZBOSS_NVRAM_SIZE / ZBOSS_NVRAM_PAGE_COUNT)
+#define ZBOSS_NVRAM_PAGE_SIZE (PM_ZBOSS_NVRAM_SIZE / CONFIG_ZIGBEE_NVRAM_PAGE_COUNT)
 #define PHYSICAL_PAGE_SIZE 0x1000
 BUILD_ASSERT((ZBOSS_NVRAM_PAGE_SIZE % PHYSICAL_PAGE_SIZE) == 0,
 	     "The size must be a multiply of physical page size.");
@@ -58,7 +56,7 @@ zb_uint32_t zb_get_nvram_page_length(void)
 
 zb_uint8_t zb_get_nvram_page_count(void)
 {
-	return ZBOSS_NVRAM_PAGE_COUNT;
+	return CONFIG_ZIGBEE_NVRAM_PAGE_COUNT;
 }
 
 static zb_uint32_t get_page_base_offset(int page_num)
