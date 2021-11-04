@@ -485,7 +485,7 @@ To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVE
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-queue.conf
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-queue.conf
 
 Bootstrap support
 =================
@@ -497,7 +497,7 @@ To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOV
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-bootstrap.conf
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
 
 See :ref:`cmake_options` for instructions on how to add this option.
 Keep in mind that the used bootstrap port is set in the aforementioned configuration file.
