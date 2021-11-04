@@ -291,7 +291,7 @@ static void cell_pos_req_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (cell_pos_type == CELL_POS_TYPE_SINGLE) {
-		err = nrf_cloud_cell_pos_request(NULL, true);
+		err = nrf_cloud_cell_pos_request(NULL, true, NULL);
 		if (err) {
 			LOG_ERR("Failed to request SCELL, error: %d", err);
 		} else {
@@ -299,7 +299,7 @@ static void cell_pos_req_wk(struct k_work *work)
 		}
 	} else {
 		if (ncell_meas_status == 0 && cell_data.current_cell.id != 0) {
-			err = nrf_cloud_cell_pos_request(&cell_data, true);
+			err = nrf_cloud_cell_pos_request(&cell_data, true, NULL);
 			if (err) {
 				LOG_ERR("Failed to request MCELL, error: %d", err);
 			} else {

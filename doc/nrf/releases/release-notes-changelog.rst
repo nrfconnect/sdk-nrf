@@ -295,6 +295,9 @@ Libraries for networking
 * :ref:`lib_fota_download` library:
 
   * Updated the signature of :c:func:`fota_download_start_with_image_type` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
+* :ref:`lib_nrf_cloud_cell_pos` library:
+
+  * Added callback parameter to :c:func:`nrf_cloud_cell_pos_request` to handle response data from the cloud.
 
 Libraries for NFC
 -----------------

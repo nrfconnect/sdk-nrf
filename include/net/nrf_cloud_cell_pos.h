@@ -49,6 +49,13 @@ struct nrf_cloud_cell_pos_result {
 #define NRF_CLOUD_CELL_POS_TIME_ADV_MAX		LTE_LC_CELL_TIMING_ADVANCE_MAX
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
+/**
+ * @brief Cloud cellular positioning result handler function type.
+ *
+ * @param pos   Cellular positioning result.
+ */
+typedef void (*nrf_cloud_cell_pos_response_t)(const struct nrf_cloud_cell_pos_result *const pos);
+
 /**@brief Perform an nRF Cloud cellular positioning request via MQTT using
  * the provided cell info.
  *
@@ -63,11 +70,14 @@ struct nrf_cloud_cell_pos_result {
  *                  the modem and used in the request.
  * @param request_loc If true, cloud will send location to the device.
  *                    If false, cloud will not send location to the device.
+ * @param cb Callback function to receive parsed cell pos result. Only used when
+ *           request_loc is true. If NULL, JSON result will be sent to the cloud event
+ *           handler as an NRF_CLOUD_EVT_RX_DATA event.
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
-			       const bool request_loc);
+			       const bool request_loc, nrf_cloud_cell_pos_response_t cb);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /**@brief Get the reference to a cJSON object containing a cell position request.
