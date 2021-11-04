@@ -1,23 +1,23 @@
-.. _paw3212:
+.. _pmw3360:
 
-PAW3212 driver
+PMW3360 driver
 ##############
 
 .. contents::
    :local:
    :depth: 2
 
-The PAW3212 driver implements a PAW3212 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
+The PMW3360 driver implements a PMW3360 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
 
 The sensor driver supports the following features:
 
 * Motion data readouts for X and Y axes
 * :c:enum:`SENSOR_TRIG_DATA_READY` trigger
-* Configuring attributes of the PAW3212 sensor
+* Configuring attributes of the PMW3360 sensor
 
 .. note::
-  The PAW3212 driver is similar to :ref:`pmw3360`, but it allows customizing motion data length instead of CPI and downshift values, as detailed in `Kconfig configuration`_.
-  Also, this sensor does not support burst mode.
+  The PMW3360 driver is similar to :ref:`paw3212`, but it allows customizing CPI value and downshift time, as detailed in `Kconfig configuration`_.
+  The sensor also supports `Burst mode`_.
 
 Configuration
 *************
@@ -31,27 +31,27 @@ The following code snippet shows an example DTS configuration:
 
 .. code-block:: none
 
-  &spi0 {
+  &spi1 {
           compatible = "nordic,nrf-spim";
           status = "okay";
-          sck-pin = <10>;
-          mosi-pin = <12>;
-          miso-pin = <12>;
-          cs-gpios = <&gpio0 15 0>;
+          sck-pin = <16>;
+          mosi-pin = <17>;
+          miso-pin = <15>;
+          cs-gpios = <&gpio0 13 0>;
 
-          paw3212@0 {
-                  compatible = "pixart,paw3212";
+          pmw3360@0 {
+                  compatible = "pixart,pmw3360";
                   reg = <0>;
-                  irq-gpios = <&gpio0 14 0>;
+                  irq-gpios = <&gpio0 21 0>;
                   spi-max-frequency = <2000000>;
-                  label = "PAW3212";
+                  label = "PMW3360";
           };
   };
 
-The PAW3212 sensor node must meet the following requirements:
+The PMW3360 sensor node must meet the following requirements:
 
 * It must be a child node of a SPI node.
-* It must be compatible with ``pixart,paw3212``.
+* It must be compatible with ``pixart,pmw3360``.
 
 Moreover, you must configure the following parameters:
 
@@ -61,9 +61,9 @@ Moreover, you must configure the following parameters:
   * ``miso-pin`` - MISO
   * ``sck-pin`` - SCK
 
-* Chip select (CS) pin for the PAW3212 motion sensor.
+* Chip select (CS) pin for the PMW3360 motion sensor.
   GPIOs used as chip select for the devices connected to the SPI are defined as ``cs-gpios``.
-  The ``@0`` in ``paw3212@0`` refers to the position of the chip select pin of the motion sensor in the array.
+  The ``@0`` in ``pmw3360@0`` refers to the position of the chip select pin of the motion sensor in the array.
 * Parameters inherited from the ``spi-device`` binding that are defined for every SPI device:
 
   * ``reg`` - The slave ID number the device has on a bus.
@@ -77,17 +77,20 @@ See :ref:`zephyr:dt-guide` for more detailed information about the DTS data stru
 
 .. note::
    The motion sensor driver implementation does not benefit from the SPI context lock.
-   The operation related to the PAW3212 motion sensor can be interrupted by data exchange with another sensor connected over the same SPI interface.
+   The operation related to the PMW3360 motion sensor can be interrupted by data exchange with another sensor connected over the same SPI interface.
    If other sensors use the same SPI interface, you must ensure that SPI operations are not preempted.
 
 Kconfig configuration
 =====================
 
-Use the following Kconfig options to configure the PAW3212 motion sensor:
+Use the following Kconfig options to configure the PMW3360 motion sensor:
 
-* :kconfig:`CONFIG_PAW3212` - This option enables the PAW3212 motion sensor driver.
-* :kconfig:`CONFIG_PAW3212_ORIENTATION_0`, :kconfig:`CONFIG_PAW3212_ORIENTATION_90`, :kconfig:`CONFIG_PAW3212_ORIENTATION_180`, or :kconfig:`CONFIG_PAW3212_ORIENTATION_270` - The selected choice option specifies the rotation of the PAW3212 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
-* :kconfig:`CONFIG_PAW3212_8_BIT_MODE` or :kconfig:`CONFIG_PAW3212_12_BIT_MODE` - The selected choice option specifies the motion data length, respectively 8-bit or 12-bit.
+* :kconfig:`CONFIG_PMW3360` - This option enables the PMW3360 motion sensor driver.
+* :kconfig:`CONFIG_PMW3360_ORIENTATION_0`, :kconfig:`CONFIG_PMW3360_ORIENTATION_90`, :kconfig:`CONFIG_PMW3360_ORIENTATION_180`, or :kconfig:`CONFIG_PMW3360_ORIENTATION_270` - The selected choice option specifies the rotation of the PMW3360 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
+* :kconfig:`CONFIG_PMW3360_CPI` - This option specifies the Counts Per Inch (CPI) value.
+* :kconfig:`CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS` - Times in milliseconds after which the sensor switches to the next mode.
+  The sequence of the modes is static, with the following pattern: ``RUN`` > ``REST1`` > ``REST2`` > ``REST3``.
+  The time value specified in the Kconfig options corresponds to the respective arrows.
 
 See :ref:`kconfig_tips_and_tricks` for information about Kconfig.
 
@@ -124,12 +127,17 @@ The sensor supports a custom set of attributes that are not part of generic sens
 The attribues are defined as private to the motion sensor in the sensor's header file.
 See API documentation for details.
 
+Burst mode
+==========
+
+Driver uses burst mode for reading motion to improve data transfer speed.
+
 API documentation
 *****************
 
-| Header file: :file:`include/sensor/paw3212.h`
-| Source file: :file:`drivers/sensor/paw3212/paw3212.c`
+| Header file: :file:`include/sensor/pmw3360.h`
+| Source file: :file:`drivers/sensor/pmw3360/pmw3360.c`
 
-.. doxygengroup:: paw3212
+.. doxygengroup:: pmw3360
    :project: nrf
    :members:

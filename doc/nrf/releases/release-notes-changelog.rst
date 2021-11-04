@@ -182,6 +182,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added API documentation and :ref:`conceptual documentation page <sensor_sim>` for the simulated sensor driver.
 * Added API documentation and :ref:`conceptual documentation page <paw3212>` for the PAW3212 motion sensor driver.
+* Added API documentation and :ref:`conceptual documentation page <pmw3360>` for the PMW3360 motion sensor driver.
 
 Libraries
 =========
