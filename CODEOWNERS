@@ -18,6 +18,9 @@
 /.github/labeler.yml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 /.github/workflows/manifest.yml           @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 
+# VS Code Configuration files
+/.vscode/                                 @trond-snekvik
+
 # Applications
 /applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
