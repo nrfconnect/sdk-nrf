@@ -121,13 +121,9 @@ zb_bool_t zb_osif_timer_is_on(void)
 }
 
 /*
- * Get time value in us.
- * Time is calculated as number of beacon intervals
- * multiplied by beacon interval duration in us (15360us) and
- * accumulated with current timer value.
- * TODO: Consider using the RTC from Zephyr.
+ * Get current time, us.
  */
-zb_uint32_t zb_osif_timer_get(void)
+zb_time_t osif_transceiver_time_get(void)
 {
 	zb_uint32_t time_sys;
 	zb_uint32_t time_cur;
@@ -145,27 +141,17 @@ zb_uint32_t zb_osif_timer_get(void)
 	return time_sys + time_cur;
 }
 
-/*
- * Get current time, us.
- * TODO: Remove this wrapper and the zb_timer_get_value()
- *       should be used directly.
- */
-zb_time_t osif_transceiver_time_get(void)
-{
-	return zb_osif_timer_get();
-}
-
 void osif_sleep_using_transc_timer(zb_time_t timeout_us)
 {
-	zb_time_t tstart = zb_osif_timer_get();
+	zb_time_t tstart = osif_transceiver_time_get();
 	zb_time_t tend = tstart + timeout_us;
 
 	if (tend < tstart) {
-		while (tend < zb_osif_timer_get()) {
+		while (tend < osif_transceiver_time_get()) {
 			zb_osif_busy_loop_delay(10);
 		}
 	} else {
-		while (zb_osif_timer_get() < tend) {
+		while (osif_transceiver_time_get() < tend) {
 			zb_osif_busy_loop_delay(10);
 		}
 	}
