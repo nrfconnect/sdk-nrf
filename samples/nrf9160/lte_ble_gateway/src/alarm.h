@@ -8,6 +8,6 @@
 #define _ALARM_H_
 
 void alarm(void);
-void send_aggregated_data(void);
+void send_aggregated_data(struct k_work *work);
 
 #endif /* _ALARM_H_ */
