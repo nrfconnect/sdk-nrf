@@ -55,11 +55,11 @@ On the next reboot, the device will run the new firmware.
 Modem delta upgrades
 ====================
 
-This type of firmware upgrade opens a socket into the modem and passes the data given to the :c:func:`dfu_target_write` function through the socket.
-The modem stores the data in the memory location for firmware patches.
+This type of firmware upgrade is used for delta upgrades to the modem firmware (see: :ref:`nrf_modem_delta_dfu`).
+The modem stores the data in the memory location reserved for firmware patches.
 If there is already a firmware patch stored in the modem, the library requests the modem to delete the old firmware patch, to make space for the new patch.
 
-When the complete transfer is done, call the :c:func:`dfu_target_done` function to request the modem to apply the patch, and to close the socket.
+When the transfer is completed, call the :c:func:`dfu_target_done` function to request the modem to apply the patch.
 On the next reboot, the modem will try to apply the patch.
 
 .. _lib_dfu_target_full_modem_update:

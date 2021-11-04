@@ -7,19 +7,13 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <drivers/flash.h>
-#if defined(CONFIG_POSIX_API)
-#include <posix/unistd.h>
-#include <posix/sys/socket.h>
-#else
-#include <net/socket.h>
-#endif
-#include <nrf_socket.h>
+#include <nrf_modem_delta_dfu.h>
+#include <nrf_errno.h>
 #include <logging/log.h>
 #include <dfu/dfu_target.h>
 
 LOG_MODULE_REGISTER(dfu_target_modem_delta, CONFIG_DFU_TARGET_LOG_LEVEL);
 
-#define DIRTY_IMAGE 0x280000
 #define MODEM_MAGIC 0x7544656d
 
 struct modem_delta_header {
@@ -28,69 +22,34 @@ struct modem_delta_header {
 	uint32_t magic;
 };
 
-static int  fd;
-static int  offset;
 static dfu_target_callback_t callback;
 
-static int get_modem_error(void)
-{
-	int rc;
-	int err = 0;
-	socklen_t len;
-
-	len = sizeof(err);
-	rc = getsockopt(fd, SOL_DFU, SO_DFU_ERROR, &err, &len);
-	if (rc) {
-		LOG_ERR("Unable to fetch modem error, errno %d", errno);
-	}
-
-	return err;
-}
-
-static int apply_modem_delta_upgrade(void)
-{
-	int err;
-
-	LOG_INF("Scheduling modem firmware upgrade at next boot");
-
-	err = setsockopt(fd, SOL_DFU, SO_DFU_APPLY, NULL, 0);
-	if (err < 0) {
-		if (errno == ENOEXEC) {
-			LOG_ERR("SO_DFU_APPLY failed, modem error %d",
-				get_modem_error());
-		} else {
-			LOG_ERR("SO_DFU_APPLY failed, modem error %d", err);
-		}
-	}
-	return 0;
-}
 #define SLEEP_TIME 1
 static int delete_banked_modem_delta_fw(void)
 {
 	int err;
-	socklen_t len = sizeof(offset);
+	int offset;
 	int timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
 
 	LOG_INF("Deleting firmware image, this can take several minutes");
-	err = setsockopt(fd, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
-	if (err < 0) {
-		LOG_ERR("Failed to delete backup, errno %d", errno);
+	err = nrf_modem_delta_dfu_erase();
+	if (err != 0) {
+		LOG_ERR("Failed to delete backup, error %d", err);
 		return -EFAULT;
 	}
+
 	while (true) {
-		err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
-		if (err < 0) {
+		err = nrf_modem_delta_dfu_offset(&offset);
+		if (err != 0) {
 			if (timeout < 0) {
 				callback(DFU_TARGET_EVT_TIMEOUT);
 				timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
 			}
-			if (errno == ENOEXEC) {
-				err = get_modem_error();
-				if (err != DFU_ERASE_PENDING) {
-					LOG_ERR("DFU error: %d", err);
-				}
-				k_sleep(K_SECONDS(SLEEP_TIME));
+			if (err != NRF_MODEM_DELTA_DFU_ERASE_PENDING &&
+			    err != NRF_MODEM_DELTA_DFU_INVALID_DATA) {
+				LOG_ERR("Error during erase, error %d", err);
 			}
+			k_sleep(K_SECONDS(SLEEP_TIME));
 			timeout -= SLEEP_TIME;
 		} else {
 			callback(DFU_TARGET_EVT_ERASE_DONE);
@@ -102,65 +61,38 @@ static int delete_banked_modem_delta_fw(void)
 	return 0;
 }
 
-/**@brief Initialize DFU socket. */
-static int modem_delta_dfu_socket_init(void)
-{
-	int err;
-	socklen_t len;
-	uint8_t version[36];
-	char version_string[37];
-
-	/* Create a socket for firmware upgrade*/
-	fd = socket(AF_LOCAL, SOCK_STREAM, NPROTO_DFU);
-	if (fd < 0) {
-		LOG_ERR("Failed to open Modem DFU socket.");
-		return fd;
-	}
-
-	LOG_INF("Modem DFU Socket created");
-
-	len = sizeof(version);
-	err = getsockopt(fd, SOL_DFU, SO_DFU_FW_VERSION, &version,
-			    &len);
-	if (err < 0) {
-		LOG_ERR("Firmware version request failed, errno %d", errno);
-		return -1;
-	}
-
-	snprintf(version_string, sizeof(version_string), "%.*s",
-		 sizeof(version), version);
-
-	LOG_INF("Modem firmware version: %s", log_strdup(version_string));
-
-	return err;
-}
-
 bool dfu_target_modem_delta_identify(const void *const buf)
 {
 	return ((const struct modem_delta_header *)buf)->magic == MODEM_MAGIC;
-
 }
 
 int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
 {
 	int err;
+	int offset;
 	size_t scratch_space;
-	socklen_t len = sizeof(offset);
+	struct nrf_modem_delta_dfu_uuid version;
+	char version_string[NRF_MODEM_DELTA_DFU_UUID_LEN+1];
 
 	callback = cb;
 
-	err = modem_delta_dfu_socket_init();
-	if (err < 0) {
-		return err;
+	/* Retrieve and print modem firmware UUID */
+	err = nrf_modem_delta_dfu_uuid(&version);
+	if (err != 0) {
+		LOG_ERR("Firmware version request failed, error %d", err);
+		return -EFAULT;
 	}
 
-	err = getsockopt(fd, SOL_DFU, SO_DFU_RESOURCES, &scratch_space, &len);
-	if (err < 0) {
-		if (errno == ENOEXEC) {
-			LOG_ERR("Modem error: %d", get_modem_error());
-		} else {
-			LOG_ERR("getsockopt(OFFSET) errno: %d", errno);
-		}
+	snprintf(version_string, sizeof(version_string), "%.*s",
+		 sizeof(version.data), version.data);
+
+	LOG_INF("Modem firmware version: %s", log_strdup(version_string));
+
+	/* Check if scratch area is big enough for downloaded image */
+	err = nrf_modem_delta_dfu_area(&scratch_space);
+	if (err != 0) {
+		LOG_ERR("Failed to retrieve size of modem DFU area, error %d", err);
+		return -EFAULT;
 	}
 
 	if (file_size > scratch_space) {
@@ -169,25 +101,16 @@ int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
 		return -EFBIG;
 	}
 
-	/* Check offset, store to local variable */
-	err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
-	if (err < 0) {
-		if (errno == ENOEXEC) {
-			LOG_ERR("Modem error: %d", get_modem_error());
-		} else {
-			LOG_ERR("getsockopt(OFFSET) errno: %d", errno);
-		}
+	/* Check offset and erase firmware if necessary */
+	err = nrf_modem_delta_dfu_offset(&offset);
+	if (err != 0) {
+		LOG_ERR("Failed to retrieve offset in scratch area, error %d", err);
+		return -EFAULT;
 	}
 
-	if (offset == DIRTY_IMAGE) {
-		delete_banked_modem_delta_fw();
-	} else if (offset != 0) {
-		LOG_INF("Setting offset to 0x%x", offset);
-		len = sizeof(offset);
-		err = setsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, len);
-		if (err != 0) {
-			LOG_INF("Error while setting offset: %d", offset);
-		}
+	if (offset == NRF_MODEM_DELTA_DFU_OFFSET_DIRTY) {
+		err = delete_banked_modem_delta_fw();
+		return err;
 	}
 
 	return 0;
@@ -195,78 +118,72 @@ int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
 
 int dfu_target_modem_delta_offset_get(size_t *out)
 {
-	*out = offset;
+	int err;
+
+	err = nrf_modem_delta_dfu_offset(out);
+	if (err != 0) {
+		LOG_ERR("Failed to retrieve offset in scratch area, error %d", err);
+		return -EFAULT;
+	}
+
 	return 0;
 }
 
 int dfu_target_modem_delta_write(const void *const buf, size_t len)
 {
-	int err = 0;
-	int sent = 0;
-	int modem_error = 0;
-	int send_result = 0;
+	int err;
 
-	while (send_result >= 0) {
-		send_result = send(fd, (((uint8_t *)buf) + sent),
-				   (len - sent), 0);
-		if (send_result > 0) {
-			sent += send_result;
-			if (sent >= len) {
-				offset += len;
+	err = nrf_modem_delta_dfu_write_init();
+	if (err != 0 && err != -NRF_EALREADY) {
+		LOG_ERR("Failed to ready modem for firmware update receival, error %d", err);
+		return -EFAULT;
+	}
+
+	err = nrf_modem_delta_dfu_write(buf, len);
+	if (err < 0) {
+		LOG_ERR("Write failed, modem library error %d", err);
+		return -EFAULT;
+	} else if (err > 0) {
+		LOG_ERR("Write failed, modem error %d", err);
+		switch (err) {
+		case NRF_MODEM_DELTA_DFU_INVALID_UUID:
+			return -EINVAL;
+		case NRF_MODEM_DELTA_DFU_INVALID_FILE_OFFSET:
+		case NRF_MODEM_DELTA_DFU_AREA_NOT_BLANK:
+			delete_banked_modem_delta_fw();
+			err = dfu_target_modem_delta_write(buf, len);
+			if (err != 0) {
+				return -EINVAL;
+			} else {
 				return 0;
 			}
+		default:
+			return -EFAULT;
 		}
 	}
 
-	if (errno != ENOEXEC) {
-		return -EFAULT;
-	}
-
-	modem_error = get_modem_error();
-	LOG_ERR("send failed, modem errno %d, dfu err %d", errno, modem_error);
-	switch (modem_error) {
-	case DFU_INVALID_UUID:
-		return -EINVAL;
-	case DFU_INVALID_FILE_OFFSET:
-		delete_banked_modem_delta_fw();
-		err = dfu_target_modem_delta_write(buf, len);
-		if (err < 0) {
-			return -EINVAL;
-		} else {
-			return 0;
-		}
-	case DFU_AREA_NOT_BLANK:
-		delete_banked_modem_delta_fw();
-		err = dfu_target_modem_delta_write(buf, len);
-		if (err < 0) {
-			return -EINVAL;
-		} else {
-			return 0;
-		}
-	default:
-		return -EFAULT;
-	}
+	return 0;
 }
 
 int dfu_target_modem_delta_done(bool successful)
 {
-	int err = 0;
+	int err;
 
-	if (successful) {
-		err = apply_modem_delta_upgrade();
-		if (err < 0) {
-			LOG_ERR("Failed request modem DFU upgrade");
-			return err;
-		}
-	} else {
-		LOG_INF("Modem upgrade aborted.");
+	err = nrf_modem_delta_dfu_write_done();
+	if (err != 0) {
+		LOG_ERR("Failed to stop MFU and release resources, error %d", err);
+		return -EFAULT;
 	}
 
-
-	err = close(fd);
-	if (err < 0) {
-		LOG_ERR("Failed to close modem DFU socket.");
-		return err;
+	if (successful) {
+		err = nrf_modem_delta_dfu_update();
+		if (err != 0) {
+			LOG_ERR("Modem firmware upgrade scheduling failed, error %d", err);
+			return -EFAULT;
+		}
+		LOG_INF("Scheduling modem firmware upgrade at next boot");
+	} else {
+		LOG_INF("Modem upgrade stopped.");
 	}
 
 	return 0;
