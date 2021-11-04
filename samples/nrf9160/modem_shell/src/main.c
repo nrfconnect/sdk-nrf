@@ -49,6 +49,10 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 
+#if defined(CONFIG_MOSH_LOCATION)
+#include "location_shell.h"
+#endif
+
 /* Global variables */
 struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
@@ -162,6 +166,10 @@ void main(void)
 	}
 #endif
 
+#if defined(CONFIG_MOSH_LOCATION)
+	/* Location library should be initialized before LTE normal mode */
+	location_ctrl_init();
+#endif
 #if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 	link_init();
 #endif

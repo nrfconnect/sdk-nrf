@@ -64,6 +64,13 @@ config MOSH_SMS
 	help
 	  SMS tool for sending and receiving SMS messages.
 
+config MOSH_LOCATION
+	bool "Location"
+	default y
+	select LOCATION
+	help
+	  Tool for location queries via location library.
+
 config MOSH_FOTA
 	bool "FOTA"
 	default y
