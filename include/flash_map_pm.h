@@ -44,6 +44,10 @@
 #define FLASH_AREA_SIZE(label) \
 	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(PM_ID(label), _LABEL)), _SIZE))
 
+#define FLASH_AREA_DEVICE(label) \
+	device_get_binding( \
+		UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(PM_ID(label), _LABEL)), _DEV_NAME)))
+
 #define FLASH_AREA_LABEL_EXISTS(label) \
 	IS_ENABLED(PM_IS_ENABLED(label))
 
