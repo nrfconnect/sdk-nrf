@@ -18,7 +18,6 @@
 
 #include "aggregator.h"
 #include "ble.h"
-
 #include "alarm.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
@@ -70,6 +69,7 @@ static atomic_val_t send_data_enable;
 /* Structures for work */
 static struct k_work_delayable leds_update_work;
 static struct k_work_delayable connect_work;
+struct k_work_delayable aggregated_work;
 
 static bool cloud_connected;
 
@@ -313,6 +313,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		display_state = LEDS_CLOUD_CONNECTED;
 		sensors_init();
 		atomic_set(&send_data_enable, 1);
+		k_work_schedule(&aggregated_work, K_MSEC(100));
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		printk("NRF_CLOUD_EVT_SENSOR_DATA_ACK\n");
@@ -320,6 +321,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED\n");
 		atomic_set(&send_data_enable, 0);
+		k_work_cancel_delayable(&aggregated_work);
 		display_state = LEDS_INITIALIZING;
 
 		cloud_connected = false;
@@ -398,6 +400,7 @@ static void work_init(void)
 {
 	k_work_init_delayable(&leds_update_work, leds_update);
 	k_work_init_delayable(&connect_work, cloud_connect);
+	k_work_init_delayable(&aggregated_work, send_aggregated_data);
 	k_work_schedule(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
@@ -488,10 +491,4 @@ void main(void)
 	cloud_init();
 	modem_configure();
 	cloud_connect(NULL);
-
-	while (true) {
-		nrf_cloud_process();
-		send_aggregated_data();
-		k_sleep(K_MSEC(10));
-	}
 }

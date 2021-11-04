@@ -16,6 +16,8 @@ static bool alarm_pending;
 
 extern void sensor_data_send(struct nrf_cloud_sensor_data *data);
 
+extern struct k_work_delayable aggregated_work;
+
 char *orientation_strings[] = {"LEFT", "NORMAL", "RIGHT", "UPSIDE_DOWN"};
 
 void alarm(void)
@@ -23,8 +25,10 @@ void alarm(void)
 	alarm_pending = true;
 }
 
-void send_aggregated_data(void)
+void send_aggregated_data(struct k_work *work)
 {
+	ARG_UNUSED(work);
+
 	static uint8_t gps_data_buffer[GPS_NMEA_SENTENCE_MAX_LENGTH];
 
 	static struct nrf_cloud_sensor_data gps_cloud_data = {
@@ -37,6 +41,8 @@ void send_aggregated_data(void)
 	};
 
 	struct sensor_data aggregator_data;
+
+	k_work_schedule(&aggregated_work, K_MSEC(100));
 
 	if (!alarm_pending) {
 		return;
