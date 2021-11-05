@@ -97,4 +97,4 @@
 
 .. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 
-.. |thingy53_unreleased| replace:: As of the |NCS| v1.7.0 release, Thingy:53 is an unreleased product that will be released in the near future.
+.. |thingy53_unreleased| replace:: As of the |NCS| |release| release, Thingy:53 is an unreleased product that will be released in the near future.
