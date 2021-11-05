@@ -260,7 +260,7 @@ The nRF Desktop supports the HID keyboard LED report.
 The report is used by the host to update the state of the keyboard LEDs, for example to indicate that the Caps Lock key is active.
 
 .. note::
-   Only the nrf52840dk_nrf52840 in ``ZDebug_keyboard`` configuration has hardware LEDs that can be used to disaply state of the Caps Lock and Num Lock.
+   Only the nrf52840dk_nrf52840 in ``keyboard`` configuration has hardware LEDs that can be used to disaply state of the Caps Lock and Num Lock.
 
 The following diagrams show the HID output report data exchange between the application modules.
 
@@ -378,34 +378,39 @@ nRF Desktop build types
 The nRF Desktop does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types for each supported board.
 
+Each board has its own :file:`prj.conf` file, which represents a ``debug`` build type.
+Other build types are covered by dedicated files the build type added as a suffix to the ``prj`` part, as per the following list.
+For example, the ``release_b0`` build type file name is :file:`prj_release_b0.conf`.
+If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+
 .. include:: /gs_modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
 
 .. note::
     `Selecting a build type`_ is optional.
-    The ``ZDebug`` build type is used by default in nRF Desktop if no build type is explicitly selected.
+    The ``debug`` build type is used by default in nRF Desktop if no build type is explicitly selected.
 
 The following build types are available for various boards in the nRF Desktop:
 
-* ``ZRelease`` -- Release version of the application with no debugging features.
-* ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
-* ``ZDebugB0`` -- ``ZDebug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZDebugWithShell`` -- ``ZDebug`` build type with the shell enabled.
+* ``release`` -- Release version of the application with no debugging features.
+* ``release_b0`` -- ``release`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``release_mcuboot`` -- ``release`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``debug`` -- Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
+* ``b0`` -- ``debug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``mcuboot`` -- ``debug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``shell`` -- ``debug`` build type with the shell enabled.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
 If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.
-For example, if the ``ZDebugWithShell`` build type is not supported on the selected DK, the following notification appears:
+For example, if the ``shell`` build type is not supported on the selected DK, the following notification appears:
 
 .. code-block:: console
 
-   Configuration file for build type ZDebugWithShell is missing.
+   File not found: ./ncs/nrf/applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/prj_shell.conf
 
 |nrf_desktop_build_type_conf|
-For example, the nRF52840 Development Kit supports the ``ZDebug_keyboard`` configuration, which is defined in the :file:`app_ZDebug_keyboard.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
+For example, the nRF52840 Development Kit supports the ``keyboard`` configuration, which is defined in the :file:`prj_keyboard.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
 This configuration lets you generate the application with the keyboard role.
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
@@ -915,7 +920,7 @@ The application configuration files define both a set of options with which the 
 Include the following files in this directory:
 
 Mandatory configuration files
-    * Application configuration file for the ``ZDebug`` :ref:`build type <nrf_desktop_requirements_build_types>`.
+    * Application configuration file for the ``debug`` (:file:`prj.conf`) :ref:`build type <nrf_desktop_requirements_build_types>`.
     * Configuration files for the selected modules.
 
 Optional configuration files
@@ -984,7 +989,7 @@ Adding a new board
 ==================
 
 When adding a new board for the first time, focus on a single configuration.
-Moreover, keep the default ``ZDebug`` build type that the application is built with, and do not add any additional build type parameters.
+Moreover, keep the default ``debug`` build type that the application is built with, and do not add any additional build type parameters.
 
 .. note::
     * The following procedure uses the gaming mouse configuration as an example.
@@ -1261,7 +1266,9 @@ Memory layout in partition manager
 When the bootloader is enabled, the nRF Desktop application uses the partition manager for the layout configuration of the flash memory.
 The nRF Desktop configurations with bootloader use static configurations of partitions to ensure that the partition layout will not change between builds.
 
-Add the :file:`pm_static_${CMAKE_BUILD_TYPE}.yml` file to the project's board configuration directory to define the static partition manager configuration for given board and build type.
+Add the :file:`pm_static_${BUILD_TYPE}.yml` file to the project's board configuration directory to define the static partition manager configuration for given board and build type.
+For example, to define the static partition layout for the nrf52840dk_nrf52840 board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
+
 Take into account the following points:
 
 * For the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`, you must define the secondary image partition.
@@ -1280,7 +1287,7 @@ Enabling external flash can be useful especially for memory-limited devices.
 For example, the MCUboot can use it as a secondary image partition for the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`.
 The MCUboot moves the image data from the secondary image partition to the primary image partition before booting the new firmware.
 
-For an example of the nRF Desktop application configuration that uses an external flash, see the ``ZDebugMCUBootQSPI`` configuration of the nRF52840 Development Kit.
+For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 Development Kit.
 This configuration uses the ``MX25R64`` external flash that is part of the development kit.
 
 For detailed information, see the :ref:`partition_manager` documentation.
@@ -1599,10 +1606,10 @@ Configuring serial recovery DFU
 
 Configure :ref:`MCUboot <mcuboot:mcuboot_wrapper>` to enable the serial recovery DFU through USB.
 The MCUboot configuration for a given board and :ref:`build type <nrf_desktop_requirements_build_types>` should be written to :file:`applications/nrf_desktop/configuration/your_board_name/mcuboot_buildtype.conf`.
-For an example of the configuration, see the ``ZReleaseMCUBoot`` build type of the nRF52820 or the nRF52833 dongle.
+For an example of the configuration, see the ``release_mcuboot`` build type of the nRF52820 or the nRF52833 dongle.
 
 Not every configuration with MCUboot in the nRF Desktop supports the USB serial recovery.
-For example, the ``ZDebugMCUBootSMP`` configuration for the nRF52840 Development Kit supports the MCUboot bootloader with background firmware upgrade.
+For example, the ``mcuboot_smp`` configuration for the nRF52840 Development Kit supports the MCUboot bootloader with background firmware upgrade.
 
 Select the following Kconfig options to enable the serial recovery DFU:
 
