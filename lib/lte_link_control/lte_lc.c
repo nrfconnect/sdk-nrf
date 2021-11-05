@@ -1387,12 +1387,12 @@ int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type)
 	 */
 
 	if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT) {
-		err = at_cmd_write("AT%NCELLMEAS=1",  NULL, 0, NULL);
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=1");
 	} else if (type == LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE) {
-		err = at_cmd_write("AT%NCELLMEAS=2",  NULL, 0, NULL);
+		err = nrf_modem_at_printf("AT%%NCELLMEAS=2");
 	} else {
 		/* Defaulting to use LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT */
-		err = at_cmd_write("AT%NCELLMEAS",  NULL, 0, NULL);
+		err = nrf_modem_at_printf("AT%%NCELLMEAS");
 	}
 
 	return err ? -EFAULT : 0;

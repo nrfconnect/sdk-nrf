@@ -12,10 +12,8 @@
 #include <stdio.h>
 #include <device.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <modem/at_notif.h>
 #include <logging/log.h>
 
 #include "lte_lc_helpers.h"
