@@ -35,7 +35,7 @@ After this amount of time (in ms), the device will be restarted if the watchdog 
 
 .. note::
     The module is used only in the release configurations (``ZRelease``, ``ZReleaseB0``).
-    For the :ref:`debug configurations <nrf_desktop_requirements_build_types>` (``ZDebug``, ``ZDebugWithShell``, ``ZDebugB0``), enabling watchdog timer can cause losing logs, for example when the logger is in the panic mode.
+    For the :ref:`debug configurations <nrf_desktop_requirements_build_types>` (``debug``, ``shell``, ``b0``), enabling watchdog timer can cause losing logs, for example when the logger is in the panic mode.
 
 Implementation details
 **********************
