@@ -141,8 +141,14 @@ endfunction()
 # This function extends the zephyr_file(CONF_FILES <arg>) function to support
 # switching BOARD for child images.
 #
-# It also supports lookup of static partition manager files for boards based on
+# It also supports lookup of static partition manager files for based on
 # the board name, revision, and the current build type.
+# The order at which files are considers is from the most specific to the least specific:
+# - first, file name with board name, board revision and build type identifiers,
+# - second, file name with board name and build type identifiers,
+# - third, file with only build type identifier,
+# - finally, the file with no identifiers is looked up.
+# During each pass, if domain is defined, the file with additional domain identifier has precedence.
 #
 # This function currently support the following <modes>.
 #
@@ -223,30 +229,44 @@ Please provide one of following: CONF_FILES")
   endif()
 
   if(NCS_FILE_PM)
+    set(PM_FILE_PREFIX pm_static)
+
+    # Prepare search for pm_static_board@ver_build.yml
     zephyr_build_string(filename
                         BOARD ${ZEPHYR_FILE_BOARD}
                         BOARD_REVISION ${ZEPHYR_FILE_BOARD_REVISION}
                         BUILD ${ZEPHYR_FILE_BUILD}
     )
-    set(filename_list ${filename})
+    set(filename_list ${PM_FILE_PREFIX}_${filename})
 
+    # Prepare search for pm_static_board_build.yml
     zephyr_build_string(filename
                         BOARD ${ZEPHYR_FILE_BOARD}
                         BUILD ${ZEPHYR_FILE_BUILD}
     )
-    list(APPEND filename_list ${filename})
+    list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+
+    # Prepare search for pm_static_build.yml
+    # Note that BOARD argument is used to position suffix accordingly
+    zephyr_build_string(filename
+                        BOARD ${ZEPHYR_FILE_BUILD}
+    )
+    list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+
+    # Prepare search for pm_static.yml
+    list(APPEND filename_list ${PM_FILE_PREFIX})
     list(REMOVE_DUPLICATES filename_list)
 
     foreach(filename ${filename_list})
       if(DEFINED NCS_FILE_DOMAIN)
-        if(EXISTS ${NCS_FILE_CONF_FILES}/pm_static_${filename}_${NCS_FILE_DOMAIN}.yml)
-          set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/pm_static_${filename}_${NCS_FILE_DOMAIN}.yml PARENT_SCOPE)
+        if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml)
+          set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml PARENT_SCOPE)
           break()
         endif()
       endif()
 
-      if(EXISTS ${NCS_FILE_CONF_FILES}/pm_static_${filename}.yml)
-        set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/pm_static_${filename}.yml PARENT_SCOPE)
+      if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}.yml)
+        set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}.yml PARENT_SCOPE)
         break()
       endif()
     endforeach()
