@@ -109,9 +109,8 @@ static void send_system_description(void)
 			err = send_info_data(&end_line, 1);
 		}
 	}
-
 	if (!err) {
-		err = send_info_data(&end_line, 1);
+		(void)send_info_data(&end_line, 1);
 	}
 }
 
