@@ -55,7 +55,7 @@ RAM partition types
 Default image RAM partition
    The default image RAM partition consists of all the RAM that is not defined as a permanent image RAM partition or placeholder RAM partition.
    It is the default RAM partition associated with an image and is set as the RAM region when linking the image.
-   If an image must reserve its RAM area permanently (i.e. at the same time as other images are running), it must use a permanent image RAM partition, described below.
+   If an image must reserve its RAM area permanently (that is, at the same time as other images are running), it must use a permanent image RAM partition, described below.
 
 .. _pm_permanent_image_ram_partition:
 
@@ -576,7 +576,7 @@ HEX files
 
 The Partition Manager may implicitly or explicitly assign a HEX file to a partition.
 
-Image partitions are implicitly assigned the compiled HEX file, i.e. the HEX file that is generated when building the corresponding image.
+Image partitions are implicitly assigned the compiled HEX file, that is, the HEX file that is generated when building the corresponding image.
 Container partitions are implicitly assigned the result of merging the HEX files that are assigned to the underlying partitions.
 Placeholder partitions are not implicitly assigned a HEX file.
 

@@ -33,7 +33,7 @@ To obtain a fresh copy of the |NCS| at revision ``{revision}`` and place it in a
   west update
 
 Replace ``{revision}`` with any revision you wish to obtain.
-This can be ``main`` if you want the latest state, or any released version (e.g. |release_tt|).
+This can be ``main`` if you want the latest state, or any released version (for example, |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``main``.
 
 This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`gs_installing`.

@@ -21,11 +21,11 @@ The library supports HTTP, HTTPS (TLS 1.2), CoAP, and CoAPS (DTLS 1.2) over IPv4
 HTTP and HTTPS (TLS 1.2)
 ========================
 
-In the case of download via HTTP, the library sends only one HTTP request to the server and receives only one HTTP response.
+In the case of download using HTTP, the library sends only one HTTP request to the server and receives only one HTTP response.
 
 .. _download_client_https:
 
-In the case of download via HTTPS, it is carried out through `Content-Range requests (IETF RFC 7233)`_ due to memory constraints that limit the maximum HTTPS message size to 2 kilobytes.
+In the case of download using HTTPS, it is carried out through `Content-Range requests (IETF RFC 7233)`_ due to memory constraints that limit the maximum HTTPS message size to 2 kilobytes.
 The library thus sends and receives as many requests and responses as the number of fragments that constitutes the download.
 For example, to download a file of size 47 kilobytes file with a fragment size of 2 kilobytes, a total of 24 HTTP GET requests are sent.
 It is therefore recommended to use the largest fragment size to minimize the network usage.

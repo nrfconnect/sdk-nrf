@@ -46,7 +46,7 @@ A SET is a logical part of a device that supports communication with a SUPL netw
 SUPL session and transaction type
 =================================
 
-A typical SUPL client session is SET-based, i.e. the position is calculated based on SET.
+A typical SUPL client session is SET-based, that is, the position is calculated based on SET.
 See `SET-initiated SUPL collaboration`_ for more information.
 
 Each LPP session consists of one or more LPP transactions.

@@ -132,12 +132,12 @@ If you build this application for the nRF53 DK, it enables additional features s
 
 * MCUboot bootloader with serial recovery and multi-image update.
 * Static configuration of :ref:`partition_manager`.
-* DFU over-the-air via Simple Management Protocol over Bluetooth.
+* DFU over-the-air using Simple Management Protocol over Bluetooth.
 
 See :ref:`ug_thingy53` for detailed information about the mentioned features.
 
 The nRF53 DK has a J-Link debug IC that can be used to program the firmware.
-Alternatively, firmware can be updated over MCUBoot serial recovery or DFU over-ther-air via Simple Management Protocol over Bluetooth.
+Alternatively, firmware can be updated over MCUBoot serial recovery or DFU over-ther-air using Simple Management Protocol over Bluetooth.
 Keep in mind that if you use bootloader to update firmware, the new firmware must be compatible with used bootloader and partition map.
 
 The nRF53 Development Kit uses RTT as logger's backend.

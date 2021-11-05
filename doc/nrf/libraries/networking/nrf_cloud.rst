@@ -197,7 +197,7 @@ Initialization
 ==============
 
 To use a defined Cloud API backend, a binding must be obtained using the Cloud API function :c:func:`cloud_get_binding`, to which you can pass the name of the desired backend.
-The nRF Cloud library defines the Cloud API backend as ``NRF_CLOUD`` via the :c:macro:`CLOUD_BACKEND_DEFINE` macro.
+The nRF Cloud library defines the Cloud API backend as ``NRF_CLOUD`` using the :c:macro:`CLOUD_BACKEND_DEFINE` macro.
 
 The backend must be initialized using the :c:func:`cloud_init` function, with the binding, and a function pointer to user-defined Cloud API event handler as parameters.
 If :c:func:`cloud_init` returns success, the backend is ready for use.

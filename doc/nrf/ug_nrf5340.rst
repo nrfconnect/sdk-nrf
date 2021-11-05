@@ -261,8 +261,8 @@ If you want to enable the network core anyway, set the :kconfig:`CONFIG_BOARD_EN
 
 .. _ug_nrf5340_multi_image:
 
-Single image vs. multi-image build
-**********************************
+Multi-image builds
+*******************
 
 If a sample consists of several images (in this case, different images for the application core and for the network core), you can build these images separately or combined as a :ref:`multi-image build <ug_multi_image>`, depending on the sample configuration.
 

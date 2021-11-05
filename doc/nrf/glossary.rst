@@ -278,7 +278,7 @@ Glossary
       A machine-to-machine (M2M) connectivity protocol used by some IoT devices.
       It is designed as an extremely lightweight publish/subscribe messaging transport.
       It is useful for connections with remote locations where a small code footprint is required and/or network bandwidth is at a premium.
-      For example, it has been used in sensors communicating to a broker via satellite link, over occasional dial-up connections with healthcare providers, and in a range of home automation and small device scenarios.
+      For example, it has been used in sensors communicating to a broker through a satellite link, over occasional dial-up connections with healthcare providers, and in a range of home automation and small device scenarios.
 
    Microcontroller Unit (MCU)
       A small computer on an integrated circuit.

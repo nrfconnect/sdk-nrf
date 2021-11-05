@@ -31,8 +31,9 @@ During the commissioning process, the devices involved are assigned one of the f
 * *Joiner Router* - Role for a router device that is one hop away from the Joiner device in the Thread network and is the sole device connected with the Joiner.
   Responds to the Discovery Request of the Joiner.
   Moreover, when chosen by the Joiner, it passes subsequent communication in a secure manner.
-* *Border Router* - Role for a device equipped with at least two interfaces (for example Thread and Wi-Fi, Ethernet, LTE etc.) that forwards data between a Thread network and a non-Thread network.
-  It can also be an interface for the Commissioner.
+* *Border Router* - Role for a device that forwards data between a Thread network and a non-Thread network. For this purpose, it is equipped with at least two interfaces, for example Wi-Fi, Ethernet, LTE, or other interface in addition to Thread.
+  The Border Router can also be an interface for the Commissioner.
+
 
   The Border Router role is usually combined with the *Border Agent* function, which accepts :ref:`petitions <thread_ot_commissioning_phases>` from the Commissioner candidate.
   It also relays commissioning messages between Thread Network and a Commissioner.

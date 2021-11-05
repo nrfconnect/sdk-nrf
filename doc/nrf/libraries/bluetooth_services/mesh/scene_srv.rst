@@ -56,7 +56,7 @@ Adding scene data for a model
 *****************************
 
 Every model that needs to store its state in scenes must register a :c:type:`bt_mesh_scene_entry` structure containing callbacks for storing and recalling the scene data.
-The scene entry must be declared using :c:macro:`BT_MESH_SCENE_ENTRY_SIG` for SIG defined models (e.g. from the model specification), or :c:macro:`BT_MESH_SCENE_ENTRY_VND` for vendor-specific models.
+The scene entry must be declared using :c:macro:`BT_MESH_SCENE_ENTRY_SIG` for SIG defined models (for example, from the model specification), or :c:macro:`BT_MESH_SCENE_ENTRY_VND` for vendor-specific models.
 These macros will allocate the structure in flash, and make them known to the Scene Server model.
 
 For instance, the Generic OnOff Server model defines its scene entry by declaring a :c:type:`bt_mesh_scene_entry` structure with the Generic OnOff Server model ID and a set of callbacks:

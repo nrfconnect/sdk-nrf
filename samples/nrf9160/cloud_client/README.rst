@@ -8,7 +8,7 @@ nRF9160: Cloud client
    :depth: 2
 
 This sample connects to, and communicates with a compatible cloud service using the respective cloud backend firmware library.
-The sample connects via cellular network (LTE) and publishes a custom string in intervals or upon a button trigger, to the cloud service.
+The sample connects to the cloud service using cellular network (LTE) and publishes a custom string in intervals or upon a button trigger.
 
 Overview
 ********

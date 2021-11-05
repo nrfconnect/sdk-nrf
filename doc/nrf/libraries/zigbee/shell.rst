@@ -436,7 +436,7 @@ Example:
 bdb factory_reset
 =================
 
-Perform a factory reset via local action.
+Perform a factory reset using local action.
 See Base Device Behavior specification chapter 9.5 for details.
 
 .. code-block::

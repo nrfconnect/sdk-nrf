@@ -464,7 +464,7 @@ To test the Thread 1.2 features, complete the following steps:
          Done
 
       Observe that the reply latency is reduced to a value below 500 ms.
-      The reduction occurs because the transmission from the leader is performed via CSL, based on the CSL Information Elements sent by the CSL Receiver.
+      The reduction occurs because the transmission from the leader is performed using CSL, based on the CSL Information Elements sent by the CSL Receiver.
 
 Dependencies
 ************
