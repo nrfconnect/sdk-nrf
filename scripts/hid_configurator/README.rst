@@ -78,8 +78,9 @@ Complete the following steps:
       pip3 install --user -r requirements.txt
 
    .. note::
-       When using the configuration channel for Bluetooth LE devices on Linux, use the BlueZ version 5.44 or higher.
-       In earlier versions, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
+       When using the configuration channel for Bluetooth LE devices on Linux, use the BlueZ version 5.56 or higher.
+       In versions earlier than 5.44, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
+       In versions earlier than 5.56, the HID device attached by BlueZ might provide incomplete HID feature report on get operation.
 
    Additionally, to call the Python script on Linux without root rights, install the provided udev rule :file:`99-hid.rules` file by copying it to :file:`/etc/udev/rules.d` and replugging the device.
 
