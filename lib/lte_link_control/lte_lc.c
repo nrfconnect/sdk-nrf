@@ -1108,7 +1108,7 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 	}
 
 	/* Read network registration status */
-	err = nrf_modem_at_scanf("AT%XMONITOR", "%%XMONITOR: %u", status);
+	err = nrf_modem_at_scanf("AT%XMONITOR", "%%XMONITOR: %hhu", status);
 	if (err != 1) {
 		LOG_ERR("Could not get registration status, error: %d", err);
 		return -EFAULT;
@@ -1267,7 +1267,7 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
 	}
 
 	/* Exactly one parameter is expected to match. */
-	err = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %u", mode);
+	err = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hhu", mode);
 	if (err != 1) {
 		LOG_ERR("AT command failed, nrf_modem_at_scanf() returned error: %d", err);
 		return -EFAULT;
@@ -1350,7 +1350,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 		"%*u,"		/* <stat> */
 		"%*[^,],"	/* <tac> */
 		"%*[^,],"	/* <ci> */
-		"%u",		/* <AcT> */
+		"%hhu",		/* <AcT> */
 		mode);
 	if (err == -NRF_EBADMSG) {
 		/* The AT command was successful, but there were no matches.
