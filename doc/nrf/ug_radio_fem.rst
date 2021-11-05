@@ -227,7 +227,7 @@ This enables connecting an SoC or a signal generator to the input.
 It also enables connecting the outputs to measurement tools or to antennas directly.
 The FEM can be configured through the pins available on the Arduino headers.
 
-The nRF21540's gain control, antenna switching, and modes are controlled via GPIO or SPI, or a combination of both.
+The nRF21540's gain control, antenna switching, and modes are controlled using GPIO or SPI, or a combination of both.
 GPIO and SPI are accessible through the Arduino Uno Rev3 compatible headers.
 The shield also features two additional SMA connectors hooked to the dual antenna ports from the RF FEM, to monitor the performance of the RF FEM using any equipment desired.
 The FEM SMA input can be connected to the nRF52 or nRF53 Series SoC RF output with a coaxial RF cable with SMA\SWF connectors.

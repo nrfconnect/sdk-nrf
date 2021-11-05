@@ -234,7 +234,7 @@ Either by using the :c:macro:`NET_BUF_SIMPLE` macro:
                                                     MESSAGE_SET_MAXLEN)),
     }
 
-Or e.g. in the :c:member:`bt_mesh_model_cb.init` callback, using :c:func:`net_buf_simple_init_with_data`:
+Or, for example, in the :c:member:`bt_mesh_model_cb.init` callback, using :c:func:`net_buf_simple_init_with_data`:
 
 .. code-block:: c
 
@@ -258,7 +258,7 @@ Or e.g. in the :c:member:`bt_mesh_model_cb.init` callback, using :c:func:`net_bu
 How to initialize :c:member:`bt_mesh_model_cb.init` is described later in this guide.
 
 When the model supports the model publication, configure the model to send messages at certain periods, regardless of the current model state, using the Configuration Client.
-This is useful for periodic data publication, e.g. if it changes over time.
+This is useful for periodic data publication, for example, if it changes over time.
 To support the model publication, initialize the :c:member:`bt_mesh_model_pub.update` callback.
 
 If the periodic publication is configured by the Configuration Client, the access layer calls the :c:member:`bt_mesh_model_pub.update` callback in the beginning of each publication period.
@@ -306,7 +306,7 @@ These callbacks are defined in :c:struct:`bt_mesh_model_cb`.
 
 :c:member:`bt_mesh_model_cb.init`
    This handler is called on every model instance during the mesh initialization.
-   Implement it if you need to do additional model initialization before the mesh stack starts, e.g. to initialize the model publication context.
+   Implement it if you need to do additional model initialization before the mesh stack starts, for example, to initialize the model publication context.
    If any of the model init callbacks return an error, the mesh subsystem initialization is aborted, and the error is returned to the caller of :c:func:`bt_mesh_init`.
 
 :c:member:`bt_mesh_model_cb.reset`

@@ -13,7 +13,7 @@ The sample enables you to use an external computer or MCU to send AT commands to
 Overview
 ********
 
-The AT Client sample acts as a proxy for sending directives to the nRF9160 modem via AT commands.
+The AT Client sample acts as a proxy for sending directives to the nRF9160 modem using AT commands.
 This facilitates the reading of responses or analyzing of events related to the nRF9160 modem.
 The commands can be initiated from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
 

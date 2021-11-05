@@ -81,7 +81,7 @@ This configuration option, if set, allows the sample to request eDRX from the mo
 This configuration option, if set, allows the sample to request RAI for transmitted messages.
 
 .. note::
-   PSM, eDRX and RAI value or timers are set via the configurable options for the :ref:`lte_lc_readme` library.
+   PSM, eDRX and RAI value or timers are set using the configurable options for the :ref:`lte_lc_readme` library.
 
 
 Additional configuration

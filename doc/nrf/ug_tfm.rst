@@ -16,7 +16,7 @@ TF-M is the reference implementation of `Platform Security Architecture (PSA)`_.
 
 It provides a highly configurable set of software components to create a Trusted Execution Environment.
 This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
-Additionally, secure boot via MCUboot in TF-M ensures integrity of run time software and supports firmware upgrade.
+Additionally, secure boot through MCUboot in TF-M ensures integrity of run time software and supports firmware upgrade.
 
 Support for TF-M in |NCS| is currently experimental.
 TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.

@@ -219,7 +219,7 @@ Syntax
 
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
-  It is associated with a credential, i.e. certificate or PSK. The credential should be stored on the modem side beforehand.
+  It is associated with a credential, that is, a certificate or PSK. The credential should be stored on the modem side beforehand.
 
 * The ``<peer_verify>`` parameter can accept one of the following values:
 

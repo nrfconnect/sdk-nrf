@@ -9,7 +9,7 @@ Bootloader crypto
 
 The bootloader crypto library is the cryptography library that is used by the :ref:`bootloader`.
 
-The API is public because applications that are booted by the immutable bootloader can call functions from this library via the bootloader's code, through external APIs.
+The API is public because applications that are booted by the immutable bootloader can call functions from this library using the bootloader's code, through external APIs.
 See :ref:`doc_fw_info_ext_api` for more information.
 
 The library provides the following functionality:
@@ -28,7 +28,7 @@ When using the library, you can choose between the following backends:
 
 * Hardware backend :ref:`nrf_cc310_bl_readme` (can only be used if Arm CryptoCell CC310 is available)
 * Software backend :ref:`nrf_oberon_readme`
-* Another image's instance of the bootloader crypto library, called via external APIs.
+* Another image's instance of the bootloader crypto library, called through external APIs.
   The other image chooses its own backend.
 
 To configure which backend is used for hashing, set one of the following configuration options:

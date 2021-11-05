@@ -15,7 +15,7 @@ For more information about how the SoftDevice Controller and MPSL work together,
 
 The multiprotocol solution available for Thread and Zigbee is dynamic.
 This means that it allows for running several radio protocols simultaneously without the time-expensive uninitialization and initialization in-between the switching.
-Switching between protocols requires only a reinitialization of the radio peripheral, since protocols may operate on different frequencies, modulations, etc.
+Switching between protocols requires only a reinitialization of the radio peripheral, since protocols may operate on different frequencies and modulations.
 
 Multiprotocol limitations in application development
 ****************************************************

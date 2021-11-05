@@ -10,7 +10,7 @@ nRF9160: Asset Tracker
 .. note::
    The Asset Tracker application is deprecated and succeeded by the :ref:`asset_tracker_v2` application.
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Cloud`_ through LTE, transmit GPS and sensor data, and retrieve information about the device.
 
 Overview
 ********
@@ -297,7 +297,7 @@ This application uses the following |NCS| libraries and drivers:
 * ``drivers/sensor/sensor_sim``
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`
-* |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
+* |NCS| modules abstracted by the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
 
 .. include:: /libraries/bin/lwm2m_carrier/app_integration.rst
   :start-after: lwm2m_osal_mod_list_start

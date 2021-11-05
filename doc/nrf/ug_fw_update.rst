@@ -74,7 +74,7 @@ Using Imgtool to generate keys
 
 :doc:`mcuboot:imgtool` is a Python tool maintained by MCUboot that handles public/private key pairs.
 
-It is also available as a PyPI package that you can install via ``pip``.
+It is also available as a PyPI package that you can install using ``pip``.
 However, when working within the |NCS| framework, it is recommended to use the script that is included in the fork of MCUboot used by the |NCS|.
 
 See below for examples of imgtool used to create some commonly used key types:

@@ -8,7 +8,7 @@ nRF9160: A-GPS
    :depth: 2
 
 The A-GPS sample demonstrates how the `nRF Cloud`_ Assisted GPS (`A-GPS`_) feature or an external :ref:`SUPL client <supl_client>` can be used to implement A-GPS in your application.
-The sample uses the generic A-GPS library, which allows the selection of different A-GPS sources via the :kconfig:`CONFIG_AGPS_SRC_SUPL` configurable option.
+The sample uses the generic A-GPS library, which allows the selection of different A-GPS sources using the :kconfig:`CONFIG_AGPS_SRC_SUPL` configurable option.
 By default, `nRF Cloud`_ is used for A-GPS and cloud communication.
 
 Requirements

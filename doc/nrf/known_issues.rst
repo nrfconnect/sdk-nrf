@@ -199,7 +199,7 @@ Receive error with large packets
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
 Modem FW reset on debugger connection through SWD
-  If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
+  If a debugger (for example, J-Link) is connected through SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0

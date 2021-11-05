@@ -24,7 +24,7 @@ Hence, this application is not backward compatible to the :ref:`asset_tracker` a
 Overview
 ********
 
-The application samples sensor data and publishes the data to a connected cloud service over TCP/IP via LTE.
+The application samples sensor data and publishes the data to a connected cloud service over TCP/IP through LTE.
 As of now, the application supports the following cloud services and the corresponding cloud-side instances:
 
 +---------------------------+---------------------------------------------------------------------------------------+
