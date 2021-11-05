@@ -391,6 +391,9 @@ struct bt_mesh_sensor {
 		/** Flag indicating whether the sensor is in fast cadence mode.
 		 */
 		uint8_t fast_pub : 1;
+
+		/** Flag indicating whether the sensor cadence state has been configured. */
+		uint8_t configured : 1;
 	} state;
 };
 

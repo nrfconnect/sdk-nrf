@@ -51,6 +51,10 @@ static void store_timeout(struct k_work *work)
 		const struct bt_mesh_sensor *s = srv->sensor_array[i];
 		int err;
 
+		if (!s->state.configured) {
+			continue;
+		}
+
 		net_buf_simple_add_le16(&buf, s->type->id);
 		err = sensor_cadence_encode(&buf, s->type, s->state.pub_div,
 					    s->state.min_int,
@@ -405,8 +409,8 @@ static int handle_cadence_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 	net_buf_simple_add_le16(&rsp, id);
 
 	sensor = sensor_get(srv, id);
-	if (!sensor || sensor->type->channel_count != 1) {
-		BT_WARN("Cadence not supported");
+	if (!sensor || sensor->type->channel_count != 1 || !sensor->state.configured) {
+		BT_WARN("Cadence not supported or not configured");
 		goto respond;
 	}
 
@@ -473,6 +477,7 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	sensor->state.min_int = min_int;
 	sensor->state.pub_div = period_div;
 	sensor->state.threshold = threshold;
+	sensor->state.configured = true;
 
 	/** Reschedule publication timer if the cadence increased. */
 	if (period_div > srv->pub.period_div) {
@@ -800,6 +805,14 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 		return;
 	}
 
+	if (!s->state.configured &&
+	    ((srv->seq - s->state.seq) < (1 << period_div))) {
+		/** Don't publish a sensor value with not configured sensor cadence state more
+		 * frequently than base periodic publication.
+		 */
+		return;
+	}
+
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 
 	err = value_get(s, NULL, value);
@@ -807,11 +820,13 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 		return;
 	}
 
-	bool delta_triggered = bt_mesh_sensor_delta_threshold(s, value);
-	uint16_t interval = pub_int_get(s, period_div);
+	if (s->state.configured) {
+		bool delta_triggered = bt_mesh_sensor_delta_threshold(s, value);
+		uint16_t interval = pub_int_get(s, period_div);
 
-	if (!delta_triggered && srv->seq - s->state.seq < interval) {
-		return;
+		if (!delta_triggered && srv->seq - s->state.seq < interval) {
+			return;
+		}
 	}
 
 	err = sensor_status_encode(srv->pub.msg, s, value);
@@ -936,6 +951,7 @@ static void sensor_srv_reset(struct bt_mesh_model *model)
 
 		s->state.pub_div = 0;
 		s->state.min_int = 0;
+		s->state.configured = false;
 		memset(&s->state.threshold, 0, sizeof(s->state.threshold));
 	}
 
@@ -991,6 +1007,7 @@ static int sensor_srv_settings_set(struct bt_mesh_model *model, const char *name
 		}
 
 		s->state.pub_div = pub_div;
+		s->state.configured = true;
 
 		/** Update the publication divisor so that the publication timer starts with
 		 * the fastest cadence after settings are loaded.
@@ -1049,7 +1066,8 @@ int bt_mesh_sensor_srv_sample(struct bt_mesh_sensor_srv *srv,
 		return -EBUSY;
 	}
 
-	if (sensor->type->channel_count == 1 &&
+	if (sensor->state.configured &&
+	    sensor->type->channel_count == 1 &&
 	    !bt_mesh_sensor_delta_threshold(sensor, value)) {
 		BT_WARN("Outside threshold");
 		return -EALREADY;
