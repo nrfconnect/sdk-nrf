@@ -14,6 +14,7 @@ config BOOT_SIGNATURE_KEY_FILE
 config SIGN_IMAGES
 	bool "Sign images for MCUBoot"
 	default y
+	imply BUILD_OUTPUT_META
 	depends on MCUBOOT_BUILD_STRATEGY_FROM_SOURCE \
 		   || BOOT_SIGNATURE_KEY_FILE != ""
 	help
