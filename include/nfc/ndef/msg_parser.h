@@ -61,6 +61,8 @@ struct nfc_ndef_msg_parser_msg_2 {
  *
  *  This function parses NDEF messages using NDEF binary record descriptors.
  *
+ *  @note The @p result_buf parameter must point to a word-aligned address.
+ *
  *  @param[out] result_buf Pointer to the buffer that will be used to hold
  *                         the NDEF message descriptor. After parsing is
  *                         completed successfully, the first address
