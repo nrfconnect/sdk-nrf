@@ -188,6 +188,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/lte_lc/                        @jtguggedal
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/sms/                           @trantanen @tokangas
+/tests/lib/modem_trace/                   @balaji-nordic
 /tests/modules/lib/cddl-gen/              @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @hakonfam @SebastianBoe

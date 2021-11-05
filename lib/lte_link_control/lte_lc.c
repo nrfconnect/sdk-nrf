@@ -55,11 +55,6 @@ enum lte_lc_notif_type {
 
 static bool is_initialized;
 
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
-/* Enable modem trace */
-static const char mdm_trace[] = "AT%%XMODEMTRACE=1,2";
-#endif
-
 #if defined(CONFIG_LTE_LOCK_BANDS)
 /* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
 static const char lock_bands[] = "AT%%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
@@ -609,11 +604,6 @@ static int init_and_config(void)
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
 	if (lte_lc_edrx_req(true) != 0) {
-		return -EIO;
-	}
-#endif
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
-	if (nrf_modem_at_printf(mdm_trace)) {
 		return -EIO;
 	}
 #endif

@@ -18,12 +18,8 @@
 #include <pm_config.h>
 #include <logging/log.h>
 
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-#include <nrfx_uarte.h>
-#endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-#include <SEGGER_RTT.h>
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#include <modem/nrf_modem_lib_trace.h>
 #endif
 
 #define UNUSED_FLAGS 0
@@ -31,11 +27,6 @@
 /* Handle modem traces from IRQ context with lower priority. */
 #define TRACE_IRQ EGU2_IRQn
 #define TRACE_IRQ_PRIORITY 6
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-/* Use UARTE1 as a dedicated peripheral to print traces. */
-static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
-#endif
 
 #define THREAD_MONITOR_ENTRIES 10
 
@@ -324,17 +315,14 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 {
-	/*
-	 * Process traces.
-	 * The function has to be called even if UART traces are disabled.
-	 */
+	/* Process modem traces. */
 	nrf_modem_trace_irq_handler();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
 }
 
-void trace_task_create(void)
+void trace_irq_init(void)
 {
 	IRQ_DIRECT_CONNECT(TRACE_IRQ, TRACE_IRQ_PRIORITY,
 			   trace_proxy_irq_handler, UNUSED_FLAGS);
@@ -349,52 +337,6 @@ void read_task_create(void)
 			   rpc_proxy_irq_handler, UNUSED_FLAGS);
 	irq_enable(NRF_MODEM_APPLICATION_IRQ);
 }
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-void trace_uart_init(void)
-{
-	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
-	const nrfx_uarte_config_t config = {
-		/* Use UARTE1 pins routed on VCOM2. */
-		.pseltxd = DT_PROP(DT_NODELABEL(uart1), tx_pin),
-		.pselrxd = DT_PROP(DT_NODELABEL(uart1), rx_pin),
-		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
-		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
-
-		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
-		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
-		.baudrate = NRF_UARTE_BAUDRATE_1000000,
-
-		/* IRQ handler not used. Blocking mode.*/
-		.interrupt_priority = NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY,
-		.p_context = NULL,
-	};
-
-	/* Initialize nrfx UARTE driver in blocking mode. */
-	/* TODO: use UARTE in non-blocking mode with IRQ handler. */
-	nrfx_uarte_init(&uarte_inst, &config, NULL);
-}
-#endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-#define RTT_BUF_SZ		(CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE)
-static int trace_rtt_channel;
-static char rtt_buffer[RTT_BUF_SZ];
-
-static void trace_rtt_init(void)
-{
-	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer,
-		sizeof(rtt_buffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
-
-	if (trace_rtt_channel < 0) {
-		LOG_ERR("Could not allocated RTT channel for modem trace (%d)",
-			trace_rtt_channel);
-	} else {
-		LOG_INF("RTT channel for modem trace is now %d",
-			trace_rtt_channel);
-	}
-}
-#endif
 
 void *nrf_modem_os_alloc(size_t bytes)
 {
@@ -585,17 +527,15 @@ void nrf_modem_os_init(void)
 
 	read_task_create();
 
-	/* Configure and enable modem tracing over UART and RTT. */
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	trace_uart_init();
-#endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-	trace_rtt_init();
-#endif
-
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	trace_task_create();
+	int err = nrf_modem_lib_trace_init();
+
+	if (err != 0) {
+		LOG_ERR("nrf_modem_lib_trace_init failed with error %d.", err);
+	} else {
+		trace_irq_init();
+	}
+
 #endif
 
 	memset(&heap_diag, 0x00, sizeof(heap_diag));
@@ -628,37 +568,11 @@ void nrf_modem_os_init(void)
 
 int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
-	uint32_t remaining_bytes = len;
-	const uint32_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+	int err = nrf_modem_lib_trace_process(data, len);
 
-	while (remaining_bytes) {
-		size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
-		uint32_t idx = len - remaining_bytes;
-
-		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
-		remaining_bytes -= transfer_len;
-	}
-#endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-	/* First, let's check if the buffer has been correctly
-	 * allocated for the modem trace
-	 */
-	if (trace_rtt_channel < 0) {
-		return 0;
-	}
-
-	uint32_t remaining_bytes = len;
-
-	while (remaining_bytes) {
-		uint8_t transfer_len = MIN(remaining_bytes, RTT_BUF_SZ);
-		uint32_t idx = len - remaining_bytes;
-
-		SEGGER_RTT_WriteSkipNoLock(trace_rtt_channel, &data[idx],
-			transfer_len);
-		remaining_bytes -= transfer_len;
+	if (err != 0) {
+		LOG_ERR("nrf_modem_lib_trace_process returns %d", err);
 	}
 #endif
 	return 0;

@@ -9,7 +9,7 @@ Modem library integration layer
 
 
 The Modem library integration layer handles the integration of the Modem library into |NCS|.
-The integration layer is constituted by the library wrapper and functionalities like socket offloading, OS abstraction, memory reservation by the Partition manager, and diagnostics.
+The integration layer is constituted by the library wrapper and functionalities like socket offloading, OS abstraction, memory reservation by the Partition manager, handling modem traces, and diagnostics.
 
 Library wrapper
 ***************
@@ -30,6 +30,8 @@ If your application performs an update of the nRF9160 modem firmware, you must d
 
 The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.
 This is done by the :c:func:`nrf_modem_lib_shutdown` function call, by waking the sleeping threads when the modem is being shut down.
+
+When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the library wrapper enables proprietary modem traces and forwards it to the `Modem trace module`_.
 
 When using the Modem library in |NCS|, the library should be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
@@ -61,6 +63,23 @@ The OS abstraction layer is implemented in the :file:`nrfxlib\\nrf_modem\\includ
 The behavior of the functions in the OS abstraction layer is dependent on the |NCS| components that are used in their implementation.
 This is relevant for functions such as :c:func:`nrf_modem_os_shm_tx_alloc`, which uses :ref:`Zephyr's Heap implementation <zephyr:heap_v2>` to dynamically allocate memory.
 In this case, the characteristics of the allocations made by these functions depend on the heap implementation by Zephyr.
+
+Modem trace module
+******************
+The modem trace module is implemented in :file:`nrf\\lib\\nrf_modem_lib\\nrf_modem_lib_trace.c`.
+
+The module provides the functionality for starting, stopping, and forwarding of modem traces to a transport medium that can be set by enabling any one of the following Kconfig options:
+
+* :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART` to send modem traces over UARTE1
+* :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT` to send modem traces over SEGGER RTT
+
+When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, :c:func:`nrf_modem_lib_init` sends the trace memory configuration to the modem.
+When this happens, the modem starts sending startup trace data.
+If the application wants the trace data, :c:func:`nrf_modem_lib_trace_init` must be called before :c:func:`nrf_modem_lib_init`.
+This is done automatically when using the OS Abstraction layer.
+If the application wants to stop an ongoing trace session, it can use the :c:func:`nrf_modem_lib_trace_stop` function.
+The :c:func:`nrf_modem_lib_trace_start` function supports activating a subset of traces or all traces.
+It is also possible to use this function to run a trace session either for a specific time interval or until a given amount of trace data is received.
 
 .. _partition_mgr_integration:
 
@@ -125,9 +144,13 @@ The report will be printed by a dedicated work queue that is distinct from the s
 API documentation
 *****************
 
-| Header file: :file:`include/modem/nrf_modem_lib.h`
+| Header file: :file:`include/modem/nrf_modem_lib.h`, :file:`include/modem/nrf_modem_lib_trace.h`
 | Source file: :file:`lib/nrf_modem_lib.c`
 
 .. doxygengroup:: nrf_modem_lib
+   :project: nrf
+   :members:
+
+.. doxygengroup:: nrf_modem_lib_trace
    :project: nrf
    :members:
