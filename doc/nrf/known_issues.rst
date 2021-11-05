@@ -617,7 +617,7 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
   Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE may result in receiving improper HID feature report ID.
   In such case, the device will provide HID input reports, but it cannot be configured with the HID configurator.
 
-  **Workaround:** Connect the nRF Desktop peripheral through USB or using the nRF Desktop dongle.
+  **Workaround:** Use BlueZ in version 5.56 or higher.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
