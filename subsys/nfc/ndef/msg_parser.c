@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <kernel.h>
 #include <logging/log.h>
 #include "msg_parser_local.h"
 
@@ -13,6 +14,9 @@ int nfc_ndef_msg_parse(const uint8_t *result_buf,
 		       const uint8_t *raw_data,
 		       uint32_t *raw_data_len)
 {
+	__ASSERT((POINTER_TO_UINT(result_buf) % 4) == 0,
+			"Buffer address for the msg parser must be word-aligned");
+
 	int err;
 	struct nfc_ndef_parser_memo_desc parser_memory_helper;
 
