@@ -15,6 +15,8 @@ The events managed by the Event Manager are structured data types that are defin
 The Event Manager profiler tracer registers :c:struct:`profiler_info` as trace_data of event types.
 The tracer uses this additional information to track the usage of events within the application.
 
+See the :ref:`event_manager_profiling_sample` sample for an example of how to use the library with the :ref:`profiler`.
+
 .. _event_manager_profiler_tracer_config:
 
 Configuration

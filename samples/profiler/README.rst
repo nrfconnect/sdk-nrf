@@ -10,19 +10,6 @@ Profiler
 The Profiler sample demonstrates the functionality of the :ref:`profiler` subsystem.
 It shows how to use the Profiler to log and visualize data about custom events that are not part of the :ref:`event_manager`.
 
-Overview
-********
-
-The sample initializes the :ref:`profiler` and registers and periodically profiles the occurrences of the following event types:
-
-Event without data (``no data event``)
-  This event is used to signal the occurrence of an event only.
-  It does not contain additional data.
-
-Event with data (``data event``)
-  There are several numerical values associated with this event.
-  The values are updated periodically.
-
 Requirements
 ************
 
@@ -31,6 +18,16 @@ The sample supports the following development kits:
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+
+Overview
+********
+
+The sample initializes the :ref:`profiler` and registers and periodically profiles the occurrences of the following event types:
+
+* Event without data (``no data event``) - This event is used to signal the occurrence of an event only.
+  It does not contain additional data.
+* Event with data (``data event``) - There are several numerical values associated with this event.
+  The values are updated periodically.
 
 Configuration
 *************
