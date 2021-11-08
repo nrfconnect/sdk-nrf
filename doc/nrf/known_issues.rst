@@ -597,6 +597,14 @@ nRF Desktop
 
 .. rst-class:: v1-7-1 v1-7-0
 
+NCSDK-12337: Possible assertion failure at boot of an USB-connected host
+  During the booting procedure of a host device connected through USB, the HID report subscriptions might be disabled and enabled a few times without disconnecting the USB.
+  This can result in improper subscription handling and assertion failure in the :ref:`nrf_desktop_hid_state`.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``3dbd4b47752671b61d13a4e5813163e9f8aef840``).
+
+.. rst-class:: v1-7-1 v1-7-0
+
 NCSDK-11626: HID keyboard LEDs are not turned off when host disconnects
   The HID keyboard LEDs, indicating among others state of Caps Lock and Num Lock, may not be updated after host disconnection.
   The problem replicates only if there is no other connected host.
