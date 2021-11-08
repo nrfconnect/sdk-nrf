@@ -18,7 +18,6 @@ The stack comes with the following features:
 * Devices definitions for devices that were implemented for Zigbee Home Automation and Light Link profiles
 * Zigbee Green Power Proxy Basic
 * Experimental support for ``ZB_ZCL_WWAH``
-* Experimental support for Green Power Combo
 
 Experimental support means the feature is either not certified or no sample is provided for the given feature (or both).
 
