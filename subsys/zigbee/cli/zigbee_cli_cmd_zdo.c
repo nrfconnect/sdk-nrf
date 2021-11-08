@@ -182,7 +182,7 @@ static void cmd_zb_match_desc_cb(zb_bufid_t bufid)
 				 * response header.
 				 */
 				shell_print(ctx_entry->shell,
-					    "src_addr=%0hx ep=%d",
+					    "src_addr=%04hx ep=%d",
 					    data_ind->src_addr, *matched_ep);
 
 				matched_ep += 1;
@@ -218,7 +218,7 @@ static void cmd_zb_active_ep_cb(zb_bufid_t bufid)
 	if (active_ep_resp->status == ZB_ZDP_STATUS_SUCCESS) {
 		char text_buffer[150] = "";
 
-		sprintf(text_buffer, "src_addr=%0hx ",
+		sprintf(text_buffer, "src_addr=%04hx ",
 			active_ep_resp->nwk_addr);
 
 		PRINT_LIST(text_buffer, "ep=", "%d", zb_uint8_t,
@@ -263,7 +263,9 @@ static void cmd_zb_simple_desc_req_cb(zb_bufid_t bufid)
 	if (simple_desc_resp->hdr.status == ZB_ZDP_STATUS_SUCCESS) {
 		char text_buffer[150] = "";
 
-		sprintf(text_buffer, "src_addr=0x%0hx ep=%d profile_id=0x%04hx app_dev_id=0x%0hx app_dev_ver=0x%0hx ",
+		sprintf(text_buffer,
+			"src_addr=0x%04hx ep=%d profile_id=0x%04hx"
+			" app_dev_id=0x%0hx app_dev_ver=0x%0hx ",
 			simple_desc_resp->hdr.nwk_addr,
 			simple_desc_resp->simple_desc.endpoint,
 			simple_desc_resp->simple_desc.app_profile_id,
@@ -392,7 +394,7 @@ void cmd_zb_nwk_addr_cb(zb_bufid_t bufid)
 		zb_uint16_t nwk_addr;
 
 		ZB_LETOH16(&nwk_addr, &(nwk_addr_resp->nwk_addr));
-		shell_print(ctx_entry->shell, "%hx", nwk_addr);
+		shell_print(ctx_entry->shell, "%04hx", nwk_addr);
 		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
 	} else {
 		shell_error(ctx_entry->shell, "Error: Unable to resolve EUI64 source address. Status: %d",
