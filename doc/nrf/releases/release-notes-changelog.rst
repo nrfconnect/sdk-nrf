@@ -89,6 +89,7 @@ nRF Desktop
   * Updated documentation with information about forwarding boot reports.
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
+  * Fixed an issue that was causing an assertion failure in the :ref:`nrf_desktop_hid_state` on the nRF Desktop peripheral device during the boot of the host device connected through USB.
   * The application switched to using generic configuration file scheme.
     It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
     When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
