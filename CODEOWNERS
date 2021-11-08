@@ -177,6 +177,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/modules/tfm/                       @hakonfam
+/tests/subsys/bootloader/                 @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/profiler/                   @pdunaj @MarekPieta
