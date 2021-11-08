@@ -51,7 +51,7 @@ static inline size_t module_count(void)
  *
  * @return Module ID.
  */
-static inline const void * const module_id_get(size_t idx)
+static inline const void *module_id_get(size_t idx)
 {
 	if (idx >= module_count()) {
 		return NULL;
