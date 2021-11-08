@@ -96,6 +96,22 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 				 const uint8_t *buffer, size_t length);
 
 /**
+ * @brief Handle a get operation and inform that the transport is disabled.
+ *
+ * Fills the buffer with response informing that the transport is disabled and cannot be used to
+ * configure device. If a given transport is disabled, set operation should be ignored and get
+ * operation should use this function to prepare response for host.
+ *
+ * The disabled transport returns disconnected status.
+ *
+ * @param buffer    Pointer to the buffer to be filled.
+ * @param length    Length of the data to be filled.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int config_channel_transport_get_disabled(uint8_t *buffer, size_t length);
+
+/**
  * @brief Handle the response received from higher layer.
  *
  * @param transport Pointer to the configuration channel transport instance.

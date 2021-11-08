@@ -30,6 +30,10 @@ The library supports both Bluetooth® LE and USB.
 On the HID feature report level, the host can set or get report, either to or from the connected device.
 The host initiates all data exchange.
 
+.. note::
+   If the device supports multiple USB or Bluetooth® LE HID instances, only one USB HID instance and only one Bluetooth® LE HID instance can be used to configure the device.
+   Other HID instances ignore the HID report set method and respond with the disconnected status on the HID report get method to indicate that the HID instance is not used for configuration channel.
+
 Transaction request and response
 ********************************
 

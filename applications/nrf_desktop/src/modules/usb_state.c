@@ -110,13 +110,12 @@ static int get_report(const struct device *dev,
 				err = config_channel_transport_get(&cfg_chan_transport,
 								   &buffer[1],
 								   length - 1);
-
-				if (err) {
-					LOG_WRN("Failed to process report get");
-				}
 			} else {
-				/* Configuration channel does not use this USB HID instance. */
-				memset(&buffer[1], 0, length - 1);
+				err = config_channel_transport_get_disabled(&buffer[1], length - 1);
+			}
+
+			if (err) {
+				LOG_WRN("Failed to process report get (err: %d)", err);
 			}
 
 			*len_to_set = length;

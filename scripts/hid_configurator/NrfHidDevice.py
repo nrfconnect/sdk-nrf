@@ -95,7 +95,6 @@ class NrfHidTransport():
             logging.error('Response too short')
             return None
 
-        # Report ID is not included in the feature report from device
         fmt = '{}{}s'.format(NrfHidTransport.HEADER_FORMAT, data_field_len)
 
         (report_id, rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
@@ -201,12 +200,6 @@ class NrfHidDevice():
 
         try:
             devlist = hid.enumerate(vid=vid)
-            # Config channel can use only first HID interface of nrf_desktop
-            # device. Other HID interfaces do not provide proper config channel
-            # response.
-            devlist = list(filter(lambda x: x['interface_number'] in (-1, 0),
-                                  devlist))
-
             for d in devlist:
                 dev = hid.Device(path=d['path'])
                 dev_active = False
