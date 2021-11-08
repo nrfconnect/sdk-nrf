@@ -35,6 +35,21 @@
 #error "No PPI or DPPI"
 #endif
 
+#if DT_NODE_HAS_PROP(DT_NODELABEL(uart0), current_speed)
+/* UART Baudrate used to communicate with the DTM library. */
+#define DTM_UART_BAUDRATE DT_PROP(DT_NODELABEL(uart0), current_speed)
+
+/* The UART poll cycle in micro seconds.
+ * A baud rate of e.g. 19200 bits / second, and 8 data bits, 1 start/stop bit,
+ * no flow control, give the time to transmit a byte:
+ * 10 bits * 1/19200 = approx: 520 us. To ensure no loss of bytes,
+ * the UART should be polled every 260 us.
+ */
+#define DTM_UART_POLL_CYCLE ((uint32_t) (10 * 1e6 / DTM_UART_BAUDRATE / 2))
+#else
+#error "DTM UART node not found"
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(uart0), currrent_speed) */
+
 /* Default timer used for timing. */
 #define DEFAULT_TIMER_INSTANCE     0
 #define DEFAULT_TIMER_IRQ          NRFX_CONCAT_3(TIMER,			 \
@@ -43,8 +58,16 @@
 #define DEFAULT_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,		 \
 						 DEFAULT_TIMER_INSTANCE, \
 						 _irq_handler)
+/* Timer used for measuring UART poll cycle wait time. */
+#define WAIT_TIMER_INSTANCE        1
+#define WAIT_TIMER_IRQ             NRFX_CONCAT_3(TIMER,			 \
+						 WAIT_TIMER_INSTANCE,    \
+						 _IRQn)
+#define WAIT_TIMER_IRQ_HANDLER     NRFX_CONCAT_3(nrfx_timer_,		 \
+						 WAIT_TIMER_INSTANCE,    \
+						 _irq_handler)
 /* Timer used for the workaround for errata 172 on affected nRF5 devices. */
-#define ANOMALY_172_TIMER_INSTANCE     1
+#define ANOMALY_172_TIMER_INSTANCE     2
 #define ANOMALY_172_TIMER_IRQ          NRFX_CONCAT_3(TIMER,		    \
 						ANOMALY_172_TIMER_INSTANCE, \
 						_IRQn)
@@ -58,6 +81,8 @@
 
 BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(DEFAULT_TIMER_INSTANCE) == 1,
 	     "Core DTM timer needs additional KConfig configuration");
+BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(WAIT_TIMER_INSTANCE) == 1,
+	     "Wait DTM timer needs additional KConfig configuration");
 BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 	     "Anomaly DTM timer needs additional KConfig configuration");
 
@@ -322,6 +347,12 @@ static struct dtm_instance {
 	/* Timer to be used for scheduling TX packets. */
 	const nrfx_timer_t timer;
 
+	/* Timer to be used for measuring UART poll cycle wait time. */
+	const nrfx_timer_t wait_timer;
+
+	/* Semaphore for synchronizing UART poll cycle wait time.*/
+	struct k_sem wait_sem;
+
 	/* Timer to be used to handle Anomaly 172. */
 	const nrfx_timer_t anomaly_timer;
 
@@ -350,6 +381,8 @@ static struct dtm_instance {
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
 	.address = DTM_RADIO_ADDRESS,
 	.timer = NRFX_TIMER_INSTANCE(DEFAULT_TIMER_INSTANCE),
+	.wait_timer = NRFX_TIMER_INSTANCE(WAIT_TIMER_INSTANCE),
+	.wait_sem = Z_SEM_INITIALIZER(dtm_inst.wait_sem, 0, 1),
 	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = NRF_RADIO_TXPOWER_0DBM,
@@ -491,6 +524,7 @@ static void radio_cte_prepare(bool rx)
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
 static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context);
+static void wait_timer_handler(nrf_timer_event_t event_type, void *context);
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context);
 static void radio_handler(const void *context);
 
@@ -551,6 +585,32 @@ static int timer_init(void)
 			false);
 
 	nrfx_timer_enable(&dtm_inst.timer);
+
+	return 0;
+}
+
+static int wait_timer_init(void)
+{
+	nrfx_err_t err;
+	nrfx_timer_config_t timer_cfg = {
+		.frequency = NRF_TIMER_FREQ_1MHz,
+		.mode = NRF_TIMER_MODE_TIMER,
+		.bit_width = NRF_TIMER_BIT_WIDTH_16,
+	};
+
+	err = nrfx_timer_init(&dtm_inst.wait_timer, &timer_cfg, wait_timer_handler);
+	if (err != NRFX_SUCCESS) {
+		printk("nrfx_timer_init failed with: %d\n", err);
+		return -EAGAIN;
+	}
+
+	IRQ_CONNECT(WAIT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
+		    WAIT_TIMER_IRQ_HANDLER, NULL, 0);
+
+	nrfx_timer_compare(&dtm_inst.wait_timer,
+		NRF_TIMER_CC_CHANNEL0,
+		nrfx_timer_us_to_ticks(&dtm_inst.wait_timer, DTM_UART_POLL_CYCLE),
+		true);
 
 	return 0;
 }
@@ -692,6 +752,11 @@ int dtm_init(void)
 		return err;
 	}
 
+	err = wait_timer_init();
+	if (err) {
+		return err;
+	}
+
 	/* Enable the timer used by nRF52840 anomaly 172 if running on an
 	 * affected device.
 	 */
@@ -726,6 +791,18 @@ int dtm_init(void)
 	dtm_inst.packet_len = 0;
 
 	return 0;
+}
+
+void dtm_wait(void)
+{
+	int err;
+
+	nrfx_timer_enable(&dtm_inst.wait_timer);
+
+	err = k_sem_take(&dtm_inst.wait_sem, K_FOREVER);
+	if (err) {
+		printk("DTM wait error: %d\n", err);
+	}
 }
 
 /* Function for verifying that a received PDU has the expected structure and
@@ -1992,6 +2069,14 @@ static void radio_handler(const void *context)
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	// Do nothing
+}
+
+static void wait_timer_handler(nrf_timer_event_t event_type, void *context)
+{
+	nrfx_timer_disable(&dtm_inst.wait_timer);
+	nrfx_timer_clear(&dtm_inst.wait_timer);
+
+	k_sem_give(&dtm_inst.wait_sem);
 }
 
 static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context)
