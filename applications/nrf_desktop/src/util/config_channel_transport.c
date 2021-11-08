@@ -240,6 +240,21 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 	return 0;
 }
 
+int config_channel_transport_get_disabled(uint8_t *buffer, size_t length)
+{
+	int err = frame_length_check(length);
+
+	if (err) {
+		return err;
+	}
+
+	/* Recipient ID and Event ID are both set to zero. */
+	memset(buffer, 0, length);
+	buffer[CONFIG_STATUS_POS] = CONFIG_STATUS_DISCONNECTED;
+
+	return 0;
+}
+
 bool config_channel_transport_rsp_receive(struct config_channel_transport *transport,
 					  struct config_event *event)
 {
