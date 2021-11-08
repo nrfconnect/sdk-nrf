@@ -22,9 +22,16 @@
 
 #include <bluetooth/gatt_dm.h>
 
+#include <dk_buttons_and_leds.h>
+
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
 
+/* Key used to accept or reject passkey value */
+#define KEY_PAIRING_ACCEPT DK_BTN1_MSK
+#define KEY_PAIRING_REJECT DK_BTN2_MSK
+
+static struct bt_conn *pairing_confirmation_conn;
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
@@ -123,6 +130,18 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
+static void pairing_confirm(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	pairing_confirmation_conn = bt_conn_ref(conn);
+
+	printk("Pairing confirmation required for %s\n", addr);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
+}
+
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -139,19 +158,70 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+
+	if (pairing_confirmation_conn) {
+		pairing_confirmation_conn = NULL;
+		bt_conn_unref(pairing_confirmation_conn);
+	}
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
+	.pairing_confirm = pairing_confirm,
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
+
+static void button_changed(uint32_t button_state, uint32_t has_changed)
+{
+	int err;
+	uint32_t buttons = button_state & has_changed;
+
+	if (pairing_confirmation_conn) {
+		struct bt_conn *conn = pairing_confirmation_conn;
+
+		if (buttons & KEY_PAIRING_ACCEPT) {
+			pairing_confirmation_conn = NULL;
+
+			err = bt_conn_auth_pairing_confirm(conn);
+			if (err) {
+				printk("Failed to confirm the pairing: %d\n", err);
+			} else {
+				printk("Pairing confirmed\n");
+			}
+
+			bt_conn_unref(conn);
+
+			return;
+		}
+
+		if (buttons & KEY_PAIRING_REJECT) {
+			pairing_confirmation_conn = NULL;
+
+			err = bt_conn_auth_cancel(conn);
+			if (err) {
+				printk("Failed to reject the pairing: %d\n", err);
+			} else {
+				printk("Pairing rejected\n");
+			}
+
+			bt_conn_unref(conn);
+
+			return;
+		}
+	}
+}
 
 void main(void)
 {
 	int err;
 
 	printk("Starting GATT Discovery Manager example\n");
+
+	err = dk_buttons_init(button_changed);
+	if (err) {
+		printk("Cannot init buttons (err: %d)\n", err);
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
