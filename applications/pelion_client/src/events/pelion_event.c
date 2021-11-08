@@ -27,6 +27,7 @@ static int log_pelion_state_event(const struct event_header *eh, char *buf,
 	BUILD_ASSERT(ARRAY_SIZE(state_name) == PELION_STATE_COUNT,
 		     "Invalid number of elements");
 
+	__ASSERT_NO_MSG(event);
 	__ASSERT_NO_MSG(event->state < PELION_STATE_COUNT);
 
 	return snprintf(buf, buf_len, "%s", state_name[event->state]);
@@ -36,6 +37,8 @@ static void profile_pelion_state_event(struct log_event_buf *buf,
 				       const struct event_header *eh)
 {
 	const struct pelion_state_event *event = cast_pelion_state_event(eh);
+
+	__ASSERT_NO_MSG(event);
 
 	profiler_log_encode_uint8(buf, event->state);
 }
