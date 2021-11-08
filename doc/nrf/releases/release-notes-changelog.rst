@@ -360,6 +360,8 @@ Libraries for Zigbee
 * Added :ref:`BDB command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` library and :ref:`Zigbee Shell <lib_zigbee_shell>` library.
 * Removed experimental support for Green Power Combo Basic functionality.
+* Updated ZBOSS Zigbee stack to version v3.9.0.1+v4.0.1.
+    See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
 
 Scripts
 =======
