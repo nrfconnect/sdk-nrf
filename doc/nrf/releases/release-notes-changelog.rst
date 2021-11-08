@@ -351,6 +351,7 @@ Libraries for Zigbee
 * Fixes and improvements in :ref:`Zigbee Shell  <lib_zigbee_shell>` library.
 * Added :ref:`BDB command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` library and :ref:`Zigbee Shell <lib_zigbee_shell>` library.
+* Removed experimental support for Green Power Combo Basic functionality.
 
 Scripts
 =======
