@@ -206,6 +206,12 @@ Bluetooth mesh samples
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
   * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
+HomeKit samples
+---------------
+* Added:
+
+  * Samples are using Apple HomeKit ADK v6.1
+
 Matter samples
 --------------
 
