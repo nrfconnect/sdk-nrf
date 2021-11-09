@@ -27,6 +27,7 @@ rsource "Kconfig.rscs"
 rsource "Kconfig.throughput"
 rsource "Kconfig.latency"
 rsource "Kconfig.latency_c"
+rsource "Kconfig.hrs_client"
 rsource "alexa_gadgets/Kconfig.gadgets"
 
 endmenu
