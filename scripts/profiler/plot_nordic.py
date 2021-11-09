@@ -18,7 +18,7 @@ import json
 
 from processed_events import ProcessedEvents, EM_MEM_ADDRESS_DATA_DESC
 from events import TrackedEvent, EventType
-from stream import Stream, StreamError
+from stream import StreamError
 from plot_nordic_config import PlotNordicConfig
 
 class MouseButton(Enum):
@@ -61,7 +61,7 @@ class DrawState():
 
 class PlotNordic():
 
-    def __init__(self, own_recv_socket_dict=None, log_lvl=logging.WARNING):
+    def __init__(self, stream=None, log_lvl=logging.WARNING):
         plt.rcParams['toolbar'] = 'None'
         plt.ioff()
         self.plot_config = PlotNordicConfig
@@ -73,12 +73,13 @@ class PlotNordic():
         self.close_event_flag = False
         self.processed_events = ProcessedEvents()
 
-        if own_recv_socket_dict is not None:
+        if stream is not None:
             timeouts = {
                 'descriptions': None,
                 'events': 0
             }
-            self.in_stream = Stream(own_recv_socket_dict, timeouts)
+            self.in_stream = stream
+            self.in_stream.set_timeouts(timeouts)
 
         self.logger = logging.getLogger('Plot Nordic')
         self.logger_console = logging.StreamHandler()
@@ -393,7 +394,7 @@ class PlotNordic():
             try:
                 data = self.in_stream.recv_ev()
             except StreamError as err:
-                if err.args[1] == 'timeout':
+                if err.args[1] == StreamError.TIMEOUT_MSG:
                     break
                 self.logger.error("Receiving error: {}. Exiting".format(err))
                 self.close_event(None)
