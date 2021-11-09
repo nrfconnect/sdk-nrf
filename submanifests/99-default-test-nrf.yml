@@ -1,5 +1,6 @@
 manifest:
 
+  version: "0.12"
   remotes:
     - name: ncs-test
       url-base: https://projecttools.nordicsemi.no/bitbucket/scm/~sewe

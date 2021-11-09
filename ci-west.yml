@@ -1,5 +1,5 @@
 manifest:
-  version: "0.10"
+  version: "0.12"
 
   self:
     west-commands: scripts/west-commands.yml
