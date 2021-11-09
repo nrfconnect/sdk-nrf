@@ -41,6 +41,7 @@ bool initialized;
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 static gateway_state_handler_t gateway_state_handler;
 #endif
+#endif
 
 static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_GPS] = "GPS",
@@ -55,7 +56,6 @@ static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_LIGHT] = "LIGHT",
 };
 #define SENSOR_TYPE_ARRAY_SIZE (sizeof(sensor_type_str) / sizeof(*sensor_type_str))
-#endif
 
 #define MSGTYPE_VAL_DATA	"DATA"
 #define FOTA_VAL_BOOT		"BOOT"
@@ -213,22 +213,12 @@ int nrf_cloud_json_add_modem_info(cJSON *const data_obj)
 	return json_format_modem_info_data_obj(data_obj, &modem_info);
 }
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 static int json_add_obj_cs(cJSON *parent, const char *str, cJSON *item)
 {
 	if (!parent || !str || !item) {
 		return -EINVAL;
 	}
 	return cJSON_AddItemToObjectCS(parent, str, item) ? 0 : -ENOMEM;
-}
-
-static int json_add_str_cs(cJSON *parent, const char *str, const char *item)
-{
-	if (!parent || !str || !item) {
-		return -EINVAL;
-	}
-
-	return cJSON_AddStringToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
 
 static int json_add_null_cs(cJSON *parent, const char *const str)
@@ -238,6 +228,16 @@ static int json_add_null_cs(cJSON *parent, const char *const str)
 	}
 
 	return cJSON_AddNullToObjectCS(parent, str) ? 0 : -ENOMEM;
+}
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+static int json_add_str_cs(cJSON *parent, const char *str, const char *item)
+{
+	if (!parent || !str || !item) {
+		return -EINVAL;
+	}
+
+	return cJSON_AddStringToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
 
 static cJSON *json_object_decode(cJSON *obj, const char *str)
@@ -694,6 +694,73 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 	return err;
 }
 
+int json_send_to_cloud(cJSON *const request)
+{
+	__ASSERT_NO_MSG(request != NULL);
+
+	char *msg_string;
+	int err;
+
+	msg_string = cJSON_PrintUnformatted(request);
+	if (!msg_string) {
+		LOG_ERR("Could not allocate memory for request message");
+		return -ENOMEM;
+	}
+
+	LOG_DBG("Created request: %s", log_strdup(msg_string));
+
+	struct nct_dc_data msg = {
+		.data.ptr = msg_string,
+		.data.len = strlen(msg_string)
+	};
+
+	err = nct_dc_send(&msg);
+	if (err) {
+		LOG_ERR("Failed to send request, error: %d", err);
+	} else {
+		LOG_DBG("Request sent to cloud");
+	}
+
+	k_free(msg_string);
+
+	return err;
+}
+#endif /* CONFIG_NRF_CLOUD_MQTT */
+
+static int encode_info_item_cs(const enum nrf_cloud_shadow_info inf, const char *const inf_name,
+			    cJSON *const inf_obj, cJSON *const root_obj)
+{
+	cJSON *move_obj;
+
+	switch (inf) {
+	case NRF_CLOUD_INFO_SET:
+		move_obj = cJSON_DetachItemFromObject(inf_obj, inf_name);
+
+		if (!move_obj) {
+			LOG_ERR("Info item \"%s\" not found", log_strdup(inf_name));
+			return -ENOMSG;
+		}
+
+		if (json_add_obj_cs(root_obj, inf_name, move_obj)) {
+			cJSON_Delete(move_obj);
+			LOG_ERR("Failed to add info item \"%s\"", log_strdup(inf_name));
+			return -ENOMEM;
+		}
+		break;
+	case NRF_CLOUD_INFO_CLEAR:
+		if (json_add_null_cs(root_obj, inf_name)) {
+			LOG_ERR("Failed to create NULL item for \"%s\"", log_strdup(inf_name));
+			return -ENOMEM;
+		}
+		break;
+	case NRF_CLOUD_INFO_NO_CHANGE:
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fota *const fota,
 					      cJSON *const svc_inf_obj)
 {
@@ -701,7 +768,8 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 		return -EINVAL;
 	}
 
-	if (fota == NULL || !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA)) {
+	if (fota == NULL ||
+	    (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) && !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA))) {
 		if (fota && (fota->application || fota->modem || fota->bootloader)) {
 			LOG_WRN("CONFIG_NRF_CLOUD_FOTA not enabled, setting FOTA array to 'null'");
 		}
@@ -801,40 +869,6 @@ static int nrf_cloud_encode_service_info_ui(const struct nrf_cloud_svc_info_ui *
 			cJSON_DeleteItemFromObject(svc_inf_obj, JSON_KEY_SRVC_INFO_UI);
 			return -ENOMEM;
 		}
-	}
-
-	return 0;
-}
-
-static int encode_info_item_cs(const enum nrf_cloud_shadow_info inf, const char *const inf_name,
-			    cJSON *const inf_obj, cJSON *const root_obj)
-{
-	cJSON *move_obj;
-
-	switch (inf) {
-	case NRF_CLOUD_INFO_SET:
-		move_obj = cJSON_DetachItemFromObject(inf_obj, inf_name);
-
-		if (!move_obj) {
-			LOG_ERR("Info item \"%s\" not found", log_strdup(inf_name));
-			return -ENOMSG;
-		}
-
-		if (json_add_obj_cs(root_obj, inf_name, move_obj)) {
-			cJSON_Delete(move_obj);
-			LOG_ERR("Failed to add info item \"%s\"", log_strdup(inf_name));
-			return -ENOMEM;
-		}
-		break;
-	case NRF_CLOUD_INFO_CLEAR:
-		if (json_add_null_cs(root_obj, inf_name)) {
-			LOG_ERR("Failed to create NULL item for \"%s\"", log_strdup(inf_name));
-			return -ENOMEM;
-		}
-		break;
-	case NRF_CLOUD_INFO_NO_CHANGE:
-	default:
-		break;
 	}
 
 	return 0;
@@ -947,16 +981,24 @@ void nrf_cloud_device_status_free(struct nrf_cloud_data *status)
 }
 
 int nrf_cloud_device_status_encode(const struct nrf_cloud_device_status *const dev_status,
-	struct nrf_cloud_data * const output)
+	struct nrf_cloud_data * const output, const bool include_state)
 {
 	if (!dev_status || !output) {
 		return -EINVAL;
 	}
 
 	int err = 0;
+	cJSON *state_obj = NULL;
+	cJSON *reported_obj = NULL;
 	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_STATE);
-	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_REP);
+
+	if (include_state) {
+		state_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_STATE);
+		reported_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_REP);
+	} else {
+		reported_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_REP);
+	}
+
 	cJSON *device_obj = cJSON_AddObjectToObjectCS(reported_obj, JSON_KEY_DEVICE);
 	cJSON *svc_inf_obj = cJSON_AddObjectToObjectCS(device_obj, JSON_KEY_SRVC_INFO);
 
@@ -996,39 +1038,6 @@ cleanup:
 
 	return err;
 }
-
-int json_send_to_cloud(cJSON *const request)
-{
-	__ASSERT_NO_MSG(request != NULL);
-
-	char *msg_string;
-	int err;
-
-	msg_string = cJSON_PrintUnformatted(request);
-	if (!msg_string) {
-		LOG_ERR("Could not allocate memory for request message");
-		return -ENOMEM;
-	}
-
-	LOG_DBG("Created request: %s", log_strdup(msg_string));
-
-	struct nct_dc_data msg = {
-		.data.ptr = msg_string,
-		.data.len = strlen(msg_string)
-	};
-
-	err = nct_dc_send(&msg);
-	if (err) {
-		LOG_ERR("Failed to send request, error: %d", err);
-	} else {
-		LOG_DBG("Request sent to cloud");
-	}
-
-	k_free(msg_string);
-
-	return err;
-}
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 {

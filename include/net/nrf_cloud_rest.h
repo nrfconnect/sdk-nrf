@@ -247,6 +247,32 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	const enum nrf_cloud_fota_status status, const char * const details);
 
 /**
+ * @brief Updates the device's "state" in the shadow via the UpdateDeviceState endpoint.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     shadow_json Null-terminated JSON string to be written to the device's shadow.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char * const shadow_json);
+
+/**
+ * @brief Updates the device's "ServiceInfo" in the shadow.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     svc_inf Service info items to be updated in the shadow.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf);
+
+/**
  * @brief Closes the connection to the server.
  *
  * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.

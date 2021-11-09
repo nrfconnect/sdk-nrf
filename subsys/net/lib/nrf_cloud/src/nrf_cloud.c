@@ -280,7 +280,7 @@ int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *
 		return -EACCES;
 	}
 
-	err = nrf_cloud_device_status_encode(dev_status, &tx_data.data);
+	err = nrf_cloud_device_status_encode(dev_status, &tx_data.data, true);
 	if (err) {
 		return err;
 	}

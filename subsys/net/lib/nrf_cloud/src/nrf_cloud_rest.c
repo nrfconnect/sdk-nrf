@@ -85,6 +85,9 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define PGPS_REQ_START_GPS_DAY		"&" NRF_CLOUD_JSON_PGPS_GPS_DAY "=%u"
 #define PGPS_REQ_START_GPS_TOD_S	"&" NRF_CLOUD_JSON_PGPS_GPS_TIME "=%u"
 
+#define API_DEVICES_BASE		"/devices"
+#define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
+
 #define HTTP_PROTOCOL		"HTTP/1.1"
 #define SOCKET_PROTOCOL		IPPROTO_TLS_1_2
 
@@ -388,6 +391,118 @@ static void init_request(struct http_request *const req, const enum http_method 
 	(void)nrf_cloud_codec_init();
 }
 
+int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char * const shadow_json)
+{
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+	__ASSERT_NO_MSG(shadow_json != NULL);
+
+	int ret;
+	size_t buff_sz;
+	char *auth_hdr = NULL;
+	char *url = NULL;
+	struct http_request http_req;
+
+	init_request(&http_req, HTTP_PATCH, CONTENT_TYPE_APP_JSON);
+
+	/* Format API URL with device ID */
+	buff_sz = sizeof(API_DEVICES_STATE_TEMPLATE) + strlen(device_id);
+	url = k_calloc(buff_sz, 1);
+	if (!url) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+	http_req.url = url;
+
+	ret = snprintk(url, buff_sz, API_DEVICES_STATE_TEMPLATE, device_id);
+	if (ret < 0 || ret >= buff_sz) {
+		LOG_ERR("Could not format URL");
+		ret = -ETXTBSY;
+		goto clean_up;
+	}
+
+	LOG_DBG("URL: %s", log_strdup(http_req.url));
+
+	/* Format auth header */
+	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
+	if (ret) {
+		LOG_ERR("Could not format HTTP auth header");
+		goto clean_up;
+	}
+	char *const headers[] = {
+		HDR_ACCEPT_APP_JSON,
+		(char *const)auth_hdr,
+		NULL
+	};
+
+	http_req.header_fields = (const char **)headers;
+
+	/* Set payload */
+	http_req.payload = shadow_json;
+	http_req.payload_len = strlen(shadow_json);
+	LOG_DBG("Payload: %s", log_strdup(http_req.payload));
+
+	/* Make REST call */
+	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	if (ret) {
+		ret = -EIO;
+		goto clean_up;
+	}
+
+	LOG_DBG("API status: %d", rest_ctx->status);
+	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED) {
+		ret = -EBADMSG;
+		goto clean_up;
+	}
+
+	LOG_DBG("API call response len: %u bytes", rest_ctx->response_len);
+
+clean_up:
+	if (url) {
+		k_free(url);
+	}
+	if (auth_hdr) {
+		k_free(auth_hdr);
+	}
+
+	close_connection(rest_ctx);
+
+	return ret;
+}
+
+int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf)
+{
+	if (svc_inf == NULL) {
+		return -EINVAL;
+	}
+
+	int ret;
+	struct nrf_cloud_data data_out;
+	const struct nrf_cloud_device_status dev_status = {
+		.modem = NULL,
+		.svc = (struct nrf_cloud_svc_info *)svc_inf
+	};
+
+	(void)nrf_cloud_codec_init();
+
+	ret = nrf_cloud_device_status_encode(&dev_status, &data_out, false);
+	if (ret) {
+		LOG_ERR("Failed to encode device status, error: %d", ret);
+		return ret;
+	}
+
+	ret = nrf_cloud_rest_shadow_state_update(rest_ctx, device_id, data_out.ptr);
+	if (ret) {
+		LOG_ERR("Failed to update device shadow, error: %d", ret);
+	}
+
+	nrf_cloud_device_status_free(&data_out);
+
+	return ret;
+}
+
 int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char *const job_id,
 	const enum nrf_cloud_fota_status status, const char * const details)
@@ -577,7 +692,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	if (rest_ctx->status == NRF_CLOUD_HTTP_STATUS_OK) {
 		ret = nrf_cloud_rest_fota_execution_parse(rest_ctx->response, job);
 		if (ret) {
-			LOG_ERR("Failed to parse job execution response: error: %d", ret);
+			LOG_ERR("Failed to parse job execution response, error: %d", ret);
 		}
 	}
 
