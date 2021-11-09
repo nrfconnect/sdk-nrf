@@ -1,0 +1,14 @@
+sample:
+  name: BLE Central and Peripheral HRS
+  description: Bluetooth Low Energy central and peripheral heart rate relay sample
+tests:
+  samples.bluetooth.central_bas.build:
+    build_only: true
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+    tags: bluetooth ci_build
