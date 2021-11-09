@@ -52,6 +52,19 @@ config MCUMGR_BUF_SIZE
 config ENTROPY_GENERATOR
 	default y if BUILD_WITH_TFM || (SPM && SPM_SECURE_SERVICES)
 
+DT_COMPAT_NORDIC_QSPI_NOR := nordic,qspi-nor
+config NORDIC_QSPI_NOR
+	default y if $(dt_compat_on_bus,$(DT_COMPAT_NORDIC_QSPI_NOR),qspi) && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY && !SPI_NOR
+
+DT_ZEPHYR_FLASH := zephyr,flash
+DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
+config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+	help
+	  Set the flash layout page size equal to the erase block size of the
+	  chosen Zephyr flash devicetree node to ensure that swapping can be
+	  performed.
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
