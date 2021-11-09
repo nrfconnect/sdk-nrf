@@ -3,16 +3,13 @@
 Using external flash memory partitions
 ######################################
 
-You can use external flash memory as the storage partition for the secondary slot, using a driver for the external flash memory, like the QSPI NOR flash memory driver, that supports the following features:
+When using MCUboot, you can store the storage partition for the secondary slot in the external flash memory, using a driver for the external flash memory that supports the following features:
 
 * Single-byte read and write.
 * Writing data from the internal flash memory to the external flash memory.
 
-See :ref:`pm_external_flash` for general information about how to set up partitions in the external flash memory using the Partition Manager.
+The QSPI NOR flash memory driver supports these features, and it can access the QSPI external flash memory of the nRF52840 DK and nRF5340 DK.
 
-.. note::
-
-   Currently, only MCUboot supports booting images stored in the external memory partition.
-
-Both the nRF52840 DK and nRF5340 DK come with an external flash memory that can be used for the secondary slot and can be accessed using the QSPI NOR flash memory driver.
-See the test in :file:`tests/modules/mcuboot/external_flash` for an example on how to enable this.
+See the test in :file:`tests/modules/mcuboot/external_flash` for reference.
+This test passes both devicetree overlay files and Kconfig fragments to the MCUboot child image through its :file:`child_image` folder.
+See also :ref:`ug_multi_image_variables` for more details on how to pass configuration files to a child image.
