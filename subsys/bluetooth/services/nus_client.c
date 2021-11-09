@@ -34,14 +34,14 @@ static uint8_t on_received(struct bt_conn *conn,
 		params->value_handle = 0;
 		atomic_clear_bit(&nus->state, NUS_C_TX_NOTIF_ENABLED);
 		if (nus->cb.unsubscribed) {
-			nus->cb.unsubscribed();
+			nus->cb.unsubscribed(nus);
 		}
 		return BT_GATT_ITER_STOP;
 	}
 
 	LOG_DBG("[NOTIFICATION] data %p length %u", data, length);
 	if (nus->cb.received) {
-		return nus->cb.received(data, length);
+		return nus->cb.received(nus, data, length);
 	}
 
 	return BT_GATT_ITER_CONTINUE;
@@ -63,7 +63,7 @@ static void on_sent(struct bt_conn *conn, uint8_t err,
 
 	atomic_clear_bit(&nus_c->state, NUS_C_RX_WRITE_PENDING);
 	if (nus_c->cb.sent) {
-		nus_c->cb.sent(err, data, length);
+		nus_c->cb.sent(nus_c, err, data, length);
 	}
 }
 

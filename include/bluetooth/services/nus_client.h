@@ -43,6 +43,8 @@ struct bt_nus_client_handles {
 	uint16_t tx_ccc;
 };
 
+struct bt_nus_client;
+
 /** @brief NUS Client callback structure. */
 struct bt_nus_client_cb {
 	/** @brief Data received callback.
@@ -50,29 +52,33 @@ struct bt_nus_client_cb {
 	 * The data has been received as a notification of the NUS TX
 	 * Characteristic.
 	 *
+	 * @param[in] nus  NUS Client instance.
 	 * @param[in] data Received data.
 	 * @param[in] len Length of received data.
 	 *
 	 * @retval BT_GATT_ITER_CONTINUE To keep notifications enabled.
 	 * @retval BT_GATT_ITER_STOP To disable notifications.
 	 */
-	uint8_t (*received)(const uint8_t *data, uint16_t len);
+	uint8_t (*received)(struct bt_nus_client *nus, const uint8_t *data, uint16_t len);
 
 	/** @brief Data sent callback.
 	 *
 	 * The data has been sent and written to the NUS RX Characteristic.
 	 *
+	 * @param[in] nus  NUS Client instance.
 	 * @param[in] err ATT error code.
 	 * @param[in] data Transmitted data.
 	 * @param[in] len Length of transmitted data.
 	 */
-	void (*sent)(uint8_t err, const uint8_t *data, uint16_t len);
+	void (*sent)(struct bt_nus_client *nus, uint8_t err, const uint8_t *data, uint16_t len);
 
 	/** @brief TX notifications disabled callback.
 	 *
 	 * TX notifications have been disabled.
+	 *
+	 * @param[in] nus  NUS Client instance.
 	 */
-	void (*unsubscribed)(void);
+	void (*unsubscribed)(struct bt_nus_client *nus);
 };
 
 /** @brief NUS Client structure. */
