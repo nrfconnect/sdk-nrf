@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+import errno
 import argparse
 import json
 import time
@@ -52,22 +53,26 @@ if __name__ == '__main__':
         manifest['name'] = args.name
 
     if args.meta_info_file is not None:
+        meta = None
         meta_file = PurePath(args.meta_info_file)
         if Path(meta_file).is_file():
             with Path(meta_file).open('r') as f:
                 meta = yaml.safe_load(f.read())
+        else:
+            raise OSError(errno.ENOENT, "Meta info file not found", args.meta_info_file)
 
-        zephyr_revision = meta.get('zephyr', {}).get('revision')
-        nrf_revision = None
+        if meta is not None:
+            zephyr_revision = meta.get('zephyr', {}).get('revision')
+            nrf_revision = None
 
-        for module in meta.get('modules', []):
-            if module.get('name') == 'nrf':
-                nrf_revision = module.get('revision')
-                break
+            for module in meta.get('modules', []):
+                if module.get('name') == 'nrf':
+                    nrf_revision = module.get('revision')
+                    break
 
-        firmware_revisions = {'zephyr': {'revision': zephyr_revision},
-                              'nrf': {'revision': nrf_revision}}
-        manifest['firmware'] = firmware_revisions
+            firmware_revisions = {'zephyr': {'revision': zephyr_revision},
+                                  'nrf': {'revision': nrf_revision}}
+            manifest['firmware'] = firmware_revisions
 
     shared_info = dict()
     special_info = dict()
