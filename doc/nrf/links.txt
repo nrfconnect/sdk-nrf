@@ -746,7 +746,7 @@
 
 .. _`mbedtls_memory_buffer_alloc_init`: https://tls.mbed.org/api/memory__buffer__alloc_8h.html#ac70d134be54133c272d8eab2cb85dfbf
 
-.. _`HERE Positioning`: https://www.here.com/platform/tracking-positioning-solutions/positioning
+.. _`HERE Positioning`: https://www.here.com/platform/positioning
 
 .. _`Skyhook Precision Location`: https://www.skyhook.com/precision-location
 
