@@ -343,8 +343,10 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
-Bluetooth libraries
--------------------
+Bluetooth libraries and services
+--------------------------------
+
+Updated:
 
 * :ref:`ble_rpc` library:
 
@@ -355,6 +357,10 @@ Bluetooth libraries
 
   * Aligned the Silvair EnOcean Proxy Server model implementation with rev 1.2 of the Silvair EnOcean Switch Mesh Proxy Server specification.
   * Fixed an issue where the Sensor Client API can be used as non-blocking by passing NULL to the arguments that are used to fill the response.
+
+* :ref:`nus_client_readme` library:
+
+  * Added context to functions :c:func:`bt_nus_client.received`, :c:func:`bt_nus_client.sent` and :c:func:`bt_nus_client.unsubscribed` to enable their use in a multi-client application.
 
   Added:
 
