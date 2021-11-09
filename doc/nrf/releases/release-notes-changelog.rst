@@ -404,6 +404,7 @@ Libraries for networking
   * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
   * Added handling of MQTT ping failures and MQTT input failures.
   * Updated the :c:func:`nrf_cloud_configured_client_id_get` function to use :c:func:`nrf_modem_at_cmd` instead of the deprecated :c:func:`at_cmd_write`.
+  * Added functions :c:func:`nrf_cloud_rest_shadow_state_update` and :c:func:`nrf_cloud_rest_shadow_service_info_update` to the :ref:`lib_nrf_cloud_rest` library. They enable device shadow updates using REST.
 
 * :ref:`lib_nrf_cloud_agps` library:
 
