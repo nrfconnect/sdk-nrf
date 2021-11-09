@@ -29,6 +29,7 @@ If you are new to Matter, check also the tutorials on `DevZone`_.
    :caption: Subpages:
 
    ug_matter_architecture.rst
-   ug_matter_configuring.rst
+   ug_matter_configuring_protocol.rst
+   ug_matter_configuring_env.rst
    ug_matter_tools.rst
    ug_matter_creating_accessory.rst
