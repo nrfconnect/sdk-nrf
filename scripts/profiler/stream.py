@@ -3,58 +3,90 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import socket
-import errno
+from multiprocessing import Pipe
 
 class StreamError(Exception):
-    pass
+    ERROR_MSG = 'error'
+    TIMEOUT_MSG = 'timeout'
 
 class Stream():
     RECV_BUF_SIZE = 2**13
 
-    def __init__(self, own_socket_dict, timeouts, remote_socket_dict=None):
-        self.own_sock_desc = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-        self.own_sock_desc.bind(own_socket_dict['descriptions'])
-        self.own_sock_desc.settimeout(timeouts['descriptions'])
-        self.own_sock_ev = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-        self.own_sock_ev.bind(own_socket_dict['events'])
-        self.own_sock_ev.settimeout(timeouts['events'])
+    @staticmethod
+    def create_stream(num):
+        assert num > 1
+        streams = []
+        pipes_desc_pairs = []
+        pipes_ev_pairs = []
+        for i in range(num - 1):
+            pipes_desc_pairs.append(Pipe(False))
+            pipes_ev_pairs.append(Pipe(False))
+        for i in range(num):
+            if i == 0:
+                streams.append(Stream(pipe_send_desc=pipes_desc_pairs[0][1],
+                                      pipe_send_ev=pipes_ev_pairs[0][1]))
+            elif i == num - 1:
+                streams.append(Stream(pipe_recv_desc=pipes_desc_pairs[-1][0],
+                                      pipe_recv_ev=pipes_ev_pairs[-1][0]))
+            else:
+                streams.append(Stream(pipe_recv_desc=pipes_desc_pairs[i - 1][0],
+                                      pipe_recv_ev=pipes_ev_pairs[i - 1][0],
+                                      pipe_send_desc=pipes_desc_pairs[i][1],
+                                      pipe_send_ev=pipes_ev_pairs[i][1]))
 
-        self.remote_socket_dict = remote_socket_dict
+        return streams
+
+    def __init__(self, pipe_recv_desc=None, pipe_recv_ev=None, timeouts=None,
+                 pipe_send_desc=None, pipe_send_ev=None):
+        self.pipe_recv_desc = pipe_recv_desc
+        self.pipe_recv_ev = pipe_recv_ev
+
+        if timeouts is None:
+            self.timeouts = {
+                'descriptions': None,
+                'events': None
+            }
+        else:
+            self.timeouts = timeouts
+
+        self.pipe_send_desc = pipe_send_desc
+        self.pipe_send_ev = pipe_send_ev
+
+    def set_timeouts(self, timeouts):
+        self.timeouts = timeouts
 
     @staticmethod
-    def _send(bytes, own_socket, remote_address):
+    def _send(bytes, pipe):
+        if pipe is None:
+            raise StreamError('Pipe for sending is not created.', StreamError.ERROR_MSG)
         # Ensure that data would not be dropped.
         assert len(bytes) <= Stream.RECV_BUF_SIZE
-
         try:
-            own_socket.sendto(bytes, remote_address)
-        except socket.error as err:
-            if err.errno == errno.ECONNREFUSED:
-                raise StreamError(err, 'closed')
-            else:
-                raise StreamError(err, 'error')
+            pipe.send_bytes(bytes)
+        except ValueError as err:
+            raise StreamError(err, StreamError.ERROR_MSG)
 
     def send_desc(self, bytes):
-        if self.remote_socket_dict is not None:
-            self._send(bytes, self.own_sock_desc, self.remote_socket_dict['descriptions'])
+        self._send(bytes, self.pipe_send_desc)
+
     def send_ev(self, bytes):
-        if self.remote_socket_dict is not None:
-            self._send(bytes, self.own_sock_ev, self.remote_socket_dict['events'])
+        self._send(bytes, self.pipe_send_ev)
 
     @staticmethod
-    def _receive(own_socket):
-        try:
-            bytes, _ = own_socket.recvfrom(Stream.RECV_BUF_SIZE)
-            return bytes
-        except socket.error as err:
-            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                raise StreamError(err, 'timeout')
-            else:
-                raise StreamError(err, 'error')
+    def _receive(pipe, timeout):
+        if pipe is None:
+            raise StreamError('Pipe for receiving is not created.', StreamError.ERROR_MSG)
+        if pipe.poll(timeout):
+            try:
+                bytes = pipe.recv_bytes(Stream.RECV_BUF_SIZE)
+                return bytes
+            except (EOFError, OSError) as err:
+                raise StreamError(err, StreamError.ERROR_MSG)
+        else:
+            raise StreamError('Timeout reached on receiving end of pipe.', StreamError.TIMEOUT_MSG)
 
     def recv_desc(self):
-        return self._receive(self.own_sock_desc)
+        return self._receive(self.pipe_recv_desc, self.timeouts['descriptions'])
 
     def recv_ev(self):
-        return self._receive(self.own_sock_ev)
+        return self._receive(self.pipe_recv_ev, self.timeouts['events'])

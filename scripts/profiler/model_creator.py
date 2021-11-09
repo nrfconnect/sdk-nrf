@@ -10,7 +10,7 @@ import json
 from rtt_nordic_config import RttNordicConfig
 from events import Event, EventType, TrackedEvent, EventsData
 from processed_events import ProcessedEvents
-from stream import Stream, StreamError
+from stream import StreamError
 from io import StringIO
 import csv
 
@@ -23,13 +23,13 @@ PROFILER_FATAL_ERROR_EVENT_NAME = "_profiler_fatal_error_event_"
 
 class ModelCreator:
 
-    def __init__(self, own_recv_socket_dict,
-                 own_send_socket_dict=None,
-                 remote_socket_dict=None,
+    def __init__(self, stream,
+                 sending_events=False,
                  config=RttNordicConfig,
                  event_filename=None,
                  event_types_filename=None,
                  log_lvl=logging.INFO):
+
         self.config = config
         self.event_filename = event_filename
         self.event_types_filename = event_types_filename
@@ -39,13 +39,9 @@ class ModelCreator:
             'descriptions': None,
             'events': None
         }
-        self.in_stream = Stream(own_recv_socket_dict, timeouts)
-
-        if own_send_socket_dict is not None and remote_socket_dict is not None:
-            self.sending = True
-            self.out_stream = Stream(own_send_socket_dict, timeouts, remote_socket_dict=remote_socket_dict)
-        else:
-            self.sending = False
+        self.stream = stream
+        self.stream.set_timeouts(timeouts)
+        self.sending = sending_events
 
         self.timestamp_overflows = 0
         self.after_half = False
@@ -94,7 +90,7 @@ class ModelCreator:
             if self.bcnt >= num_bytes:
                 break
             try:
-                buf = self.in_stream.recv_ev()
+                buf = self.stream.recv_ev()
             except StreamError as err:
                 self.logger.error("Receiving error: {}".format(err))
                 self.close()
@@ -111,16 +107,18 @@ class ModelCreator:
         return ts_s
 
     def transmit_all_events_descriptions(self):
-        try:
-            bytes = self.in_stream.recv_desc()
-        except StreamError as err:
-            self.logger.error("Receiving error: {}. Exiting".format(err))
-            sys.exit()
+        while True:
+            try:
+                bytes = self.stream.recv_desc()
+                break
+            except StreamError as err:
+                self.logger.error("Receiving error: {}. Exiting.".format(err))
+                sys.exit()
         desc_buf = bytes.decode()
         f = StringIO(desc_buf)
         reader = csv.reader(f, delimiter=',')
         for row in reader:
-            # Empty field is send after last event description
+            # Empty field is sent after last event description
             if len(row) == 0:
                 break
             name = row[0]
@@ -141,10 +139,9 @@ class ModelCreator:
                     for k, v in self.processed_events.registered_events_types.items())
             json_et_string = json.dumps(event_types_dict)
             try:
-                self.out_stream.send_desc(json_et_string.encode())
+                self.stream.send_desc(json_et_string.encode())
             except StreamError as err:
-                self.logger.error("Error: {}. Unable to send data".format(err))
-                sys.exit()
+                self.logger.error("Sending error: {}. Cannot send descriptions.".format(err))
 
     def _read_single_event(self):
         id = int.from_bytes(
@@ -224,12 +221,9 @@ class ModelCreator:
     def _send_event(self, tracked_event):
         event_string = tracked_event.serialize()
         try:
-            self.out_stream.send_ev(event_string.encode())
+            self.stream.send_ev(event_string.encode())
         except StreamError as err:
-            if err.args[1] != 'closed':
-                self.logger.error("Error. Unable to send data: {}".format(err))
-            # Receiver has been closed
-            self.close()
+            self.logger.error("Sending error: {}. Cannot send event.".format(err))
 
     def _write_event_to_file(self, csvfile, tracked_event):
         try:

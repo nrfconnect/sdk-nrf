@@ -3,36 +3,28 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import os
 from multiprocessing import Process, Event, active_children
 import argparse
 import signal
 import time
 import logging
-from rtt2socket import Rtt2Socket
+import os
+from stream import Stream
+from rtt2stream import Rtt2Stream
 from model_creator import ModelCreator
 
-RTT2SOCKET_OUT_ADDR_DICT = {
-    'descriptions': '\0' + 'rtt2socket_desc',
-    'events': '\0' + 'rtt2socket_ev'
-}
-
-MODEL_CREATOR_IN_ADDR_DICT = {
-    'descriptions': '\0' + 'model_creator_desc',
-    'events': '\0' + 'model_creator_ev'
-}
-
-def rtt2socket(event, log_lvl_number):
+def rtt2stream(stream, event, log_lvl_number):
     try:
-        rtt2s = Rtt2Socket(RTT2SOCKET_OUT_ADDR_DICT, MODEL_CREATOR_IN_ADDR_DICT, log_lvl=log_lvl_number)
+        rtt2s = Rtt2Stream(stream, log_lvl=log_lvl_number)
         event.wait()
         rtt2s.read_and_transmit_data()
     except KeyboardInterrupt:
         rtt2s.close()
 
-def model_creator(event, dataset_name, log_lvl_number):
+def model_creator(stream, event, dataset_name, log_lvl_number):
     try:
-        mc = ModelCreator(MODEL_CREATOR_IN_ADDR_DICT,
+        mc = ModelCreator(stream,
+                          sending_events=False,
                           event_filename=dataset_name + ".csv",
                           event_types_filename=dataset_name + ".json",
                           log_lvl=log_lvl_number)
@@ -55,17 +47,20 @@ def main():
     else:
         log_lvl_number = logging.INFO
 
-    # event is made to ensure that ModelCreator class is initialized before Rtt2Socket starts sending data
+    # event is made to ensure that ModelCreator class is initialized before Rtt2Stream starts sending data
     event = Event()
+
+    streams = Stream.create_stream(2)
 
     try:
         processes = []
-        processes.append(Process(target=rtt2socket,
-                                 args=(event, log_lvl_number),
+        processes.append(Process(target=rtt2stream,
+                                 args=(streams[0], event, log_lvl_number),
                                  daemon=True))
         processes.append(Process(target=model_creator,
-                                 args=(event, args.dataset_name, log_lvl_number),
+                                 args=(streams[1], event, args.dataset_name, log_lvl_number),
                                  daemon=True))
+
         for p in processes:
             p.start()
 

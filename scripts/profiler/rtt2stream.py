@@ -10,24 +10,20 @@ import time
 from pynrfjprog.LowLevel import API
 from pynrfjprog.APIError import APIError
 from enum import Enum
-from stream import Stream, StreamError
+from stream import StreamError
 
 class Command(Enum):
     START = 1
     STOP = 2
     INFO = 3
 
-class Rtt2Socket:
-    def __init__(self, own_send_socket_dict, remote_socket_dict, config=RttNordicConfig, log_lvl=logging.INFO):
+class Rtt2Stream:
+    def __init__(self, out_stream, config=RttNordicConfig, log_lvl=logging.INFO):
         self.config = config
 
-        timeouts = {
-            'descriptions': None,
-            'events': None
-        }
-        self.out_stream = Stream(own_send_socket_dict, timeouts, remote_socket_dict=remote_socket_dict)
+        self.out_stream = out_stream
 
-        self.logger = logging.getLogger('Profiler Rtt to socket')
+        self.logger = logging.getLogger('Profiler Rtt to stream')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
@@ -57,7 +53,7 @@ class Rtt2Socket:
 
     def _connect_rtt(self):
         snr = self.config['device_snr']
-        device_family = Rtt2Socket._rtt_get_device_family(snr)
+        device_family = Rtt2Stream._rtt_get_device_family(snr)
         self.logger.info('Recognized device family: ' + device_family)
         self.jlink = API(device_family)
         self.jlink.open()
@@ -121,11 +117,8 @@ class Rtt2Socket:
             try:
                 self.out_stream.send_ev(buf)
             except StreamError as err:
-                if err.args[1] != 'closed':
-                    self.logger.error("Error. Unable to send data: {}".format(err))
-                # Cannot send more data over socket.
+                self.logger.error("Error: {}. Unable to send remaining data".format(err))
                 break
-
             buf = self._read_bytes()
 
     def _disconnect_rtt(self):
@@ -156,7 +149,7 @@ class Rtt2Socket:
     def _read_all_events_descriptions(self):
         self._send_command(Command.INFO)
         desc_buf = bytearray()
-        # Empty field is send after last event description
+        # Empty field is sent after last event description
         while True:
             try:
                 buf_temp = self.jlink.rtt_read(self.rtt_up_channels['info'],
@@ -177,7 +170,7 @@ class Rtt2Socket:
         try:
             self.out_stream.send_desc(desc_buf)
         except StreamError as err:
-            self.logger.error("Error. Unable to send data: {}".format(err))
+            self.logger.error("Error: {}. Unable to send data".format(err))
             self._disconnect_rtt()
             sys.exit()
 
@@ -189,9 +182,7 @@ class Rtt2Socket:
                 try:
                     self.out_stream.send_ev(buf)
                 except StreamError as err:
-                    if err.args[1] != 'closed':
-                        self.logger.error("Error. Unable to send data: {}".format(err))
-                    # Receiver has been closed.
+                    self.logger.error("Error: {}. Unable to send data".format(err))
                     self._disconnect_rtt()
                     sys.exit()
 
