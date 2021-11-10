@@ -1,5 +1,25 @@
 menu "MCUboot"
 
+config BOOT_SIGNATURE_KEY_FILE
+	string "MCUBoot PEM key file"
+	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
+	help
+	  Absolute path to PEM key file containing the private key corresponding
+	  to the public key included in MCUBoot. This will be used to sign the
+	  image so that it can be verified by MCUBoot. Since MCUBoot is not
+	  built from source, it is not possible for the build system to deduce
+	  what key was used when compiling it. Hence, it is required that the
+	  key is passed to the build system through this option.
+
+config SIGN_IMAGES
+	bool "Sign images for MCUBoot"
+	default y
+	depends on MCUBOOT_BUILD_STRATEGY_FROM_SOURCE \
+		   || BOOT_SIGNATURE_KEY_FILE != ""
+	help
+	  Sign images for MCUBoot as integrated part of the build stages using
+	  the private key.
+
 if BOOTLOADER_MCUBOOT
 
 # The name of this configuration needs to match the requirements set by the
