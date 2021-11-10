@@ -1,0 +1,31 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AT_SMS_CERT
+	bool "AT SMS commands for certification"
+	depends on SOC_NRF9160_SICA
+	help
+	  Provide an implementation of the following SMS-related AT commands for certification purposes:
+	  AT+CPMS
+	  AT+CSMS
+	  AT+CSCA
+	  AT+CSCS
+	  AT+CMGD
+	  AT+CMSS
+	  AT+CMGW
+
+if AT_SMS_CERT
+
+config AT_SMS_CERT_SYS_INIT
+	bool "Initialize during SYS_INIT"
+	default y
+	help
+	  Initialize the AT SMS Certification library automatically during the SYS_INIT sequence.
+
+module = AT_SMS_CERT
+module-str = AT SMS Cert
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # AT_SMS_CERT
