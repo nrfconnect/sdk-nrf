@@ -241,6 +241,10 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 
 	info.neighbor_cells = neighbor_cells->neighbor_cells;
 
+	if (!neighbor_cells->queued) {
+		return -ENODATA;
+	}
+
 	err = nrf_cloud_cell_pos_request_json_get(&info, false, &root_obj);
 	if (err) {
 		LOG_ERR("nrf_cloud_cell_pos_request_json_get, error: %d", err);
@@ -263,6 +267,7 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 	output->len = strlen(buffer);
 
 exit:
+	neighbor_cells->queued = false;
 	cJSON_Delete(root_obj);
 	return err;
 }
