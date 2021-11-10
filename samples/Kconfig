@@ -12,6 +12,7 @@ config NCS_SAMPLES_DEFAULTS
 	imply ASSERT
 	imply ASSERT_NO_COND_INFO
 	imply ASSERT_NO_MSG_INFO
+	imply RESET_ON_FATAL_ERROR if !DEBUG && !BOARD_NATIVE_POSIX && !QEMU_TARGET && !ZTEST
 	imply HW_STACK_PROTECTION if ARCH_HAS_STACK_PROTECTION
 	help
 	  Use the default configuration for NCS samples.
