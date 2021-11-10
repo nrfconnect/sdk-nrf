@@ -602,6 +602,7 @@ static void timeout(struct k_work *work)
 		if (srv->resume && atomic_test_and_clear_bit(&srv->flags, FLAG_RESUME_TIMER)) {
 			BT_DBG("Resuming LC server");
 			ctrl_enable(srv);
+			store(srv, FLAG_STORE_STATE);
 		}
 		return;
 	}
@@ -1634,6 +1635,9 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 		} else if (atomic_test_bit(&srv->lightness->flags,
 					   LIGHTNESS_SRV_FLAG_IS_ON)) {
 			lightness_on_power_up(srv->lightness);
+			schedule_resume_timer(srv);
+		} else {
+			schedule_resume_timer(srv);
 		}
 		break;
 	default:
@@ -1658,6 +1662,7 @@ static void light_ctrl_srv_reset(struct bt_mesh_model *model)
 
 	ctrl_disable(srv);
 	net_buf_simple_reset(srv->pub.msg);
+	srv->resume = CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY;
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->setup_srv, false, NULL,
