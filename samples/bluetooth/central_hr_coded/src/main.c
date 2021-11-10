@@ -21,75 +21,61 @@
 #include <bluetooth/gatt.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
+#include <bluetooth/services/hrs_client.h>
 
 static struct bt_conn *default_conn;
 
-static struct bt_gatt_subscribe_params subscribe_params;
+static struct bt_hrs_client hrs_c;
 
-static uint8_t notify_func(struct bt_conn *conn,
-		struct bt_gatt_subscribe_params *params,
-		const void *data, uint16_t length)
+static void notify_func(struct bt_hrs_client *hrs_c,
+			const struct bt_hrs_client_measurement *meas,
+			int err)
 {
-	if (!data) {
-		printk("[UNSUBSCRIBED]\n");
-		params->value_handle = 0U;
-		return BT_GATT_ITER_STOP;
+	if (err) {
+		printk("Error during receiving Heart Rate Measurement notification, err: %d\n",
+		       err);
+		return;
 	}
 
-	if (length == 2) {
-		uint8_t hr_bpm = ((uint8_t *)data)[1];
+	printk("Heart Rate Measurement notification received:\n\n");
+	printk("\tHeart Rate Measurement Value Format: %s\n",
+		meas->flags.value_format ? "16 - bit" : "8 - bit");
+	printk("\tSensor Contact detected: %d\n", meas->flags.sensor_contact_detected);
+	printk("\tSensor Contact supported: %d\n", meas->flags.sensor_contact_supported);
+	printk("\tEnergy Expended present: %d\n", meas->flags.energy_expended_present);
+	printk("\tRR-Intervals present: %d\n", meas->flags.rr_intervals_present);
 
-		printk("[NOTIFICATION] Heart Rate %u bpm\n", hr_bpm);
-	} else {
-		printk("[NOTIFICATION] data %p length %u\n", data, length);
+	printk("\n\tHeart Rate Measurement Value: %d bpm\n", meas->hr_value);
+
+	if (meas->flags.energy_expended_present) {
+		printk("\n\tEnergy Expended: %d J\n", meas->energy_expended);
 	}
 
-	return BT_GATT_ITER_CONTINUE;
+	if (meas->flags.rr_intervals_present) {
+		printk("\t RR-intervals: ");
+		for (size_t i = 0; i < meas->rr_intervals_count; i++) {
+			printk("%d ", meas->rr_intervals[i]);
+		}
+	}
+
+	printk("\n");
 }
 
 static void discover_hrs_completed(struct bt_gatt_dm *dm, void *ctx)
 {
 	int err;
 
-	const struct bt_gatt_dm_attr *gatt_chrc;
-	const struct bt_gatt_dm_attr *gatt_desc;
-
-	struct bt_conn *conn = bt_gatt_dm_conn_get(dm);
-
 	printk("The discovery procedure succeeded\n");
 
 	bt_gatt_dm_data_print(dm);
 
-	/* Heart rate characteristic */
-	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_HRS_MEASUREMENT);
-	if (!gatt_chrc) {
-		printk("No heart rate measurement characteristic found");
+	err = bt_hrs_client_handles_assign(dm, &hrs_c);
+	if (err) {
+		printk("Could not init HRS client object (err %d)\n", err);
 		return;
 	}
 
-	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc,
-			BT_UUID_HRS_MEASUREMENT);
-	if (!gatt_desc) {
-		printk("No heat rate measurement characteristic value found");
-		return;
-	}
-
-	subscribe_params.value_handle = gatt_desc->handle;
-
-	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc,
-			BT_UUID_GATT_CCC);
-
-	if (!gatt_desc) {
-		printk("No heart rate CCC descriptor found. "
-		       "Heart rate service does not support notifications.");
-		return;
-	}
-
-	subscribe_params.notify = notify_func;
-	subscribe_params.value = BT_GATT_CCC_NOTIFY;
-	subscribe_params.ccc_handle = gatt_desc->handle;
-
-	err = bt_gatt_subscribe(conn, &subscribe_params);
+	err = bt_hrs_client_measurement_subscribe(&hrs_c, notify_func);
 	if (err && err != -EALREADY) {
 		printk("Subscribe failed (err %d)\n", err);
 	} else {
@@ -279,6 +265,12 @@ void main(void)
 	printk("Bluetooth initialized\n");
 
 	bt_conn_cb_register(&conn_callbacks);
+
+	err = bt_hrs_client_init(&hrs_c);
+	if (err) {
+		printk("Heart Rate Service client failed to init (err %d)\n", err);
+		return;
+	}
 
 	scan_init();
 
