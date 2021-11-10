@@ -493,6 +493,9 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		 */
 		int64_t rsrp_ts = modem_dyn_buf->ts;
 
+		/* Adjust RSRP to dBm */
+		modem_dyn_buf->rsrp -= 140;
+
 		len = snprintk(rsrp, sizeof(rsrp), "%d", modem_dyn_buf->rsrp);
 		if ((len < 0) || (len >= sizeof(rsrp))) {
 			LOG_ERR("Cannot convert RSRP value to string, buffer to small");
