@@ -1200,6 +1200,11 @@ SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
 		 CHANNEL("Max", gen_lvl)),
 };
 
+SENSOR_TYPE(total_dev_runtime) = {
+	.id = BT_MESH_PROP_ID_TOT_DEV_RUNTIME,
+	CHANNELS(CHANNEL("Total device runtime", time_decihour_8)),
+};
+
 /******************************************************************************/
 
 const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id)
