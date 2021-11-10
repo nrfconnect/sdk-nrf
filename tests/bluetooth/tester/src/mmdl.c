@@ -1931,6 +1931,7 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
+	memset(&value, 0, sizeof(value));
 	memcpy(&value, cmd->data, cmd->len);
 
 	if (cmd->ack) {
