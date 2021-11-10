@@ -35,7 +35,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click the :guilabel:`Open Segger Embedded Studio` button next to the version you installed to start SES.
    If you have installed SES manually, run the :file:`emStudio` executable file from the :file:`bin` directory.
 
-   .. figure:: images/gs-assistant_tm_installed.png
+   .. figure:: images/gs-assistant_tm_dropdown.png
       :alt: The Toolchain Manager options after installing the nRF Connect SDK version, cropped
 
       The Toolchain Manager options after installing the |NCS| version
