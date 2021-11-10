@@ -189,6 +189,7 @@ Bluetooth mesh samples
 
   * :ref:`bluetooth_ble_peripheral_lbs_coex` sample, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
   * Support for :ref:`zephyr:nrf21540dk_nrf52840`.
+  * :ref:`central_and_peripheral_hrs` sample.
 
 * Updated:
 
@@ -312,6 +313,10 @@ Bluetooth libraries
   * Added support for the GATT Server API serialization.
   * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
 
+Added:
+
+* :ref:`lib_hrs_client_readme`
+
 Common Application Framework (CAF)
 ----------------------------------
 
@@ -327,6 +332,7 @@ Updated:
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 * The :ref:`caf_power_manager` now has a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
 * Extended the functionality of the :ref:`caf_sensor_sampler` with passive and active power management.
+
 
 Modem libraries
 ---------------
