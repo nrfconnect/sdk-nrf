@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "Kconfig.mcuboot"
 rsource "cddl-gen/Kconfig"
 rsource "mbedtls/Kconfig"
 rsource "memfault/Kconfig"

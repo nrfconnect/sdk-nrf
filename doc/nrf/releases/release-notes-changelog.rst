@@ -531,11 +531,13 @@ MCUboot
 
 The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``680ed07``, plus some |NCS| specific additions.
 
-The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
+The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
-The following list summarizes the most important changes inherited from upstream MCUboot:
+The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
 * The value of the :kconfig:`CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY` Kconfig option does not have to be specified manually as it automatically shares the value with the primary partition.
+
+* Reduced the number of downstream patches to the :file:`ncs/bootloader/mcuboot/boot/zephyr/Kconfig` file.
 
 Mcumgr
 ======
