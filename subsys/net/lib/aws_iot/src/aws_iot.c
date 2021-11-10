@@ -1281,9 +1281,11 @@ start:
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
 			err = aws_iot_input();
-			LOG_ERR("Cloud MQTT input error: %d", err);
-			if (err == -ENOTCONN) {
-				break;
+			if (err) {
+				LOG_ERR("Cloud MQTT input error: %d", err);
+				if (err == -ENOTCONN) {
+					break;
+				}
 			}
 
 			if (atomic_get(&aws_iot_disconnected) == 1) {
