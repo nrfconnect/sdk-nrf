@@ -56,9 +56,15 @@ After programming the sample to your development kit, you can test it by connect
 #. Observe that the received notifications are output in the terminal window::
 
       [SUBSCRIBED]
-      [NOTIFICATION] Heart Rate 113 bpm
-      [NOTIFICATION] Heart Rate 114 bpm
-      [NOTIFICATION] Heart Rate 115 bpm
+      Heart Rate Measurement notification received:
+
+        Heart Rate Measurement Value Format: 8 - bit
+        Sensor Contact detected: 1
+        Sensor Contact supported: 1
+        Energy Expended present: 0
+        RR-Intervals present: 0
+
+        Heart Rate Measurement Value: 113 bpm
 
 Dependencies
 ************
@@ -67,6 +73,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`gatt_dm_readme`
 * :ref:`nrf_bt_scan_readme`
+* :ref:`lib_hrs_client_readme`
 
 In addition, it uses the following Zephyr libraries:
 
