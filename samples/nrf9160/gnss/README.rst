@@ -1,4 +1,5 @@
 .. _gps_with_supl_support_sample:
+.. _agps_sample:
 .. _gnss_sample:
 
 nRF9160: GNSS
