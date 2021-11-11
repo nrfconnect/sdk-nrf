@@ -732,7 +732,7 @@ struct lte_lc_periodic_search_cfg {
 	 *  0: No return pattern.
 	 *  1 - 4: Return to search pattern index 1..4.
 	 */
-	uint8_t return_to_pattern;
+	uint16_t return_to_pattern;
 
 	/** 0: No optimization. Every periodic search shall be all band search.
 	 *  1: Use default optimizations predefined by modem. Predefinition depends on
@@ -740,7 +740,7 @@ struct lte_lc_periodic_search_cfg {
 	 *     See "nRF91 AT Commands - Command Reference Guide" for more information.
 	 *  2 - 20: Every n periodic search must be an all band search.
 	 */
-	uint8_t band_optimization;
+	uint16_t band_optimization;
 
 	/** The number of valid patterns. Range 1 - 4. */
 	size_t pattern_count;
