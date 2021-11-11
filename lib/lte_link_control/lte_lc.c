@@ -891,39 +891,65 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	char active_time_str[9] = {0};
 	char tau_ext_str[9] = {0};
 	char tau_legacy_str[9] = {0};
+	char response[128] = { 0 };
+	const char ch = ',';
+	char *comma_ptr;
 
 	if ((tau == NULL) || (active_time == NULL)) {
 		return -EINVAL;
 	}
 
-	/* We expect match on at least two parameters, <Active-Time> and <Periodic-TAU-ext>.
-	 * Three matches will only happen on modem firmwares >= 1.2.0.
+	/* Format of XMONITOR AT command response:
+	 * %XMONITOR: <reg_status>,[<full_name>,<short_name>,<plmn>,<tac>,<AcT>,<band>,<cell_id>,
+	 * <phys_cell_id>,<EARFCN>,<rsrp>,<snr>,<NW-provided_eDRX_value>,<Active-Time>,
+	 * <Periodic-TAUext>,<Periodic-TAU>]
+	 * We need to parse the three last parameters, Active-Time, Periodic-TAU-ext and
+	 * Periodic-TAU. N.B. Periodic-TAU will not be present on modem firmwares < 1.2.0.
 	 */
-	err = nrf_modem_at_scanf("AT%XMONITOR",
-		"%%XMONITOR: "
-		"%*u,"		/* <reg_status> */
-		"%*[^,],"	/* <full_name> */
-		"%*[^,],"	/* <short_name> */
-		"%*[^,],"	/* <plmn> */
-		"%*[^,],"	/* <tac> */
-		"%*u,"		/* <AcT> */
-		"%*u,"		/* <band> */
-		"%*[^,],"	/* <cell_id> */
-		"%*u,"		/* <phys_cell_id> */
-		"%*u,"		/* <EARFCN> */
-		"%*u,"		/* <rsrp> */
-		"%*u,"		/* <snr> */
-		"%*[^,],"	/* <NW-provided_eDRX_value> */
-		"\"%8[0-1]\","	/* <Active-Time> */
-		"\"%8[0-1]\","	/* <Periodic-TAU-ext> */
-		"\"%8[0-1]\"",	/* <Periodic-TAU>, available only for modem fw >= v1.2.0 */
-		active_time_str, tau_ext_str, tau_legacy_str);
+
+	err = nrf_modem_at_cmd(response, sizeof(response), "AT%%XMONITOR");
 	if (err < 0) {
 		LOG_ERR("AT command failed, error: %d", err);
 		return -EFAULT;
-	} else if (err < 2) {
-		LOG_ERR("Active time and/or TAU interval is missing");
-		return -EBADMSG;
+	}
+
+	/* Skip over first 13 fields in AT cmd response by counting delimiters (commas). */
+	comma_ptr = strchr(response, ch);
+	for (int i = 0; i < 12; i++) {
+		if (comma_ptr) {
+			comma_ptr = strchr(comma_ptr + 1, ch);
+		} else {
+			LOG_ERR("AT command parsing failed");
+			return -EFAULT;
+		}
+	}
+
+	/* The last three fields of AT response looks something like this:
+	 * ,"00011110","00000111","01001001"
+	 * comma_ptr now points the comma before Active-Time. Discard the comma and the quote mark,
+	 * hence + 2, and copy Active-Time into active_time_str. Find the next comma and repeat for
+	 * Periodic-TAU-ext and so forth.
+	 */
+
+	if (comma_ptr) {
+		strncpy(active_time_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
+		return -EFAULT;
+	}
+
+	comma_ptr = strchr(comma_ptr + 1, ch);
+	if (comma_ptr) {
+		strncpy(tau_ext_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
+		return -EFAULT;
+	}
+
+	/* It's ok not to have legacy Periodic-TAU, older FWs don't provide it. */
+	comma_ptr = strchr(comma_ptr + 1, ch);
+	if (comma_ptr) {
+		strncpy(tau_legacy_str, comma_ptr + 2, 8);
 	}
 
 	err = parse_psm(active_time_str, tau_ext_str, tau_legacy_str, &psm_cfg);
