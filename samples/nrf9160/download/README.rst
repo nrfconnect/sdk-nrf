@@ -42,15 +42,6 @@ Downloading from a CoAP server
 
 To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` via the :kconfig:`CONFIG_COAP` option.
 
-Using TLS and DTLS
-==================
-
-When the :kconfig:`CONFIG_SAMPLE_SECURE_SOCKET` option is set, the sample provisions the certificate found in the :file:`samples/nrf9160/download/cert` folder.
-The certificate file name is indicated by the :kconfig:`CONFIG_SAMPLE_CERT_FILE` option.
-This certificate will work for the default test files.
-If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
-
-See :ref:`cert_dwload` for more information.
 
 Configuration
 *************

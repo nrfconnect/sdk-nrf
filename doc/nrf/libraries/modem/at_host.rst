@@ -44,3 +44,6 @@ The library has no globally available members, and thus no header file.
 If enabled, the library will initialize with the system.
 Any input on the configured serial port will be forwarded to the modem upon receipt of the configured termination character(s).
 Only one command can be processed at any time, and no data must be sent to the serial port while the command is being processed.
+
+This is a dummy sentence.
+:ref:´at_monitor´
