@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 
 #include "mosh_print.h"
 #include "link.h"
@@ -868,15 +868,10 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		} else if (link_cmd_args.common_option == LINK_COMMON_ENABLE) {
 			link_sett_save_defcont_enabled(true);
 		} else if (link_cmd_args.common_option == LINK_COMMON_DISABLE) {
-			static const char cgdcont[] = "AT+CGDCONT=0";
-
-			if (at_cmd_write(cgdcont, NULL, 0, NULL) != 0) {
+			if (nrf_modem_at_printf("AT+CGDCONT=0") != 0) {
 				mosh_warn(
 					"ERROR from modem. Getting the initial PDP context back "
 					"wasn't successful.");
-				mosh_warn(
-					"Please note: you might need to visit the pwroff state to "
-					"make an impact to modem.");
 			}
 			link_sett_save_defcont_enabled(false);
 			mosh_print("Custom default context config disabled.");
@@ -911,9 +906,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 		} else if (link_cmd_args.common_option ==
 			   LINK_COMMON_DISABLE) {
-			static const char cgauth[] = "AT+CGAUTH=0,0";
-
-			if (at_cmd_write(cgauth, NULL, 0, NULL) != 0) {
+			if (nrf_modem_at_printf("AT+CGAUTH=0,0") != 0) {
 				mosh_warn("Disabling of auth cannot be done to modem.");
 			}
 			link_sett_save_defcontauth_enabled(false);

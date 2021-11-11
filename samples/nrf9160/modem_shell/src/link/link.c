@@ -13,7 +13,6 @@
 #include <shell/shell.h>
 #include <shell/shell_uart.h>
 
-#include <modem/at_cmd.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
@@ -36,6 +35,7 @@
 #include "sms.h"
 #endif
 
+#include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
@@ -99,7 +99,6 @@ static void link_api_activate_mosh_contexts(
 }
 
 /* ****************************************************************************/
-#define AT_CMD_PDP_CONTEXTS_ACT_READ "AT+CGACT?"
 
 static void link_api_get_pdn_activation_status(
 	struct pdn_activation_status_info pdn_act_status_arr[], int size)
@@ -109,8 +108,7 @@ static void link_api_get_pdn_activation_status(
 	char at_response_str[256];
 	int ret;
 
-	ret = at_cmd_write(AT_CMD_PDP_CONTEXTS_ACT_READ, at_response_str,
-			   sizeof(at_response_str), NULL);
+	ret = nrf_modem_at_cmd(at_response_str, sizeof(at_response_str), "AT+CGACT?");
 	if (ret) {
 		mosh_error("Cannot get PDP contexts activation states, err: %d", ret);
 		return;
@@ -415,14 +413,14 @@ static int link_default_pdp_context_auth_set(void)
 
 static int link_enable_rel14_features(void)
 {
-	static const char rel14feat_at_cmd[] = "AT%REL14FEAT=1,1,1,1,1";
-	enum at_cmd_state state = AT_CMD_OK;
+	int ret;
 
-	at_cmd_write(rel14feat_at_cmd, NULL, 0, &state);
-	if (state != AT_CMD_OK) {
-		mosh_warn(
-			"Release 14 features AT-command \"%s\" returned: ERROR",
-			rel14feat_at_cmd);
+	ret = nrf_modem_at_printf("AT%%REL14FEAT=1,1,1,1,1");
+	if (ret < 0) {
+		mosh_warn("Release 14 features AT-command failed, err %d", ret);
+	} else if (ret > 0) {
+		mosh_warn("Release 14 features AT-command error, type %d err %d",
+			nrf_modem_at_err_type(ret), nrf_modem_at_err(ret));
 	}
 	return 0;
 }
@@ -440,14 +438,14 @@ static int link_normal_mode_at_cmds_run(void)
 			link_sett_normal_mode_at_cmd_str_get(mem_slot_index);
 		len = strlen(normal_mode_at_cmd);
 		if (len) {
-			if (at_cmd_write(normal_mode_at_cmd, response,
-					 sizeof(response), NULL) != 0) {
+			if (nrf_modem_at_cmd(response, sizeof(response), "%s",
+					     normal_mode_at_cmd) != 0) {
 				mosh_error(
 					"Normal mode AT-command from memory slot %d \"%s\" returned: ERROR",
 					mem_slot_index, normal_mode_at_cmd);
 			} else {
 				mosh_print(
-					"Normal mode AT-command from memory slot %d \"%s\" returned:\n\r %s OK",
+					"Normal mode AT-command from memory slot %d \"%s\" returned:\n\r %s",
 					mem_slot_index, normal_mode_at_cmd,
 					response);
 			}
@@ -493,18 +491,12 @@ void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode)
 	}
 }
 
-#define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
-#define AT_MDM_SLEEP_NOTIF_STOP "AT%XMODEMSLEEP=0"
 void link_modem_sleep_notifications_subscribe(uint32_t warn_time_ms,
 					       uint32_t threshold_ms)
 {
-	char buf_sub[48];
 	int err;
 
-	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START,
-		 warn_time_ms, threshold_ms);
-
-	err = at_cmd_write(buf_sub, NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT%%XMODEMSLEEP=1,%d,%d", warn_time_ms, threshold_ms);
 	if (err) {
 		mosh_error("Cannot subscribe to modem sleep notifications, err %d", err);
 	} else {
@@ -516,7 +508,7 @@ void link_modem_sleep_notifications_unsubscribe(void)
 {
 	int err;
 
-	err = at_cmd_write(AT_MDM_SLEEP_NOTIF_STOP, NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT%%XMODEMSLEEP=0");
 	if (err) {
 		mosh_error("Cannot stop modem sleep notifications, err %d", err);
 	} else {
@@ -524,18 +516,12 @@ void link_modem_sleep_notifications_unsubscribe(void)
 	}
 }
 
-#define AT_TAU_NOTIF_START "AT%%XT3412=1,%d,%d"
-#define AT_TAU_NOTIF_STOP "AT%XT3412=0"
 void link_modem_tau_notifications_subscribe(uint32_t warn_time_ms,
 					     uint32_t threshold_ms)
 {
-	char buf_sub[48];
 	int err;
 
-	snprintk(buf_sub, sizeof(buf_sub), AT_TAU_NOTIF_START, warn_time_ms,
-		 threshold_ms);
-
-	err = at_cmd_write(buf_sub, NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT%%XT3412=1,%d,%d", warn_time_ms, threshold_ms);
 	if (err) {
 		mosh_error("Cannot subscribe to TAU notifications, err %d", err);
 	} else {
@@ -547,7 +533,7 @@ void link_modem_tau_notifications_unsubscribe(void)
 {
 	int err;
 
-	err = at_cmd_write(AT_TAU_NOTIF_STOP, NULL, 0, NULL);
+	err = nrf_modem_at_printf("AT%%XT3412=0");
 	if (err) {
 		mosh_error("Cannot stop TAU pre-warning notifications, err %d", err);
 	} else {
@@ -643,19 +629,16 @@ void link_rai_read(void)
 
 int link_rai_enable(bool enable)
 {
-	enum at_cmd_state state = AT_CMD_ERROR;
-	char command[10];
 	int err;
 
-	sprintf(command, "AT%%RAI=%d", enable);
-	err = at_cmd_write(command, NULL, 0, &state);
-	if (state == AT_CMD_OK) {
+	err = nrf_modem_at_printf("AT%%RAI=%d", enable);
+	if (!err) {
 		mosh_print(
 			"Release Assistance Indication functionality set to enabled=%d.\n"
 			"The change will be applied when going to normal mode for the next time.",
 			enable);
 	} else {
-		mosh_error("Error state=%d, error=%d", state, err);
+		mosh_error("RAI AT command failed, error: %d", err);
 		return -EFAULT;
 	}
 	return 0;
