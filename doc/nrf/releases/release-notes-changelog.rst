@@ -183,6 +183,11 @@ nRF9160 samples
   * Added support for nRF Cloud A-GPS and P-GPS.
   * LTE now remains connected to the network all the time when assistance is enabled. You can enable the old behavior with A-GPS using a Kconfig option.
 
+* nRF9160: A-GPS sample:
+
+  * The sample has been removed.
+    nRF Cloud A-GPS and P-GPS are demonstrated in the :ref:`gnss_sample` sample.
+
 Zigbee samples
 --------------
 
