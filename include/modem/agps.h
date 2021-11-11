@@ -7,6 +7,9 @@
 /**
  * @file agps.h
  * @brief Public APIs for the A-GPS library.
+ *
+ * @deprecated since v1.8.0.
+ *
  * @defgroup agps A-GPS library
  * @{
  */
