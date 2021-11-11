@@ -188,6 +188,9 @@ Install west
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`Zephyr's west <zephyr:west>`.
 
+Create a folder named :file:`ncs`.
+This folder will hold all |NCS| repositories.
+
 To install west, complete the following step:
 
 .. tabs::
@@ -244,9 +247,7 @@ For more information about the repository and development model, see the :ref:`d
 
 To clone the repositories, complete the following steps:
 
-1. Create a folder named :file:`ncs`.
-   This folder will hold all |NCS| repositories.
-#. Determine the identifier of the revision of the |NCS| you want to work with.
+1. Determine the identifier of the revision of the |NCS| you want to work with.
    The recommended way is to work with a specific release.
 
    * To work with a specific release, the identifier is the corresponding tag (for example, |release_tt|).

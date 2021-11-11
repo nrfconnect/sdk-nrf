@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp
 
 You can use one or more of the development kits listed above and mix different development kits.
 
@@ -69,8 +69,8 @@ LED 4:
 Button 4:
     Toggles the identification mode on the device.
 
-All other interactions with the application can be handled using serial communication.
-See :ref:`zigbee_cli_reference` for available serial commands.
+All other interactions with the application can be handled using **serial** communication.
+See :ref:`zigbee_cli_reference` for available **serial** commands.
 
 Configuration
 *************
@@ -121,7 +121,7 @@ One of these samples acts as Zigbee Coordinator, the second one as Zigbee Router
 After building the sample and programming it to your development kits, test it by performing the following steps:
 
 #. Turn on the development kits.
-#. Set up the serial connection with the development kits using one of the `Available shell interfaces`_.
+#. Set up the **serial** connection with the development kits using one of the `Available shell interfaces`_.
 #. Set one shell device to work as coordinator by running the following shell command:
 
    .. code-block::
