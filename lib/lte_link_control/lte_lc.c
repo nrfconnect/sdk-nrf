@@ -1102,17 +1102,20 @@ int lte_lc_rai_param_set(const char *value)
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 {
 	int err;
+	uint16_t status_tmp;
 
 	if (status == NULL) {
 		return -EINVAL;
 	}
 
 	/* Read network registration status */
-	err = nrf_modem_at_scanf("AT%XMONITOR", "%%XMONITOR: %hhu", status);
+	err = nrf_modem_at_scanf("AT%XMONITOR", "%%XMONITOR: %hu", &status_tmp);
 	if (err != 1) {
 		LOG_ERR("Could not get registration status, error: %d", err);
 		return -EFAULT;
 	}
+
+	*status = status_tmp;
 
 	return 0;
 }
@@ -1261,17 +1264,20 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
 {
 	int err;
+	uint16_t mode_tmp;
 
 	if (mode == NULL) {
 		return -EINVAL;
 	}
 
 	/* Exactly one parameter is expected to match. */
-	err = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hhu", mode);
+	err = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hu", &mode_tmp);
 	if (err != 1) {
 		LOG_ERR("AT command failed, nrf_modem_at_scanf() returned error: %d", err);
 		return -EFAULT;
 	}
+
+	*mode = mode_tmp;
 
 	return 0;
 }
@@ -1339,6 +1345,7 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 {
 	int err;
+	uint16_t mode_tmp;
 
 	if (mode == NULL) {
 		return -EINVAL;
@@ -1350,8 +1357,8 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 		"%*u,"		/* <stat> */
 		"%*[^,],"	/* <tac> */
 		"%*[^,],"	/* <ci> */
-		"%hhu",		/* <AcT> */
-		mode);
+		"%hu",		/* <AcT> */
+		&mode_tmp);
 	if (err == -NRF_EBADMSG) {
 		/* The AT command was successful, but there were no matches.
 		 * This is not an error, but the LTE mode is unknown.
@@ -1363,6 +1370,8 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 		LOG_ERR("Could not get the LTE mode, error: %d", err);
 		return -EFAULT;
 	}
+
+	*mode = mode_tmp;
 
 	switch (*mode) {
 	case LTE_LC_LTE_MODE_NONE:
@@ -1410,6 +1419,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 	int result;
 	/* PLMN field is a string of maximum 6 characters, plus null termination. */
 	char plmn_str[7] = {0};
+	uint16_t rrc_state_tmp, energy_estimate_tmp, tau_trig_tmp, ce_level_tmp;
 
 	if (params == NULL) {
 		return -EINVAL;
@@ -1442,27 +1452,27 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 	err = nrf_modem_at_scanf(
 		AT_CONEVAL_READ,
 		"%%CONEVAL: "
-		"%u,"		/* <result> */
-		"%u,"		/* <rrc_state> */
-		"%u,"		/* <energy_estimate> */
-		"%d,"		/* <rsrp> */
-		"%d,"		/* <rsrq> */
-		"%u,"		/* <snr> */
+		"%d,"		/* <result> */
+		"%hu,"		/* <rrc_state> */
+		"%hu,"		/* <energy_estimate> */
+		"%hd,"		/* <rsrp> */
+		"%hd,"		/* <rsrq> */
+		"%hd,"		/* <snr> */
 		"\"%x\","	/* <cell_id> */
 		"\"%6[^\"]\","	/* <plmn> */
-		"%u,"		/* <phys_cell_id> */
-		"%u,"		/* <earfcn> */
-		"%u,"		/* <band> */
-		"%u,"		/* <tau_triggered> */
-		"%u,"		/* <ce_level> */
-		"%d,"		/* <tx_power> */
-		"%u,"		/* <tx_repetitions> */
-		"%u,"		/* <rs_repetitions> */
-		"%d",		/* <dl-pathloss> */
-		&result, &params->rrc_state, &params->energy_estimate,
+		"%hd,"		/* <phys_cell_id> */
+		"%d,"		/* <earfcn> */
+		"%hd,"		/* <band> */
+		"%hu,"		/* <tau_triggered> */
+		"%hu,"		/* <ce_level> */
+		"%hd,"		/* <tx_power> */
+		"%hd,"		/* <tx_repetitions> */
+		"%hd,"		/* <rx_repetitions> */
+		"%hd",		/* <dl-pathloss> */
+		&result, &rrc_state_tmp, &energy_estimate_tmp,
 		&params->rsrp, &params->rsrq, &params->snr, &params->cell_id,
 		plmn_str, &params->phy_cid, &params->earfcn, &params->band,
-		&params->tau_trig, &params->ce_level, &params->tx_power,
+		&tau_trig_tmp, &ce_level_tmp, &params->tx_power,
 		&params->tx_rep, &params->rx_rep, &params->dl_pathloss);
 	if (err < 0) {
 		LOG_ERR("AT command failed, error: %d", err);
@@ -1474,6 +1484,11 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 		LOG_ERR("AT command parsing failed, error: %d", err);
 		return -EBADMSG;
 	}
+
+	params->rrc_state = rrc_state_tmp;
+	params->energy_estimate = energy_estimate_tmp;
+	params->tau_trig = tau_trig_tmp;
+	params->ce_level = ce_level_tmp;
 
 	/* Read MNC and store as integer. The MNC starts as the fourth character
 	 * in the string, following three characters long MCC.
@@ -1520,9 +1535,9 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
 
 	err = nrf_modem_at_printf(
 		"AT%%PERIODICSEARCHCONF=0," /* Write mode */
-		"%u,"  /* <loop> */
-		"%u,"  /* <return_to_pattern> */
-		"%u,"  /* <band_optimization> */
+		"%hu,"  /* <loop> */
+		"%hu,"  /* <return_to_pattern> */
+		"%hu,"  /* <band_optimization> */
 		"%s%s" /* <pattern_1> */
 		"%s%s" /* <pattern_2> */
 		"%s%s" /* <pattern_3> */
@@ -1581,6 +1596,7 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 
 	int err;
 	char pattern_buf[4][40];
+	uint16_t loop_tmp;
 
 	if (!cfg) {
 		return -EINVAL;
@@ -1593,14 +1609,14 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 
 	err = nrf_modem_at_scanf("AT%PERIODICSEARCHCONF=1",
 		"%%PERIODICSEARCHCONF: "
-		"%u," /* <loop> */
-		"%u," /* <return_to_pattern> */
-		"%u," /* <band_optimization> */
+		"%hu," /* <loop> */
+		"%hu," /* <return_to_pattern> */
+		"%hu," /* <band_optimization> */
 		"\"%40[^\"]\","  /* <pattern_1> */
 		"\"%40[^\"]\","  /* <pattern_2> */
 		"\"%40[^\"]\","  /* <pattern_3> */
 		"\"%40[^\"]\"",  /* <pattern_4> */
-		&cfg->loop, &cfg->return_to_pattern, &cfg->band_optimization,
+		&loop_tmp, &cfg->return_to_pattern, &cfg->band_optimization,
 		pattern_buf[0], pattern_buf[1], pattern_buf[2], pattern_buf[3]
 	);
 	if (err == -NRF_EBADMSG) {
@@ -1611,6 +1627,8 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 		/* No pattern found */
 		return -EBADMSG;
 	}
+
+	cfg->loop = loop_tmp;
 
 	/* Pattern count is matched parameters minus 3 for loop, return_to_pattern
 	 * and band_optimization.
