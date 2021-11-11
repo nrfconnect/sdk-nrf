@@ -14,6 +14,7 @@
 
 	chosen {
 		zephyr,entropy = &rng;
+		nordic,pm-ext-flash = &mx25r64;
 	};
 
 	/*
