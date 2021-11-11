@@ -630,3 +630,6 @@ In the default configuration:
 * Logging output from the application core sample is available on the third (last) COM port.
 * Logging output from the network core (if available) is routed to the first COM port.
 * The second (middle) COM port is silent.
+
+External link for Nordic Semiconductor, see
+`Nordic Semiconductor website`_.
