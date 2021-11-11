@@ -265,6 +265,10 @@ Updated:
   * Added logging on modem errors.
   * Changed the return values on modem errors to -ENOEXEC to avoid conflicts with return of other positive values.
 
+* A-GPS library:
+
+  * The A-GPS library has been deprecated in favor of using the :ref:`lib_nrf_cloud_agps` library directly.
+
 Libraries for networking
 ------------------------
 
