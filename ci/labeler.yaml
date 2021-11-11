@@ -1,0 +1,238 @@
+# https://github.com/actions/labeler/blob/main/README.md
+
+# When extending this, remember that in the PR, the labeler will run against
+# the labeler.yml in master, more info:
+# https://github.com/actions/labeler/issues/12
+# This means your changes won't be tested. To test your branch, make a second
+# branch with dummy changes, and open a PR on your own fork, against the
+# first branch.
+
+manifest:
+  - 'west.yml'
+
+doc-required:
+  - 'doc/.*/?.*'
+  - '.*/?.*\.rst'
+
+CI-libmodem-test:
+  - 'samples/nrf9160/.*/?.*'
+  - 'lib/lte_link_control/.*/?.*'
+  - 'lib/nrf_modem_lib/.*'
+
+CI-lwm2m-test:
+  - 'samples/nrf9160/lwm2m_.*/?.*'
+  - 'lib/bin/.*'
+  - 'lib/lte_link_control/.*/?.*'
+  - 'lib/nrf_modem_lib/.*'
+
+CI-boot-dfu-test:
+  - 'include/bl.*'
+  - 'include/fprotect.h'
+  - 'include/fw_info\..*'
+  - 'include/mgmt/.*'
+  - 'include/spm.h'
+  - 'include/dfu/.*/?.*'
+  - 'include/net/.*/?.*'
+  - 'cmake/.*'
+  - 'lib/lte_link_control/.*/?.*'
+  - 'modules/mcuboot/.*/?.*'
+  - 'samples/nrf9160/.*fota/.*/?.*'
+  - 'samples/nrf9160/fmfu_smp_svr/.*/?.*'
+  - 'samples/nrf9160/http_update/.*/?.*'
+  - 'samples/nrf5340/netboot/.*'
+  - 'samples/bootloader/.*/?.*'
+  - 'scripts/bootloader/.*/?.*'
+  - 'subsys/bootloader/.*/?.*'
+  - 'subsys/nonsecure/.*'
+  - 'subsys/partition_manager/.*'
+  - 'subsys/dfu/.*'
+  - 'subsys/fw_info/.*/?.*'
+  - 'subsys/mgmt/.*/?.*'
+  - 'subsys/pcd/.*'
+  - 'subsys/spm/.*'
+  - 'subsys/net/lib/.*fota*/.*/?.*'
+  - 'subsys/net/lib/download_client/.*/?.*'
+  - 'tests/subsys/bootloader/.*/?.*'
+  - 'tests/subsys/dfu/.*/?.*'
+  - 'tests/subsys/fw_info/.*/?.*'
+  - 'tests/subsys/net/.*/?.*'
+
+CI-all-test:
+  - '.*/?.*partition_manager*/.*/?.*'
+  - '.*/?.*partition_manager*'
+
+CI-tfm-test:
+  - 'cmake/.*'
+  - 'modules/nrfxlib/.*/?.*'
+  - 'modules/tfm/.*/?.*'
+  - 'samples/tfm/.*/?.*'
+  - 'subsys/bootloader/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+  - 'tests/modules/tfm'
+  - 'tests/subsys/spm/secure_services/.*/?.*'
+
+CI-ble-test:
+  - any:
+    - 'subsys/bluetooth/.*/?.*'
+    - '!subsys/bluetooth/mesh/?.*'
+  - any:
+    - 'include/bluetooth/.*/?.*'
+    - '!include/bluetooth/mash/?.*'
+  - any:
+    - 'samples/bluetooth/.*/?.*'
+    - '!samples/bluetooth/mesh/?.*'
+  - 'subsys/nrf_rpc/.*/?.*'
+  - 'subsys/mpsl/.*/?.*'
+  - 'drivers/mpsl/.*/?.*'
+
+CI-mesh-test:
+  - 'subsys/bluetooth/mesh/.*/?.*'
+  - 'include/bluetooth/mesh/.*/?.*'
+  - 'tests/subsys/bluetooth/mesh/.*/?.*'
+
+CI-zigbee-test:
+  - 'include/zigbee/.*/?.*'
+  - 'samples/zigbee/.*/?.*'
+  - 'subsys/dfu/.*/?.*'
+  - 'subsys/zigbee/.*/?.*'
+  - 'tests/subsys/zigbee/.*/?.*'
+  - 'subsys/mpsl/.*/?.*'
+  - 'subsys/ieee802154/.*/?.*'
+  - 'drivers/mpsl/.*/?.*'
+  - 'dts/bindings/radio_fem/.*/?.*'
+  - 'samples/nrf5340/multiprotocol_rpmsg/.*/?.*'
+  - 'modules/nrfxlib/nrf_802154/.*/?.*'
+  - any:
+    - 'subsys/bluetooth/.*/?.*'
+    - '!subsys/bluetooth/mesh/?.*'
+  - any:
+    - 'include/bluetooth/.*/?.*'
+    - '!include/bluetooth/mesh/?.*'
+
+CI-thingy91-test:
+  - 'applications/asset_tracker/.*/?.*'
+  - 'ext/cjson/.*/?.*'
+  - 'drivers/gps/gps_sim/.*/?.*'
+  - 'subsys/net/lib/nrf_cloud/.*/?.*'
+  - 'subsys/net/lib/cloud/.*/?.*'
+  - 'lib/date_time/.*/?.*'
+  - 'drivers/sensor/sensor_sim/.*/?.*'
+  - 'samples/nrf9160/udp/.*/?.*'
+
+CI-desktop-test:
+  - 'applications/nrf_desktop/.*/?.*'
+  - 'boards/arm/.*dmouse*/.*/?.*'
+  - 'boards/arm/.*kbd*/.*/?.*'
+  - 'boards/arm/.*dongle*/.*/?.*'
+  - 'boards/arm/.*gmouse*/.*/?.*'
+  - 'cmake/.*'
+  - 'drivers/sensor/pmw3360/.*/?.*'
+  - 'drivers/sensor/paw3212/.*/?.*'
+  - 'dts/bindings/sensor/pixart*'
+  - 'include/bluetooth/services/.*/?.*'
+  - 'include/bluetooth/.*'
+  - 'include/caf/.*/?.*'
+  - 'include/sensor/.*'
+  - 'include/event_manager.h'
+  - 'include/profiler.h'
+  - 'scripts/hid_configurator/.*/?.*'
+  - 'subsys/bluetooth/services/.*/?.*'
+  - 'subsys/bluetooth/.*'
+  - 'subsys/caf/.*/?.*'
+  - 'subsys/event_manager/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+
+CI-crypto-test:
+  - 'cmake/.*'
+  - 'drivers/entropy/.*'
+  - 'drivers/hw_cc310/.*'
+  - 'drivers/net/.*'
+  - 'samples/crypto/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+  - 'tests/crypto/.*/?.*'
+
+CI-rs-test:
+  - 'subsys/mpsl/.*/?.*'
+  - 'subsys/ieee802154/.*/?.*'
+  - 'drivers/mpsl/.*/?.*'
+  - 'dts/bindings/radio_fem/.*/?.*'
+  - 'samples/nrf5340/multiprotocol_rpmsg/.*/?.*'
+  - 'modules/nrfxlib/nrf_802154/.*/?.*'
+  - 'samples/CMakeLists.txt'
+
+CI-homekit-test:
+  - 'subsys/mpsl/.*/?.*'
+  - 'subsys/ieee802154/.*/?.*'
+  - 'drivers/mpsl/.*/?.*'
+  - 'dts/bindings/radio_fem/.*/?.*'
+  - 'modules/nrfxlib/nrf_802154/.*/?.*'
+  - 'drivers/hw_cc310/.*'
+  - 'subsys/bootloader/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+  - 'modules/mcuboot/.*/?.*'
+  - any:
+    - 'subsys/bluetooth/.*/?.*'
+    - '!subsys/bluetooth/mesh/?.*'
+  - any:
+    - 'include/bluetooth/.*/?.*'
+    - '!include/bluetooth/mesh/?.*'
+
+CI-thread-test:
+  - 'samples/openthread/.*/?.*'
+  - 'subsys/mpsl/.*/?.*'
+  - 'subsys/ieee802154/.*/?.*'
+  - 'subsys/net/lib/coap_utils/.*/?.*'
+  - 'subsys/net/openthread/.*/?.*'
+  - 'drivers/mpsl/.*/?.*'
+  - 'drivers/hw_cc310/.*'
+  - 'modules/nrfxlib/nrf_802154/.*/?.*'
+
+CI-nfc-test:
+  - 'subsys/nfc/.*/?.*'
+  - 'include/nfc/.*/?.*'
+  - 'lib/st25r3911b/.*/?.*'
+  - 'samples/nfc/.*/?.*'
+  - 'samples/bluetooth/peripheral_nfc_pairing/.*/?.*'
+  - 'samples/bluetooth/central_nfc_pairing/.*/?.*'
+  - 'samples/bluetooth/peripheral_hids_keyboard/.*/?.*'
+
+CI-matter-test:
+  - 'drivers/mpsl/.*/?.*'
+  - 'drivers/hw_cc310/.*'
+  - 'drivers/net/.*'
+  - 'subsys/mpsl/.*/?.*'
+  - 'subsys/ieee802154/.*/?.*'
+  - 'subsys/bootloader/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+  - 'subsys/nfc/.*/?.*'
+  - 'subsys/nrf_rpc/.*/?.*'
+  - 'subsys/net/.*/?.*'
+  - 'modules/tfm/.*/?.*'
+  - 'modules/nrfxlib/nrf_802154/.*/?.*'
+  - 'modules/mcuboot/.*/?.*'
+  - 'samples/matter/.*/?.*'
+  - 'applications/matter_weather_station/.*/?.*'
+  - 'samples/nrf5340/multiprotocol_rpmsg/.*/?.*'
+
+CI-find-my-test:
+  - 'include/dfu/.*/?.*'
+  - 'include/nfc/.*/?.*'
+  - 'include/dk_buttons_and_leds.h'
+  - 'include/event_manager.h'
+  - 'lib/dk_buttons_and_leds/.*/?.*'
+  - 'subsys/bootloader/.*/?.*'
+  - 'subsys/dfu/dfu_target/.*/?.*'
+  - 'subsys/event_manager/.*/?.*'
+  - 'subsys/nfc/.*/?.*'
+  - 'subsys/partition_manager/.*/?.*'
+  - 'modules/mcuboot/.*/?.*'
+  - any:
+    - 'include/bluetooth/.*/?.*'
+    - '!include/bluetooth/mesh/?.*'
+  - any:
+    - 'subsys/bluetooth/.*/?.*'
+    - '!subsys/bluetooth/mesh/?.*'
+
+CI-rpc-test:
+  - 'subsys/nrf_rpc/.*/?.*'
+  - 'samples/nrf_rpc/.*/?.*'
