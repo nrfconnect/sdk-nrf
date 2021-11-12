@@ -35,6 +35,8 @@ extensions = [
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
     "zephyr.kconfig-role",
+    "zephyr.dtcompatible-role",
+    "zephyr.link-roles",
     "ncs_cache",
     "zephyr.external_content",
     "zephyr.doxyrunner",
@@ -158,7 +160,13 @@ external_content_contents = [
     (NRF_BASE, "scripts/**/*.rst"),
     (NRF_BASE, "tests/**/*.rst"),
 ]
-external_content_keep = ["versions.txt"]
+
+external_content_keep = [
+    "versions.txt",
+    "reference/devicetree/bindings.rst",
+    "reference/devicetree/bindings/**/*",
+    "reference/devicetree/compatibles/**/*"
+]
 
 # Options for table_from_rows --------------------------------------------------
 
