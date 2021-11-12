@@ -90,6 +90,28 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    .. build_SES_projimport_start
 
 4. Click :guilabel:`OK` to add the project to SES.
+
+Activating a license for the first time
+=======================================
+
+   If you are adding the project for the first time, you need to request and activate a license.
+   The following notification appears after you click :guilabel:`OK` to add the project to SES:
+
+      .. figure:: images/ses_license_build.png
+         :alt: SEGGER Embedded Studio Dashboard notification about missing license
+
+         No commercial-use license detected SES prompt
+
+   To request and activate the license, complete the following steps:
+
+      a. Click :guilabel:`Activate Your Free License`.
+         A request form appears.
+      #. Fill in your information and click :guilabel:`Request License`.
+         The license is sent to you in an email.
+      #. After you receive your license key, click :guilabel:`Enter Activation Key` to activate the license.
+      #. Copy-paste the license key and click :guilabel:`Install License`.
+         The license activation window closes.
+
    You can now work with the project in the IDE.
 
    .. build_SES_projimport_note_start
