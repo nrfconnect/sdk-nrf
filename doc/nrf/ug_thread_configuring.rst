@@ -45,7 +45,7 @@ Configure OpenThread to build from source
   Set :kconfig:`CONFIG_OPENTHREAD_SOURCES` to build the libraries from source.
   This option is selected by default.
 
-  This alternative allows you to define :ref:`ug_thread_configuring_additional` one by one.
+  This allows you to define :ref:`ug_thread_configuring_additional` one by one.
   By default, the :ref:`thread_ug_feature_sets` option is set to custom (:kconfig:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`), which allows you to create your own OpenThread stack configuration.
   However, you can select other feature sets as a basis.
 
@@ -55,7 +55,7 @@ Configure OpenThread to use pre-built libraries
   Set :kconfig:`CONFIG_OPENTHREAD_LIBRARY_1_1` to use pre-built libraries.
   Select one of the :ref:`thread_ug_feature_sets` by enabling :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
 
-  This alternative disables building OpenThread from source files and links pre-built libraries instead.
+  This disables building OpenThread from source files and links pre-built libraries instead.
 
 .. _ug_thread_configuring_additional:
 
@@ -82,8 +82,6 @@ See the following files for more options that you might want to change:
 
 .. note::
     You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/samples/openthread/common/overlay-ot-defaults.conf` file.
-
-For other optional configuration options, see the following sections.
 
 .. _ug_thread_configuring_eui64:
 
@@ -249,7 +247,7 @@ Minimal Thread Device (MTD)
   Set :kconfig:`CONFIG_OPENTHREAD_MTD` to configure the device as MTD.
 
   By default, the MTD operates as Minimal End Device (MED).
-  To make it operate as Sleepy End Device (SED), enabling :kconfig:`CONFIG_OPENTHREAD_MTD_SED`.
+  To make it operate as Sleepy End Device (SED), set :kconfig:`CONFIG_OPENTHREAD_MTD_SED`.
 
 .. _thread_ug_prebuilt:
 
@@ -443,8 +441,7 @@ You can update the :ref:`nrfxlib:ot_libs` in nrfxlib when using any Thread sampl
 Use this functionality for :ref:`certification <ug_thread_cert>` of your configuration of the OpenThread libraries, for example.
 
 .. note::
-    The libraries destination directory can differ.
-    When you selected :kconfig:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location depends on the chosen :ref:`nrf_security backend <nrfxlib:nrf_security_readme>`, either :kconfig:`CONFIG_CC3XX_BACKEND` or :kconfig:`CONFIG_OBERON_BACKEND`.
+    When you select :kconfig:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the destination directory for the libraries depends on the chosen :ref:`nrf_security backend <nrfxlib:nrf_security_readme>`, either :kconfig:`CONFIG_CC3XX_BACKEND` or :kconfig:`CONFIG_OBERON_BACKEND`.
 
 Updating libraries without debug symbols
 ----------------------------------------
@@ -467,8 +464,9 @@ The :kconfig:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option will be di
 Updating libraries to debug version
 -----------------------------------
 
-You can also install only the debug version of the current OpenThread libraries (from Zephyr).
-This can be useful when debugging, but will take a significant amount of memory of the PC storage - it should be taken into account if one intends to commit those libraries to the repository.
+You can also install the debug version of the current OpenThread libraries (from Zephyr).
+This can be useful when debugging, but will take a significant amount of storage memory.
+Take this into account while committing those libraries to the repository.
 
 To update the nrfxlib libraries with debug symbols, run the following command:
 
