@@ -52,6 +52,7 @@ The installation process is different depending on your operating system.
          :dedent: 6
          :start-after: .. _install_dependencies_windows:
          :end-before: #. Close the window and open a new
+      Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
 
    .. group-tab:: Linux
 
@@ -63,7 +64,7 @@ The installation process is different depending on your operating system.
          :start-after: .. _install_dependencies_ubuntu:
          :end-before: Check those against the versions in the table in the beginning of this section.
 
-      Check those against the versions in the :ref:`Required tools table <req_tools_table>`.
+      Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
       Refer to the :ref:`zephyr:installation_linux` page for additional information on updating the dependencies manually.
       If you are using other Linux-based operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
 
@@ -81,7 +82,7 @@ The installation process is different depending on your operating system.
          :start-after: .. _install_dependencies_macos:
          :end-before: group-tab:: Windows
 
-
+      Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
       Also see :ref:`zephyr:mac-setup-alts` in the Zephyr documentation for additional information.
 
 ..
@@ -194,7 +195,7 @@ To install west, complete the following step:
 
    .. group-tab:: Windows
 
-      Enter the following command in a command-line window in the :file:`ncs` folder:
+      Enter the following command in a command-line window:
 
       .. parsed-literal::
          :class: highlight
@@ -203,7 +204,7 @@ To install west, complete the following step:
 
    .. group-tab:: Linux
 
-      Enter the following command in a terminal window in the :file:`ncs` folder:
+      Enter the following command in a terminal window:
 
       .. parsed-literal::
          :class: highlight
@@ -212,7 +213,7 @@ To install west, complete the following step:
 
    .. group-tab:: macOS
 
-      Enter the following command in a terminal window in the :file:`ncs` folder:
+      Enter the following command in a terminal window:
 
       .. parsed-literal::
          :class: highlight
@@ -469,9 +470,7 @@ Visual Studio Code extension
 You can install the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|.
 SES is free of charge for use with Nordic Semiconductor devices.
 
-To install the Nordic Edition, complete the following steps:
-
-1. Download the package for your operating system:
+To install the Nordic Edition, download the package for your operating system:
 
     .. tabs::
 
@@ -489,30 +488,7 @@ To install the Nordic Edition, complete the following steps:
 
           * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
 
-#. Extract the downloaded package in the directory of your choice.
-#. Register and activate a free license.
-   |SES| is free of charge for use with Nordic Semiconductor devices, but you still need to request and activate a license.
-   Complete the following steps:
-
-    a. Navigate to the :file:`bin` directory.
-    #. Run the :file:`emStudio` executable file.
-       SES first opens the Options window, which you can close at this stage, and then the Dashboard window, which informs you about the missing license.
-
-        .. figure:: images/ses_license.PNG
-           :alt: SEGGER Embedded Studio Dashboard notification about missing license
-
-           No commercial-use license detected SES prompt
-
-    #. Click :guilabel:`Activate Your Free License`.
-       A request form appears.
-
-    #. Fill in your information and click :guilabel:`Request License`.
-       The license is sent to you in an email.
-
-    #. After you receive your license key, click :guilabel:`Enter Activation Key` to activate the license.
-
-    #. Copy-paste the license key and click :guilabel:`Install License`.
-       The license activation window will close and SES will open the Project Explorer window.
+Extract the downloaded package in the directory of your choice.
 
 .. note::
     Notifications about newer versions of SES are disabled in the SES Nordic Edition.
@@ -537,20 +513,17 @@ If you chose to use |SES| for :ref:`building and programming a sample applicatio
 
    a. Navigate to the :file:`bin` directory.
    #. Run the :file:`emStudio` executable file.
-   #. Select :guilabel:`File` > :guilabel:`Open nRF Connect SDK Project`.
+   #. Click :guilabel:`OK` on the pop-up window that opens.
 
-      .. figure:: images/ses_open.png
-         :alt: Open nRF Connect SDK Project menu
+      .. figure:: images/ses_GNU_notset.png
+         :alt: Open GNU ARM Embedded Toolchain directory
 
-         Open nRF Connect SDK Project menu
+         Open GNU ARM Embedded Toolchain directory
 
-   #. Set the Zephyr Base directory to the full path to :file:`ncs/zephyr`.
-      The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, :file:`c:/gnuarmemb`).
-
-      .. figure:: images/ses_notset.png
-         :alt: Zephyr Base Not Set prompt
-
-         Zephyr Base Not Set prompt
+   #. Set the GNU ARM Embedded Toolchain directory path to the location where it was downloaded (for example, :file:`c:/gnuarmemb`).
+   #. Close the :guilabel:`nRF Connect options` window.
+   #. Navigate to :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab.
+   #. Set the full path of the Zephyr Base directory to :file:`ncs/zephyr`.
 
 #. Set up executables.
    The process is different depending on your operating system.
