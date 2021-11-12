@@ -12,12 +12,11 @@ config APP_REQUEST_GPS_ON_INITIAL_SAMPLING
 
 config APP_REQUEST_NEIGHBOR_CELLS_DATA
 	bool "Request neighbor cells data"
-	depends on AWS_IOT || NRF_CLOUD_MQTT
+	depends on AWS_IOT || NRF_CLOUD_MQTT || AZURE_IOT_HUB
 	default y
 	help
 	  Include LTE neighbor cell measurement data in regular sampling requests.
 	  The data will be encoded together with the other sampled data and sent to cloud,
 	  where it can be used to determine the device's location.
-	  Currently this option is only implemented when configuring for AWS IoT.
 
 endmenu
