@@ -36,6 +36,7 @@ Application development
   * Added an option to control the inclusion of RPMsg samples on the nRF53 network core :kconfig:`NCS_INCLUDE_RPMSG_CHILD_IMAGE`.
   * Fixed the NCSIDB-581 bug where application signing and file conversion for Device Firmware Update (DFU) could fail in SEGGER Embedded Studio during a build.
   * Added possibility to enable build warning when experimental features are enabled, NCSDK-6336.
+  * Updated generation of the :file:`manifest.json` file in the :file:`dfu_application.zip` and :file:`dfu_mcuboot.zip` files to include nrf and zephyr revisions reported by the new build file :file:`zephyr.meta`.
 
 Protocols
 =========

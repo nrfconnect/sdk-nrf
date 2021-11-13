@@ -145,6 +145,26 @@ When the device receives the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the 
 The message payload of the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event contains the :c:enum:`nrf_cloud_fota_type` value.
 If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM`, the application can optionally avoid a reboot by performing reinitialization of the modem and calling the :c:func:`nrf_cloud_modem_fota_completed` function.
 
+Building FOTA images
+====================
+The |NCS| build system places output images in the :file:`<build folder>/zephyr` folder.
+
+If :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the file :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
+Further, if :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER` are also set, then the application will be able to process FOTA updates.
+
+The :file:`app_update.bin` file is a signed version of your application.
+The signature matches to what MCUboot expects, so it allows this file to be used as an update.
+The build system creates a :file:`manifest.json` file using information in the :file:`zephyr.meta` output file.
+This includes the Zephyr and |NCS| git hashes for the commits used to build the application.
+If your working tree contains uncommitted changes, the build system adds the suffix ``-dirty`` to the relevant version field.
+
+When you use the zip file to create an update bundle, the `nRF Cloud`_ UI populates the ``Name`` and ``Version`` fields from the :file:`manifest.json` file.
+However, you are free to change them as needed.
+The UI populates the ``Version`` field from only the |NCS| version field in the :file:`manifest.json` file.
+
+Alternatively, you can use the :file:`app_update.bin` file to create an update bundle, but you need to enter the ``Name`` and ``Version`` fields manually.
+See `nRF Cloud Getting Started FOTA documentation`_ to learn how to create an update bundle.
+
 .. _lib_nrf_cloud_data:
 
 Sending sensor data
