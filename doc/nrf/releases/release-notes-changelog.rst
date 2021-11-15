@@ -377,6 +377,7 @@ Libraries for networking
     Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
   * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
   * Added handling of MQTT ping failures and MQTT input failures.
+  * Updated the :c:func:`nrf_cloud_configured_client_id_get` function to use :c:func:`nrf_modem_at_cmd` instead of the deprecated :c:func:`at_cmd_write`.
 
 * :ref:`lib_nrf_cloud_agps` library:
 
