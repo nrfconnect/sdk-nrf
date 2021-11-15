@@ -83,7 +83,9 @@ static struct usb_hid_device *dev_to_hid(const struct device *dev)
 	return usb_hid;
 }
 
-static int get_report(const struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
+static int get_report(const struct device *dev,
+		      struct usb_setup_packet *setup,
+		      int32_t *len_to_set, uint8_t **data)
 {
 	uint8_t request_value[2];
 
@@ -93,8 +95,8 @@ static int get_report(const struct device *dev, struct usb_setup_packet *setup, 
 	case REPORT_TYPE_FEATURE:
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 		    (request_value[0] == REPORT_ID_USER_CONFIG) &&
-		    (*len == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
-			size_t length = *len;
+		    (setup->wLength == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
+			size_t length = setup->wLength;
 			uint8_t *buffer = *data;
 
 			/* HID Feature report ID is specific to USB.
@@ -117,6 +119,8 @@ static int get_report(const struct device *dev, struct usb_setup_packet *setup, 
 				memset(&buffer[1], 0, length - 1);
 			}
 
+			*len_to_set = length;
+
 			return err;
 		}
 		break;
@@ -138,7 +142,9 @@ static int get_report(const struct device *dev, struct usb_setup_packet *setup, 
 	return -ENOTSUP;
 }
 
-static int set_report(const struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
+static int set_report(const struct device *dev,
+		      struct usb_setup_packet *setup,
+		      int32_t *len, uint8_t **data)
 {
 	uint8_t request_value[2];
 
@@ -148,9 +154,9 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 	case REPORT_TYPE_FEATURE:
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 		    (request_value[0] == REPORT_ID_USER_CONFIG) &&
-		    (*len == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
+		    (setup->wLength == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
 			if (dev == usb_hid_device[0].dev) {
-				size_t length = *len;
+				size_t length = setup->wLength;
 				uint8_t *buffer = *data;
 
 				/* HID Feature report ID is specific to USB.
@@ -178,12 +184,12 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 
 			if ((request_value[0] == REPORT_ID_KEYBOARD_LEDS) &&
 			    (usb_hid->hid_protocol == HID_PROTOCOL_REPORT) &&
-			    (*len == (REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t)))) {
+			    (setup->wLength == (REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t)))) {
 				/* Handle HID keyboard LEDs report. */
 			} else if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
 				  (request_value[0] == REPORT_ID_RESERVED) &&
 				  (usb_hid->hid_protocol == HID_PROTOCOL_BOOT) &&
-				  (*len == REPORT_SIZE_KEYBOARD_LEDS)) {
+				  (setup->wLength == REPORT_SIZE_KEYBOARD_LEDS)) {
 				/* Handle HID boot keyboard LEDs report. */
 			} else {
 				/* Ignore invalid report. */
@@ -199,12 +205,12 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 
 			uint8_t *buf = event->dyndata.data;
 
-			if (*len == REPORT_SIZE_KEYBOARD_LEDS) {
+			if (setup->wLength == REPORT_SIZE_KEYBOARD_LEDS) {
 				*buf = REPORT_ID_KEYBOARD_LEDS;
 				buf++;
 			}
 
-			memcpy(buf, *data, *len);
+			memcpy(buf, *data, setup->wLength);
 
 			EVENT_SUBMIT(event);
 			return 0;
