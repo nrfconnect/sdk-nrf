@@ -30,7 +30,7 @@
 #define DATA_GROUP     "messageType"
 #define DATA_ID	       "appId"
 #define DATA_TYPE      "data"
-#define DATA_TIMESTAMP "time"
+#define DATA_TIMESTAMP "ts"
 #define DATA_VALUE     "data"
 
 #define MESSAGE_TYPE_DATA "DATA"
