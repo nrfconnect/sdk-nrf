@@ -13,6 +13,11 @@ def func_names_from_header(in_file, out_file):
         content = f_in.read()
 
     with open(out_file, 'w') as f_out:
+        # remove attributes, attributes can be followed by semicolon (e.g. after struct)
+        # or by space when it's added before struct, variable or function.
+        attribute_pattern = re.compile(r'__attribute__\(\(.+?(?=(\s|;))', re.M | re.S)
+        content = attribute_pattern.sub(r"", content)
+
         # Regex match all function names in the header file
         x = re.findall(r"^\s*(?:\w+[*\s]+)+(\w+?)\([^\\]*?\);",
                        content, re.M | re.S)

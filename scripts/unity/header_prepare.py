@@ -27,6 +27,14 @@ def header_prepare(in_file, out_file, out_wrap_file):
 
     content = cpp_comments_pattern.sub(r"", content)
 
+    # remove weak used attribute if any api function has it
+    weak_pattern = re.compile(r'__attribute__\(\((weak|used)\)\)', re.M | re.S)
+    content = weak_pattern.sub(r"", content)
+
+    # remove __aligned
+    aligned_pattern = re.compile(r'__aligned\(.+?\)', re.M | re.S)
+    content = aligned_pattern.sub(r"", content)
+
     # remove inline syscalls
     static_inline_pattern = re.compile(
         r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
