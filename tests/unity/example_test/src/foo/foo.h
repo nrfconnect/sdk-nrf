@@ -7,7 +7,7 @@
 #ifndef __FOO_H
 #define __FOO_H
 
-#include <toolchain/common.h>
+#include <toolchain/gcc.h>
 
 #include "foo_internal.h"
 // c++ comment
@@ -33,10 +33,26 @@ static inline int foo_execute(void)
 	return (int)val;
 }
 
+struct foobar_struct {
+	int x;
+} __attribute__((packed, aligned(4)));
+
+struct foobar_struct2 {
+	int x;
+} __aligned(4);
+
+struct foobar_struct3 {
+	int x;
+} __packed;
+
 static ALWAYS_INLINE int foo_execute2(void)
 {
 	return 0;
 }
+
+struct __attribute__((packed)) foobar_struct4 {
+	int x;
+};
 
 inline static int foo_execute3(void)
 {
