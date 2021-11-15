@@ -4,6 +4,22 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Symbols guarded inside `if 0`.
+# Those symbols are defined in memfault upstream Kconfig but added and guarded
+# here to avoid Kconfig errors when this module is not available.
+if 0
+config MEMFAULT_HTTP_PERIODIC_UPLOAD
+	bool
+
+choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
+	prompt ""
+
+config MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE
+	bool ""
+
+endchoice
+endif
+
 if MEMFAULT
 
 config MEMFAULT_NCS_PROJECT_KEY
