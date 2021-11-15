@@ -172,6 +172,11 @@ nRF Machine Learning build types
 The nRF Machine Learning application does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types for each supported board.
 
+Each board has its own :file:`prj.conf` file, which represents a ``debug`` build type.
+Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
+For example, the ``release`` build type file name is :file:`prj_release.conf`.
+If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+
 .. include:: /gs_modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
@@ -179,16 +184,16 @@ Configuration files are provided for different build types for each supported bo
 Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
 The application supports the following build types:
 
-* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
-* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+* ``debug`` -- Debug version of the application - can be used to verify if the application works correctly.
+* ``release`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
 
 Not every board supports both mentioned build types.
 The given board can also support some additional configurations of the nRF Machine Learning application.
-For example, the nRF52840 Development Kit supports ``ZDebugNUS`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
+For example, the nRF52840 Development Kit supports ``nus`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
 
 .. note::
     `Selecting a build type`_ is optional.
-    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+    The ``debug`` build type is used by default if no build type is explicitly selected.
 
 User interface
 **************
@@ -297,10 +302,11 @@ For example, the configuration files for the Thingy:52 are defined in the :file:
 
 The following configuration files can be defined for any supported board:
 
-* :file:`app_build_type.conf` - Kconfig configuration file for a build type.
+* :file:`prj_build_type.conf` - Kconfig configuration file for a build type.
   To support a given build type for the selected board, you must define the configuration file with a proper name.
-  For example, the :file:`app_ZDebug.conf` defines configuration for ``ZDebug`` build type.
-* :file:`dts.overlay` - DTS overlay file specific for the board.
+  For example, the :file:`prj_release.conf` defines configuration for ``release`` build type.
+  The :file:`prj.conf` without any suffix defines the ``debug`` build type.
+* :file:`app.overlay` - DTS overlay file specific for the board.
   Defining the DTS overlay file for a given board is optional.
 * :file:`_def` files - These files are defined separately for modules used by the application.
   You must define a :file:`_def` file for every module that requires it and enable it in the configuration for the given board.
@@ -315,8 +321,8 @@ The Thingy:53 and nRF53 Development Kit use multi-image build with the following
 * Bluetooth HCI RPMsg
 
 You can define the application-specific configuration for the mentioned child images in the board-specific directory in the :file:`applications/machine_learning/configuration/` directory.
-The Kconfig configuration file names contain the name of the child image and the build type.
-For example, the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/hci_rpmsg_ZDebug.conf` file defines configuration of Bluetooth HCI RPMsg for ``ZDebug`` build type on ``thingy53_nrf5340_cpuapp`` board.
+The Kconfig configuration file should be located in subdirectory :file:`child_image/child_image_name` and its name should match the application Kconfig file name, that is contain the build type if necessary
+For example, the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_rpmsg/prj.conf` file defines configuration of Bluetooth HCI RPMsg for ``debug`` build type on ``thingy53_nrf5340_cpuapp`` board, while the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_rpmsg/prj_release.conf` file defines configuration of Bluetooth HCI RPMsg for ``release`` build type.
 See :ref:`ug_multi_image` for detailed information about multi-image builds and child image configuration.
 
 .. _nrf_machine_learning_app_configuration_build_types:
@@ -352,11 +358,11 @@ Selecting a build type from command line
 
 .. note::
    If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``ZDebugNUS`` build type is not supported by the selected board, the following notification appears:
+   For example, if the ``nus`` build type is not supported by the selected board, the following notification appears:
 
    .. code-block:: console
 
-      Configuration file for build type ZDebugNUS is missing.
+      Configuration file for build type ``nus`` is missing.
 
 Providing API key
 =================
@@ -383,10 +389,10 @@ In most of the provided debug configurations, the application provides logs thro
 See :ref:`testing_rtt_connect` for detailed instructions about accessing the logs.
 
 .. note::
-   The Thingy:53 in the ``ZDebug`` configuration provides logs through the USB CDC ACM serial.
+   The Thingy:53 in the ``debug`` configuration provides logs through the USB CDC ACM serial.
    See :ref:`ug_thingy53` for detailed information about working with the Thingy:53.
 
-   You can also use ``ZDebugRTT`` configuration to have the Thingy:53 use RTT for logs.
+   You can also use ``rtt`` configuration to have the Thingy:53 use RTT for logs.
 
 Testing with Thingy devices
 ---------------------------
