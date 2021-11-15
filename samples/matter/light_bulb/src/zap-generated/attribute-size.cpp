@@ -21,6 +21,7 @@
 #include <app/util/af.h>
 #include <app/util/attribute-list-byte-span.h>
 #include <app/util/basic-types.h>
+#include <lib/core/CHIPSafeCasts.h>
 #include <lib/support/SafeInt.h>
 #include <lib/support/logging/CHIPLogging.h>
 
@@ -164,7 +165,9 @@ uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata *am, bool
 			entryOffset = static_cast<uint16_t>(entryOffset + ((index - 1) * entryLength));
 			// Struct _NetworkInterfaceType
 			_NetworkInterfaceType *entry = reinterpret_cast<_NetworkInterfaceType *>(write ? src : dest);
-			ByteSpan *NameSpan = &entry->Name; // OCTET_STRING
+			ByteSpan NameSpanStorage(Uint8::from_const_char(entry->Name.data()),
+						 entry->Name.size()); // CHAR_STRING
+			ByteSpan *NameSpan = &NameSpanStorage;
 			if (CHIP_NO_ERROR != (write ? WriteByteSpan(dest + entryOffset, 34, NameSpan) :
 							    ReadByteSpan(src + entryOffset, 34, NameSpan))) {
 				ChipLogError(Zcl, "Index %" PRId32 " is invalid. Not enough remaining space", index);
@@ -188,7 +191,7 @@ uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata *am, bool
 			}
 			entryOffset = static_cast<uint16_t>(entryOffset + 10);
 			copyListMember(write ? dest : (uint8_t *)&entry->Type, write ? (uint8_t *)&entry->Type : src,
-				       write, &entryOffset, sizeof(entry->Type)); // ENUM8
+				       write, &entryOffset, sizeof(entry->Type)); // InterfaceType
 			break;
 		}
 		}
@@ -227,7 +230,9 @@ uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata *am, bool
 			copyListMember(write ? dest : (uint8_t *)&entry->NodeId,
 				       write ? (uint8_t *)&entry->NodeId : src, write, &entryOffset,
 				       sizeof(entry->NodeId)); // NODE_ID
-			ByteSpan *LabelSpan = &entry->Label; // OCTET_STRING
+			ByteSpan LabelSpanStorage(Uint8::from_const_char(entry->Label.data()),
+						  entry->Label.size()); // CHAR_STRING
+			ByteSpan *LabelSpan = &LabelSpanStorage;
 			if (CHIP_NO_ERROR != (write ? WriteByteSpan(dest + entryOffset, 34, LabelSpan) :
 							    ReadByteSpan(src + entryOffset, 34, LabelSpan))) {
 				ChipLogError(Zcl, "Index %" PRId32 " is invalid. Not enough remaining space", index);
@@ -365,7 +370,7 @@ uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata *am, bool
 		}
 		case 0x003B: // SecurityPolicy
 		{
-			entryLength = 3;
+			entryLength = 4;
 			if (((index - 1) * entryLength) > (am->size - entryLength)) {
 				ChipLogError(Zcl, "Index %" PRId32 " is invalid.", index);
 				return 0;
@@ -377,7 +382,7 @@ uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata *am, bool
 				       write ? (uint8_t *)&entry->RotationTime : src, write, &entryOffset,
 				       sizeof(entry->RotationTime)); // INT16U
 			copyListMember(write ? dest : (uint8_t *)&entry->Flags, write ? (uint8_t *)&entry->Flags : src,
-				       write, &entryOffset, sizeof(entry->Flags)); // INT8U
+				       write, &entryOffset, sizeof(entry->Flags)); // BITMAP16
 			break;
 		}
 		case 0x003D: // OperationalDatasetComponents
@@ -520,7 +525,7 @@ uint16_t emberAfAttributeValueListSize(ClusterId clusterId, AttributeId attribut
 			break;
 		case 0x003B: // SecurityPolicy
 			// Struct _SecurityPolicy
-			entryLength = 3;
+			entryLength = 4;
 			break;
 		case 0x003D: // OperationalDatasetComponents
 			// Struct _OperationalDatasetComponents
