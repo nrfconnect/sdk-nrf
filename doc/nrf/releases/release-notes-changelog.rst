@@ -63,10 +63,18 @@ nRF9160: Asset Tracker v2
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Added non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
-* Added secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
-* Added power manager to the :ref:`nrf_machine_learning_app` application.
-* Updated information about custom build types.
+* Added:
+
+  * Non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
+  * Secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
+  * Power manager to the :ref:`nrf_machine_learning_app` application.
+
+* Updated:
+
+  * Updated information about custom build types.
+  * The application configuration files were switched to follow a generic scheme.
+    When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
+    E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
 
 nRF Desktop
 -----------
