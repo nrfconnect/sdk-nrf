@@ -14,7 +14,9 @@ set(ZEPHYR_TRUSTED_FIRMWARE_M_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/trusted-firmware
 # Thus we set the module to `-NOTFOUND` if unavailable to avoid sourcing the
 # Kconfig file having undefined symbols.
 
-set(NCS_KCONFIG_EXTENDED_MODULES "")
+set(NCS_KCONFIG_EXTENDED_MODULES
+    memfault-firmware-sdk
+)
 
 foreach(module_name ${NCS_KCONFIG_EXTENDED_MODULES})
   zephyr_string(SANITIZE TOUPPER MODULE_NAME_UPPER ${module_name})
