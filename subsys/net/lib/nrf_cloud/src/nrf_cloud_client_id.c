@@ -8,7 +8,9 @@
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
 #include <modem/modem_jwt.h>
 #endif
-#include <modem/at_cmd.h>
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+#include <nrf_modem_at.h>
+#endif
 #include <zephyr.h>
 #include <stdio.h>
 #include <logging/log.h>
@@ -25,8 +27,8 @@ BUILD_ASSERT(sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) > 1,
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
-#define CGSN_RESPONSE_LENGTH 19
 #define NRF_IMEI_LEN 15
+#define CGSN_RESPONSE_LENGTH (NRF_IMEI_LEN + 6 + 1) /* Add 6 for \r\nOK\r\n and 1 for \0 */
 #define IMEI_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
 BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 	"NRF_CLOUD_CLIENT_ID_PREFIX plus IMEI must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
@@ -63,22 +65,10 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 	int err;
 	int print_ret;
 
-#if (defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) || \
-	defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI))
-	/* UUID/IMEI are obtained via AT command */
-	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
-		err = at_cmd_init();
-		if (err) {
-			LOG_ERR("at_cmd failed to initialize, error: %d", err);
-			return err;
-		}
-	}
-#endif
-
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
-	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+	char imei_buf[CGSN_RESPONSE_LENGTH];
 
-	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
 	if (err) {
 		LOG_ERR("Failed to obtain IMEI, error: %d", err);
 		return err;
