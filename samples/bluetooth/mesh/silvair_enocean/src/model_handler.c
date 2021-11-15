@@ -18,6 +18,8 @@
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
 
+static struct bt_mesh_dtt_srv dtt_srv = BT_MESH_DTT_SRV_INIT(NULL);
+
 /* Silvair Enocean Proxy behavior */
 static void onoff_status(struct bt_mesh_onoff_cli *cli,
 			 struct bt_mesh_msg_ctx *ctx,
@@ -112,6 +114,7 @@ static struct bt_mesh_elem elements[] = {
 		BT_MESH_MODEL_LIST(BT_MESH_MODEL_CFG_SRV,
 				   BT_MESH_MODEL_HEALTH_SRV(&health_srv,
 							    &health_pub),
+				   BT_MESH_MODEL_DTT_SRV(&dtt_srv),
 				   BT_MESH_MODEL_SILVAIR_ENOCEAN_BUTTON(
 					&silvair_enocean, 0)),
 		BT_MESH_MODEL_LIST(BT_MESH_MODEL_SILVAIR_ENOCEAN_SRV(

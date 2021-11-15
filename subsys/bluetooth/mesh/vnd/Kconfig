@@ -18,6 +18,7 @@ menuconfig BT_MESH_SILVAIR_ENOCEAN_SRV
 	select BT_MESH_ONOFF_CLI
 	select BT_MESH_LVL_CLI
 	select BT_ENOCEAN
+	depends on BT_MESH_DTT_SRV
 	help
 	  Enable Mesh Silvair EnOcean Proxy Server model.
 
@@ -37,24 +38,31 @@ config BT_MESH_SILVAIR_ENOCEAN_TICK_TIME
 
 config BT_MESH_SILVAIR_ENOCEAN_DELTA
 	int "Delta increment/decrement size"
-	default 1000
+	default 2520
 	help
 	  Delta value increment/decrement size used when sending delta_set
 	  messages while a button is held down.
 
 config BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME
 	int "Wait time"
-	default 250
+	default 400
 	help
 	  Time for which button must be held to start sending delta_set messages,
 	  in milliseconds.
 
 config BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT
 	int "Delta timeout"
-	default 7000
+	default 6000
 	help
 	  Maximum amount of time, in milliseconds, for which delta_set messages
 	  are sent while a button is held down.
+
+config BT_MESH_SILVAIR_ENOCEAN_DELTA_TRANSITION_TIME
+	int "Transition time for Delta Set messages"
+	default 200
+	help
+	  Transition time, in milliseconds, for Delta Set messages or -1 to use
+	  transition time from the Generic Default Transition Time server.
 
 endif
 

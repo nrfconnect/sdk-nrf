@@ -13,6 +13,8 @@
 #define MAX_TICKS (CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT / \
 		  CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME)
 
+#define DELAY_TIME_STEP_MS (5)
+
 /** Mocks ******************************************/
 
 static struct bt_mesh_silvair_enocean_srv srv;
@@ -28,6 +30,16 @@ static struct bt_enocean_device mock_enocean_device = {
 
 static struct bt_mesh_model mock_model = {
 	.user_data = &srv
+};
+
+static struct bt_mesh_model mock_lvl_model = {
+	.pub = &srv.buttons[0].lvl.pub,
+	.user_data = &srv.buttons[0].lvl,
+};
+
+static struct bt_mesh_model mock_onoff_model = {
+	.pub = &srv.buttons[0].onoff.pub,
+	.user_data = &srv.buttons[0].onoff
 };
 
 static const struct bt_enocean_callbacks *enocean_cbs;
@@ -76,29 +88,54 @@ uint32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data)
 	return 0;
 }
 
-int bt_mesh_onoff_cli_set(struct bt_mesh_onoff_cli *cli,
+uint8_t model_delay_encode(uint32_t delay)
+{
+	return delay / DELAY_TIME_STEP_MS;
+}
+
+int32_t model_delay_decode(uint8_t encoded_delay)
+{
+	return encoded_delay * DELAY_TIME_STEP_MS;
+}
+
+struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod)
+{
+	return NULL;
+}
+
+struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
+					 uint16_t id)
+{
+	return NULL;
+}
+
+int bt_mesh_onoff_cli_set_unack(struct bt_mesh_onoff_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
-				 const struct bt_mesh_onoff_set *set,
-				 struct bt_mesh_onoff_status *rsp)
+				 const struct bt_mesh_onoff_set *set)
 {
 	ztest_check_expected_value(cli);
-	ztest_check_expected_data(set, sizeof(struct bt_mesh_onoff_set));
+	ztest_check_expected_value(set->on_off);
+	zassert_not_null(set->transition, "transition is null");
+	ztest_check_expected_value(set->transition->time);
+	ztest_check_expected_value(set->transition->delay);
 	zassert_is_null(ctx, "Context was not null");
-	zassert_is_null(rsp, "rsp was not null");
+	ztest_check_expected_value(cli->pub.retransmit);
 	return 0;
 }
 
-int bt_mesh_lvl_cli_delta_set(
+int bt_mesh_lvl_cli_delta_set_unack(
 		struct bt_mesh_lvl_cli *cli,
 		struct bt_mesh_msg_ctx *ctx,
-		const struct bt_mesh_lvl_delta_set *delta_set,
-		struct bt_mesh_lvl_status *rsp)
+		const struct bt_mesh_lvl_delta_set *delta_set)
 {
 	ztest_check_expected_value(cli);
-	ztest_check_expected_data(delta_set,
-				  sizeof(struct bt_mesh_lvl_delta_set));
+	ztest_check_expected_value(delta_set->delta);
+	ztest_check_expected_value(delta_set->new_transaction);
+	zassert_not_null(delta_set->transition, "transition is null");
+	ztest_check_expected_value(delta_set->transition->time);
+	ztest_check_expected_value(delta_set->transition->delay);
 	zassert_is_null(ctx, "Context was not null");
-	zassert_is_null(rsp, "rsp was not null");
+	ztest_check_expected_value(cli->pub.retransmit);
 	return 0;
 }
 
@@ -151,6 +188,13 @@ int k_work_cancel_delayable(struct k_work_delayable *dwork)
 {
 	ztest_check_expected_value(dwork);
 	return 0;
+}
+
+static bool delta_timedout;
+
+int k_work_delayable_busy_get(const struct k_work_delayable *dwork)
+{
+	return delta_timedout ? 0 : 1;
 }
 
 /*
@@ -225,19 +269,45 @@ static void mock_timeout(int timer_idx)
 	mock_timers[timer_idx].handler(&mock_timers[timer_idx].dwork->work);
 }
 
-static void check_release(bool onoff, bool expect_generic_set)
+static void check_release(bool onoff, bool expect_generic_set, int wait)
 {
-	static struct bt_mesh_onoff_set expected_set;
-
 	ztest_expect_value(k_work_cancel_delayable, dwork, mock_timers[0].dwork);
 	if (expect_generic_set) {
-		ztest_expect_value(bt_mesh_onoff_cli_set, cli, &srv.buttons[0].onoff);
-		expected_set.on_off = onoff;
-		expected_set.transition = NULL;
-		ztest_expect_data(bt_mesh_onoff_cli_set, set, &expected_set);
+		ztest_expect_value(bt_mesh_onoff_cli_set_unack, cli, &srv.buttons[0].onoff);
+		ztest_expect_value(bt_mesh_onoff_cli_set_unack, set->on_off, onoff);
+		ztest_expect_value(bt_mesh_onoff_cli_set_unack, set->transition->time, 0);
+		ztest_expect_value(bt_mesh_onoff_cli_set_unack, set->transition->delay, 150);
+		ztest_expect_value(bt_mesh_onoff_cli_set_unack, cli->pub.retransmit,
+				   BT_MESH_TRANSMIT(3, 50));
+	} else {
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli, &srv.buttons[0].lvl);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->delta, (wait + 1) *
+				   (onoff ? 1 : -1) * CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->new_transaction,
+				   false);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->transition->time,
+				   CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TRANSITION_TIME);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
+				   delta_set->transition->delay, 0);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli->pub.retransmit,
+				   BT_MESH_TRANSMIT(4, 50));
 	}
+
 	mock_button_action(onoff ? BT_ENOCEAN_SWITCH_OB : BT_ENOCEAN_SWITCH_IB,
 			   BT_ENOCEAN_BUTTON_RELEASE);
+
+	if (expect_generic_set) {
+		srv.buttons[0].onoff.pub_buf.len = 6;
+		srv.buttons[0].onoff.pub.count = 2;
+		srv.buttons[0].onoff.pub.update(srv.buttons[0].onoff.model);
+		zassert_equal(srv.buttons[0].onoff.pub_buf.data[5], model_delay_encode(100),
+			      "Encoded incorrect delay");
+	} else {
+		srv.buttons[0].lvl.pub_buf.len = 9;
+		srv.buttons[0].lvl.pub.count = 1;
+		srv.buttons[0].lvl.pub.update(srv.buttons[0].lvl.model);
+		zassert_equal(srv.buttons[0].lvl.pub_buf.data[8], 0, "Encoded incorrect delay");
+	}
 }
 
 static void check_press(bool onoff)
@@ -252,23 +322,44 @@ static void check_press(bool onoff)
 
 static void check_ticks(bool onoff, int tick_count)
 {
-	static struct bt_mesh_lvl_delta_set expected_delta;
 	k_timeout_t tick_timeout = K_MSEC(CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME);
 
 	for (int i = 0; i < tick_count && i <= MAX_TICKS; i++) {
-		ztest_expect_value(bt_mesh_lvl_cli_delta_set, cli, &srv.buttons[0].lvl);
-		expected_delta.delta = (i + 1) * (onoff ? 1 : -1) *
-				       CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA;
-		expected_delta.new_transaction = i == 0;
-		expected_delta.transition = NULL;
-		ztest_expect_data(bt_mesh_lvl_cli_delta_set, delta_set, &expected_delta);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli, &srv.buttons[0].lvl);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->delta, (i + 1) *
+				   (onoff ? 1 : -1) * CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->new_transaction,
+				   i == 0);
+		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->transition->time,
+				   CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TRANSITION_TIME);
+		if (i == 0) {
+			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
+					   delta_set->transition->delay, 150);
+			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli->pub.retransmit,
+					   BT_MESH_TRANSMIT(3, 50));
+		} else {
+			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
+					   delta_set->transition->delay, 0);
+			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli->pub.retransmit, 0);
+		}
 		if (i < MAX_TICKS) {
 			ztest_expect_value(k_work_reschedule_for_queue, dwork,
 					   mock_timers[0].dwork);
 			ztest_expect_data(k_work_reschedule_for_queue, &delay,
 					  &tick_timeout);
 		}
+
+		delta_timedout = i >= MAX_TICKS;
+
 		mock_timeout(0);
+
+		if (i == 0) {
+			srv.buttons[0].lvl.pub_buf.len = 9;
+			srv.buttons[0].lvl.pub.count = 0;
+			srv.buttons[0].lvl.pub.update(srv.buttons[0].lvl.model);
+			zassert_equal(srv.buttons[0].lvl.pub_buf.data[8], 0,
+				      "Encoded incorrect delay");
+		}
 	}
 }
 
@@ -278,14 +369,14 @@ static void check_state_machine_vector(bool press1, int wait1,
 {
 	check_press(press1);
 	check_ticks(press1, wait1);
-	bool expect_generic_set = wait1 == 0 || press1 != release;
+	bool expect_generic_set = wait1 == 0 || wait1 >= MAX_TICKS || press1 != release;
 
 	if (press2) {
 		check_press(*press2);
 		check_ticks(*press2, wait2);
-		expect_generic_set = wait2 == 0 || *press2 != release;
+		expect_generic_set = wait2 == 0 || wait2 >= MAX_TICKS || *press2 != release;
 	}
-	check_release(release, expect_generic_set);
+	check_release(release, expect_generic_set, press2 ? wait2 : wait1);
 }
 
 
@@ -314,8 +405,8 @@ static void test_state_machine(void)
 	/*
 	 * Test release from IDLE state
 	 */
-	check_release(true, true);
-	check_release(false, true);
+	check_release(true, true, 0);
+	check_release(false, true, 0);
 
 
 	for (int first = 0; first < 2; first++) {
@@ -524,6 +615,16 @@ static void setup(void)
 			 "Start cb is null");
 	_bt_mesh_silvair_enocean_srv_cb.init(&mock_model);
 	_bt_mesh_silvair_enocean_srv_cb.start(&mock_model);
+
+	srv.buttons[0].onoff.model = &mock_onoff_model;
+	srv.buttons[0].onoff.model->pub->msg = &srv.buttons[0].onoff.pub_buf;
+	net_buf_simple_init_with_data(&srv.buttons[0].onoff.pub_buf, srv.buttons[0].onoff.pub_data,
+				      sizeof(srv.buttons[0].onoff.pub_data));
+
+	srv.buttons[0].lvl.model = &mock_lvl_model;
+	srv.buttons[0].lvl.model->pub->msg = &srv.buttons[0].lvl.pub_buf;
+	net_buf_simple_init_with_data(&srv.buttons[0].lvl.pub_buf, srv.buttons[0].lvl.pub_data,
+				      sizeof(srv.buttons[0].lvl.pub_data));
 }
 
 static void teardown(void)

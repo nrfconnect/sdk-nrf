@@ -37,11 +37,6 @@ However, the :ref:`bt_mesh_onoff_srv_readme` and :ref:`bt_mesh_lvl_srv_readme` m
 
 The Silvair EnOcean Proxy Server does not require any message handler callbacks.
 
-.. note::
-   The state machine behavior in this implementation of the `Silvair EnOcean Switch Mesh Proxy Server`_ specification differs slightly from the published specification document.
-   As in accordance with the specification, no new Generic Delta Set messages are sent when a button is held down for longer than the delta timeout.
-   The deviation from the specification is that the state machine stays in the Delta ON or Delta OFF state, meaning that a Generic OnOff message is not sent when the button is released, even after the delta times out.
-
 States
 ======
 
