@@ -11,16 +11,15 @@
 
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
-#include <app/util/af-types.h>
-#include <app/util/af.h>
+#include <app/ConcreteAttributePath.h>
 
 using namespace ::chip;
 using namespace ::chip::app::Clusters;
 
-void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
-					uint16_t manufacturerCode, uint8_t type, uint16_t size, uint8_t *value)
+void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath & attributePath, uint8_t mask, uint8_t type,
+                                       uint16_t size, uint8_t * value)
 {
-	if (clusterId == OnOff::Id && attributeId == OnOff::Attributes::Ids::OnOff) {
+	if (attributePath.mClusterId == OnOff::Id && attributePath.mAttributeId == OnOff::Attributes::OnOff::Id) {
 		ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8, *value);
 		GetAppTask().PostEvent(AppEvent(*value ? AppEvent::Lock : AppEvent::Unlock, true));
 	}

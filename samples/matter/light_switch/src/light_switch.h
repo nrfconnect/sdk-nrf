@@ -52,6 +52,7 @@ private:
 	chip::Transport::UDP mDiscoveryServiceEndpoint;
 	chip::Controller::DeviceCommissioner mCommissioner;
 	chip::Controller::ExampleOperationalCredentialsIssuer mOpCredDelegate;
+	chip::SimpleFabricStorage mFabricStorage;
 	PlaformPersistentStorageDelegate mStorageDelegate;
 	DiscoveryHandler mDiscoveryHandler;
 };

@@ -35,7 +35,7 @@ void LightBulbPublishService::Init()
 	k_timer_user_data_set(&mPublishTimer, this);
 
 	/* Initialize UDP endpoint */
-	UdpListenParameters udpParams(&chip::DeviceLayer::InetLayer);
+	UdpListenParameters udpParams(&chip::DeviceLayer::InetLayer());
 	udpParams.SetListenPort(kServiceUDPPort);
 	if (mUdp.Init(udpParams) != CHIP_NO_ERROR) {
 		LOG_ERR("LightBulbPublishService initialization failed");
