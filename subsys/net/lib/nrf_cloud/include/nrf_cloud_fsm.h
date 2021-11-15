@@ -64,10 +64,12 @@ void nfsm_disconnect(void);
  */
 bool nfsm_get_disconnect_requested(void);
 
+#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
 /**@brief Sets a callback from the nrf_cloud_cell_pos module to
  * handle the cellular positioning response data from the cloud.
  */
 void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb);
+#endif
 
 #ifdef __cplusplus
 }
