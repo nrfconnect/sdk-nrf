@@ -102,12 +102,12 @@ static int ppp_ctrl_start_net_if(void)
 	ppp_iface_global = iface;
 
 	/* Set PPP MTU according to LTE link IPv4 MTU: */
-	if (pdp_context_info->mtu) {
-		if (pdp_context_info->mtu <= PPP_MODEM_DATA_RCV_SND_BUFF_SIZE) {
-			used_mtu_mru = pdp_context_info->mtu;
+	if (pdp_context_info->ipv4_mtu) {
+		if (pdp_context_info->ipv4_mtu <= PPP_MODEM_DATA_RCV_SND_BUFF_SIZE) {
+			used_mtu_mru = pdp_context_info->ipv4_mtu;
 		} else {
 			mosh_warn("LTE link MTU (%d) cannot be set as PPP MTU. Setting to the max: %d\n",
-				pdp_context_info->mtu,
+				pdp_context_info->ipv4_mtu,
 				PPP_MODEM_DATA_RCV_SND_BUFF_SIZE);
 			used_mtu_mru = PPP_MODEM_DATA_RCV_SND_BUFF_SIZE;
 		}

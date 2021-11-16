@@ -85,8 +85,8 @@ static bool icmp_ping_shell_set_ping_args_according_to_pdp_ctx(
 
 			strcpy(ping_args->current_apn_str, ctx_info_tbl->array[i].apn_str);
 
-			if (ctx_info_tbl->array[0].mtu != 0) {
-				ping_args->mtu = ctx_info_tbl->array[0].mtu;
+			if (ctx_info_tbl->array[0].ipv4_mtu != 0) {
+				ping_args->mtu = ctx_info_tbl->array[0].ipv4_mtu;
 			} else {
 				ping_args->mtu = ICMP_DEFAULT_LINK_MTU;
 			}
@@ -213,8 +213,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 			ping_args.current_pdp_type = pdp_context_info_tbl.array[0].pdp_type;
 			ping_args.current_addr4 = pdp_context_info_tbl.array[0].ip_addr4;
 			ping_args.current_addr6 = pdp_context_info_tbl.array[0].ip_addr6;
-			if (pdp_context_info_tbl.array[0].mtu != 0) {
-				ping_args.mtu =	pdp_context_info_tbl.array[0].mtu;
+			if (pdp_context_info_tbl.array[0].ipv4_mtu != 0) {
+				ping_args.mtu =	pdp_context_info_tbl.array[0].ipv4_mtu;
 			} else {
 				ping_args.mtu = ICMP_DEFAULT_LINK_MTU;
 			}

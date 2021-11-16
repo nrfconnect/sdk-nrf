@@ -222,14 +222,28 @@ parse:
 		}
 	}
 
-	/* Read link MTU if exists: */
-	ret = at_params_int_get(&param_list,
-				AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
-				&(populated_info->mtu));
-	if (ret) {
-		/* Don't care if it fails: */
-		ret = 0;
-		populated_info->mtu = 0;
+	/* Read link MTU if exists:
+	 * AT command spec:
+	 * Note: If the PDN connection has dual stack capabilities, at least one pair of
+	 * lines with information is returned per <cid>: First one line with the IPv4
+	 * parameters followed by one line with the IPv6 parameters.
+	 */
+	if (iterator == 1) {
+		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+					&(populated_info->ipv6_mtu));
+		if (ret) {
+			/* Don't care if it fails: */
+			ret = 0;
+			populated_info->ipv6_mtu = 0;
+		}
+	} else {
+		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+					&(populated_info->ipv4_mtu));
+		if (ret) {
+			/* Don't care if it fails: */
+			ret = 0;
+			populated_info->ipv4_mtu = 0;
+		}
 	}
 
 	if (resp_continues) {
@@ -727,7 +741,14 @@ void link_api_modem_info_get_for_shell(bool connected)
 						(info_tbl[i].ctx_active) ? "yes" : "no");
 				mosh_print("  PDP type:           %s", info_tbl[i].pdp_type_str);
 				mosh_print("  APN:                %s", info_tbl[i].apn_str);
-				mosh_print("  IPv4 MTU:           %d", info_tbl[i].mtu);
+				if (info_tbl[i].ipv4_mtu) {
+					mosh_print("  IPv4 MTU:           %d",
+						info_tbl[i].ipv4_mtu);
+				}
+				if (info_tbl[i].ipv6_mtu) {
+					mosh_print("  IPv6 MTU:           %d",
+						info_tbl[i].ipv6_mtu);
+				}
 				mosh_print("  IPv4 address:       %s", ipv4_addr);
 				mosh_print("  IPv6 address:       %s", ipv6_addr);
 				mosh_print("  IPv4 DNS address:   %s, %s",
