@@ -708,7 +708,8 @@ static int init(void)
 		state = STATE_STANDBY;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) {
+	if ((IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) ||
+	   (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && IS_ENABLED(CONFIG_BT_PERIPHERAL))) {
 		k_work_init_delayable(&timeout, timeout_handler);
 	}
 
@@ -890,8 +891,7 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 			erase_adv_confirm();
 			state = STATE_ERASE_ADV;
 
-			k_work_reschedule(&timeout,
-					      ERASE_ADV_TIMEOUT);
+			k_work_reschedule(&timeout, ERASE_ADV_TIMEOUT);
 
 		} else if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			erase_confirm();
