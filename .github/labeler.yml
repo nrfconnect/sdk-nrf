@@ -234,6 +234,11 @@
     - "subsys/bluetooth/**/*"
     - "!subsys/bluetooth/mesh/**/*"
 
+"CI-gazell-test":
+  - "include/gz*.h"
+  - "samples/gazell/**/*"
+  - "subsys/gazell/*"
+
 "CI-rpc-test":
   - "subsys/nrf_rpc/**/*"
   - "samples/nrf_rpc/**/*"
