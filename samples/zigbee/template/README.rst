@@ -33,6 +33,18 @@ The Zigbee template sample takes the Zigbee Router role and implements two clust
 The Basic cluster provides attributes and commands for determining basic information about the node.
 The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
 
+.. _zigbee_template_configuration:
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
 User interface
 **************
 
@@ -76,7 +88,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :file:`include/zigbee/zigbee_error_handler.h`
+* :ref:`lib_zigbee_error_handler`
 * :ref:`lib_zigbee_application_utilities`
 * Zigbee subsystem:
 
