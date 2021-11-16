@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AT_SHELL
+	bool "AT Shell"
+	depends on NRF_MODEM_LIB
+	depends on SHELL
+	select AT_MONITOR
+	help
+	  Adds the AT command capability to shell. The shell command is called
+	  "at" and will interpret arguments as AT commands, and print back the
+	  response from the modem.
+
+if AT_SHELL
+
+config AT_SHELL_CMD_RESPONSE_MAX_LEN
+	int "Maximum AT command response length"
+	default 2700
+
+endif # AT_SHELL

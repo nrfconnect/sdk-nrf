@@ -320,6 +320,7 @@ Modem libraries
 Added:
 
 * :ref:`lib_location`.
+* :ref:`lib_at_shell`
 
 Updated:
 
