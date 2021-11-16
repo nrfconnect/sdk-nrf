@@ -103,7 +103,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :file:`include/zigbee/zigbee_error_handler.h`
+* :ref:`lib_zigbee_error_handler`
 * :ref:`lib_zigbee_application_utilities`
 * Zigbee subsystem:
 

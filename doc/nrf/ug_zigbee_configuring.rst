@@ -55,13 +55,11 @@ This allows the stack to enter the sleep state during these periods, which also 
 When the Zigbee stack thread goes to sleep, the Zigbee thread can enter the suspend state for the same amount of time as the stack's sleep.
 The thread will be automatically resumed after the sleep period is over or on an event.
 
-In the Zigbee samples in the |NCS|, the sleepy behavior can be triggered by pressing a predefined button when the device is booting.
-This action results in calling the ZBOSS API that activates this feature.
-See the :ref:`light switch sample <zigbee_light_switch_sample>` for a demonstration.
+For this feature to work, make sure to call the :c:func:`zb_set_rx_on_when_idle` ZBOSS API, as described in `Configuring sleepy behavior for end devices`_ in the ZBOSS documentation.
+This feature does not require enabling any additional options in Kconfig.
 
-.. note::
-    For this feature to work, make sure to poll the :c:func:`zb_set_rx_on_when_idle` ZBOSS API, as described in `Configuring sleepy behavior for end devices`_ in the ZBOSS documentation.
-    This feature does not require enabling any additional options in Kconfig.
+In the :ref:`Zigbee light switch sample <zigbee_light_switch_sample>` in the |NCS|, after you enable the SED behavior extension, the sleepy behavior can be triggered by pressing a predefined button when the device is booting.
+This action results in calling the ZBOSS API that activates this feature.
 
 Power saving during sleep
 -------------------------
