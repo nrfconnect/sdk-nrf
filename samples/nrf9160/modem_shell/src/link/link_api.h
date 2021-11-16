@@ -24,7 +24,8 @@
 
 struct pdp_context_info {
 	uint32_t cid;
-	uint32_t mtu;
+	uint32_t ipv4_mtu;
+	uint32_t ipv6_mtu;
 	uint32_t pdn_id;
 	bool pdn_id_valid;
 	bool ctx_active;
