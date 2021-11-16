@@ -75,6 +75,7 @@ Kconfig*                                  @tejlmand
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @emdi @rlubos
 /lib/at_notif/                            @rlubos
+/lib/at_shell/                            @jtguggedal @simensrostad
 /lib/agps/                                @jtguggedal @simensrostad
 /lib/nrf_modem_lib/                       @rlubos
 /lib/edge_impulse/                        @pdunaj

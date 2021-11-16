@@ -37,5 +37,6 @@ rsource "modem_jwt/Kconfig"
 rsource "modem_attest_token/Kconfig"
 rsource "multicell_location/Kconfig"
 rsource "location/Kconfig"
+rsource "at_shell/Kconfig"
 
 endmenu
