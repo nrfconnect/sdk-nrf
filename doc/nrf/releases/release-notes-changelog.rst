@@ -124,7 +124,11 @@ Bluetooth samples
 
 * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
 * :ref:`ble_llpm` sample - Added role selection.
-  The user now selects the role for each board by typing "m" or "s" in the terminal emulator.
+* :ref:`peripheral_uart` sample is now the default sample for the :ref:`ble_rpc` library.
+  The sample runs out of the box with a serialized Bluetooth Low Energy Host.
+* :ref:`peripheral_hids_mouse` sample now comes with the :ref:`ble_rpc_host` child image configuration overlay.
+  The overlay shows how to configure an application running a serialized Bluetooth Low Energy Host.
+  The :ref:`peripheral_hids_mouse` runs out the box with the :ref:`ble_rpc` library.
 
 Bluetooth mesh samples
 ----------------------
@@ -220,6 +224,14 @@ Libraries
 =========
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
+
+Bluetooth libraries
+-------------------
+
+* :ref:`ble_rpc` library:
+
+  * Added support for the GATT Server API serialization.
+  * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
 
 Common Application Framework (CAF)
 ----------------------------------
