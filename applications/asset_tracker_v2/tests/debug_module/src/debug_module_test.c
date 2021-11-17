@@ -21,6 +21,14 @@
 
 extern struct event_listener __event_listener_debug_module;
 
+/* The addresses of the following structures will be returned when the event_manager_alloc()
+ * function is called.
+ */
+static struct app_module_event app_module_event_memory;
+static struct data_module_event data_module_event_memory;
+static struct gps_module_event gps_module_event_memory;
+static struct debug_module_event debug_module_event_memory;
+
 #define DEBUG_MODULE_EVT_HANDLER(eh) __event_listener_debug_module.notification(eh)
 
 /* Copy of the application specific Memfault metrics defined in
@@ -90,6 +98,7 @@ static void validate_debug_data_ready_evt(struct event_header *eh, int no_of_cal
 
 void setup_debug_module_in_init_state(void)
 {
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_START;
@@ -105,8 +114,6 @@ void setup_debug_module_in_init_state(void)
 	__wrap_module_start_ExpectAndReturn(&expected_module_data, 0);
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)app_module_event));
-
-	k_free(app_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GPS fix. */
@@ -124,6 +131,7 @@ void test_memfault_trigger_metric_sampling_on_gps_fix(void)
 						0);
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Expect();
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gps_module_event_memory);
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
 	gps_module_event->type = GPS_EVT_DATA_READY;
@@ -131,8 +139,6 @@ void test_memfault_trigger_metric_sampling_on_gps_fix(void)
 	gps_module_event->data.gps.search_time = 60000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gps_module_event));
-
-	k_free(gps_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GPS timeout. */
@@ -152,6 +158,7 @@ void test_memfault_trigger_metric_sampling_on_gps_timeout(void)
 						0);
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Ignore();
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gps_module_event_memory);
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
 	gps_module_event->type = GPS_EVT_TIMEOUT;
@@ -159,8 +166,6 @@ void test_memfault_trigger_metric_sampling_on_gps_timeout(void)
 	gps_module_event->data.gps.search_time = 30000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gps_module_event));
-
-	k_free(gps_module_event);
 }
 
 /* Test that the debug module is able to submit Memfault data externally through events
@@ -180,13 +185,13 @@ void test_memfault_trigger_data_send(void)
 	/* Expect the debug module to generate an event with accompanied Memfault metric data. */
 	__wrap__event_submit_Stub(&validate_debug_data_ready_evt);
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
 	struct data_module_event *data_module_event = new_data_module_event();
 
 	data_module_event->type = DATA_EVT_DATA_SEND;
 
+	__wrap_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
-
-	k_free(data_module_event);
 }
 
 /* Test that no Memfault SDK specific APIs are called on GPS module events
@@ -199,6 +204,7 @@ void test_memfault_unhandled_event(void)
 
 	/* Expect no memfault APIs to be called on GPS_EVT_ACTIVE */
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gps_module_event_memory);
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
 	gps_module_event->type = GPS_EVT_ACTIVE;
@@ -215,8 +221,6 @@ void test_memfault_unhandled_event(void)
 
 	gps_module_event->type = GPS_EVT_ERROR_CODE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gps_module_event));
-
-	k_free(gps_module_event);
 }
 
 /* Test whether the correct Memfault software watchdog APIs are called on callbacks from the

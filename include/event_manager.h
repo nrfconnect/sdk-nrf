@@ -258,7 +258,7 @@ int event_manager_init(void);
 /** Trace event execution.
  * The behavior of this function depends on the actual implementation.
  * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overloaded by layer
+ * It is annotated as weak and is meant to be overridden by layer
  * adding support for profiling mechanism.
  **/
 void event_manager_trace_event_execution(const struct event_header *eh,
@@ -268,7 +268,7 @@ void event_manager_trace_event_execution(const struct event_header *eh,
 /** Trace event submission.
  * The behavior of this function depends on the actual implementation.
  * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overloaded by layer
+ * It is annotated as weak and is meant to be overridden by layer
  * adding support for profiling mechanism.
  **/
 void event_manager_trace_event_submission(const struct event_header *eh,
@@ -278,10 +278,30 @@ void event_manager_trace_event_submission(const struct event_header *eh,
 /** Initialize tracing in the Event Manager.
  * The behavior of this function depends on the actual implementation.
  * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overloaded by layer
+ * It is annotated as weak and is meant to be overridden by layer
  * adding support for profiling mechanism.
  **/
 int event_manager_trace_event_init(void);
+
+/** Allocate event.
+ * The behavior of this function depends on the actual implementation.
+ * The default implementation of this function is same as k_malloc.
+ * It is annotated as weak and can be overridden by user.
+ *
+ * @param size  Amount of memory requested (in bytes).
+ * @retval Address of the allocated memory if successful, otherwise NULL.
+ **/
+void *event_manager_alloc(size_t size);
+
+
+/** Free memory occupied by the event.
+ * The behavior of this function depends on the actual implementation.
+ * The default implementation of this function is same as k_free.
+ * It is annotated as weak and can be overridden by user.
+ *
+ * @param addr  Pointer to previously allocated memory.
+ **/
+void event_manager_free(void *addr);
 
 
 #ifdef __cplusplus

@@ -19,6 +19,13 @@
 
 extern struct event_listener __event_listener_gps_module;
 
+/* The addresses of the following structures will be returned when the event_manager_alloc()
+ * function is called.
+ */
+static struct app_module_event app_module_event_memory;
+static struct modem_module_event modem_module_event_memory;
+static struct gps_module_event gps_module_event_memory;
+
 #define GPS_MODULE_EVT_HANDLER(eh) __event_listener_gps_module.notification(eh)
 
 /* PVT data with a valid fix. */
@@ -252,6 +259,7 @@ static int validate_date_time(const struct tm *new_date_time, int no_of_calls)
 
 static void setup_gps_module_in_init_state(void)
 {
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	static struct module_data expected_module_data = {
@@ -271,17 +279,17 @@ static void setup_gps_module_in_init_state(void)
 
 	app_module_event->type = APP_EVT_START;
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gps_module_event_memory);
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	free(app_module_event);
 }
 
 static void setup_gps_module_in_running_state(void)
 {
 	setup_gps_module_in_init_state();
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&modem_module_event_memory);
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
 	modem_module_event->type = MODEM_EVT_INITIALIZED;
@@ -289,8 +297,6 @@ static void setup_gps_module_in_running_state(void)
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)modem_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	free(modem_module_event);
 }
 
 /* Test whether sending a APP_EVT_DATA_GET event to the GPS module generates
@@ -320,18 +326,17 @@ void test_gps_start(void)
 	expected_gps_module_events[0].type = GPS_EVT_ACTIVE;
 
 	/* Stimulus. */
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
+	__wrap_event_manager_alloc_IgnoreAndReturn(&gps_module_event_memory);
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	/* Cleanup */
-	free(app_module_event);
 }
 
 /* Test whether the GPS module generates an event with GPS fix on receiving a
@@ -339,8 +344,6 @@ void test_gps_start(void)
  */
 void test_gps_fix(void)
 {
-	resetTest();
-
 	/* Pre-condition. */
 	setup_gps_module_in_running_state();
 
@@ -372,17 +375,17 @@ void test_gps_fix(void)
 	/* Set callback to validate setting of date and time. */
 	__wrap_date_time_set_Stub(&validate_date_time);
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
+	__wrap_event_manager_alloc_IgnoreAndReturn(&gps_module_event_memory);
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	free(app_module_event);
 
 	/* Send PVT and NMEA events from the GNSS API to trigger a fix. */
 	gps_module_gnss_evt_handler(NRF_MODEM_GNSS_EVT_PVT);
@@ -395,8 +398,6 @@ void test_gps_fix(void)
  */
 void test_agps_request(void)
 {
-	resetTest();
-
 	/* Pre-condition. */
 	setup_gps_module_in_running_state();
 
@@ -425,17 +426,17 @@ void test_agps_request(void)
 	/* Set callback to handle all reads from GNSS API. */
 	__wrap_nrf_modem_gnss_read_Stub(&gnss_read_callback);
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
+	__wrap_event_manager_alloc_IgnoreAndReturn(&gps_module_event_memory);
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	free(app_module_event);
 
 	/* Send A-GPS req event from the GNSS API. */
 	gps_module_gnss_evt_handler(NRF_MODEM_GNSS_EVT_AGPS_REQ);
@@ -445,8 +446,6 @@ void test_agps_request(void)
  */
 void test_msgq_full(void)
 {
-	resetTest();
-
 	/* Pre-condition. */
 	setup_gps_module_in_running_state();
 
@@ -473,17 +472,17 @@ void test_msgq_full(void)
 	/* Set callback to handle all reads from GNSS API. */
 	__wrap_nrf_modem_gnss_read_Stub(&gnss_read_callback);
 
+	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
+	__wrap_event_manager_alloc_IgnoreAndReturn(&gps_module_event_memory);
 	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
-
-	free(app_module_event);
 
 	/* Send so many events that the message queue becomes full. */
 	gps_module_gnss_evt_handler(NRF_MODEM_GNSS_EVT_BLOCKED);

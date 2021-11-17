@@ -93,21 +93,15 @@ extern "C" {
  * an argument. Allocator function is used to create an event of the given
  * ename type.
  */
-#define _EVENT_ALLOCATOR_FN(ename)					\
-	static inline struct ename *_CONCAT(new_, ename)(void)		\
-	{								\
-		struct ename *event = (struct ename *)k_malloc(sizeof(*event));\
-		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\
-				 "");					\
-		if (unlikely(!event)) {					\
-			printk("Event Manager OOM error\n");		\
-			LOG_PANIC();					\
-			__ASSERT_NO_MSG(false);				\
-			sys_reboot(SYS_REBOOT_WARM);			\
-			return NULL;					\
-		}							\
-		event->header.type_id = _EVENT_ID(ename);		\
-		return event;						\
+#define _EVENT_ALLOCATOR_FN(ename)						\
+	static inline struct ename *_CONCAT(new_, ename)(void)			\
+	{									\
+		struct ename *event =						\
+			(struct ename *)event_manager_alloc(sizeof(*event));	\
+		BUILD_ASSERT(offsetof(struct ename, header) == 0,		\
+				 "");						\
+		event->header.type_id = _EVENT_ID(ename);			\
+		return event;							\
 	}
 
 
@@ -115,25 +109,19 @@ extern "C" {
  * an argument. Allocator function is used to create an event of the given
  * ename type.
  */
-#define _EVENT_ALLOCATOR_DYNDATA_FN(ename)				\
-	static inline struct ename *_CONCAT(new_, ename)(size_t size)	\
-	{								\
-		struct ename *event = (struct ename *)k_malloc(sizeof(*event) + size);\
-		BUILD_ASSERT((offsetof(struct ename, dyndata) +		\
-				  sizeof(event->dyndata.size)) ==	\
-				 sizeof(*event), "");			\
-		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\
-				 "");					\
-		if (unlikely(!event)) {					\
-			printk("Event Manager OOM error\n");		\
-			LOG_PANIC();					\
-			__ASSERT_NO_MSG(false);				\
-			sys_reboot(SYS_REBOOT_WARM);			\
-			return NULL;					\
-		}							\
-		event->header.type_id = _EVENT_ID(ename);		\
-		event->dyndata.size = size;				\
-		return event;						\
+#define _EVENT_ALLOCATOR_DYNDATA_FN(ename)						\
+	static inline struct ename *_CONCAT(new_, ename)(size_t size)			\
+	{										\
+		struct ename *event =							\
+			(struct ename *)event_manager_alloc(sizeof(*event) + size);	\
+		BUILD_ASSERT((offsetof(struct ename, dyndata) +				\
+				  sizeof(event->dyndata.size)) ==			\
+				 sizeof(*event), "");					\
+		BUILD_ASSERT(offsetof(struct ename, header) == 0,			\
+				 "");							\
+		event->header.type_id = _EVENT_ID(ename);				\
+		event->dyndata.size = size;						\
+		return event;								\
 	}
 
 
