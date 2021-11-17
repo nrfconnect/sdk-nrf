@@ -216,6 +216,14 @@ nRF9160 samples
   * The sample has been removed.
     nRF Cloud A-GPS and P-GPS are demonstrated in the :ref:`gnss_sample` sample.
 
+OpenThread samples
+------------------
+
+* Added:
+
+  * Support for ``nrf5340dk_nrf5340_cpuapp_ns`` build target for :ref:`zephyr:nrf5340dk_nrf5340`.
+    This allows to build the OpenThread samples with Trusted Firmware-M and the PSA crypto API support.
+
 Zigbee samples
 --------------
 
