@@ -100,7 +100,7 @@ static void on_mtd_mode_toggle(uint32_t med)
 	if (med) {
 		pm_device_state_set(cons, PM_DEVICE_STATE_ACTIVE);
 	} else {
-		pm_device_state_set(cons, PM_DEVICE_STATE_OFF);
+		pm_device_state_set(cons, PM_DEVICE_STATE_SUSPENDED);
 	}
 #endif
 	dk_set_led(MTD_SED_LED, med);
