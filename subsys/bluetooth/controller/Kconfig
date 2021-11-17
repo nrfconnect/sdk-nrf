@@ -102,7 +102,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
 
-config SDC_SCAN_BUFFER_COUNT
+config BT_CTLR_SDC_SCAN_BUFFER_COUNT
 	int "Number of buffers available in the scanner"
 	default 3
 	range 2 20
