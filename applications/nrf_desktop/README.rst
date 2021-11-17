@@ -379,7 +379,7 @@ The nRF Desktop does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types for each supported board.
 
 Each board has its own :file:`prj.conf` file, which represents a ``debug`` build type.
-Other build types are covered by dedicated files the build type added as a suffix to the ``prj`` part, as per the following list.
+Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
 For example, the ``release_b0`` build type file name is :file:`prj_release_b0.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
