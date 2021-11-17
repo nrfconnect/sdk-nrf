@@ -9,6 +9,8 @@
  #include <tfm/tfm_ioctl_api.h>
  #include <pm_config.h>
 
+ #include <hal/nrf_gpio.h>
+
 static bool is_secure(intptr_t ptr)
 {
 	/* We can not use 'arm_cmse_addr_is_secure here since this firmware
@@ -97,9 +99,40 @@ void test_tfm_read_service(void)
 #endif /* defined(FICR_NFC_TAGHEADER0_MFGID_Msk) */
 }
 
+void test_tfm_gpio_service(void)
+{
+	uint32_t err = UINT32_MAX;
+	enum tfm_platform_err_t plt_err;
+
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+	plt_err = tfm_platform_gpio_pin_mcu_select(0, NRF_GPIO_PIN_MCUSEL_PERIPHERAL, &err);
+	zassert_equal(plt_err, TFM_PLATFORM_ERR_SUCCESS,
+		      "Valid GPIO mcu select operation returned an unexpected error");
+	zassert_equal(err, 0, "Valid GPIO select arguments returned an unexpected result");
+
+	plt_err = tfm_platform_gpio_pin_mcu_select(0, 2, &err);
+	zassert_equal(plt_err, TFM_PLATFORM_ERR_SUCCESS,
+		      "Valid GPIO mcu select operation returned an unexpected error");
+	zassert_equal(err, -1,
+		      "Invalid GPIO select mcu argument returned an unexpected result");
+
+	plt_err = tfm_platform_gpio_pin_mcu_select(66, NRF_GPIO_PIN_MCUSEL_NETWORK, &err);
+	zassert_equal(plt_err, TFM_PLATFORM_ERR_SUCCESS,
+		      "Valid GPIO mcu select operation returned an unexpected error");
+	zassert_equal(err, -1,
+		      "Invalid GPIO select pin_number argument returned an unexpected result");
+#else
+	plt_err = tfm_platform_gpio_pin_mcu_select(0, 0x0 /* APPLICATION */, &err);
+	zassert_equal(plt_err, TFM_PLATFORM_ERR_NOT_SUPPORTED,
+		      "Not supported GPIO mcu select operation returned an unexpected error");
+#endif
+}
+
 void test_main(void)
 {
 	ztest_test_suite(test_secure_service,
-		ztest_unit_test(test_tfm_read_service));
+		ztest_unit_test(test_tfm_read_service),
+		ztest_unit_test(test_tfm_gpio_service)
+	);
 	ztest_run_test_suite(test_secure_service);
 }
