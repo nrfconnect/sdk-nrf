@@ -67,12 +67,6 @@ config BT_RX_STACK_SIZE
 	  require extra stack space, this value can be increased to
 	  accommodate for that.
 
-config BT_CTLR_LLPM
-	bool "Enable Low Latency Packet Mode support"
-	depends on SOC_SERIES_NRF52X
-	help
-	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
-	  which lets the application use connection intervals down to 1 ms.
 
 # SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
 # time, because Central side Bluetooth sample needs a different workqueue size
@@ -80,6 +74,13 @@ config BT_CTLR_LLPM
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
 	default 2048 if BT_LL_SOFTDEVICE
+
+config BT_CTLR_LLPM
+	bool "Enable Low Latency Packet Mode support"
+	depends on SOC_SERIES_NRF52X
+	help
+	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
+	  which lets the application use connection intervals down to 1 ms.
 
 config SDC_SLAVE_COUNT
 	int "Number of concurrent slave roles"
