@@ -9,3 +9,4 @@ pygit2
 pyyaml
 azure-storage-blob
 sphinx_markdown_tables
+markdown<3.3.5 # Workaround for ryanfox/sphinx-markdown-tables#34
