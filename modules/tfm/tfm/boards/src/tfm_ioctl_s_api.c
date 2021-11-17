@@ -34,3 +34,35 @@ enum tfm_platform_err_t tfm_platform_mem_read(void *destination, uint32_t addr,
 
 	return (enum tfm_platform_err_t) ret;
 }
+
+__attribute__((section("SFN")))
+enum tfm_platform_err_t tfm_platform_gpio_pin_mcu_select(uint32_t pin_number, uint32_t mcu,
+							 uint32_t *result)
+{
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+	enum tfm_platform_err_t ret;
+	psa_invec in_vec;
+	psa_outvec out_vec;
+	struct tfm_gpio_service_args args;
+	struct tfm_gpio_service_out out;
+
+	args.type = TFM_GPIO_SERVICE_TYPE_PIN_MCU_SELECT;
+	args.mcu_select.pin_number = pin_number;
+	args.mcu_select.mcu = mcu;
+
+	in_vec.base = (const void *)&args;
+	in_vec.len = sizeof(args);
+
+	out_vec.base = (void *)&out;
+	out_vec.len = sizeof(out);
+
+	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_GPIO_SERVICE, &in_vec,
+				 &out_vec);
+
+	*result = out.result;
+
+	return ret;
+#else
+	return TFM_PLATFORM_ERR_NOT_SUPPORTED;
+#endif
+}

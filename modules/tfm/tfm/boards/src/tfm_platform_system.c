@@ -17,12 +17,14 @@
 /* This contains the user provided allowed ranges */
 #include <tfm_read_ranges.h>
 
+#include <hal/nrf_gpio.h>
+
 static bool ptr_in_secure_area(intptr_t ptr)
 {
 	return cmse_TT((void *)ptr).flags.secure == 1;
 }
 
-enum tfm_platform_err_t
+static enum tfm_platform_err_t
 tfm_platform_hal_read_service(const psa_invec  *in_vec,
 			      const psa_outvec *out_vec)
 {
@@ -72,6 +74,59 @@ tfm_platform_hal_read_service(const psa_invec  *in_vec,
 	return err;
 }
 
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+static bool valid_mcu_select(uint32_t mcu)
+{
+	switch (mcu) {
+	case NRF_GPIO_PIN_MCUSEL_APP:
+	case NRF_GPIO_PIN_MCUSEL_NETWORK:
+	case NRF_GPIO_PIN_MCUSEL_PERIPHERAL:
+	case NRF_GPIO_PIN_MCUSEL_TND:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static uint32_t gpio_service_mcu_select(struct tfm_gpio_service_args * args)
+{
+	if (nrf_gpio_pin_present_check(args->mcu_select.pin_number) &&
+	    valid_mcu_select(args->mcu_select.mcu)) {
+		nrf_gpio_pin_mcu_select(args->mcu_select.pin_number, args->mcu_select.mcu);
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+static enum tfm_platform_err_t
+tfm_platform_hal_gpio_service(const psa_invec  *in_vec, const psa_outvec *out_vec)
+{
+	struct tfm_gpio_service_args *args;
+	struct tfm_gpio_service_out *out;
+
+	if (in_vec->len != sizeof(struct tfm_gpio_service_args) ||
+	    out_vec->len != sizeof(struct tfm_gpio_service_out)) {
+		return TFM_PLATFORM_ERR_INVALID_PARAM;
+	}
+
+	args = (struct tfm_gpio_service_args *)in_vec->base;
+	out = (struct tfm_gpio_service_out *)out_vec->base;
+	out->result = -1;
+
+	switch(args->type)
+	{
+	case TFM_GPIO_SERVICE_TYPE_PIN_MCU_SELECT:
+		out->result = gpio_service_mcu_select(args);
+		break;
+	default:
+		return TFM_PLATFORM_ERR_NOT_SUPPORTED;
+	}
+
+
+	return TFM_PLATFORM_ERR_SUCCESS;
+}
+#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 
 void tfm_platform_hal_system_reset(void)
 {
@@ -86,6 +141,10 @@ tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request, psa_invec  *in_vec,
 	switch (request) {
 	case TFM_PLATFORM_IOCTL_READ_SERVICE:
 		return tfm_platform_hal_read_service(in_vec, out_vec);
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+	case TFM_PLATFORM_IOCTL_GPIO_SERVICE:
+		return tfm_platform_hal_gpio_service(in_vec, out_vec);
+#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 	default:
 		return TFM_PLATFORM_ERR_NOT_SUPPORTED;
 	}
