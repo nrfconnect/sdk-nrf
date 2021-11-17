@@ -35,7 +35,7 @@ The following Kconfig options are also available for this module:
 * :kconfig:`CONFIG_CAF_BLE_STATE_EXCHANGE_MTU` - This option can be used for GATT client (:kconfig:`CONFIG_BT_GATT_CLIENT`) to set the Maximum Transmission Unit (MTU) to the maximum possible size that the buffers can hold.
   This option is enabled by default.
 * :kconfig:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
-  This option is enabled by default and depends on :kconfig:`CONFIG_BT_CTLR_LLPM` and :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
+  This option is enabled by default and depends on :kconfig:`CONFIG_BT_CTLR_SDC_LLPM` and :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
 
 Implementation details
 **********************
