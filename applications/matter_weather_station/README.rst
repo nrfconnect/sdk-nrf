@@ -49,6 +49,11 @@ Matter weather station build types
 The Matter weather station application does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types and they are located in the `configuration/thingy53_nrf5340_cpuapp` directory.
 
+The :file:`prj.conf` file represents a ``debug`` build type.
+Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
+For example, the ``release`` build type file name is :file:`prj_release.conf`.
+If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+
 .. include:: /gs_modifying.rst
    :start-after: build_types_overview_start
    :end-before: build_types_overview_end
@@ -56,12 +61,12 @@ Configuration files are provided for different build types and they are located 
 Before you start testing the application, you can select one of the build types supported by Matter weather station application, depending on the building method.
 This application supports the following build types:
 
-* ``ZDebug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
-* ``ZRelease`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+* ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
 
 .. note::
     `Selecting a build type`_ is optional.
-    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+    The ``debug`` build type is used by default if no build type is explicitly selected.
 
 Requirements
 ************
@@ -143,22 +148,22 @@ Selecting a build type from command line
    :start-after: build_types_selection_cmd_start
    :end-before: For example, you can replace the
 
-For example, you can replace the *selected_build_type* variable to build the ``ZRelease`` firmware for PCA20053 by running the following command in the project directory:
+For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``thingy53_nrf5340_cpuapp`` by running the following command in the project directory:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b thingy53_nrf5340_cpuapp -d build_thingy53_nrf5340_cpuapp -- -DCMAKE_BUILD_TYPE=ZRelease
+   west build -b thingy53_nrf5340_cpuapp -d build_thingy53_nrf5340_cpuapp -- -DCONF_FILE=prj_release.conf
 
 The ``build_thingy53_nrf5340_cpuapp`` parameter specifies the output directory for the build files.
 
 .. note::
    If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``ZDebugWithShell`` build type is not supported by the selected board, the following notification appears:
+   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
 
    .. code-block:: console
 
-      Configuration file for build type ZDebugWithShell is missing.
+      File not found: ./ncs/nrf/applications/matter_weather_station/configuration/thingy53_nrf5340_cpuapp/prj_shell.conf
 
 Testing
 =======
