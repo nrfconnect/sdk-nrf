@@ -42,7 +42,7 @@ Complete the following actions to optimize the Bluetooth® part of your applicat
 
   The following configuration options affect the stack sizes of the Bluetooth threads:
 
-  * :kconfig:`CONFIG_SDC_RX_STACK_SIZE`
+  * :kconfig:`CONFIG_BT_CTLR_SDC_RX_STACK_SIZE`
   * :kconfig:`CONFIG_BT_RX_STACK_SIZE`
   * :kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE`
   * :kconfig:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
