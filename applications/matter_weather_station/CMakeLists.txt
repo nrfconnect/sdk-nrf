@@ -6,16 +6,24 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE ZDebug)
+
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
+  message(FATAL_ERROR
+          "Board ${BOARD} is not supported.\n"
+          "Please make sure board specific configuration files are added to "
+          "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
 endif()
 
-set(CONF_FILE           ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/prj_${CMAKE_BUILD_TYPE}.conf)
-set(PM_STATIC_YML_FILE  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
+################################################################################
 
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
+# The application uses the configuration/<board> scheme for configuration files.
+set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(matter-weather-station)
+
+################################################################################
 
 set(COMMON_ROOT ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common)
 set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
