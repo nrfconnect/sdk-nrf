@@ -1378,7 +1378,7 @@ The nRF Desktop devices use one of the following Link Layers:
     This Link Layer does support the Low Latency Packet Mode (LLPM).
     If you opt for this Link Layer and enable the :kconfig:`CONFIG_BT_CTLR_SDC_LLPM`, the :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is also enabled by default and can be configured further:
 
-    * When :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
+    * When :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :kconfig:`CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
 
       This is required by the nRF Desktop central and helps avoid scheduling conflicts with Bluetooth Link Layer.
       Such conflicts could lead to a drop in HID input report rate or a disconnection.
@@ -1386,7 +1386,7 @@ The nRF Desktop devices use one of the following Link Layers:
 
     * When :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is disabled, the device will use only standard Bluetooth LE connection parameters with the lowest available connection interval of 7.5 ms.
 
-      If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:kconfig:`CONFIG_BT_MAX_CONN`), you can set the value for :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
+      If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:kconfig:`CONFIG_BT_MAX_CONN`), you can set the value for :kconfig:`CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
       With this value, the nRF Desktop central is able to exchange the data with up to 3 Bluetooth LE peripherals during every 7.5-ms connection interval.
       Using the value of ``3000`` for more than 2 simultaneous Bluetooth LE connections will result in a lower HID input report rate.
 
