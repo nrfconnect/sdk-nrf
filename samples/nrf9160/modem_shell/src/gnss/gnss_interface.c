@@ -11,15 +11,32 @@
 #include <init.h>
 #include <assert.h>
 #include <nrf_modem_gnss.h>
+
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#include <stdlib.h>
+#include <modem/modem_jwt.h>
+#include <net/nrf_cloud_rest.h>
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+#include <net/nrf_cloud_agps.h>
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <pm_config.h>
+#include <net/nrf_cloud_pgps.h>
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 #include <supl_session.h>
 #include <supl_os_client.h>
-#endif
+#include "gnss_supl_support.h"
+#endif /* CONFIG_SUPL_CLIENT_LIB */
 
 #include "mosh_print.h"
 #include "gnss.h"
-#if defined(CONFIG_SUPL_CLIENT_LIB)
-#include "gnss_supl_support.h"
+
+#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
+	defined(CONFIG_SUPL_CLIENT_LIB)
+BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library can not be enabled at the same time");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
@@ -38,13 +55,6 @@ enum gnss_operation_mode {
 K_THREAD_STACK_DEFINE(gnss_workq_stack_area, GNSS_WORKQ_THREAD_STACK_SIZE);
 
 static struct k_work_q gnss_work_q;
-
-#if defined(CONFIG_SUPL_CLIENT_LIB)
-static struct k_work get_agps_data_work;
-
-static struct nrf_modem_gnss_agps_data_frame agps_data;
-#endif
-
 static struct k_work gnss_stop_work;
 static struct k_work_delayable gnss_start_work;
 static struct k_work_delayable gnss_timeout_work;
@@ -53,7 +63,10 @@ static enum gnss_operation_mode operation_mode = GNSS_OP_MODE_CONTINUOUS;
 static uint32_t periodic_fix_interval;
 static uint32_t periodic_fix_retry;
 static bool nmea_mask_set;
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+static struct nrf_modem_gnss_agps_data_frame agps_need;
+
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+static struct k_work get_agps_data_work;
 static bool agps_automatic;
 static bool agps_inject_ephe = true;
 static bool agps_inject_alm = true;
@@ -63,11 +76,28 @@ static bool agps_inject_neq = true;
 static bool agps_inject_time = true;
 static bool agps_inject_pos = true;
 static bool agps_inject_int = true;
-#endif
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
+
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+static char agps_data_buf[3500];
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static bool pgps_enabled;
+static struct gps_pgps_request pgps_request;
+static struct nrf_cloud_pgps_prediction *prediction;
+static struct k_work get_pgps_data_work;
+static struct k_work inject_pgps_data_work;
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+static char jwt_buf[600];
+static char rx_buf[2048];
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
 
 /* Struct for an event item. The data is read in the event handler and passed as a part of the
  * event item because an NMEA string would get overwritten by the next NMEA string before the
- * consumer thread is able to read it. This is not a problem with PVT and AGPS request data, but
+ * consumer thread is able to read it. This is not a problem with PVT and A-GPS request data, but
  * all data is handled in the same way for simplicity.
  */
 struct event_item {
@@ -339,7 +369,7 @@ static void data_handler_thread_fn(void)
 					 event.data)->data_flags);
 
 				mosh_print(
-					"GNSS: AGPS data needed (ephe: 0x%08x, alm: 0x%08x, "
+					"GNSS: A-GPS data needed (ephe: 0x%08x, alm: 0x%08x, "
 					"flags: %s)",
 					((struct nrf_modem_gnss_agps_data_frame *)
 					 event.data)->sv_mask_ephe,
@@ -347,50 +377,18 @@ static void data_handler_thread_fn(void)
 					 event.data)->sv_mask_alm,
 					flags_string);
 			}
-#if defined(CONFIG_SUPL_CLIENT_LIB)
-			if (agps_automatic) {
-				struct nrf_modem_gnss_agps_data_frame *event_agps_data;
 
-				event_agps_data = (struct nrf_modem_gnss_agps_data_frame *)
-						  event.data;
-				(void)memset(&agps_data, 0, sizeof(agps_data));
-				if (agps_inject_ephe) {
-					agps_data.sv_mask_ephe = event_agps_data->sv_mask_ephe;
-				}
-				if (agps_inject_alm) {
-					agps_data.sv_mask_alm = event_agps_data->sv_mask_alm;
-				}
-				if (agps_inject_utc) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
-				}
-				if (agps_inject_klob) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
-				}
-				if (agps_inject_neq) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
-				}
-				if (agps_inject_time) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
-				}
-				if (agps_inject_pos) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
-				}
-				if (agps_inject_int) {
-					agps_data.data_flags |=
-						event_agps_data->data_flags &
-						NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
-				}
+			memcpy(&agps_need, event.data, sizeof(agps_need));
+
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+			if (agps_automatic) {
 				k_work_submit_to_queue(&gnss_work_q, &get_agps_data_work);
+			}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+			if (pgps_enabled && agps_need.sv_mask_ephe != 0x0) {
+				nrf_cloud_pgps_notify_prediction();
 			}
 #endif
 			break;
@@ -456,28 +454,176 @@ static int gnss_enable_all_nmeas(void)
 		NRF_MODEM_GNSS_NMEA_RMC_MASK);
 }
 
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
+{
+	int err;
+
+	err = modem_info_init();
+	if (err) {
+		return err;
+	}
+
+	char resp_buf[MODEM_INFO_MAX_RESPONSE_SIZE];
+
+	err = modem_info_string_get(MODEM_INFO_CELLID,
+				    resp_buf,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		return err;
+	}
+
+	serving_cell->id = strtol(resp_buf, NULL, 16);
+
+	err = modem_info_string_get(MODEM_INFO_AREA_CODE,
+				    resp_buf,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		return err;
+	}
+
+	serving_cell->tac = strtol(resp_buf, NULL, 16);
+
+	/* Request for MODEM_INFO_MNC returns both MNC and MCC in the same string. */
+	err = modem_info_string_get(MODEM_INFO_OPERATOR,
+				    resp_buf,
+				    MODEM_INFO_MAX_RESPONSE_SIZE);
+	if (err < 0) {
+		return err;
+	}
+
+	serving_cell->mnc = strtol(&resp_buf[3], NULL, 10);
+	/* Null-terminate MCC, read and store it. */
+	resp_buf[3] = '\0';
+	serving_cell->mcc = strtol(resp_buf, NULL, 10);
+
+	return 0;
+}
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+static void get_filtered_agps_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
+{
+	memset(agps_request, 0, sizeof(*agps_request));
+
+	if (agps_inject_ephe) {
+		agps_request->sv_mask_ephe = agps_need.sv_mask_ephe;
+	}
+	if (agps_inject_alm) {
+		agps_request->sv_mask_alm = agps_need.sv_mask_alm;
+	}
+	if (agps_inject_utc) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
+	}
+	if (agps_inject_klob) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+	if (agps_inject_neq) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+	}
+	if (agps_inject_time) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+	if (agps_inject_pos) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+	}
+	if (agps_inject_int) {
+		agps_request->data_flags |=
+			agps_need.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	}
+}
 
 static void get_agps_data(struct k_work *item)
 {
 	ARG_UNUSED(item);
 
 	char flags_string[48];
+	struct nrf_modem_gnss_agps_data_frame agps_request;
 
-	get_agps_data_flags_string(flags_string, agps_data.data_flags);
+	get_filtered_agps_request(&agps_request);
+
+	get_agps_data_flags_string(flags_string, agps_request.data_flags);
 
 	mosh_print(
-		"GNSS: Getting AGPS data (ephe: 0x%08x, alm: 0x%08x, flags: %s)...",
-		agps_data.sv_mask_ephe,
-		agps_data.sv_mask_alm,
+		"GNSS: Getting A-GPS data from %s (ephe: 0x%08x, alm: 0x%08x, flags: %s)...",
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+		"nRF Cloud",
+#else
+		"SUPL",
+#endif
+		agps_request.sv_mask_ephe,
+		agps_request.sv_mask_alm,
 		flags_string);
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	int err;
+
+	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
+	if (err) {
+		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
+		return;
+	}
+
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.auth = jwt_buf,
+		.rx_buf = rx_buf,
+		.rx_buf_len = sizeof(rx_buf),
+	};
+
+	struct nrf_cloud_rest_agps_request request = {
+		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
+		.agps_req = &agps_request,
+	};
+
+	struct nrf_cloud_rest_agps_result result = {
+		.buf = agps_data_buf,
+		.buf_sz = sizeof(agps_data_buf),
+	};
+
+	struct lte_lc_cells_info net_info = { 0 };
+
+	err = serving_cell_info_get(&net_info.current_cell);
+	if (err) {
+		mosh_warn("GNSS: Could not get cell info, error: %d", err);
+	} else {
+		/* Network info for the location request. */
+		request.net_info = &net_info;
+	}
+
+	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+	if (err) {
+		mosh_error("GNSS: Failed to get A-GPS data, error: %d", err);
+		return;
+	}
+
+	mosh_print("GNSS: Processing A-GPS data");
+
+	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
+	if (err) {
+		mosh_error("GNSS: Failed to process A-GPS data, error: %d", err);
+		return;
+	}
+
+	mosh_print("GNSS: A-GPS data injected to the modem");
+
+#else /* CONFIG_SUPL_CLIENT_LIB */
 	if (open_supl_socket() == 0) {
-		supl_session((void *)&agps_data);
+		supl_session((void *)&agps_request);
 		close_supl_socket();
 	}
+#endif
 }
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
 
+#if defined(CONFIG_SUPL_CLIENT_LIB)
 static void get_agps_data_type_string(char *type_string, uint16_t type)
 {
 	switch (type) {
@@ -526,21 +672,15 @@ static int inject_agps_data(void *agps,
 	get_agps_data_type_string(type_string, type);
 
 	if (err) {
-		mosh_error(
-			"GNSS: Failed to send AGPS data, type: %s (err: %d)",
-			type_string,
-			errno);
+		mosh_error("GNSS: Failed to send A-GPS data, type: %s (err: %d)",
+			   type_string, errno);
 		return err;
 	}
 
-	mosh_print(
-		"GNSS: Injected AGPS data, type: %s, size: %d",
-		type_string,
-		agps_size);
+	mosh_print("GNSS: Injected A-GPS data, type: %s, size: %d", type_string, agps_size);
 
 	return 0;
 }
-
 #endif /* CONFIG_SUPL_CLIENT_LIB */
 
 static void start_gnss_work_fn(struct k_work *item)
@@ -598,6 +738,98 @@ static void handle_timeout_work_fn(struct k_work *item)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void get_pgps_data_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	int err;
+
+	mosh_print("GNSS: Getting P-GPS predictions from nRF Cloud...");
+
+	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
+	if (err) {
+		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
+		return;
+	}
+
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.auth = jwt_buf,
+		.rx_buf = rx_buf,
+		.rx_buf_len = sizeof(rx_buf),
+	};
+
+	struct nrf_cloud_rest_pgps_request request = {
+		.pgps_req = &pgps_request
+	};
+
+	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
+	if (err) {
+		mosh_error("GNSS: Failed to get P-GPS data, error: %d", err);
+
+		nrf_cloud_pgps_request_reset();
+
+		return;
+	}
+
+	mosh_print("GNSS: Processing P-GPS response");
+
+	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+	if (err) {
+		mosh_error("GNSS: Failed to process P-GPS response, error: %d", err);
+
+		nrf_cloud_pgps_request_reset();
+
+		return;
+	}
+
+	mosh_print("GNSS: P-GPS response processed");
+}
+
+static void inject_pgps_data_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	int err;
+
+	mosh_print("GNSS: Injecting ephemerides to modem...");
+
+	err = nrf_cloud_pgps_inject(prediction, &agps_need);
+	if (err) {
+		mosh_error("GNSS: Failed to inject ephemerides to modem");
+	}
+
+	err = nrf_cloud_pgps_preemptive_updates();
+	if (err) {
+		mosh_error("GNSS: Failed to request preduction updates");
+	}
+}
+
+static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
+{
+	switch (event->type) {
+	case PGPS_EVT_AVAILABLE:
+		prediction = event->prediction;
+
+		k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+		break;
+
+	case PGPS_EVT_REQUEST:
+		memcpy(&pgps_request, event->request, sizeof(pgps_request));
+
+		k_work_submit_to_queue(&gnss_work_q, &get_pgps_data_work);
+		break;
+
+	default:
+		/* No action needed */
+		break;
+	}
+}
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+
 static void gnss_api_init(void)
 {
 	int err;
@@ -617,20 +849,27 @@ static void gnss_api_init(void)
 	if (!err) {
 		gnss_api_initialized = true;
 
+		struct k_work_queue_config gnss_work_q_config = {
+			.name = "gnss_workq",
+			.no_yield = false
+		};
+
 		k_work_queue_start(
 			&gnss_work_q,
 			gnss_workq_stack_area,
 			K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
 			GNSS_WORKQ_THREAD_PRIORITY,
-			NULL);
+			&gnss_work_q_config);
 
 		k_work_init(&gnss_stop_work, stop_gnss_work_fn);
 		k_work_init_delayable(&gnss_start_work, start_gnss_work_fn);
 		k_work_init_delayable(&gnss_timeout_work, handle_timeout_work_fn);
 
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 		k_work_init(&get_agps_data_work, get_agps_data);
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
 
+#if defined(CONFIG_SUPL_CLIENT_LIB)
 		static struct supl_api supl_api = {
 			.read = supl_read,
 			.write = supl_write,
@@ -640,7 +879,7 @@ static void gnss_api_init(void)
 		};
 
 		(void)supl_init(&supl_api);
-#endif
+#endif /* CONFIG_SUPL_CLIENT_LIB */
 	} else {
 		mosh_error("GNSS: Failed to initialize GNSS API");
 	}
@@ -1077,7 +1316,7 @@ int gnss_set_timing_source(enum gnss_timing_source source)
 int gnss_set_agps_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 			       bool neq, bool time, bool pos, bool integrity)
 {
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	agps_inject_ephe = ephe;
 	agps_inject_alm = alm;
 	agps_inject_utc = utc;
@@ -1089,59 +1328,81 @@ int gnss_set_agps_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+		   "A-GPS support");
 	return -EOPNOTSUPP;
 #endif
 }
 
 int gnss_set_agps_automatic(bool value)
 {
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	agps_automatic = value;
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+		   "A-GPS support");
 	return -EOPNOTSUPP;
 #endif
 }
 
 int gnss_inject_agps_data(void)
 {
-#if defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	gnss_api_init();
 
-	(void)memset(&agps_data, 0, sizeof(agps_data));
-	if (agps_inject_ephe) {
-		agps_data.sv_mask_ephe = 0xffffffff;
-	}
-	if (agps_inject_alm) {
-		agps_data.sv_mask_alm = 0xffffffff;
-	}
-	if (agps_inject_utc) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
-	}
-	if (agps_inject_klob) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
-	}
-	if (agps_inject_neq) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
-	}
-	if (agps_inject_time) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
-	}
-	if (agps_inject_pos) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
-	}
-	if (agps_inject_int) {
-		agps_data.data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
-	}
+	/* Pretend modem requested all A-GPS data */
+	agps_need.sv_mask_ephe = 0xffffffff;
+	agps_need.sv_mask_alm = 0xffffffff;
+	agps_need.data_flags = NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+				  NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+				  NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+				  NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+				  NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
 
 	k_work_submit_to_queue(&gnss_work_q, &get_agps_data_work);
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_SUPL_CLIENT_LIB for AGPS support");
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+		   "A-GPS support");
+	return -EOPNOTSUPP;
+#endif
+}
+
+int gnss_enable_pgps(void)
+{
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	int err;
+
+	if (pgps_enabled) {
+		mosh_error("GNSS: P-GPS already enabled");
+		return -EPERM;
+	}
+
+	gnss_api_init();
+
+	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
+	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
+
+	struct nrf_cloud_pgps_init_param pgps_param = {
+		.event_handler = pgps_event_handler,
+		.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
+		.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+	};
+
+	err = nrf_cloud_pgps_init(&pgps_param);
+	if (err) {
+		mosh_error("GNSS: Failed to initialize P-GPS, error: %d", err);
+		return err;
+	}
+
+	pgps_enabled = true;
+
+	return 0;
+#else
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_PGPS for P-GPS support");
 	return -EOPNOTSUPP;
 #endif
 }
