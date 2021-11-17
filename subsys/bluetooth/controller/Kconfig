@@ -112,7 +112,7 @@ config BT_CTLR_SDC_SCAN_BUFFER_COUNT
 	  It is recommended to support at least three buffers,
 	  otherwise the scan response report will likely not be generated.
 
-config SDC_RX_PRIO
+config BT_CTLR_SDC_RX_PRIO
 	# Hidden option to set the priority of the controller receive thread
 	int
 	default BT_DRIVER_RX_HIGH_PRIO
