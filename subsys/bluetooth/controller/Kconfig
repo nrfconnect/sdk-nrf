@@ -117,7 +117,7 @@ config BT_CTLR_SDC_RX_PRIO
 	int
 	default BT_DRIVER_RX_HIGH_PRIO
 
-config SDC_RX_STACK_SIZE
+config BT_CTLR_SDC_RX_STACK_SIZE
 	int "Size of the receive thread stack"
 	default 1024
 	help

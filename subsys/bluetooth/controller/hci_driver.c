@@ -60,7 +60,7 @@ const uint32_t z_bt_ctlr_used_nrf_ppi_groups;
 static K_SEM_DEFINE(sem_recv, 0, 1);
 
 static struct k_thread recv_thread_data;
-static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_SDC_RX_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BT_CTLR_SDC_RX_STACK_SIZE);
 
 #if defined(CONFIG_BT_CONN)
 /* It should not be possible to set CONFIG_BT_CTLR_SDC_SLAVE_COUNT larger than
