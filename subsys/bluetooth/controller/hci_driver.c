@@ -63,13 +63,13 @@ static struct k_thread recv_thread_data;
 static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_SDC_RX_STACK_SIZE);
 
 #if defined(CONFIG_BT_CONN)
-/* It should not be possible to set CONFIG_SDC_SLAVE_COUNT larger than
+/* It should not be possible to set CONFIG_BT_CTLR_SDC_SLAVE_COUNT larger than
  * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
  * verify that assumption.
  */
-BUILD_ASSERT(CONFIG_SDC_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
+BUILD_ASSERT(CONFIG_BT_CTLR_SDC_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
 
-#define SDC_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_SDC_SLAVE_COUNT)
+#define SDC_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BT_CTLR_SDC_SLAVE_COUNT)
 
 #else
 
@@ -81,7 +81,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 			 (SDC_MASTER_COUNT > 0));
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-			 (CONFIG_SDC_SLAVE_COUNT > 0));
+			 (CONFIG_BT_CTLR_SDC_SLAVE_COUNT > 0));
 
 #if defined(CONFIG_BT_BROADCASTER)
 	#if defined(CONFIG_BT_CTLR_ADV_EXT)
@@ -150,7 +150,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	SDC_DEFAULT_RX_PACKET_COUNT) \
 	+ SDC_MEM_SLAVE_LINKS_SHARED)
 
-#define MEMPOOL_SIZE ((CONFIG_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
+#define MEMPOOL_SIZE ((CONFIG_BT_CTLR_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
 		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE) + \
 		       SDC_ADV_SET_MEM_SIZE + \
 		       SDC_PERIODIC_ADV_MEM_SIZE + \
@@ -552,7 +552,7 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-	cfg.slave_count.count = CONFIG_SDC_SLAVE_COUNT;
+	cfg.slave_count.count = CONFIG_BT_CTLR_SDC_SLAVE_COUNT;
 
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
