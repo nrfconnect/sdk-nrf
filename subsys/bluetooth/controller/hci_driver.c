@@ -576,7 +576,7 @@ static int configure_memory_usage(void)
 	}
 
 	cfg.event_length.event_length_us =
-		CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT;
+		CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT;
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				       SDC_CFG_TYPE_EVENT_LENGTH,

@@ -93,7 +93,7 @@ config BT_CTLR_SDC_SLAVE_COUNT
 	  NOTE: the number of master roles is defined as
 	  BT_MAX_CONN - BT_CTLR_SDC_SLAVE_COUNT
 
-config SDC_MAX_CONN_EVENT_LEN_DEFAULT
+config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
 	default 7500
 	range 2500 4000000
