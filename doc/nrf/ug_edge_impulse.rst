@@ -62,8 +62,13 @@ Complete the following steps to configure the building process:
    * :kconfig:`CONFIG_LIB_CPLUSPLUS`
    * :kconfig:`CONFIG_NEWLIB_LIBC`
    * :kconfig:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
-   * :kconfig:`CONFIG_FPU`
 
+   .. note::
+      The :kconfig:`CONFIG_FPU` Kconfig option is implied by default if floating point unit (FPU) is supported by the hardware.
+      Using FPU speeds up calculations.
+
+#. Make sure that the :kconfig:`CONFIG_FP16` Kconfig option is disabled.
+   The Edge Impulse library is not compatible with half-precision floating point support introduced in Zephyr.
 #. Enable building the downloaded library by setting the :kconfig:`CONFIG_EDGE_IMPULSE` Kconfig option.
    Setting this option also enables the :ref:`ei_wrapper`.
 #. Enable and specify the Uniform Resource Identifier (URI) in the :kconfig:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
