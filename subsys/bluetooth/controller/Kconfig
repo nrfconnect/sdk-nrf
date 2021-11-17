@@ -81,7 +81,7 @@ config BT_CTLR_SDC_LLPM
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
 
-config BT_CTLR_SDC_SLAVE_COUNT
+config BT_CTLR_SDC_PERIPHERAL_COUNT
 	int "Number of concurrent slave roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
 	default 1 if BT_PERIPHERAL
@@ -91,7 +91,7 @@ config BT_CTLR_SDC_SLAVE_COUNT
 	  Number of concurrent slave roles defines how many simultaneous
 	  connections can be created with the device working as a slave.
 	  NOTE: the number of master roles is defined as
-	  BT_MAX_CONN - BT_CTLR_SDC_SLAVE_COUNT
+	  BT_MAX_CONN - BT_CTLR_SDC_PERIPHERAL_COUNT
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
