@@ -11,7 +11,9 @@ menuconfig EDGE_IMPULSE
 	depends on LIB_CPLUSPLUS
 	depends on NEWLIB_LIBC
 	depends on NEWLIB_LIBC_FLOAT_PRINTF
-	depends on FPU
+	depends on !FP16
+	imply FPU
+	imply CBPRINTF_FP_SUPPORT
 	help
 	  Enable Edge Impulse library.
 

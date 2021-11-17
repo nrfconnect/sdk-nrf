@@ -455,6 +455,8 @@ Other libraries
 * :ref:`ei_wrapper` library:
 
   * Expanded API to provide information about input data sampling frequency, every label used by the machine learning model, and results associated with every label.
+  * Removed FPU dependency.
+    The FPU is implied to speed up calculations.
 
 * :ref:`fprotect_readme` library:
 
