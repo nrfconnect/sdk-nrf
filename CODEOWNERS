@@ -49,6 +49,7 @@ Kconfig*                                  @tejlmand
 /doc/nrf/images/                          @Avalei
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
+/doc/mcuboot/                             @carlescufi
 /doc/nrfxlib/                             @gmarull
 /doc/update_versions.cmake                @carlescufi
 /doc/versions.json                        @carlescufi
