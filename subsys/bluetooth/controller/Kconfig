@@ -67,7 +67,6 @@ config BT_RX_STACK_SIZE
 	  require extra stack space, this value can be increased to
 	  accommodate for that.
 
-
 # SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
 # time, because Central side Bluetooth sample needs a different workqueue size
 # when Nordic BLE controller is used.
@@ -75,7 +74,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
 	default 2048 if BT_LL_SOFTDEVICE
 
-config BT_CTLR_LLPM
+config BT_CTLR_SDC_LLPM
 	bool "Enable Low Latency Packet Mode support"
 	depends on SOC_SERIES_NRF52X
 	help
@@ -128,7 +127,7 @@ config SDC_RX_STACK_SIZE
 choice SOFTDEVICE_CONTROLLER_VARIANT
 	prompt "SoftDevice Controller variant"
 	default SOFTDEVICE_CONTROLLER_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
-						     BT_CTLR_LLPM || \
+						     BT_CTLR_SDC_LLPM || \
 						     BT_CTLR_ADV_EXT || \
 						     BT_CTLR_PHY_CODED || \
 						     BT_CTLR_ADV_PERIODIC || \
@@ -143,14 +142,14 @@ choice SOFTDEVICE_CONTROLLER_VARIANT
 
 config SOFTDEVICE_CONTROLLER_PERIPHERAL
 	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
-	depends on !BT_OBSERVER && !BT_CTLR_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_OBSERVER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
 	help
 	  The peripheral library variant is optimized for simpler applications only
 	  requiring the peripheral role.
 
 config SOFTDEVICE_CONTROLLER_CENTRAL
 	bool "SoftDevice Controller optimized for central role applications"
-	depends on !BT_BROADCASTER && !BT_CTLR_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_BROADCASTER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
 	help
 	  The central library variant is optimized for simpler applications only
 	  requiring the central role.
