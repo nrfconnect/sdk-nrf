@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <sys/util.h>
+
 #include <platform/include/tfm_platform_system.h>
 #include <cmsis.h>
 #include <stdio.h>
@@ -14,8 +16,6 @@
 
 /* This contains the user provided allowed ranges */
 #include <tfm_read_ranges.h>
-
-#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 
 static bool ptr_in_secure_area(intptr_t ptr)
 {
