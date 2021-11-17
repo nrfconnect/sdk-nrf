@@ -499,6 +499,16 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 	return gnss_inject_agps_data();
 }
 
+static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
+{
+	return print_help(shell, argc, argv);
+}
+
+static int cmd_gnss_pgps_enable(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_enable_pgps();
+}
+
 static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **argv)
 {
 	bool ephe_enabled;
@@ -938,6 +948,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_gnss_pgps,
+	SHELL_CMD_ARG(enable, NULL, "Enable P-GPS.",
+		      cmd_gnss_pgps_enable, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_1pps,
 	SHELL_CMD_ARG(enable, NULL, "<interval (s)> <pulse length (ms)>\nEnable 1PPS.",
 		      cmd_gnss_1pps_enable, 3, 0),
@@ -958,7 +975,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(config, &sub_gnss_config, "Set GNSS configuration.", cmd_gnss_config),
 	SHELL_CMD(priority, &sub_gnss_priority, "Enable/disable priority time window requests.",
 		  cmd_gnss_priority),
-	SHELL_CMD(agps, &sub_gnss_agps, "AGPS configuration and commands.", cmd_gnss_agps),
+	SHELL_CMD(agps, &sub_gnss_agps, "A-GPS configuration and commands.", cmd_gnss_agps),
+	SHELL_CMD(pgps, &sub_gnss_pgps, "P-GPS commands.", cmd_gnss_pgps),
 	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", cmd_gnss_1pps),
 	SHELL_CMD(output, NULL, "<pvt level> <nmea level> <event level>\nSet output levels.",
 		  cmd_gnss_output),

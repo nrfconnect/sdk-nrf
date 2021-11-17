@@ -202,6 +202,8 @@ nRF9160 samples
   * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
   * Added a new shell command ``location`` for using the Location library to retrieve device's location with different methods.
   * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+  * Added support for nRF Cloud A-GPS and P-GPS.
+    A-GPS support is enabled by default.
 
 * :ref:`gnss_sample` sample:
 

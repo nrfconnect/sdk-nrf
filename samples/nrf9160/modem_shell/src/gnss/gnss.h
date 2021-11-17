@@ -319,6 +319,14 @@ int gnss_set_agps_automatic(bool value);
 int gnss_inject_agps_data(void);
 
 /**
+ * @brief Enables P-GPS. Once enabled, P-GPS remains enabled until reboot.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_enable_pgps(void);
+
+/**
  * @brief Configures how much PVT information is printed out.
  *
  * @param level 0 = PVT output disabled

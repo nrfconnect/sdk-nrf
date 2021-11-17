@@ -541,6 +541,8 @@ Building and running
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
+See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
+
 DK buttons
 ==========
 
@@ -608,8 +610,6 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-ppp.conf
 
-See :ref:`cmake_options` for more instructions on how to add this option.
-
 Application FOTA support
 ========================
 
@@ -619,8 +619,6 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-app_fota.conf
-
-See :ref:`cmake_options` for more instructions on how to add this option.
 
 LwM2M carrier library support
 =============================
@@ -632,7 +630,15 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf
 
-See :ref:`cmake_options` for more instructions on how to add this option.
+P-GPS support
+=============
+
+To build the MoSh sample with P-GPS support, use the ``-DOVERLAY_CONFIG=overlay-pgps.conf`` option.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-pgps.conf
 
 Dependencies
 ************
