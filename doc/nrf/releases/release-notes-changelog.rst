@@ -130,6 +130,16 @@ nRF9160: Serial LTE modem
   * The possibility to send to and receive from nRF Cloud JSON messages in data mode.
   * The ability to read out the ``sec_tag`` and the UUID of the device.
 
+Matter Weather Station
+----------------------
+
+* Updated:
+
+  * The application switched to using generic configuration file scheme.
+    It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
+    When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
+    For example, ``CONF_FILE=prj_release.conf`` is now used instead of ``CMAKE_BUILD_TYPE=ZRelease``.
+
 Samples
 =======
 
