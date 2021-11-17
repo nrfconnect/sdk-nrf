@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <tfm_api.h>
 #include <tfm_platform_api.h>
+#include <hal/nrf_gpio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +31,8 @@ extern "C" {
 /** @brief Supported request types.
  */
 enum tfm_platform_ioctl_reqest_types_t {
-	TFM_PLATFORM_IOCTL_READ_SERVICE
+	TFM_PLATFORM_IOCTL_READ_SERVICE,
+	TFM_PLATFORM_IOCTL_GPIO_SERVICE,
 };
 
 /** @brief Argument list for each platform read service.
@@ -45,6 +47,31 @@ struct tfm_read_service_args_t {
 /** @brief Output list for each read platform service
  */
 struct tfm_read_service_out_t {
+	uint32_t result;
+};
+
+enum tfm_gpio_service_type {
+	/** Select which MCU / Subsystem controls the pin */
+	TFM_GPIO_SERVICE_TYPE_PIN_MCU_SELECT = 0,
+};
+
+/** @brief Arguments for selecting the MCU to control a GPIO pin. */
+struct tfm_gpio_service_args_mcu_select {
+	uint32_t pin_number;
+	uint32_t mcu;
+};
+
+/** @brief Argument list for each platform GPIO service */
+struct tfm_gpio_service_args {
+	uint32_t type;
+	union {
+		struct tfm_gpio_service_args_mcu_select mcu_select;
+	};
+};
+
+/** @brief Output list for each GPIO platform service
+ */
+struct tfm_gpio_service_out {
 	uint32_t result;
 };
 
@@ -67,6 +94,20 @@ struct tfm_read_service_range {
 	uint32_t start;
 	size_t size;
 };
+
+/**
+ * @brief Perform a GPIO MCU select operation.
+ *
+ * @param pin_number         Pin_number.
+ * @param mcu                MCU to control the pin, use nrf_gpio_pin_mcusel_t values.
+
+ * @param[out] result        Result of operation
+ *
+ * @return Returns values as specified by the tfm_platform_err_t
+ */
+enum tfm_platform_err_t tfm_platform_gpio_pin_mcu_select(uint32_t pin_number, uint32_t mcu,
+							 uint32_t *result);
+
 
 #ifdef __cplusplus
 }
