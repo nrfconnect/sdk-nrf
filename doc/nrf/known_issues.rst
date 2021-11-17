@@ -19,7 +19,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
-     <option value="v1-7-1" selected>v1.7.1</option>
+     <option value="v1-8-0" selected>v1.8.0</option>
+     <option value="v1-7-1">v1.7.1</option>
      <option value="v1-7-0">v1.7.0</option>
      <option value="v1-6-1">v1.6.1</option>
      <option value="v1-6-0">v1.6.0</option>
@@ -666,6 +667,19 @@ Subsystems
 
 Bluetooth® LE
 =============
+
+.. rst-class:: v1-8-0
+
+DRGN-16506: MPSL timeslot request
+  In some cases, requesting an MPSL timeslot with MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE takes longer than in previous versions.
+
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
+
+DRGN-16506: REM does not stop the HF Clock in between events when 'no prepare' is configured
+  When requesting an MPSL timeslot with MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE, the HF clock will be kept running between timeslot events.
+  This results in increased power consumption when idle.
+
+  **Workaround:** Use MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED instead of MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE when requesting a timeslot.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
