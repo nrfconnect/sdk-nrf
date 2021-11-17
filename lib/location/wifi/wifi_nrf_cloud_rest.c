@@ -276,5 +276,8 @@ clean_up:
 	if (body) {
 		cJSON_free(body);
 	}
+	if (auth_hdr) {
+		k_free(auth_hdr);
+	}
 	return ret;
 }
