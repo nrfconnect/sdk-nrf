@@ -468,6 +468,7 @@ Other libraries
 
   * Increased number of supported Event Manager events.
   * Moved the Event Manager features responsible for profiling events into the new ``event_manager_profiler`` module.
+  * Added a weak function to allow overriding the allocation in Event Manager.
 
 * :ref:`ei_wrapper` library:
 

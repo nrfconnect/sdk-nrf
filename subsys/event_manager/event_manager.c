@@ -116,6 +116,26 @@ void __weak event_manager_trace_event_submission(const struct event_header *eh,
 {
 }
 
+void * __weak event_manager_alloc(size_t size)
+{
+	void *event = k_malloc(size);
+
+	if (unlikely(!event)) {
+		printk("Event Manager OOM error\n");
+		LOG_PANIC();
+		__ASSERT_NO_MSG(false);
+		sys_reboot(SYS_REBOOT_WARM);
+		return NULL;
+	}
+
+	return event;
+}
+
+void __weak event_manager_free(void *addr)
+{
+	k_free(addr);
+}
+
 int __weak event_manager_trace_event_init(void)
 {
 	return 0;
@@ -182,7 +202,7 @@ static void event_processor_fn(struct k_work *work)
 
 		event_manager_trace_event_execution(eh, false);
 
-		k_free(eh);
+		event_manager_free(eh);
 	}
 }
 
