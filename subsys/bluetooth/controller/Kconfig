@@ -124,9 +124,9 @@ config BT_CTLR_SDC_RX_STACK_SIZE
 	  Size of the receiving thread stack, used to retrieve HCI events and
 	  data from the controller.
 
-choice SOFTDEVICE_CONTROLLER_VARIANT
+choice BT_LL_SOFTDEVICE_VARIANT
 	prompt "SoftDevice Controller variant"
-	default SOFTDEVICE_CONTROLLER_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
+	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
 						     BT_CTLR_SDC_LLPM || \
 						     BT_CTLR_ADV_EXT || \
 						     BT_CTLR_PHY_CODED || \
@@ -135,26 +135,26 @@ choice SOFTDEVICE_CONTROLLER_VARIANT
 						     MPSL_CX_BT_3WIRE || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     SOC_NRF5340_CPUNET)
-	default SOFTDEVICE_CONTROLLER_CENTRAL if BT_OBSERVER
-	default SOFTDEVICE_CONTROLLER_PERIPHERAL if BT_BROADCASTER
+	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
+	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
 	help
 	  Select a SoftDevice Controller variant.
 
-config SOFTDEVICE_CONTROLLER_PERIPHERAL
+config BT_LL_SOFTDEVICE_PERIPHERAL
 	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
 	depends on !BT_OBSERVER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
 	help
 	  The peripheral library variant is optimized for simpler applications only
 	  requiring the peripheral role.
 
-config SOFTDEVICE_CONTROLLER_CENTRAL
+config BT_LL_SOFTDEVICE_CENTRAL
 	bool "SoftDevice Controller optimized for central role applications"
 	depends on !BT_BROADCASTER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
 	help
 	  The central library variant is optimized for simpler applications only
 	  requiring the central role.
 
-config SOFTDEVICE_CONTROLLER_MULTIROLE
+config BT_LL_SOFTDEVICE_MULTIROLE
 	bool "SoftDevice Controller optimized for multirole and other advanced configurations"
 	help
 	  The multirole library variant is contains all supported features and can be used
@@ -163,5 +163,6 @@ config SOFTDEVICE_CONTROLLER_MULTIROLE
 	  by the linker.
 
 endchoice
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
