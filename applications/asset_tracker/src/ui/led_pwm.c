@@ -18,7 +18,6 @@ LOG_MODULE_REGISTER(ui_led_pwm, CONFIG_UI_LOG_LEVEL);
 struct led {
 	const struct device *pwm_dev;
 
-	size_t id;
 	struct led_color color;
 	const struct led_effect *effect;
 	uint16_t effect_step;
@@ -171,7 +170,6 @@ int ui_leds_init(void)
 	int err = 0;
 
 	leds.pwm_dev = device_get_binding(dev_name);
-	leds.id = 0;
 	leds.effect = &effect[UI_LTE_DISCONNECTED];
 
 	if (!leds.pwm_dev) {
