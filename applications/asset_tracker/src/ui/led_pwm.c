@@ -83,10 +83,14 @@ static struct led_effect custom_effect =
 		LED_NOCOLOR());
 
 static struct led leds;
+
+#define LED_PSEL(led_node_label) \
+	NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(led_node_label), gpios)
+
 static const size_t led_pins[3] = {
-	CONFIG_UI_LED_RED_PIN,
-	CONFIG_UI_LED_GREEN_PIN,
-	CONFIG_UI_LED_BLUE_PIN,
+	LED_PSEL(red_led),
+	LED_PSEL(green_led),
+	LED_PSEL(blue_led)
 };
 
 static void pwm_out(struct led *led, struct led_color *color)
@@ -168,14 +172,13 @@ static void led_update(struct led *led)
 
 int ui_leds_init(void)
 {
-	const char *dev_name = CONFIG_UI_LED_PWM_DEV_NAME;
 	int err = 0;
 
-	leds.pwm_dev = device_get_binding(dev_name);
+	leds.pwm_dev = DEVICE_DT_GET(DT_ALIAS(rgb_pwm));
 	leds.effect = &effect[UI_LTE_DISCONNECTED];
 
-	if (!leds.pwm_dev) {
-		LOG_ERR("Could not bind to device %s", dev_name);
+	if (!device_is_ready(leds.pwm_dev)) {
+		LOG_ERR("Device %s is not ready", leds.pwm_dev->name);
 		return -ENODEV;
 	}
 

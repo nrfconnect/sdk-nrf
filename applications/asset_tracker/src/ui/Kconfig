@@ -11,54 +11,11 @@ config USE_UI_MODULE
 		Enable the User Interface module for user interaction on
 		development kit / Thingy91 hardware.
 
-menu "User Interface"
-	visible if USE_UI_MODULE
-
-config UI_LED_USE_PWM
-	bool "Use PWM to control LEDs"
-	default y if BOARD_THINGY91_NRF9160_NS
-	select PWM if BOARD_THINGY91_NRF9160_NS
-	select PWM_0 if BOARD_THINGY91_NRF9160_NS
-
-if UI_LED_USE_PWM
-
-config UI_LED_PWM_DEV_NAME
-	string "PWM device name for RGB LED"
-	default "PWM_0" if BOARD_THINGY91_NRF9160_NS
-
-config UI_LED_RED_PIN
-	int "Red LED pin number"
-	default 29 if BOARD_THINGY91_NRF9160_NS
-
-config UI_LED_GREEN_PIN
-	int "Green LED pin number"
-	default 30 if BOARD_THINGY91_NRF9160_NS
-
-config UI_LED_BLUE_PIN
-	int "Blue LED pin number"
-	default 31 if BOARD_THINGY91_NRF9160_NS
-
-endif # UI_LED_USE_PWM
-
-config UI_BUZZER
-	bool "Enable buzzer"
-	default y if BOARD_THINGY91_NRF9160_NS
-	select PWM if BOARD_THINGY91_NRF9160_NS
-	select PWM_1 if BOARD_THINGY91_NRF9160_NS
-
-if UI_BUZZER
-
-config UI_BUZZER_PWM_DEV_NAME
-	string "PWM device name for buzzer"
-	default "PWM_1" if BOARD_THINGY91_NRF9160_NS
-
-config UI_BUZZER_PIN
-	int "Buzzer pin number"
-	default 28 if BOARD_THINGY91_NRF9160_NS
-
-endif # UI_BUZZER
-
-endmenu
+config UI_SELECT_PWM
+	def_bool $(dt_alias_enabled,rgb-pwm) || \
+			$(dt_alias_enabled,buzzer-pwm)
+	depends on USE_UI_MODULE
+	select PWM
 
 module = UI
 module-str = User Interface

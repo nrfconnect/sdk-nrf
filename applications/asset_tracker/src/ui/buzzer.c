@@ -12,6 +12,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 
+#define BUZZER_NODE			DT_ALIAS(buzzer_pwm)
+#define BUZZER_CH0_PIN			DT_PROP(BUZZER_NODE, ch0_pin)
 #define BUZZER_MIN_FREQUENCY		100
 #define BUZZER_MAX_FREQUENCY		10000
 #define BUZZER_MIN_INTENSITY		0
@@ -19,7 +21,7 @@ LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 #define BUZZER_MIN_DUTY_CYCLE_DIV	100
 #define BUZZER_MAX_DUTY_CYCLE_DIV	2
 
-static const struct device *pwm_dev;
+static const struct device *pwm_dev = DEVICE_DT_GET(BUZZER_NODE);
 static atomic_t buzzer_enabled;
 
 static uint32_t intensity_to_duty_cycle_divisor(uint8_t intensity)
@@ -45,14 +47,14 @@ static int pwm_out(uint32_t frequency, uint8_t intensity)
 	 * disables the PWM, but not before the current period is finished.
 	 */
 	if (prev_period) {
-		pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
+		pwm_pin_set_usec(pwm_dev, BUZZER_CH0_PIN,
 				 prev_period, 0, 0);
 		k_sleep(K_MSEC(MAX((prev_period / USEC_PER_MSEC), 1)));
 	}
 
 	prev_period = period;
 
-	return pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
+	return pwm_pin_set_usec(pwm_dev, BUZZER_CH0_PIN,
 				period, duty_cycle, 0);
 }
 
@@ -89,12 +91,10 @@ static int buzzer_enable(void)
 
 int ui_buzzer_init(void)
 {
-	const char *dev_name = CONFIG_UI_BUZZER_PWM_DEV_NAME;
 	int err = 0;
 
-	pwm_dev = device_get_binding(dev_name);
-	if (!pwm_dev) {
-		LOG_ERR("Could not bind to device %s", log_strdup(dev_name));
+	if (!device_is_ready(pwm_dev)) {
+		LOG_ERR("PWM device %s is not ready", pwm_dev->name);
 		return -ENODEV;
 	}
 
