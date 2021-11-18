@@ -1658,6 +1658,7 @@ static void light_ctrl_srv_reset(struct bt_mesh_model *model)
 
 	ctrl_disable(srv);
 	net_buf_simple_reset(srv->pub.msg);
+	srv->resume = CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY;
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->setup_srv, false, NULL,
