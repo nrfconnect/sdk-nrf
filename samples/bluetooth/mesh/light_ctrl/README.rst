@@ -16,12 +16,15 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
+
+.. note::
+   |thingy53_sample_note|
 
 Overview
 ********
@@ -106,6 +109,10 @@ LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
    First LED outputs the current light level of the Light Lightness Server in the first element.
 
+.. note::
+   :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+   Each RGB LED channel is used as separate LED.
+
 Configuration
 *************
 
@@ -119,6 +126,8 @@ This sample is split into the following source files:
 * A :file:`main.c` file to handle initialization.
 * A file for handling mesh models, :file:`model_handler.c`.
 * A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
+* A :file:`thingy53.c` file, used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
+  It is only compiled when the sample is built for the :ref:`zephyr:thingy53_nrf5340` board.
 
 FEM support
 ===========
@@ -161,7 +170,7 @@ Configure the Generic OnOff Server model on each element on the :guilabel:`Mesh 
 
 You should now see the following actions:
 
-1. The LED fades from 0% to 100% over 500ms :guilabel:`Standby -> On`.
+1. The LED fades from 0% to 100% over a defined transition time following the message :guilabel:`Standby -> On`.
 #. The LED stays at 100% for three seconds :guilabel:`On`.
 #. The LED fades from 100% to :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` over five seconds :guilabel:`On -> Prolong`.
 #. The LED stays at :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` for three seconds :guilabel:`Prolong`.
