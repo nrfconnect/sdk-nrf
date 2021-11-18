@@ -63,36 +63,6 @@ config UI_BUZZER_PIN
 
 endif # UI_BUZZER
 
-config UI_NMOS
-	bool "Enable NMOS control"
-	default y if BOARD_THINGY91_NRF9160_NS
-	select PWM if BOARD_THINGY91_NRF9160_NS
-	select PWM_2 if BOARD_THINGY91_NRF9160_NS
-
-if UI_NMOS
-
-config UI_NMOS_PWM_DEV_NAME
-	string "PWM device name for buzzer"
-	default "PWM_2" if BOARD_THINGY91_NRF9160_NS
-
-config UI_NMOS_1_PIN
-	int "NMOS 1 pin"
-	default 13 if BOARD_THINGY91_NRF9160_NS
-
-config UI_NMOS_2_PIN
-	int "NMOS 2 pin"
-	default 14 if BOARD_THINGY91_NRF9160_NS
-
-config UI_NMOS_3_PIN
-	int "NMOS 3 pin"
-	default 15 if BOARD_THINGY91_NRF9160_NS
-
-config UI_NMOS_4_PIN
-	int "NMOS 4 pin"
-	default 16 if BOARD_THINGY91_NRF9160_NS
-
-endif # UI_NMOS
-
 endmenu
 
 module = UI

@@ -33,11 +33,6 @@ extern "C" {
 #define UI_LED_3			3
 #define UI_LED_4			4
 
-#define UI_NMOS_1			0
-#define UI_NMOS_2			1
-#define UI_NMOS_3			2
-#define UI_NMOS_4			3
-
 #define UI_LED_ON(x)			(x)
 #define UI_LED_BLINK(x)			((x) << 8)
 #define UI_LED_GET_ON(x)		((x) & 0xFF)
@@ -209,27 +204,6 @@ bool ui_button_is_active(uint32_t button);
  * @return 0 on success or negative error value on failure.
  */
 int ui_buzzer_set_frequency(uint32_t frequency, uint8_t intensity);
-
-/**
- * @brief Write value to pin controlling NMOS transistor.
- *
- * @param nmos_idx	NMOS to control.
- * @param value		1 sets high signal on NMOS gate, 0 sets it low.
- *
- * @return 0 on success or negative error value on failure.
- */
-int ui_nmos_write(size_t nmos_idx, uint8_t value);
-
-/**
- * @brief Control NMOS with PWM signal.
- *
- * @param nmos_idx	NMOS to control.
- * @param period	PWM signal period in microseconds.
- * @param pulse	PWM signal Pulse in microseconds.
- *
- * @return 0 on success or negative error value on failure.
- */
-int ui_nmos_pwm_set(size_t nmos_idx, uint32_t period, uint32_t pulse);
 
 #ifdef __cplusplus
 }

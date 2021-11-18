@@ -9,7 +9,6 @@
 #include "ui.h"
 #include "buzzer.h"
 #include "led_pwm.h"
-#include "nmos.h"
 
 LOG_MODULE_REGISTER(ui, CONFIG_UI_LOG_LEVEL);
 
@@ -163,14 +162,6 @@ int ui_init(ui_callback_t cb)
 		return err;
 	}
 #endif /* CONFIG_UI_BUZZER */
-
-#ifdef CONFIG_UI_NMOS
-	err = ui_nmos_init();
-	if (err) {
-		LOG_ERR("Could not enable NMOS control, err code: %d\n", err);
-		return err;
-	}
-#endif /* CONFIG_UI_NMOS */
 
 	return err;
 }
