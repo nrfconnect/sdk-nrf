@@ -7,7 +7,8 @@
 #include <stdlib.h>
 
 #include <shell/shell.h>
-#include <modem/at_cmd.h>
+#include <modem/at_monitor.h>
+#include <nrf_modem_at.h>
 #include <modem/at_notif.h>
 
 #include "mosh_defines.h"
@@ -22,76 +23,51 @@ static const char at_usage_str[] =
 	"\n"
 	"Any other subcommand is interpreted as AT command and sent to the modem.\n";
 
-static void at_cmd_handler(void *context, const char *response)
+AT_MONITOR(mosh_at_handler, ANY, at_cmd_handler, PAUSED);
+
+static void at_cmd_handler(const char *response)
 {
 	mosh_print("AT event handler: %s", response);
 }
 
-static void at_print_usage(void)
+static void at_cmd_handler_old(void *context, const char *response)
 {
-	mosh_print_no_format(at_usage_str);
-}
-
-static void at_print_error_info(enum at_cmd_state state, int error)
-{
-	switch (state) {
-	case AT_CMD_ERROR:
-		mosh_error("ERROR: %d", error);
-		break;
-	case AT_CMD_ERROR_CMS:
-		mosh_error("CMS ERROR: %d", error);
-		break;
-	case AT_CMD_ERROR_CME:
-		mosh_error("CME ERROR: %d", error);
-		break;
-	case AT_CMD_ERROR_QUEUE:
-		mosh_error("QUEUE ERROR: %d", error);
-		break;
-	case AT_CMD_ERROR_WRITE:
-		mosh_error("AT CMD SOCKET WRITE ERROR: %d", error);
-		break;
-	case AT_CMD_ERROR_READ:
-		mosh_error("AT CMD SOCKET READ ERROR: %d", error);
-		break;
-	case AT_CMD_NOTIFICATION:
-		mosh_error("AT CMD NOTIFICATION: %d", error);
-		break;
-	default:
-		break;
-	}
+	mosh_print("Old AT event handler: %s", response);
 }
 
 int at_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 	char response[MOSH_AT_CMD_RESPONSE_MAX_LEN + 1];
-	enum at_cmd_state state = AT_CMD_OK;
 
 	if (argc < 2) {
-		at_print_usage();
+		mosh_print_no_format(at_usage_str);
 		return 0;
 	}
 
 	char *command = argv[1];
 
 	if (!strcmp(command, "events_enable")) {
-		int err = at_notif_register_handler((void *)shell,
-						    at_cmd_handler);
-		if (err == 0) {
-			mosh_print("AT command event handler registered successfully");
-		} else {
-			mosh_print("AT command event handler registeration failed, err=%d", err);
-		}
+		at_monitor_resume(mosh_at_handler);
+		/* TODO: at_notif should be removed once all used libraries use at_monitor */
+		at_notif_register_handler((void *)shell, at_cmd_handler_old);
+		mosh_print("AT command events enabled");
 	} else if (!strcmp(command, "events_disable")) {
-		at_notif_deregister_handler((void *)shell, at_cmd_handler);
+		at_monitor_pause(mosh_at_handler);
+		/* TODO: at_notif should be removed once all used libraries use at_monitor */
+		at_notif_deregister_handler((void *)shell, at_cmd_handler_old);
+		mosh_print("AT command events disabled");
 	} else {
-		err = at_cmd_write(command, response, sizeof(response), &state);
-		if (state != AT_CMD_OK) {
-			at_print_error_info(state, err);
-			return -EINVAL;
+		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
+		if (err == 0) {
+			mosh_print("%s", response);
+		} else if (err > 0) {
+			mosh_error("%s", response);
+			err = -EINVAL;
+		} else {
+			/* Negative values are error codes */
+			mosh_error("Failed to send AT command, err %d", err);
 		}
-
-		mosh_print("%sOK", response);
 	}
 
 	return 0;
