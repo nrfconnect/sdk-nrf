@@ -6,12 +6,43 @@
 
 menu "GNSS sample"
 
+choice
+	default GNSS_SAMPLE_MODE_CONTINUOUS
+	prompt "Select GNSS operation mode"
+
+config GNSS_SAMPLE_MODE_CONTINUOUS
+	bool "Continuous tracking"
+
+config GNSS_SAMPLE_MODE_PERIODIC
+	bool "Periodic fixes"
+
+endchoice
+
+if GNSS_SAMPLE_MODE_PERIODIC
+
+config GNSS_SAMPLE_PERIODIC_INTERVAL
+	int "Fix interval for periodic fixes"
+	range 10 65535
+	default 120
+	help
+	  Fix interval (in seconds) for periodic fixes.
+
+config GNSS_SAMPLE_PERIODIC_TIMEOUT
+	int "Fix timeout for periodic fixes"
+	range 0 65535
+	default 120
+	help
+	  Fix timeout (in seconds) for periodic fixes.
+	  If set to zero, GNSS is allowed to run indefinitely until a valid PVT estimate is produced.
+
+endif # GNSS_SAMPLE_MODE_PERIODIC
+
 config GNSS_SAMPLE_NMEA_ONLY
 	bool "Output only NMEA strings"
 	help
 	  Outputs only NMEA strings from the GNSS.
 
-choice GNSS_SAMPLE_ANTENNA
+choice
 	default GNSS_SAMPLE_ANTENNA_ONBOARD
 	prompt "Select which antenna to use for GNSS"
 
@@ -41,7 +72,7 @@ config GNSS_SAMPLE_AT_COEX0
 
 endmenu
 
-choice GNSS_SAMPLE_ASSISTANCE
+choice
 	default GNSS_SAMPLE_ASSISTANCE_NONE
 	prompt "Select whether GNSS assistance is used or not"
 
@@ -88,6 +119,30 @@ config GNSS_SAMPLE_SUPL_PORT
 	  SUPL server port number.
 
 endif # GNSS_SAMPLE_ASSISTANCE_SUPL
+
+if GNSS_SAMPLE_MODE_CONTINUOUS
+
+choice
+	default GNSS_SAMPLE_POWER_SAVING_DISABLED
+	prompt "Select GNSS power saving mode (duty-cycling)"
+
+config GNSS_SAMPLE_POWER_SAVING_DISABLED
+	bool "No power saving"
+
+config GNSS_SAMPLE_POWER_SAVING_MODERATE
+	bool "Power saving without significant performance degradation"
+
+config GNSS_SAMPLE_POWER_SAVING_HIGH
+	bool "Power saving with acceptable performance degradation"
+
+endchoice
+
+endif # GNSS_SAMPLE_MODE_CONTINUOUS
+
+config GNSS_SAMPLE_LOW_ACCURACY
+	bool "Allow low accuracy fixes"
+	help
+	  Allows fixes with lower accuracy.
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

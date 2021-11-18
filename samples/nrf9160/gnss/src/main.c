@@ -30,7 +30,6 @@ K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
 static const char update_indicator[] = {'\\', '|', '/', '-'};
 
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
-static volatile bool gnss_blocked;
 
 K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
 K_SEM_DEFINE(pvt_data_sem, 0, 1);
@@ -97,14 +96,6 @@ static void gnss_event_handler(int event)
 			k_work_submit_to_queue(&agps_work_q, &agps_data_get_work);
 		}
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
-		break;
-
-	case NRF_MODEM_GNSS_EVT_BLOCKED:
-		gnss_blocked = true;
-		break;
-
-	case NRF_MODEM_GNSS_EVT_UNBLOCKED:
-		gnss_blocked = false;
 		break;
 
 	default:
@@ -278,21 +269,67 @@ static int gnss_init_and_start(void)
 		return -1;
 	}
 
-	if (nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_RMC_MASK |
-					 NRF_MODEM_GNSS_NMEA_GGA_MASK |
-					 NRF_MODEM_GNSS_NMEA_GLL_MASK |
-					 NRF_MODEM_GNSS_NMEA_GSA_MASK |
-					 NRF_MODEM_GNSS_NMEA_GSV_MASK) != 0) {
+	/* Enable all supported NMEA messages. */
+	uint16_t nmea_mask = NRF_MODEM_GNSS_NMEA_RMC_MASK |
+			     NRF_MODEM_GNSS_NMEA_GGA_MASK |
+			     NRF_MODEM_GNSS_NMEA_GLL_MASK |
+			     NRF_MODEM_GNSS_NMEA_GSA_MASK |
+			     NRF_MODEM_GNSS_NMEA_GSV_MASK;
+
+	if (nrf_modem_gnss_nmea_mask_set(nmea_mask) != 0) {
 		LOG_ERR("Failed to set GNSS NMEA mask");
 		return -1;
 	}
 
-	if (nrf_modem_gnss_fix_retry_set(0) != 0) {
+	/* This use case flag should always be set. */
+	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
+
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_PERIODIC) &&
+	    !IS_ENABLED(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)) {
+		/* Disable GNSS scheduled downloads when assistance is used. */
+		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
+	}
+
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_LOW_ACCURACY)) {
+		use_case |= NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
+	}
+
+	if (nrf_modem_gnss_use_case_set(use_case) != 0) {
+		LOG_ERR("Failed to set GNSS use case");
+		return -1;
+	}
+
+#if defined(CONFIG_GNSS_SAMPLE_MODE_CONTINUOUS)
+	/* Default to no power saving. */
+	uint8_t power_mode = NRF_MODEM_GNSS_PSM_DISABLED;
+
+#if defined(GNSS_SAMPLE_POWER_SAVING_MODERATE)
+	power_mode = NRF_MODEM_GNSS_PSM_DUTY_CYCLING_PERFORMANCE;
+#elif defined(GNSS_SAMPLE_POWER_SAVING_HIGH)
+	power_mode = NRF_MODEM_GNSS_PSM_DUTY_CYCLING_POWER;
+#endif
+
+	if (nrf_modem_gnss_power_mode_set(power_mode) != 0) {
+		LOG_ERR("Failed to set GNSS power saving mode");
+		return -1;
+	}
+#endif /* CONFIG_GNSS_SAMPLE_MODE_CONTINUOUS */
+
+	/* Default to continuous tracking. */
+	uint16_t fix_retry = 0;
+	uint16_t fix_interval = 1;
+
+#if defined(CONFIG_GNSS_SAMPLE_MODE_PERIODIC)
+	fix_retry = CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT;
+	fix_interval = CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL;
+#endif
+
+	if (nrf_modem_gnss_fix_retry_set(fix_retry) != 0) {
 		LOG_ERR("Failed to set GNSS fix retry");
 		return -1;
 	}
 
-	if (nrf_modem_gnss_fix_interval_set(1) != 0) {
+	if (nrf_modem_gnss_fix_interval_set(fix_interval) != 0) {
 		LOG_ERR("Failed to set GNSS fix interval");
 		return -1;
 	}
@@ -334,23 +371,31 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 		}
 	}
 
-	printk("Tracking: %d Using: %d Unhealthy: %d\n", tracked, in_fix, unhealthy);
+	printk("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
 }
 
 static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	printk("Latitude:   %.06f\n", pvt_data->latitude);
-	printk("Longitude:  %.06f\n", pvt_data->longitude);
-	printk("Altitude:   %.01f m\n", pvt_data->altitude);
-	printk("Accuracy:   %.01f m\n", pvt_data->accuracy);
-	printk("Speed:      %.01f m/s\n", pvt_data->speed);
-	printk("Heading:    %.01f deg\n", pvt_data->heading);
-	printk("Date:       %02u-%02u-%02u\n", pvt_data->datetime.year,
-					       pvt_data->datetime.month,
-					       pvt_data->datetime.day);
-	printk("Time (UTC): %02u:%02u:%02u\n", pvt_data->datetime.hour,
-					       pvt_data->datetime.minute,
-					       pvt_data->datetime.seconds);
+	printk("Latitude:       %.06f\n", pvt_data->latitude);
+	printk("Longitude:      %.06f\n", pvt_data->longitude);
+	printk("Altitude:       %.01f m\n", pvt_data->altitude);
+	printk("Accuracy:       %.01f m\n", pvt_data->accuracy);
+	printk("Speed:          %.01f m/s\n", pvt_data->speed);
+	printk("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
+	printk("Heading:        %.01f deg\n", pvt_data->heading);
+	printk("Date:           %04u-%02u-%02u\n",
+	       pvt_data->datetime.year,
+	       pvt_data->datetime.month,
+	       pvt_data->datetime.day);
+	printk("Time (UTC):     %02u:%02u:%02u.%03u\n",
+	       pvt_data->datetime.hour,
+	       pvt_data->datetime.minute,
+	       pvt_data->datetime.seconds,
+	       pvt_data->datetime.ms);
+	printk("PDOP:           %.01f\n", pvt_data->pdop);
+	printk("HDOP:           %.01f\n", pvt_data->hdop);
+	printk("VDOP:           %.01f\n", pvt_data->vdop);
+	printk("TDOP:           %.01f\n", pvt_data->tdop);
 }
 
 int main(void)
@@ -391,17 +436,24 @@ int main(void)
 				printk("\033[2J");
 				print_satellite_stats(&last_pvt);
 
-				if (gnss_blocked) {
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
 					printk("GNSS operation blocked by LTE\n");
 				}
-				printk("---------------------------------\n");
+				if (last_pvt.flags &
+				    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
+					printk("Insufficient GNSS time windows\n");
+				}
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
+					printk("Sleep period(s) between PVT notifications\n");
+				}
+				printk("-----------------------------------\n");
 
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
 					fix_timestamp = k_uptime_get();
 					print_fix_data(&last_pvt);
 				} else {
 					printk("Seconds since last fix: %lld\n",
-							(k_uptime_get() - fix_timestamp) / 1000);
+					       (k_uptime_get() - fix_timestamp) / 1000);
 					cnt++;
 					printk("Searching [%c]\n", update_indicator[cnt%4]);
 				}
