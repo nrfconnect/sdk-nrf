@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 #define BUZZER_MIN_DUTY_CYCLE_DIV	100
 #define BUZZER_MAX_DUTY_CYCLE_DIV	2
 
-const struct device *pwm_dev;
+static const struct device *pwm_dev;
 static atomic_t buzzer_enabled;
 
 static uint32_t intensity_to_duty_cycle_divisor(uint8_t intensity)
@@ -95,7 +95,7 @@ int ui_buzzer_init(void)
 	pwm_dev = device_get_binding(dev_name);
 	if (!pwm_dev) {
 		LOG_ERR("Could not bind to device %s", log_strdup(dev_name));
-		err = -ENODEV;
+		return -ENODEV;
 	}
 
 	buzzer_enable();
