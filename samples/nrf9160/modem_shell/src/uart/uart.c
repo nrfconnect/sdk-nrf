@@ -16,12 +16,12 @@ void disable_uarts(void)
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 	}
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 	}
 }
 

@@ -99,13 +99,13 @@ void uart_toggle_power_state(void)
 			/* allow little time for printing the notification */
 			k_sleep(K_MSEC(500));
 
-			/* set uart0 to low power state */
-			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
+			/* set uart0 to suspended state */
+			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 
-			/* set uart1 to low power state */
+			/* set uart1 to suspended state */
 			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 			if (uart_dev) {
-				pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
+				pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 			}
 		} else {
 			/* set uart0 to active state */
