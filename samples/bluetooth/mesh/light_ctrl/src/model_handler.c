@@ -77,7 +77,7 @@ static void start_new_light_trans(const struct bt_mesh_lightness_set *set,
 
 	ctx->target_lvl = set->lvl;
 	ctx->time_per = (step_cnt ? time / step_cnt : 0);
-	ctx->rem_time = bt_mesh_model_transition_time(set->transition);
+	ctx->rem_time = time;
 	k_work_reschedule(&ctx->per_work, K_MSEC(delay));
 
 	printk("New light transition-> Lvl: %d, Time: %d, Delay: %d\n",
@@ -92,8 +92,16 @@ static void periodic_led_work(struct k_work *work)
 
 	if ((l_ctx->rem_time <= l_ctx->time_per) ||
 	    (abs(l_ctx->target_lvl - l_ctx->current_lvl) <= PWM_SIZE_STEP)) {
+		struct bt_mesh_lightness_status status = {
+			.current = l_ctx->target_lvl,
+			.target = l_ctx->target_lvl,
+		};
+
 		l_ctx->current_lvl = l_ctx->target_lvl;
 		l_ctx->rem_time = 0;
+
+		bt_mesh_lightness_srv_pub(&l_ctx->lightness_srv, NULL, &status);
+
 		goto apply_and_print;
 	} else if (l_ctx->target_lvl > l_ctx->current_lvl) {
 		l_ctx->current_lvl += PWM_SIZE_STEP;
@@ -118,7 +126,7 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 	start_new_light_trans(set, l_ctx);
 	rsp->current = l_ctx->current_lvl;
 	rsp->target = l_ctx->target_lvl;
-	rsp->remaining_time = bt_mesh_model_transition_time(set->transition);
+	rsp->remaining_time = set->transition ? set->transition->time : 0;
 }
 
 static void light_get(struct bt_mesh_lightness_srv *srv,
@@ -168,15 +176,22 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	int err;
-
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&my_ctx.per_work, periodic_led_work);
+
+	return &comp;
+}
+
+void model_handler_start(void)
+{
+	int err;
+
+	if (bt_mesh_is_provisioned()) {
+		return;
+	}
 
 	err = bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
 	if (!err) {
 		printk("Successfully enabled LC server\n");
 	}
-
-	return &comp;
 }

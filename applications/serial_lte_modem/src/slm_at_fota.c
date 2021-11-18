@@ -5,6 +5,7 @@
  */
 #include <logging/log.h>
 
+#include <stdint.h>
 #include <zephyr.h>
 #include <stdio.h>
 #include <nrf_modem_delta_dfu.h>
@@ -163,7 +164,7 @@ static int do_fota_erase_mfw(void)
 }
 
 static int do_fota_start(int op, const char *file_uri, int sec_tag,
-			 const char *apn, enum dfu_target_image_type type)
+			 uint8_t pdn_id, enum dfu_target_image_type type)
 {
 	int ret;
 	struct http_parser_url parser = {
@@ -218,9 +219,9 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 			LOG_ERR("Missing sec_tag");
 			return -EINVAL;
 		}
-		ret = fota_download_start_with_image_type(hostname, path, sec_tag, apn, 0, type);
+		ret = fota_download_start_with_image_type(hostname, path, sec_tag, pdn_id, 0, type);
 	} else if (slm_util_cmd_casecmp(schema, SCHEMA_HTTP)) {
-		ret = fota_download_start_with_image_type(hostname, path, -1, apn, 0, type);
+		ret = fota_download_start_with_image_type(hostname, path, -1, pdn_id, 0, type);
 	} else {
 		ret = -EINVAL;
 	}
@@ -281,7 +282,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 }
 
 /**@brief handle AT#XFOTA commands
- *  AT#XFOTA=<op>,<file_uri>[,<sec_tag>[,<apn>]]
+ *  AT#XFOTA=<op>,<file_uri>[,<sec_tag>[,<pdn_id>]]
  *  AT#XFOTA? TEST command not supported
  *  AT#XFOTA=?
  */
@@ -303,7 +304,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			err = fota_download_cancel();
 		} else if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_MFW) {
 			char uri[FILE_URI_MAX];
-			char apn[APN_MAX];
+			uint16_t pdn_id;
 			int size = FILE_URI_MAX;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 			enum dfu_target_image_type type;
@@ -321,14 +322,10 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 			}
 			if (at_params_valid_count_get(&at_param_list) > 4) {
-				size = APN_MAX;
-				err = util_string_get(&at_param_list, 4, apn, &size);
-				if (err) {
-					return err;
-				}
-				err = do_fota_start(op, uri, sec_tag, apn, type);
+				at_params_unsigned_short_get(&at_param_list, 4, &pdn_id);
+				err = do_fota_start(op, uri, sec_tag, pdn_id, type);
 			} else {
-				err = do_fota_start(op, uri, sec_tag, NULL, type);
+				err = do_fota_start(op, uri, sec_tag, 0, type);
 			}
 #if FOTA_FUTURE_FEATURE
 		} else if (op == SLM_FOTA_PAUSE_RESUME) {

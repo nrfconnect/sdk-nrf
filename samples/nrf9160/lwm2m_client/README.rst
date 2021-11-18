@@ -43,59 +43,70 @@ The following LwM2M objects are implemented in this sample:
    :header-rows: 1
 
    *  - LwM2M objects
+      - Object ID
       - Thingy:91
       - nRF9160 DK
    *  - LwM2M Server
+      - 1
       - Yes
       - Yes
    *  - Device
+      - 3
       - Yes
       - Yes
    *  - Connectivity Monitoring
+      - 4
       - Yes
       - Yes
    *  - FOTA
+      - 5
       - Yes
       - Yes
    *  - Location
+      - 6
       - Yes
       - Yes
    *  - Accelerometer
+      - 3313
       - Yes
       - Simulated
    *  - Color
+      - 3335
       - Yes
       - Simulated
    *  - Temperature
+      - 3303
       - Yes
       - Simulated
    *  - Pressure
+      - 3323
       - Yes
       - Simulated
    *  - Humidity
+      - 3304
       - Yes
       - Simulated
    *  - Generic Sensor
+      - 3300
       - Yes
       - Simulated
    *  - Light Control
+      - 3311
       - Yes
       - Yes
    *  - Push Button
+      - 3347
       - Yes
       - Yes
    *  - Buzzer
+      - 3338
       - Yes
       - No
    *  - On/Off Switch
+      - 3342
       - No
       - Yes
 
-
-.. note::
-
-   The level resource on the Buzzer object does not work properly.
-   This is due to an error in Zephyr’s float handling, which will be fixed soon.
 
 .. _dtls_support:
 
@@ -469,7 +480,7 @@ To use the LwM2M Client with LwM2M Queue Mode support, build it with the ``-DOVE
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-queue.conf
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-queue.conf
 
 Bootstrap support
 =================
@@ -481,7 +492,7 @@ To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOV
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=-DOVERLAY_CONFIG=overlay-bootstrap.conf
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
 
 See :ref:`cmake_options` for instructions on how to add this option.
 Keep in mind that the used bootstrap port is set in the aforementioned configuration file.

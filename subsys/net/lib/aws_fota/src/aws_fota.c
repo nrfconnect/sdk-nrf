@@ -302,7 +302,6 @@ static int job_update_accepted(struct mqtt_client *const client,
 {
 	int err;
 	int sec_tag = -1;
-	char *apn = NULL;
 
 	err = get_published_payload(client, payload_buf, payload_len);
 	if (err) {
@@ -331,7 +330,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
 #endif
 
-		err = fota_download_start(hostname, file_path, sec_tag, apn, 0);
+		err = fota_download_start(hostname, file_path, sec_tag, 0, 0);
 		if (err) {
 			LOG_ERR("Error (%d) when trying to start firmware download", err);
 			aws_fota_evt.id = AWS_FOTA_EVT_ERROR;

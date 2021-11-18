@@ -22,32 +22,29 @@ macro(add_region)
 endmacro()
 
 # Load static configuration if found.
+# Try user defined file first, then file found in configuration directory,
+# finally file from board directory.
+
 set(user_def_pm_static ${PM_STATIC_YML_FILE})
-set(nodomain_pm_static ${APPLICATION_CONFIG_DIR}/pm_static.yml)
-set(domain_pm_static ${APPLICATION_CONFIG_DIR}/pm_static_${DOMAIN}.yml)
 
 ncs_file(CONF_FILES ${APPLICATION_CONFIG_DIR}
-         PM board_pm_static
+         PM conf_dir_pm_static
          DOMAIN ${DOMAIN}
          BUILD ${CONF_FILE_BUILD_TYPE}
 )
 
 ncs_file(CONF_FILES ${BOARD_DIR}
-         PM board_def_pm_static
+         PM board_dir_pm_static
          DOMAIN ${DOMAIN}
          BUILD ${CONF_FILE_BUILD_TYPE}
 )
 
 if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
   set(static_configuration_file ${user_def_pm_static})
-elseif (EXISTS ${board_pm_static})
-  set(static_configuration_file ${board_pm_static})
-elseif (EXISTS ${domain_pm_static})
-  set(static_configuration_file ${domain_pm_static})
-elseif (EXISTS ${nodomain_pm_static})
-  set(static_configuration_file ${nodomain_pm_static})
-elseif (EXISTS ${board_def_pm_static})
-  set(static_configuration_file ${board_def_pm_static})
+elseif (EXISTS ${conf_dir_pm_static})
+  set(static_configuration_file ${conf_dir_pm_static})
+elseif (EXISTS ${board_dir_pm_static})
+  set(static_configuration_file ${board_dir_pm_static})
 endif()
 
 if (EXISTS ${static_configuration_file})
@@ -499,7 +496,7 @@ else()
   endforeach()
 
   if (CONFIG_BOOTLOADER_MCUBOOT)
-    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY AND CONFIG_HAS_HW_NRF_QSPI)
       # First we see if an ext flash dev has been chosen, if not, then we look
       # up the 'qspi' node and assume that this has the required address.
       if (DEFINED ext_flash_dev)

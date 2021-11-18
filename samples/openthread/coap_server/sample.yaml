@@ -4,10 +4,11 @@ sample:
 tests:
   samples.openthread.coap_server:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840

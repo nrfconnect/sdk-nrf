@@ -45,7 +45,7 @@ The following applications use the :ref:`lib_nrf_cloud` for services in |NCS|:
 
 The following samples demonstrate specific nRF Cloud functionality:
 
-* :ref:`agps_sample`
 * :ref:`cloud_client`
+* :ref:`gnss_sample`
 * :ref:`lte_sensor_gateway`
 * :ref:`multicell_location`

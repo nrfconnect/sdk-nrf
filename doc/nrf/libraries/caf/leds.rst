@@ -13,7 +13,7 @@ The source of such events could be any other module in |NCS|.
 The module uses Zephyr's :ref:`zephyr:led_api` driver for setting the LED color, either RGB or monochromatic.
 Zephyr's LED driver can use the implementation based on either GPIO or PWM.
 Use the PWM-based implementation to achieve smooth changes of brightness.
-Use the GPIO-based implementation if your board does not support PWM or if you want to control LEDs connected via GPIO expander.
+Use the GPIO-based implementation if your board does not support PWM or if you want to control LEDs connected using the GPIO expander.
 
 Configuration
 *************
@@ -192,7 +192,7 @@ Enabling the GPIOs
 ~~~~~~~~~~~~~~~~~~
 
 In general, boards in Zephyr configure and enable the GPIO drivers by default, so no additional configuration is needed.
-You can also use the LED GPIO driver to control LEDs connected via a GPIO expander supported by Zephyr.
+You can also use the LED GPIO driver to control LEDs connected using a GPIO expander supported by Zephyr.
 For example, the DTS configuration of the ``thingy52_nrf52832`` board supports ``sx1509b`` GPIO expander, which is used to control lightwell RGB LEDs.
 
 Enabling the LED GPIO nodes
@@ -205,7 +205,7 @@ There is no limit to the number of node instances you can create.
 The LED GPIO is configured as a node that is compatible with ``gpio-leds``.
 The following code snippets show examples of DTS nodes:
 
-* Example 1 - RGB LED controlled via GPIO expander (``sx1509b``)
+* Example 1 - RGB LED controlled using GPIO expander (``sx1509b``)
 
   .. code-block:: none
 

@@ -16,6 +16,6 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build
+    extra_args: DTC_OVERLAY_FILE="spm_uart.overlay"
     extra_configs:
       - CONFIG_SPM_SHARE_CONSOLE_UART=y
-      - CONFIG_UART_CONSOLE_ON_DEV_NAME="SPM_UART"

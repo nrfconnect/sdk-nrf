@@ -246,36 +246,9 @@ To prepare the network coordinator for testing the newly extended application ba
 #. Open the serial port and issue the ``help`` command.
    The following output appears:
 
-   .. code-block::
-
-        help
-        Please press the <Tab> button to see all available commands.
-        You can also use the <Tab> button to prompt or auto-complete all commands or its subcommands.
-        You can try to call commands with <-h> or <--help> parameter for more information.
-
-        Shell supports following meta-keys:
-        Ctrl + (a key from: abcdefklnpuw)
-        Alt  + (a key from: bf)
-        Please refer to shell documentation for more details.
-
-        Available commands:
-        bdb                :Base device behaviour manipulation
-        clear              :Clear screen.
-        device             :Device commands
-        devmem             :Read/write physical memory"devmem address [width [value]]"
-        flash              :Flash shell commands
-        help               :Prints the help message.
-        history            :Command history.
-        kernel             :Kernel commands
-        nrf_clock_control  :Clock control commmands
-        resize             :Console gets terminal screen size or assumes default in
-                        case the readout fails. It must be executed after each
-                        terminal width change to ensure correct text display.
-        sensor             :Sensor commands
-        shell              :Useful, not Unix-like shell commands.
-        version            :Print firmware version
-        zcl                :ZCL subsystem commands.
-        zdo                :ZDO manipulation
+   .. include:: /libraries/zigbee/shell.rst
+      :start-after: zigbee_help_output_start
+      :end-before: zigbee_help_output_end
 
 This output means that the Zigbee shell is enabled on the network coordinator node device.
 You can read more about the Zigbee shell on its :ref:`documentation page <lib_zigbee_shell>`.

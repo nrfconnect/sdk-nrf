@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Location sample"
+
+choice LOCATION_SAMPLE_GNSS_ANTENNA
+	default LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD
+	prompt "Select which antenna to use for GNSS"
+
+config LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD
+	bool "Use onboard antenna"
+
+config LOCATION_SAMPLE_GNSS_ANTENNA_EXTERNAL
+	bool "Use external antenna"
+
+endchoice
+
+config LOCATION_SAMPLE_GNSS_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
+	help
+	  Defines what is the AT%XMAGPIO command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+config LOCATION_SAMPLE_GNSS_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && LOCATION_SAMPLE_GNSS_ANTENNA_EXTERNAL
+	help
+	  Defines what is the AT%XCOEX0 command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

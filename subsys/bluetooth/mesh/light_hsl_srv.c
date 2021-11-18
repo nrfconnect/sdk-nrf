@@ -94,7 +94,7 @@ static int hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return -EMSGSIZE;
 	}
 
-	set.l.lvl = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	set.l.lvl = from_actual(net_buf_simple_pull_le16(buf));
 	set.h.lvl = net_buf_simple_pull_le16(buf);
 	set.s.lvl = net_buf_simple_pull_le16(buf);
 
@@ -411,9 +411,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	}
 
 	srv->lightness->handlers->light_get(srv->lightness, NULL, &status);
-	sys_put_le16(status.remaining_time ? light_to_repr(status.target, ACTUAL) :
-					     status.current,
-		     &data[0]);
+	sys_put_le16(status.remaining_time ? to_actual(status.target) : status.current, &data[0]);
 
 	return 2;
 }
@@ -430,7 +428,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 
 	struct bt_mesh_lightness_status light_status = { 0 };
 	struct bt_mesh_lightness_set light_set = {
-		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
+		.lvl = from_actual(sys_get_le16(data)),
 		.transition = transition,
 	};
 

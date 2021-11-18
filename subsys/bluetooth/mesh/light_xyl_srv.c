@@ -103,7 +103,7 @@ static int xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lightness_set light;
 	struct bt_mesh_light_xyl_status xyl_status;
 
-	light.lvl = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	light.lvl = from_actual(net_buf_simple_pull_le16(buf));
 	set.params.x = net_buf_simple_pull_le16(buf);
 	set.params.y = net_buf_simple_pull_le16(buf);
 	uint8_t tid = net_buf_simple_pull_u8(buf);
@@ -225,7 +225,7 @@ static int default_set(struct bt_mesh_model *model,
 {
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
 	struct bt_mesh_light_xy old_default = srv->xy_default;
-	uint16_t light = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	uint16_t light = from_actual(net_buf_simple_pull_le16(buf));
 
 	srv->xy_default.x = net_buf_simple_pull_le16(buf);
 	srv->xy_default.y = net_buf_simple_pull_le16(buf);
@@ -434,9 +434,9 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	}
 
 	if (light.remaining_time) {
-		scene->light = light_to_repr(light.target, ACTUAL);
+		scene->light = to_actual(light.target);
 	} else {
-		scene->light = light_to_repr(light.current, ACTUAL);
+		scene->light = to_actual(light.current);
 	}
 
 	return sizeof(struct scene_data);
@@ -467,7 +467,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 
 	struct bt_mesh_lightness_status light_status = { 0 };
 	struct bt_mesh_lightness_set light = {
-		.lvl = repr_to_light(scene->light, ACTUAL),
+		.lvl = from_actual(scene->light),
 		.transition = transition,
 	};
 

@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <zephyr/types.h>
+#include <drivers/flash.h>
 #include <stdbool.h>
 #include <ztest.h>
 #include <dfu/dfu_target_stream.h>
@@ -24,6 +25,10 @@ static const struct device *fdev;
 static uint8_t sbuf[128];
 static uint8_t read_buf[BUF_LEN];
 static uint8_t write_buf[BUF_LEN] = {[0 ... BUF_LEN - 1] = 0xaa};
+
+#ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
+static int page_size;
+#endif
 
 #define DFU_TARGET_STREAM_INIT(id_, fdev_, buf_, len_, offset_, size_, cb_)  \
 	dfu_target_stream_init(&(struct dfu_target_stream_init) { .id = id_, \
@@ -101,6 +106,8 @@ static void test_dfu_target_stream_save_progress(void)
 	int err;
 	size_t first_offset;
 	size_t second_offset;
+	const struct stream_flash_ctx *ctx = NULL;
+	off_t erased_page_offset;
 
 	/* Reset state to avoid failure when initializing */
 	err = dfu_target_stream_done(true);
@@ -189,6 +196,81 @@ static void test_dfu_target_stream_save_progress(void)
 	err = dfu_target_stream_offset_get(&first_offset);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 	zassert_equal(0, first_offset, "Offsets has not been reset");
+
+	/* Next, check that writing zero bytes does not change the last page
+	 * erased.
+	 */
+	err = dfu_target_stream_write(write_buf, 0);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+
+	/* Store the last erased page start offset from before load. */
+	ctx = dfu_target_stream_get_stream();
+	zassert_not_null(ctx, "Expected non-null ctx.");
+	erased_page_offset = ctx->last_erased_page_start_offset;
+
+	/* Re-initialize to reload the progress */
+	err = dfu_target_stream_done(false);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+
+	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
+				     FLASH_BASE, 0, NULL);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+
+	/* Check that last erased page offset was set correctly when loading */
+	ctx = dfu_target_stream_get_stream();
+	zassert_not_null(ctx, "Expected non-null ctx.");
+	zassert_equal(erased_page_offset, ctx->last_erased_page_start_offset,
+		      "Expected last erased page offset to be unchanged.");
+
+	/* Next, check that writes that end up right after a page boundary
+	 * result in a correct start offset for the last page erased.
+	 */
+
+	/* Write exactly one page of data */
+	err = dfu_target_stream_write(write_buf, page_size);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+
+	/* Store the last erased page start offset from before load */
+	ctx = dfu_target_stream_get_stream();
+	zassert_not_null(ctx, "Expected non-null ctx.");
+	erased_page_offset = ctx->last_erased_page_start_offset;
+
+	/* Verify that at least one page was erased. */
+	zassert_true(erased_page_offset >= 0, "Expected pages to be erased.");
+
+	/* Re-initialize to reload the progress */
+	err = dfu_target_stream_done(false);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
+				     FLASH_BASE, 0, NULL);
+	zassert_equal(err, 0, "Unexpected failure: %d", err);
+
+	/* Check that last erased page offset was set correctly when loading */
+	ctx = dfu_target_stream_get_stream();
+	zassert_not_null(ctx, "Expected non-null ctx.");
+	zassert_equal(erased_page_offset, ctx->last_erased_page_start_offset,
+		      "Expected last erased page offset to be unchanged.");
+}
+
+static size_t get_flash_page_size(const struct device *dev)
+{
+	struct flash_driver_api *api = (struct flash_driver_api *) dev->api;
+	const struct flash_pages_layout *layout;
+	size_t layout_size;
+
+	api->page_layout(dev, &layout, &layout_size);
+	return layout->pages_size;
+}
+
+static void check_flash_base_at_page_start(const struct device *dev)
+{
+	uint32_t err;
+	struct flash_pages_info page;
+
+	err = flash_get_page_info_by_offs(dev, FLASH_BASE, &page);
+	__ASSERT(err == 0, "Unexpected failure: %d", err);
+	__ASSERT(page.start_offset == FLASH_BASE,
+		 "Expected FLASH_BASE to be at a page boundary.");
 }
 
 #else
@@ -204,6 +286,18 @@ static void test_dfu_target_stream_save_progress(void)
 void test_main(void)
 {
 	fdev = device_get_binding(FLASH_NAME);
+
+#ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
+	/* Check that the FLASH_BASE macro is actually at the start of a page,
+	 * since this is important for the validity of the progress test.
+	 */
+	check_flash_base_at_page_start(fdev);
+
+	page_size = get_flash_page_size(fdev);
+	__ASSERT(page_size <= BUF_LEN,
+		 "BUF_LEN must be at least one page long");
+#endif
+
 	ztest_test_suite(lib_dfu_target_stream,
 	     ztest_unit_test(test_dfu_target_stream_null_checks),
 	     ztest_unit_test(test_dfu_target_stream),

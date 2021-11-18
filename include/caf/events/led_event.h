@@ -14,7 +14,8 @@
  * @brief CAF LED Event.
  */
 
-#include "event_manager.h"
+#include <event_manager.h>
+#include <event_manager_profiler.h>
 #include <caf/led_effect.h>
 
 #ifdef __cplusplus

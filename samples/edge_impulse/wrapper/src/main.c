@@ -25,17 +25,32 @@ static void result_ready_cb(int err)
 	float value;
 	float anomaly;
 
-	err = ei_wrapper_get_classification_results(&label, &value, &anomaly);
+	printk("\nClassification results\n");
+	printk("======================\n");
+
+	while (true) {
+		err = ei_wrapper_get_next_classification_result(&label, &value, NULL);
+
+		if (err) {
+			if (err == -ENOENT) {
+				err = 0;
+			}
+			break;
+		}
+
+		printk("Value: %.2f\tLabel: %s\n", value, label);
+	}
 
 	if (err) {
 		printk("Cannot get classification results (err: %d)", err);
 	} else {
-		printk("\nClassification results\n");
-		printk("======================\n");
-		printk("Label: %s\n", label);
-		printk("Value: %.2f\n", value);
 		if (ei_wrapper_classifier_has_anomaly()) {
-			printk("Anomaly: %.2f\n", anomaly);
+			err = ei_wrapper_get_anomaly(&anomaly);
+			if (err) {
+				printk("Cannot get anomaly (err: %d)\n", err);
+			} else {
+				printk("Anomaly: %.2f\n", anomaly);
+			}
 		}
 	}
 
@@ -70,6 +85,14 @@ void main(void)
 		printk("Improper number of input samples\n");
 		return;
 	}
+
+	printk("Machine learning model sampling frequency: %zu\n",
+	       ei_wrapper_get_classifier_frequency());
+	printk("Labels assigned by the model:\n");
+	for (size_t i = 0; i < ei_wrapper_get_classifier_label_count(); i++) {
+		printk("- %s\n", ei_wrapper_get_classifier_label(i));
+	}
+	printk("\n");
 
 	size_t cnt = 0;
 

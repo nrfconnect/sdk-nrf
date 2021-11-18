@@ -1050,11 +1050,11 @@ int esb_init(const struct esb_config *config)
 	sys_timer_init();
 	ppi_init();
 
-	IRQ_DIRECT_CONNECT(RADIO_IRQn, config->radio_irq_priority,
+	IRQ_DIRECT_CONNECT(RADIO_IRQn, CONFIG_ESB_RADIO_IRQ_PRIORITY,
 			   RADIO_IRQHandler, 0);
-	IRQ_DIRECT_CONNECT(ESB_EVT_IRQ, config->event_irq_priority,
+	IRQ_DIRECT_CONNECT(ESB_EVT_IRQ, CONFIG_ESB_EVENT_IRQ_PRIORITY,
 			   ESB_EVT_IRQHandler, 0);
-	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, config->event_irq_priority,
+	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, CONFIG_ESB_EVENT_IRQ_PRIORITY,
 			   ESB_SYS_TIMER_IRQHandler, 0);
 
 	irq_enable(RADIO_IRQn);

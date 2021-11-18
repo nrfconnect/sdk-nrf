@@ -28,7 +28,7 @@ Overview
 The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
 Next, it provisions a certificate to the modem using the :ref:`modem_key_mgmt` library if the :kconfig:`CONFIG_SAMPLE_SECURE_SOCKET` option is set.
 The provisioning of the certificates must be done before connecting to the LTE network since the certificates can only be provisioned when the device is not connected.
-The certificate file name and security tag can be configured via the :kconfig:`CONFIG_SAMPLE_SEC_TAG` and the :kconfig:`CONFIG_SAMPLE_CERT_FILE` options, respectively.
+The certificate file name and security tag can be configured using the :kconfig:`CONFIG_SAMPLE_SEC_TAG` and the :kconfig:`CONFIG_SAMPLE_CERT_FILE` options, respectively.
 
 The sample then performs the following actions:
 
@@ -40,7 +40,7 @@ The sample then performs the following actions:
 Downloading from a CoAP server
 ==============================
 
-To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` via the :kconfig:`CONFIG_COAP` option.
+To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` using the :kconfig:`CONFIG_COAP` option.
 
 Using TLS and DTLS
 ==================

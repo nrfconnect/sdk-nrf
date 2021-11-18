@@ -54,8 +54,6 @@ extern "C" {
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
-		.radio_irq_priority = 1,				       \
-		.event_irq_priority = 2,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false                                    \
 	}
@@ -75,8 +73,6 @@ extern "C" {
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
 		.tx_mode = ESB_TXMODE_AUTO,				       \
-		.radio_irq_priority = 1,				       \
-		.event_irq_priority = 2,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false                                    \
 	}
@@ -237,9 +233,6 @@ struct esb_config {
 
 	/* Control settings */
 	enum esb_tx_mode tx_mode;	/**< Transmission mode. */
-
-	uint8_t radio_irq_priority;	/**< nRF radio interrupt priority. */
-	uint8_t event_irq_priority;	/**< ESB event interrupt priority. */
 
 	uint8_t payload_length; /**< Length of the payload (maximum length depends
 			       *  on the platforms that are used on each side).

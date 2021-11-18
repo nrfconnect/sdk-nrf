@@ -16,7 +16,7 @@ The mesh and peripheral coexistence sample supports the following development ki
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf21540dk_nrf52840
 
 The sample also requires a smartphone with the following apps:
 
@@ -113,6 +113,11 @@ This sample is split into the following source files:
 * :file:`main.c` used to handle initialization.
 * :file:`model_handler.c` used to handle mesh models.
 * :file:`lb_service_handler.c` used to handle the LBS interaction.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************

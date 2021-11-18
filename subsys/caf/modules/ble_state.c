@@ -188,7 +188,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    (info.role == BT_CONN_ROLE_SLAVE)) {
+	    (info.role == BT_CONN_ROLE_PERIPHERAL)) {
 		struct bond_find_data bond_find_data = {
 			.peer_id = 0,
 			.peer_count = 0,

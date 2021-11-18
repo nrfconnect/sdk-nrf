@@ -4,12 +4,12 @@ sample:
 tests:
   samples.bluetooth.mesh.silvair_enocean:
     build_only: true
-    build_on_all: false
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf21540dk_nrf52840
     tags: bluetooth ci_build
     integration_platforms:
         - nrf52dk_nrf52832
         - nrf52840dk_nrf52840
         - nrf5340dk_nrf5340_cpuapp
         - nrf5340dk_nrf5340_cpuapp_ns
+        - nrf21540dk_nrf52840

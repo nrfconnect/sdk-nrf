@@ -62,7 +62,7 @@ static int buzzer_intensity_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t r
 int lwm2m_init_buzzer(void)
 {
 	int ret;
-	float64_value_t start_intensity = { .val1 = INTENSITY_START_VAL, .val2 = 0 };
+	float32_value_t start_intensity = { .val1 = INTENSITY_START_VAL, .val2 = 0 };
 
 	ret = ui_buzzer_init();
 	if (ret) {
@@ -86,7 +86,7 @@ int lwm2m_init_buzzer(void)
 						  buzzer_intensity_cb);
 	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, APPLICATION_TYPE_RID),
 				  BUZZER_APP_TYPE, sizeof(BUZZER_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_float64(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID), &start_intensity);
+	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID), &start_intensity);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_APP_BUZZER_VERSION_1_1)) {
 		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, TIMESTAMP_RID),

@@ -95,8 +95,9 @@ struct bt_mesh_dtt_cli {
  *
  * @retval 0 Successfully retrieved the status of the bound srv.
  * @retval -EALREADY A blocking operation is already in progress in this model.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
+
  */
 int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 		    int32_t *rsp_transition_time);
@@ -121,8 +122,8 @@ int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
  * @p rsp_transition_time buffer.
  * @retval -EINVAL The given transition time is invalid.
  * @retval -EALREADY A blocking operation is already in progress in this model.
- * @retval -EAGAIN The device has not been provisioned or the request timed out
- * without a response.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 		    uint32_t transition_time, int32_t *rsp_transition_time);

@@ -104,24 +104,6 @@ struct event_subscriber {
 };
 
 
-/** @brief Event description for profiling or logging.
- */
-struct event_info {
-	/** Function for profiling this event. */
-	void (*profile_fn)(struct log_event_buf *buf,
-			   const struct event_header *eh);
-
-	/** Number of logged data fields. */
-	const uint8_t log_arg_cnt;
-
-	/** Labels of logged data fields. */
-	const char **log_arg_labels;
-
-	/** Types of logged data fields. */
-	const enum profiler_arg *log_arg_types;
-};
-
-
 /** @brief Event type.
  */
 struct event_type {
@@ -142,8 +124,8 @@ struct event_type {
 	int (*log_event)(const struct event_header *eh, char *buf,
 			      size_t buf_len);
 
-	/** Logging and formatting information. */
-	const struct event_info *ev_info;
+	/** Custom data related to tracking. */
+	const void *trace_data;
 };
 
 
@@ -191,29 +173,6 @@ extern const struct event_type __stop_event_types[];
 #define EVENT_SUBSCRIBE_FINAL(lname, ename)							\
 	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL));			\
 	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), final_sub_redefined) = {}
-
-
-/** Encode event data types or labels.
- *
- * @param ... Data types or labels to be encoded.
- */
-#define ENCODE(...) __VA_ARGS__
-
-
-/** Define event profiling information.
- *
- * This macro provides definitions required for an event to be profiled.
- *
- * @note Types and labels of the profiled values should be wrapped
- *       with the @ref ENCODE macro.
- *
- * @param ename Name of the event.
- * @param types Types of values to profile (represented as @ref profiler_arg).
- * @param labels Labels of values to profile.
- * @param profile_func Function used to profile event data.
- */
-#define EVENT_INFO_DEFINE(ename, types, labels, profile_func) \
-	_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), profile_func)
 
 
 /** Declare an event type.
@@ -294,6 +253,35 @@ void _event_submit(struct event_header *eh);
  * @retval 0 If the operation was successful.
  */
 int event_manager_init(void);
+
+
+/** Trace event execution.
+ * The behavior of this function depends on the actual implementation.
+ * The default implementation of this function is no-operation.
+ * It is annotated as weak and is meant to be overloaded by layer
+ * adding support for profiling mechanism.
+ **/
+void event_manager_trace_event_execution(const struct event_header *eh,
+				  bool is_start);
+
+
+/** Trace event submission.
+ * The behavior of this function depends on the actual implementation.
+ * The default implementation of this function is no-operation.
+ * It is annotated as weak and is meant to be overloaded by layer
+ * adding support for profiling mechanism.
+ **/
+void event_manager_trace_event_submission(const struct event_header *eh,
+				const void *trace_info);
+
+
+/** Initialize tracing in the Event Manager.
+ * The behavior of this function depends on the actual implementation.
+ * The default implementation of this function is no-operation.
+ * It is annotated as weak and is meant to be overloaded by layer
+ * adding support for profiling mechanism.
+ **/
+int event_manager_trace_event_init(void);
 
 
 #ifdef __cplusplus

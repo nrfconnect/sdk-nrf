@@ -31,7 +31,7 @@ Avoiding connection requests from unbonded centrals when bonded
 ===============================================================
 
 If the Bluetooth local identity currently in use already has a bond and the nRF Desktop device uses indirect advertising, the device will not set the General Discoverable flag.
-The nRF desktop devices also enable :kconfig:`CONFIG_BT_WHITELIST` to whitelist incoming scan response data requests and connection requests.
+The nRF Desktop devices also enable :kconfig:`CONFIG_BT_FILTER_ACCEPT_LIST` to mark incoming scan response data requests and connection requests as acceptable.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 The nRF Desktop dongle scans for peripheral devices using the Bluetooth device name, which is provided in the scan response data.
 

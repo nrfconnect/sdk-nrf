@@ -18,6 +18,9 @@
 /.github/labeler.yml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 /.github/workflows/manifest.yml           @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 
+# VS Code Configuration files
+/.vscode/                                 @trond-snekvik
+
 # Applications
 /applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
@@ -77,6 +80,7 @@ Kconfig*                                  @tejlmand
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
+/lib/location/                            @trantanen @hiltunent @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
@@ -117,6 +121,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
 /samples/spm/                             @lemrey @hakonfam @ioannisg
 /samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
@@ -163,6 +168,7 @@ Kconfig*                                  @tejlmand
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
 /tests/drivers/flash_nop_device/          @de-nordic
+/tests/drivers/clock_control/clock_control_mpsl/ @ryanjh
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo

@@ -4,6 +4,35 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menuconfig CLOUD_CODEC
+	bool "Application cloud codec"
+	default y
+
+if CLOUD_CODEC
+
+choice
+	prompt "Application cloud codec backend"
+	default CLOUD_CODEC_NRF_CLOUD if NRF_CLOUD_MQTT
+	default CLOUD_CODEC_AWS_IOT if AWS_IOT
+	default CLOUD_CODEC_AZURE_IOT_HUB if AZURE_IOT_HUB
+
+config CLOUD_CODEC_NRF_CLOUD
+	bool "Enable nRF Cloud codec backend"
+	select NRF_CLOUD_CELL_POS
+	help
+	  The nRF Cloud codec backend uses the nRF Cloud cell position library to
+	  generate a JSON cell position request based on neighbor cell measurements.
+
+config CLOUD_CODEC_AWS_IOT
+	bool "Enable AWS IoT codec backend"
+
+config CLOUD_CODEC_AZURE_IOT_HUB
+	bool "Enable Azure IoT Hub codec backend"
+
+endchoice
+
 module = CLOUD_CODEC
 module-str = Cloud codec
 source "subsys/logging/Kconfig.template.log_config"
+
+endif # CLOUD_CODEC #

@@ -70,7 +70,7 @@ K_THREAD_DEFINE(mflt_send_thread, CONFIG_DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE
 static struct module_data self = {
 	.name = "debug",
 	.msg_q = NULL,
-	.supports_shutdown = true,
+	.supports_shutdown = false,
 };
 
 /* Handlers */

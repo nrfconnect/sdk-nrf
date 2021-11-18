@@ -12,8 +12,11 @@ This section documents both the Secure User-Plane Location (SUPL) client library
 The Secure User-Plane Location (SUPL) client library is an OS-independent library that is distributed separately with a different license than the |NCS|.
 This library can be used to receive A-GPS data from a SUPL server using the SUPL protocol.
 
-The SUPL client OS integration library is a source code library distributed with |NCS|.
+The SUPL client OS integration library is a source code library distributed with the |NCS|.
 This library is used to integrate the SUPL client library with an |NCS| application.
+
+The SUPL client is used with a 3rd party SUPL server.
+For example, Google hosts a SUPL server (supl.google.com), but for commercial use a license is required.
 
 Secure User-Plane Location
 **************************
@@ -23,17 +26,17 @@ See `SUPL context model`_ for more information on the SUPL architecture.
 SUPL is designed to support future positioning technologies.
 The SUPL version supported by the SUPL client library is 2.0.4.
 
-SUPL uses `A-GPS`_ for obtaining GPS data, overcoming the limitations of standalone GPS.
+SUPL uses `A-GPS`_ for obtaining GPS satellite data, overcoming limitations of a standalone GNSS module.
 
-A standalone GPS uses the orbital data (like Ephemeris_ and the Almanac_) of the satellite to calculate the current position of a device.
+A standalone GNSS module downloads orbital data (like Ephemeris_ and the Almanac_) from satellites to calculate the current position of a device.
 It has the following limitations:
 
-* Typically, the data download from the satellite takes a long time and the first position is calculated in 30-40 seconds.
+* Typically, the data download from the satellites takes a long time and the first position is calculated in 30-40 seconds.
 
 * Any loss of signal requires the whole process to be restarted.
 
 An A-GPS server is a cached server that stores the orbital data.
-This information can be downloaded at a fast rate since an A-GPS capable device supports mobile radio-network bearers with high data rate such as GSM or LTE.
+This information can be downloaded at a fast rate since an A-GPS capable device supports mobile radio-network bearers with high data rate such as LTE.
 
 SUPL payload
 ============
@@ -46,7 +49,7 @@ A SET is a logical part of a device that supports communication with a SUPL netw
 SUPL session and transaction type
 =================================
 
-A typical SUPL client session is SET-based, i.e. the position is calculated based on SET.
+A typical SUPL client session is SET-based, that is, the position is calculated based on SET.
 See `SET-initiated SUPL collaboration`_ for more information.
 
 Each LPP session consists of one or more LPP transactions.
@@ -81,7 +84,6 @@ The SUPL client library must be downloaded separately and integrated into the |N
 Before you download the library, read through the license on the webpage.
 You must accept the license before you can download the library.
 
-
 .. _download_supl:
 
 Downloading and installing
@@ -89,7 +91,7 @@ Downloading and installing
 
 You can download the SUPL client library from the `nRF9160 DK product page <SUPL client download_>`_.
 
-Download the nRF9160 SiP SUPL client library zip file and extract it into the :file:`nrf\\ext\\lib\\bin\\supl\\` folder.
+Download the nRF9160 SiP SUPL client library zip file and extract it into the :file:`nrf/ext/lib/bin/` folder.
 Make sure to maintain the folder structure that is used in the zip file.
 
 Configuration
@@ -110,7 +112,7 @@ The SUPL client library implements the following functionalities:
 
 * Send messages to the SUPL server
 * Receive messages from the SUPL server
-* Send A-GPS data to the GPS module
+* Send A-GPS data to the GNSS module
 
 These functionalities are implemented using a set of callback functions.
 Both the buffers and the pointers to the callback functions are passed to the SUPL client library through the :c:func:`supl_client_init` function.
@@ -120,14 +122,14 @@ API callback functions
 
 Callback functions are needed to achieve platform independence.
 If your application uses the SUPL client library, you must implement these callback functions.
-You can find an implementation example in the :ref:`gps_with_supl_support_sample` sample.
-The implementation is located in the :file:`samples\\nrf9160\\gps\\src\\` files.
+For an example of the implementation, see the :ref:`gnss_sample` sample.
+The implementation is located in the :file:`samples/nrf9160/gnss/src/` directory.
 The various callback functions implemented in the SUPL client library and their purposes are listed below.
 
-AGPS handler
-   Callback function to handle nRF assistance data types (:c:type:`nrf_gnss_agps_data_type_t`).
-   This callback writes the A-GPS data to the GPS module.
-   The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF AGPS data structures defined in :file:`nrf_socket.h` that can be written directly to the GNSS socket.
+A-GPS handler
+   Callback function to handle nRF assistance data types defined in `A-GPS data types <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/api.html#a-gps-data-types>`_.
+   This callback writes the A-GPS data to the GNSS module.
+   The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF A-GPS data structures defined in :file:`nrf_modem_gnss.h` that can be written directly using the GNSS API.
 
 SUPL logger
    Callback function to output the SUPL client library debug messages.
@@ -151,11 +153,9 @@ SUPL session
 
 The SUPL communication spans the following events and message transfers:
 
-* Receiving an event from the GPS module requesting to update A-GPS data
+* Receiving an event from the GNSS module requesting to update A-GPS data
 * Executing subsequent message transfers until the completion of the A-GPS session
-* Pushing data into the GPS module
-
-It is assumed that the GNSS socket is already available.
+* Pushing data into the GNSS module
 
 The following message sequence chart (MSC) describes the flow of communication in a SUPL session.
 
@@ -166,21 +166,21 @@ The following message sequence chart (MSC) describes the flow of communication i
 
 The various steps in the communication session are described below:
 
-1. The application receives a request from the GPS to start a SUPL session.
-   This request message (:c:macro:`NRF_GNSS_AGPS_DATA_ID`) is sent periodically from the GPS and received on the GNSS socket.
+1. The application receives a request from the GNSS to start a SUPL session.
+   GNSS sends the :c:macro:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event when it needs fresh A-GPS data.
 
 #. If the LTE modem is deactivated, the user must enable the LTE modem.
    When the modem is enabled, it initiates a TCP socket to connect to the SUPL server.
-   In the SUPL session MSC above, the application opens a TCP socket to connect to the Google SUPL server.
+   In the SUPL session MSC above, the application opens a TCP socket to connect to the SUPL server.
 #. In order to start a SUPL session, the application must first initialize the SUPL client library.
    This is done by calling the :c:func:`supl_init` function of the SUPL client OS integration library.
    The function sets up the API and the buffers required for initializing the SUPL client library and invokes the :c:func:`supl_client_init` function with these parameters.
-#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :c:type:`nrf_gnss_agps_data_frame_t` data that was received through the AGPS request event from the GPS module.
+#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :c:type:`nrf_modem_gnss_agps_data_frame` data that was received through the A-GPS data request event from the GNSS module.
    The SUPL client OS integration library generates the following parameters that are necessary for the session:
 
-   * ``supl_session_ctx_t`` structure from the AGPS request event data
+   * ``supl_session_ctx_t`` structure from the A-GPS request event data
    * ``lte_params_t`` structure from the data read from the LTE modem
-   * ``device_id`` from IMSI number
+   * ``device_id`` from device IP address
 
 #. The SUPL client OS integration library then starts the SUPL session by calling the :c:func:`supl_client_session` function from the SUPL client library with the ``supl_session_ctx_t`` parameter.
    The application does not return from this function until the SUPL session is finished or the :c:func:`supl_client_abort` function is called.
@@ -189,10 +189,10 @@ The various steps in the communication session are described below:
    See the documentation on the `SET-Initiated Non-Roaming Successful Case (Proxy mode)`_ for more information on the SUPL session.
    The callback functions used for data transfer are listed below:
 
-    * SUPL Write (:c:type:`supl_write_t`) : callback for sending outgoing data to the SUPL server
-    * SUPL Read (:c:type:`supl_read_t`) : callback for receiving incoming data from the SUPL server
+    * SUPL write (:c:type:`supl_write_t`): callback for sending outgoing data to the SUPL server
+    * SUPL read (:c:type:`supl_read_t`): callback for receiving incoming data from the SUPL server
 
-#. The decoded SUPL data is sent to the GPS module using the AGPS Handler (:c:func:`agps_handler_t`) callback function.
+#. The decoded SUPL data is sent to the GNSS module using the A-GPS handler (:c:func:`agps_handler_t`) callback function.
 #. After the application returns from the :c:func:`supl_client_session` function, the TCP socket is no longer used by the SUPL client library and can be closed.
 
 SUPL client OS integration library

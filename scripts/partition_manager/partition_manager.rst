@@ -55,7 +55,7 @@ RAM partition types
 Default image RAM partition
    The default image RAM partition consists of all the RAM that is not defined as a permanent image RAM partition or placeholder RAM partition.
    It is the default RAM partition associated with an image and is set as the RAM region when linking the image.
-   If an image must reserve its RAM area permanently (i.e. at the same time as other images are running), it must use a permanent image RAM partition, described below.
+   If an image must reserve its RAM area permanently (that is, at the same time as other images are running), it must use a permanent image RAM partition, described below.
 
 .. _pm_permanent_image_ram_partition:
 
@@ -491,25 +491,21 @@ For example, see the following definitions for default regions:
 
 .. _pm_external_flash:
 
-External flash
-==============
+External flash memory partitions
+================================
 
 The Partition Manager supports partitions in the external flash memory through the use of :ref:`pm_regions`.
-Any placeholder partition can specify that it should be stored in the external flash region.
-External flash regions always use the start_to_end placement strategy.
+Any placeholder partition can specify that it should be stored in the external flash memory region.
+External flash memory regions always use the *start_to_end* placement strategy.
 
-To store partitions in external flash, you must choose a value for the ``nordic,pm-ext-flash`` property in devicetree as shown below.
+To store partitions in the external flash memory, you must choose a value for the ``nordic,pm-ext-flash`` property in the devicetree.
+See the following example of an overlay file that sets this value:
 
-.. code-block:: devicetree
+.. literalinclude:: ../../tests/modules/mcuboot/external_flash/boards/nrf52840dk_nrf52840.overlay
+    :language: c
+    :caption: nrf52840dk_nrf52840.overlay
 
-    / {
-            chosen {
-                    nordic,pm-ext-flash = &mx25r64;
-            };
-
-    };
-
-Now partitions can be placed in the external flash:
+After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the external flash memory as follows:
 
 .. code-block:: yaml
 
@@ -517,6 +513,8 @@ Now partitions can be placed in the external flash:
    external_plz:
      region: external_flash
      size: CONFIG_EXTERNAL_PLZ_SIZE
+
+See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
 .. _pm_build_system:
 
@@ -578,7 +576,7 @@ HEX files
 
 The Partition Manager may implicitly or explicitly assign a HEX file to a partition.
 
-Image partitions are implicitly assigned the compiled HEX file, i.e. the HEX file that is generated when building the corresponding image.
+Image partitions are implicitly assigned the compiled HEX file, that is, the HEX file that is generated when building the corresponding image.
 Container partitions are implicitly assigned the result of merging the HEX files that are assigned to the underlying partitions.
 Placeholder partitions are not implicitly assigned a HEX file.
 

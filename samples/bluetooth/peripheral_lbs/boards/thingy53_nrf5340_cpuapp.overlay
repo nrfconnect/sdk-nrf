@@ -4,8 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
 /*
- * This file is used to enable a partition which is used through the flash API
+ * This section is used to enable a partition which is used through the flash API
  * but which is in reality stored in RAM. This is done to load data from
  * external flash to the network core. Since the network core cannot access
  * the external flash directly, the data is buffered in RAM before being
@@ -59,5 +65,16 @@
 				};
 			};
 		};
+	};
+
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_ACM_0";
 	};
 };

@@ -159,33 +159,8 @@ static int socket_pdn_id_set(int fd, uint8_t pdn_id)
 	return 0;
 }
 
-static int socket_apn_set(int fd, const char *apn)
-{
-	int err;
-	size_t len;
-
-	__ASSERT_NO_MSG(apn);
-
-	len = strlen(apn);
-	if (len >= IFNAMSIZ) {
-		LOG_ERR("Access point name is too long.");
-		return -EINVAL;
-	}
-
-	LOG_INF("Setting up APN: %s", log_strdup(apn));
-
-	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, apn, len);
-	if (err) {
-		LOG_ERR("Failed to bind socket to network \"%s\", err %d",
-			log_strdup(apn), errno);
-		return -ENETDOWN;
-	}
-
-	return 0;
-}
-
 static int host_lookup(const char *host, int family, uint8_t pdn_id,
-		       const char *apn, struct sockaddr *sa)
+		       struct sockaddr *sa)
 {
 	int err;
 	char pdnserv[4];
@@ -205,17 +180,8 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	if (pdn_id) {
 		hints.ai_flags = AI_PDNSERV;
 		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-
 		err = getaddrinfo(hostname, pdnserv, &hints, &ai);
 	} else {
-		if (apn) {
-			hints.ai_next = &(struct addrinfo) {
-				.ai_family    = AF_LTE,
-				.ai_socktype  = SOCK_MGMT,
-				.ai_protocol  = NPROTO_PDN,
-				.ai_canonname = (char *)apn
-			};
-		}
 		err = getaddrinfo(hostname, NULL, &hints, &ai);
 	}
 
@@ -309,12 +275,7 @@ static int client_connect(struct download_client *dl, const char *host,
 		return -errno;
 	}
 
-	if (dl->config.apn != NULL && strlen(dl->config.apn)) {
-		err = socket_apn_set(*fd, dl->config.apn);
-		if (err) {
-			goto cleanup;
-		}
-	} else if (dl->config.pdn_id) {
+	if (dl->config.pdn_id) {
 		err = socket_pdn_id_set(*fd, dl->config.pdn_id);
 		if (err) {
 			goto cleanup;
@@ -654,10 +615,10 @@ int download_client_connect(struct download_client *client, const char *host,
 	err = 0;
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET6, config->pdn_id, config->apn, &sa);
+		err = host_lookup(host, AF_INET6, config->pdn_id, &sa);
 	}
 	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET, config->pdn_id, config->apn, &sa);
+		err = host_lookup(host, AF_INET, config->pdn_id, &sa);
 	}
 
 	if (err) {

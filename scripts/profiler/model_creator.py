@@ -19,6 +19,8 @@ class Command(Enum):
     STOP = 2
     INFO = 3
 
+PROFILER_FATAL_ERROR_EVENT_NAME = "_profiler_fatal_error_event_"
+
 class ModelCreator:
 
     def __init__(self, own_recv_socket_dict,
@@ -243,6 +245,9 @@ class ModelCreator:
                 self.event_types_filename)
         while True:
             event = self._read_single_event()
+            if self.raw_data.registered_events_types[event.type_id].name == PROFILER_FATAL_ERROR_EVENT_NAME:
+                self.logger.error("Fatal error of Profiler on device! Event has been dropped. "
+                                  "Data buffer has overflown. No more events will be received.")
 
             if event.type_id == self.event_processing_start_id:
                 self.start_event = event

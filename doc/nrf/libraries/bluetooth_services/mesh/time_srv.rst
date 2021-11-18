@@ -27,7 +27,7 @@ To ensure consistent synchronization, the Time Server model should be configured
 
    To ensure a high level of accuracy, Time Status messages are always transmitted one hop at a time if it is sent as an unsolicited message.
    Every mesh node without access to the Time Authority that needs access to the common time reference must be within the radio range of at least one other node with the Time Server model.
-   Time Server nodes that have no neighboring Time Servers need to get this information in some other way (e.g. getting time from the Time Authority).
+   Time Server nodes that have no neighboring Time Servers need to get this information in some other way (for example, getting time from the Time Authority).
 
 Roles
 *****

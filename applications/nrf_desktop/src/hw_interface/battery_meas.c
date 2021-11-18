@@ -14,7 +14,7 @@
 
 #include <hal/nrf_saadc.h>
 
-#include "event_manager.h"
+#include <event_manager.h>
 #include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "battery_def.h"

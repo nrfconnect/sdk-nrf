@@ -9,6 +9,7 @@
 
 #include <stdbool.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_cell_pos.h>
 #include "nrf_cloud_transport.h"
 
 #ifdef __cplusplus
@@ -62,6 +63,13 @@ void nfsm_disconnect(void);
  *         false Unexpected disconnect.
  */
 bool nfsm_get_disconnect_requested(void);
+
+#if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
+/**@brief Sets a callback from the nrf_cloud_cell_pos module to
+ * handle the cellular positioning response data from the cloud.
+ */
+void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb);
+#endif
 
 #ifdef __cplusplus
 }

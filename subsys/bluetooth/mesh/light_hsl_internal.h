@@ -18,7 +18,7 @@
 static inline void light_hsl_buf_push(struct net_buf_simple *buf,
 				      const struct bt_mesh_light_hsl *hsl)
 {
-	net_buf_simple_add_le16(buf, light_to_repr(hsl->lightness, ACTUAL));
+	net_buf_simple_add_le16(buf, to_actual(hsl->lightness));
 	net_buf_simple_add_le16(buf, hsl->hue);
 	net_buf_simple_add_le16(buf, hsl->saturation);
 }
@@ -36,7 +36,7 @@ light_hue_sat_range_buf_push(struct net_buf_simple *buf,
 static inline void light_hsl_buf_pull(struct net_buf_simple *buf,
 				      struct bt_mesh_light_hsl *hsl)
 {
-	hsl->lightness = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	hsl->lightness = from_actual(net_buf_simple_pull_le16(buf));
 	hsl->hue = net_buf_simple_pull_le16(buf);
 	hsl->saturation = net_buf_simple_pull_le16(buf);
 }

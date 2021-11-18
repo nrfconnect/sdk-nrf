@@ -26,8 +26,9 @@ config INIT_ARCH_HW_AT_BOOT
 	  leave the system in a clean state, so it is necessary to perform
 	  architecture specific hardware initialization.
 
+DT_COMPAT_NORDIC_QSPI_NOR := nordic,qspi-nor
 config NORDIC_QSPI_NOR
-	default y if PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY && HAS_HW_NRF_QSPI
+	default y if $(dt_compat_on_bus,$(DT_COMPAT_NORDIC_QSPI_NOR),qspi) && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY && !SPI_NOR
 
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))

@@ -29,6 +29,19 @@ static char mosh_print_buf[CONFIG_MOSH_PRINT_BUFFER_SIZE];
 /** Mutex for protecting mosh_print_buf */
 K_MUTEX_DEFINE(mosh_print_buf_mutex);
 
+static bool mosh_print_shell_ptr_update(void)
+{
+	if (mosh_shell == NULL) {
+		mosh_shell = shell_backend_uart_get_ptr();
+		if (mosh_shell == NULL) {
+			printk("%s: CANNOT OBTAIN SHELL BACKEND. THIS IS FATAL INTERNAL ERROR.\n",
+			       __func__);
+			return false;
+		}
+	}
+	return true;
+}
+
 static const char *create_timestamp_string(void)
 {
 	uint32_t year;
@@ -71,16 +84,11 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 	k_mutex_lock(&mosh_print_buf_mutex, K_FOREVER);
 
-	if (mosh_shell == NULL) {
-		mosh_shell = shell_backend_uart_get_ptr();
-		if (mosh_shell == NULL) {
-			printk("%s: CANNOT OBTAIN SHELL BACKEND. THIS IS FATAL INTERNAL ERROR.\n",
-			       __func__);
-			vsnprintf(mosh_print_buf, sizeof(mosh_print_buf), fmt, args);
-			printk("%s", mosh_print_buf);
-			k_mutex_unlock(&mosh_print_buf_mutex);
-			return;
-		}
+	if (!mosh_print_shell_ptr_update()) {
+		vsnprintf(mosh_print_buf, sizeof(mosh_print_buf), fmt, args);
+		printk("%s", mosh_print_buf);
+		k_mutex_unlock(&mosh_print_buf_mutex);
+		return;
 	}
 
 	va_start(args, fmt);
@@ -130,7 +138,10 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 void mosh_print_no_format(const char *usage)
 {
-	/* Shell should never be NULL here as mosh_fprintf is used in the boot up */
-	assert(mosh_shell != NULL);
+	if (!mosh_print_shell_ptr_update()) {
+		printk("%s", usage);
+		return;
+	}
+
 	shell_print(mosh_shell, "%s", usage);
 }

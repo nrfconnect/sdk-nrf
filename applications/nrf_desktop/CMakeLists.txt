@@ -7,10 +7,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 
-if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE ZDebug)
-endif()
-
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
   message(FATAL_ERROR
           "Board ${BOARD} is not supported.\n"
@@ -18,36 +14,11 @@ if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
           "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
 endif()
 
-if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
-  message(FATAL_ERROR
-          "Configuration file for build type ${CMAKE_BUILD_TYPE} is missing.\n"
-          "Please add file ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
-endif()
-
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
-  set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
-endif()
-
-set(mcuboot_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf
-  )
-set(b0_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/b0_${CMAKE_BUILD_TYPE}.conf
-  )
-set(hci_rpmsg_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/hci_rpmsg_${CMAKE_BUILD_TYPE}.conf
-  )
-
-# Use static partition layout to ensure consistency between builds.
-# This is to ensure settings storage will be at the same location after the DFU.
-set(PM_STATIC_YML_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
-  )
-
-# Define configuration files.
-set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
-
 ################################################################################
+
+# The application uses the configuration/<board> scheme for configuration files.
+set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
+
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project("nRF52 Desktop"

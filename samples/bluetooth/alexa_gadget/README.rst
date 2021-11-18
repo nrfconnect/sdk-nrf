@@ -48,7 +48,7 @@ The following table shows the mapping between capability configuration and suppo
 
 Gadget Custom Directives and Events
 ***********************************
-Custom directives sent from the peer to the Gadget are propagated via the ``BT_GADGETS_EVT_CUSTOM`` event.
+Custom directives sent from the peer to the Gadget are propagated using the ``BT_GADGETS_EVT_CUSTOM`` event.
 Custom directives do not require defining any additional data format.
 
 This sample includes a rudimentary custom event type that lets you send a JSON-formatted string with your chosen custom event name and namespace, using the function ``bt_gadgets_profile_custom_event_json_send``.
@@ -87,7 +87,7 @@ This sample depends on an external protobuf compiler tool - `Nanopb`_.
 
 This tool must be downloaded manually.
 
-Download Nanopb version **0.4.2** for your platform from the `Nanopb Downloads`_ site and extract the downloaded file to either this sample directory, the |NCS| installation directory, the tools folder in the |NCS| installation directory, or any other location where CMake can find it via a standard system PATH.
+Download Nanopb version **0.4.2** for your platform from the `Nanopb Downloads`_ site and extract the downloaded file to either this sample directory, the |NCS| installation directory, the tools folder in the |NCS| installation directory, or any other location where CMake can find it through a standard system PATH.
 Note that this sample directory is searched automatically for the presence of Nanopb.
 For example, if you are using Windows, download and extract **nanopb-0.4.2-windows-x86.zip** to this sample directory.
 

@@ -12,10 +12,8 @@
 #include <stdio.h>
 #include <device.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <modem/at_notif.h>
 #include <logging/log.h>
 
 #include "lte_lc_helpers.h"
@@ -128,23 +126,6 @@ void event_handler_list_dispatch(const struct lte_lc_evt *const evt)
 	k_mutex_unlock(&list_mtx);
 }
 
-static int string_to_int(const char *str_buf, int base, int *output)
-{
-	int temp;
-	char *end_ptr;
-
-	errno = 0;
-	temp = strtol(str_buf, &end_ptr, base);
-
-	if (end_ptr == str_buf || *end_ptr != '\0' ||
-	    ((temp == LONG_MAX || temp == LONG_MIN) && errno == ERANGE)) {
-		return -ENODATA;
-	}
-
-	*output = temp;
-
-	return 0;
-}
 
 /* Converts integer on string format to integer type.
  * Returns zero on success, otherwise negative error on failure.
@@ -299,6 +280,24 @@ static int get_nw_reg_status(struct at_param_list *list, bool is_notif)
 	return reg_status;
 }
 
+int string_to_int(const char *str_buf, int base, int *output)
+{
+	int temp;
+	char *end_ptr;
+
+	errno = 0;
+	temp = strtol(str_buf, &end_ptr, base);
+
+	if (end_ptr == str_buf || *end_ptr != '\0' ||
+	    ((temp == LONG_MAX || temp == LONG_MIN) && errno == ERANGE)) {
+		return -ENODATA;
+	}
+
+	*output = temp;
+
+	return 0;
+}
+
 int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg)
 {
 	int err, tmp_int;
@@ -414,18 +413,10 @@ clean_exit:
 	return err;
 }
 
-int parse_psm(struct at_param_list *at_params,
-			 bool is_notif,
-			 struct lte_lc_psm_cfg *psm_cfg)
+int parse_psm(const char *active_time_str, const char *tau_ext_str,
+	      const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg)
 {
-	int err;
-	size_t tau_idx = is_notif ? AT_CEREG_TAU_INDEX :
-				    AT_CEREG_READ_TAU_INDEX;
-	size_t active_time_idx = is_notif ? AT_CEREG_ACTIVE_TIME_INDEX :
-					    AT_CEREG_READ_ACTIVE_TIME_INDEX;
-	char timer_str[9] = {0};
 	char unit_str[4] = {0};
-	size_t timer_str_len = sizeof(timer_str) - 1;
 	size_t unit_str_len = sizeof(unit_str) - 1;
 	size_t lut_idx;
 	uint32_t timer_unit, timer_value;
@@ -433,58 +424,64 @@ int parse_psm(struct at_param_list *at_params,
 	/* Lookup table for T3324 timer used for PSM active time in seconds.
 	 * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
 	 */
-	static const uint32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
+	static const uint32_t t3324_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
 
-	/* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
+	/* Lookup table for T3412-extended timer used for periodic TAU. Unit is seconds.
 	 * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
 	 */
-	static const uint32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60,
-					      1152000, 0};
+	static const uint32_t t3412_ext_lookup[8] = {600, 3600, 36000, 2, 30, 60, 1152000, 0};
 
-	/* Parse periodic TAU string */
-	err = at_params_string_get(at_params,
-				   tau_idx,
-				   timer_str,
-				   &timer_str_len);
-	if (err) {
-		LOG_ERR("Could not get TAU, error: %d", err);
-		return err;
+	/* Lookup table for T3412 (legacy) timer used for periodic TAU. Unit is seconds.
+	 * Ref: GPRS Timer in 3GPP TS 24.008 Table 10.5.172/3GPP TS 24.008.
+	 */
+	static const uint32_t t3412_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
+
+	if ((strlen(active_time_str) != 8) || (strlen(tau_ext_str) != 8)) {
+		return -EINVAL;
 	}
 
-	memcpy(unit_str, timer_str, unit_str_len);
+	/* Parse T3412-extended (periodic TAU) timer */
+	memcpy(unit_str, tau_ext_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
-	if (lut_idx > (ARRAY_SIZE(t3412_lookup) - 1)) {
-		LOG_ERR("Unable to parse periodic TAU string");
-		err = -EINVAL;
-		return err;
+	if (lut_idx > (ARRAY_SIZE(t3412_ext_lookup) - 1)) {
+		LOG_ERR("Unable to parse periodic TAU string (T3412 extended)");
+		return -EINVAL;
 	}
 
-	timer_unit = t3412_lookup[lut_idx];
-	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
+	timer_unit = t3412_ext_lookup[lut_idx];
+	timer_value = strtoul(tau_ext_str + unit_str_len, NULL, 2);
 	psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
 
-	/* Parse active time string */
-	err = at_params_string_get(at_params,
-				   active_time_idx,
-				   timer_str,
-				   &timer_str_len);
-	if (err) {
-		LOG_ERR("Could not get TAU, error: %d", err);
-		return err;
+	/* If T3412-extended is disabled, there's a chance that the network
+	 * only reports the T3412 (legacy) timer. We therefore needs to check
+	 * that as well. The legacy timer is only reported by modem fe >= 1.2.0.
+	 */
+	if ((psm_cfg->tau == -1) && tau_legacy_str && (strlen(tau_legacy_str) == 8)) {
+		memcpy(unit_str, tau_legacy_str, unit_str_len);
+
+		lut_idx = strtoul(unit_str, NULL, 2);
+		if (lut_idx > (ARRAY_SIZE(t3412_lookup) - 1)) {
+			LOG_ERR("Unable to parse periodic TAU string (T3412)");
+			return -EINVAL;
+		}
+
+		timer_unit = t3412_lookup[lut_idx];
+		timer_value = strtoul(tau_legacy_str + unit_str_len, NULL, 2);
+		psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
 	}
 
-	memcpy(unit_str, timer_str, unit_str_len);
+	/* Parse active time */
+	memcpy(unit_str, active_time_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
 	if (lut_idx > (ARRAY_SIZE(t3324_lookup) - 1)) {
 		LOG_ERR("Unable to parse active time string");
-		err = -EINVAL;
-		return err;
+		return -EINVAL;
 	}
 
 	timer_unit = t3324_lookup[lut_idx];
-	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
+	timer_value = strtoul(active_time_str + unit_str_len, NULL, 2);
 	psm_cfg->active_time = timer_unit ? timer_unit * timer_value : -1;
 
 	LOG_DBG("TAU: %d sec, active time: %d sec\n",
@@ -492,7 +489,6 @@ int parse_psm(struct at_param_list *at_params,
 
 	return 0;
 }
-
 
 /**@brief Parses an AT command response, and returns the current RRC mode.
  *
@@ -551,8 +547,7 @@ int parse_cereg(const char *at_response,
 		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
-		enum lte_lc_lte_mode *lte_mode,
-		struct lte_lc_psm_cfg *psm_cfg)
+		enum lte_lc_lte_mode *lte_mode)
 {
 	int err, status;
 	struct at_param_list resp_list;
@@ -666,22 +661,6 @@ int parse_cereg(const char *at_response,
 
 			LOG_DBG("LTE mode: %d", *lte_mode);
 		}
-	}
-
-	/* Parse PSM configuration only when registered */
-	if (psm_cfg && ((status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-	    (status == LTE_LC_NW_REG_REGISTERED_ROAMING)) &&
-	     (at_params_valid_count_get(&resp_list) > AT_CEREG_TAU_INDEX)) {
-		err = parse_psm(&resp_list, is_notif, psm_cfg);
-		if (err) {
-			LOG_ERR("Failed to parse PSM configuration, error: %d",
-				err);
-			goto clean_exit;
-		}
-	} else if (psm_cfg) {
-		/* When device is not registered, PSM valies are invalid */
-		psm_cfg->tau = -1;
-		psm_cfg->active_time = -1;
 	}
 
 clean_exit:
@@ -1045,179 +1024,6 @@ clean_exit:
 	return err;
 }
 
-int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *params)
-{
-	int err, tmp;
-	struct at_param_list resp_list = {0};
-	char resp_prefix[sizeof(AT_CONEVAL_RESPONSE_PREFIX)] = {0};
-	size_t prefix_len = sizeof(resp_prefix);
-	char plmn_str[7];
-	size_t plmn_len = sizeof(plmn_str);
-	int16_t coneval_result, rrc_state, energy_estimate, tau_trig, ce_level;
-
-	if (params == NULL || at_response == NULL) {
-		return -EINVAL;
-	}
-
-	err = at_params_list_init(&resp_list, AT_CONEVAL_PARAMS_MAX);
-	if (err) {
-		LOG_ERR("Could not initialize AT params list, error: %d", err);
-		return err;
-	}
-
-	err = at_parser_params_from_str(at_response, NULL, &resp_list);
-	if (err) {
-		LOG_ERR("Could not parse CONEVAL response, error: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_string_get(&resp_list, AT_RESPONSE_PREFIX_INDEX, resp_prefix, &prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(resp_prefix, prefix_len, AT_CONEVAL_RESPONSE_PREFIX)) {
-		LOG_ERR("Invalid CONEVAL response");
-		err = -EIO;
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_RESULT_INDEX, &coneval_result);
-	if (err) {
-		LOG_ERR("Could not parse result parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	if (coneval_result != 0) {
-		/* Return values directly maps to the <result> parameter of CONEVAL. */
-		err = coneval_result;
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_RRC_STATE_INDEX, &rrc_state);
-	if (err) {
-		LOG_ERR("Could not parse RRC state parameter, err: %d", err);
-		goto clean_exit;
-	}
-	params->rrc_state = rrc_state;
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_ENERGY_ESTIMATE_INDEX, &energy_estimate);
-	if (err) {
-		LOG_ERR("Could not parse energy estimate parameter, err: %d", err);
-		goto clean_exit;
-	}
-	params->energy_estimate = energy_estimate;
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_RSRP_INDEX, &params->rsrp);
-	if (err) {
-		LOG_ERR("Could not parse RSRP parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_RSRQ_INDEX, &params->rsrq);
-	if (err) {
-		LOG_ERR("Could not parse RSRQ parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_SNR_INDEX, &params->snr);
-	if (err) {
-		LOG_ERR("Could not parse SNR parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = string_param_to_int(&resp_list, AT_CONEVAL_CELL_ID_INDEX, &tmp, 16);
-	if (err) {
-		LOG_ERR("Could not parse cell ID parameter, err: %d", err);
-		goto clean_exit;
-	}
-	params->cell_id = tmp;
-
-	err = at_params_string_get(&resp_list, AT_CONEVAL_PLMN_INDEX, plmn_str, &plmn_len);
-	if (err) {
-		goto clean_exit;
-	}
-
-	plmn_str[plmn_len] = '\0';
-
-	/* Read MNC and store as integer. The MNC starts as the fourth character
-	 * in the string, following three characters long MCC.
-	 */
-	err = string_to_int(&plmn_str[3], 10, &params->mnc);
-	if (err) {
-		goto clean_exit;
-	}
-
-	/* Null-terminated MCC, read and store it. */
-	plmn_str[3] = '\0';
-
-	err = string_to_int(plmn_str, 10, &params->mcc);
-	if (err) {
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_PHYSICAL_CELL_ID_INDEX, &params->phy_cid);
-	if (err) {
-		LOG_ERR("Could not parse physical cell ID parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_int_get(&resp_list, AT_CONEVAL_EARFCN_INDEX, &params->earfcn);
-	if (err) {
-		LOG_ERR("Could not parse EARFCN parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_BAND_INDEX, &params->band);
-	if (err) {
-		LOG_ERR("Could not parse band parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_TAU_TRIGGERED_INDEX, &tau_trig);
-	if (err) {
-		LOG_ERR("Could not parse TAU triggered parameter, err: %d", err);
-		goto clean_exit;
-	}
-	params->tau_trig = tau_trig;
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_CE_LEVEL_INDEX, &ce_level);
-	if (err) {
-		LOG_ERR("Could not parse CE level parameter, err: %d", err);
-		goto clean_exit;
-	}
-	params->ce_level = ce_level;
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_TX_POWER_INDEX, &params->tx_power);
-	if (err) {
-		LOG_ERR("Could not parse TX power parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_TX_REPETITIONS_INDEX, &params->tx_rep);
-	if (err) {
-		LOG_ERR("Could not parse TX repetitions parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_RX_REPETITIONS_INDEX, &params->rx_rep);
-	if (err) {
-		LOG_ERR("Could not parse RX repetitions parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_short_get(&resp_list, AT_CONEVAL_DL_PATHLOSS_INDEX, &params->dl_pathloss);
-	if (err) {
-		LOG_ERR("Could not parse downlink pathloss parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-clean_exit:
-	at_params_list_free(&resp_list);
-	return err;
-}
-
 int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 {
 	static const char *const event_types[] = {
@@ -1252,4 +1058,134 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 	LOG_DBG("No modem event type found: %s", log_strdup(at_response));
 
 	return -ENODATA;
+}
+
+char *periodic_search_pattern_get(char *const buf, size_t buf_size,
+				  const struct lte_lc_periodic_search_pattern *const pattern)
+{
+	int err;
+
+	if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) {
+		/* Range format:
+		 * "<type>,<initial_sleep>,<final_sleep>,[<time_to_final_sleep>],
+		 *  <pattern_end_point>"
+		 */
+		if (pattern->range.time_to_final_sleep != -1) {
+			err = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
+				       pattern->range.initial_sleep, pattern->range.final_sleep,
+				       pattern->range.time_to_final_sleep,
+				       pattern->range.pattern_end_point);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else {
+			err = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
+				       pattern->range.initial_sleep, pattern->range.final_sleep,
+				       pattern->range.pattern_end_point);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		}
+	} else if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) {
+		/* Table format: "<type>,<val1>[,<val2>][,<val3>][,<val4>][,<val5>]". */
+		if (pattern->table.val_2 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_3 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_4 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else if (pattern->table.val_5 == -1) {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3, pattern->table.val_4);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		} else {
+			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
+				       pattern->table.val_1, pattern->table.val_2,
+				       pattern->table.val_3, pattern->table.val_4,
+				       pattern->table.val_5);
+			if (err < 0 || err >= buf_size) {
+				goto error;
+			}
+		}
+	} else {
+		LOG_WRN("Unrecognized periodic search pattern type");
+		buf[0] = '\0';
+	}
+
+	return buf;
+
+error:
+	LOG_ERR("An error occurred, the pattern string is empty. Error code %d", err);
+	buf[0] = '\0';
+
+	return buf;
+}
+
+int parse_periodic_search_pattern(const char *const pattern_str,
+				  struct lte_lc_periodic_search_pattern *pattern)
+{
+	int err;
+	int values[5];
+	size_t param_count;
+
+	err = sscanf(pattern_str, "%d,%u,%u,%u,%u,%u",
+		(int *)&pattern->type, &values[0], &values[1], &values[2], &values[3], &values[4]);
+	if (err < 1) {
+		LOG_ERR("Unrecognized pattern type");
+		return -EBADMSG;
+	}
+
+	param_count = err;
+
+	if ((pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) &&
+	    (param_count >= 3)) {
+		/* The 'time_to_final_sleep' parameter is optional and may not always be present.
+		 * If that's the case, there will be only 3 matches, and we need a
+		 * workaround to get the 'pattern_end_point' value.
+		 */
+		if (param_count == 3) {
+			param_count = sscanf(pattern_str, "%*u,%*u,%*u,,%u", &values[3]);
+			if (param_count != 1) {
+				LOG_ERR("Could not find 'pattern_end_point' value");
+				return -EBADMSG;
+			}
+
+			values[2] = -1;
+		}
+
+		pattern->range.initial_sleep = values[0];
+		pattern->range.final_sleep = values[1];
+		pattern->range.time_to_final_sleep = values[2];
+		pattern->range.pattern_end_point = values[3];
+	} else if ((pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) &&
+		   (param_count >= 2)) {
+		/* Populate optional parameters only if matched, otherwise set
+		 * to disabled, -1.
+		 */
+		pattern->table.val_1 = values[0];
+		pattern->table.val_2 = param_count > 2 ? values[1] : -1;
+		pattern->table.val_3 = param_count > 3 ? values[2] : -1;
+		pattern->table.val_4 = param_count > 4 ? values[3] : -1;
+		pattern->table.val_5 = param_count > 5 ? values[4] : -1;
+	} else {
+		LOG_DBG("No valid pattern found");
+		return -EBADMSG;
+	}
+
+	return 0;
 }

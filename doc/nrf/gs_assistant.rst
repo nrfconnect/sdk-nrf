@@ -26,13 +26,12 @@ Toolchain Manager
 The Toolchain manager app is available for Windows and macOS.
 It installs the full toolchain that you need to work with the |NCS|, including the |VSC| extension, |SES|, and the |NCS| source code.
 
+.. _tcm_setup:
 
 Installing the Toolchain Manager
 ================================
 
 To install the Toolchain Manager app, complete the following steps:
-
-.. _tcm_setup:
 
 1. `Download nRF Connect for Desktop`_ for your operating system.
 #. Install and run the tool on your machine.

@@ -339,8 +339,21 @@ int cloud_wrap_ui_send(char *buf, size_t len)
 
 int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
 {
-	/* Not supported */
-	return -ENOTSUP;
+	int err;
+	struct nrf_cloud_tx_data msg = {
+		.data.ptr = buf,
+		.data.len = len,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+	};
+
+	err = nrf_cloud_send(&msg);
+	if (err) {
+		LOG_ERR("nrf_cloud_send, error: %d", err);
+		return err;
+	}
+
+	return 0;
 }
 
 int cloud_wrap_agps_request_send(char *buf, size_t len)

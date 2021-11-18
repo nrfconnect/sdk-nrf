@@ -24,7 +24,7 @@ Syntax
 
 ::
 
-   AT#XFOTA=<op>,<file_url>[,<sec_tag>[,<apn>]]
+   AT#XFOTA=<op>,<file_url>[,<sec_tag>[,<pdn_id>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -42,8 +42,8 @@ Syntax
   It indicates to the modem the credential of the security tag used for establishing a secure connection for downloading the image.
   It is associated with the certificate or PSK.
   Specifying the ``<sec_tag>`` is mandatory when using HTTPS.
-* The ``<apn>`` parameter is a string.
-  It represents an alternative access point name (APN), other than the default primary APN, to use for downloading.
+* The ``<pdn_id>`` parameter is an integer.
+  It represents the Packet Data Network (PDN) ID that can be used instead of the default PDN for downloading.
 
 Response syntax
 ~~~~~~~~~~~~~~~

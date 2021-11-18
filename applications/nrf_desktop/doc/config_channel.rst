@@ -7,37 +7,76 @@ Configuration channel
    :local:
    :depth: 2
 
-Use the configuration channel to exchange data between your host computer and nRF Desktop's HID device.
+The configuration channel lets you exchange data between the host computer and an nRF Desktop's HID device.
+On the logical level, it creates a bridge between the application modules and the corresponding part of the host script.
+If there are more compatible devices connected to the host, you can select which device will receive data.
+The configuration channel allows a dongle type device to act as a proxy for Bluetooth® LE Peripheral devices.
 
-For example, among the types of data that you can send through the configuration channel are the following:
+Among the types of data that you can send through the configuration channel are the following:
 
 * Device configuration parameters, for example mouse sensor CPI.
 * Firmware updates.
 * LED effect display data, after it has been generated on the computer.
 
-For instructions on how to install and use the configuration channel on a host computer, see the :ref:`nrf_desktop_config_channel_script`.
+For instructions on how to install and use the configuration channel tools that are provided in the |NCS| on a host computer, see the :ref:`nrf_desktop_config_channel_script`.
 
-Behavior
-********
+Transport overview
+******************
 
-The HID feature reports are used for transporting information between the host and the connected embedded device.
+The configuration channel activity is performed using a dedicated HID feature report.
 The cross-platform `HIDAPI library`_ is used for exchanging the reports.
-The library supports both Bluetooth® Low Energy and USB.
+The library supports both Bluetooth® LE and USB.
 
-The host computer can set configuration values of the embedded device.
-It can also request fetching a value, for example in order to display it to the user.
+On the HID feature report level, the host can set or get report, either to or from the connected device.
+The host initiates all data exchange.
+
+Transaction request and response
+********************************
+
+To maintain the communication pace between the host and the device, configuration channel uses transactions.
+Each transaction consists of a single request send from the host to the device, followed by a single response that provides the completion status of the requested activity.
+
+* A request from the host to the device is a single HID feature report set operation.
+* The response is a single HID feature report get operation.
+
+Since the device works asynchronously from the host, it might happen that an activity requested by the host through the configuration channel is still pending when the host-side operation is done.
+
+* If the received request completion status indicates that the request is still pending, the host must retry asking the device for status update after some time.
+* If the received status indicates that the request was completed by the device, the host can send another request.
+
+.. note::
+   There can be only one pending configuration channel request.
+   The host can send the following request only after it received response for the previous request.
+
+Transaction types
+*****************
+
+The configuration channel has the following transaction types:
+
+* set - Used to write configurable options.
+* fetch - Used to read the values of options from the device.
+
+Both transactions can be used to trigger a device to perform an activity, but fetch transaction can ensure that such activity is completed.
+
+Transaction forwarding
+**********************
+
+The nRF Desktop dongle can forward the request from the host to a peripheral.
+In such case, the dongle also forwards the response from the peripheral to the host.
+The :ref:`nrf_desktop_hid_forward` implements this functionality.
+
+See the following diagrams for example transactions:
 
 Setting a configuration value
+
     .. msc::
        hscale = "1.3";
        Host,Device;
        Host>>Device      [label="set report: set value 1600"];
        Host<<Device      [label="get report: SUCCESS"];
 
-    All exchanges, both setting and getting a report, are initiated by the host.
-    Therefore, during a fetch operation, the host polls the device until the data is available.
-
 Fetching a configuration value
+
     .. msc::
        hscale = "1.3";
        Host,Device;
@@ -45,10 +84,8 @@ Fetching a configuration value
        Host<<Device      [label="get report: PENDING"];
        Host<<Device      [label="get report: value 1600, SUCCESS"];
 
-    Data from the host can be forwarded through a USB dongle to the connected device.
-    The device must act as a Bluetooth® LE peripheral in such case.
-
 Setting a configuration value of a device, forwarded by the dongle to a paired device
+
     .. msc::
        hscale = "1.3";
        Host,Dongle,Device;
@@ -59,42 +96,261 @@ Setting a configuration value of a device, forwarded by the dongle to a paired d
        Host<<Dongle      [label="get report: SUCCESS"];
 
 Data format
-===========
+***********
 
-The following table shows the format of requests and responses used to exchange data in the HID feature reports.
+Both request and response share the same data format, which is described in the following table.
 
 .. _nrf_desktop_table:
 
-+-------------------------------------------------------------------+
-| Feature report                                                    |
-+-----------+-----------+----------+--------+-------------+---+-----+
-| 0         | 1         | 2        | 3      | 4           | 5 | ... |
-+===========+===========+==========+========+=============+===+=====+
-| Report ID | Recipient | Event ID | Status | Data length | Data    |
-+-----------+-----------+----------+--------+-------------+---------+
++--------------------------------------------------------------------------------+
+| Feature report                                                                 |
++-----------+-----------+-----------------------+--------+-------------+---+-----+
+| 0         | 1         | 2                     | 3      | 4           | 5 | ... |
++===========+===========+=======================+========+=============+===+=====+
+| Report ID | Recipient | Event ID              | Status | Data length | Data    |
+|           |           | bits:                 |        |             |         |
+|           |           +-----------+-----------+        |             |         |
+|           |           | 0..3      | 4..7      |        |             |         |
+|           |           +-----------+-----------+        |             |         |
+|           |           | Option ID | Module ID |        |             |         |
++-----------+-----------+-----------+-----------+--------+-------------+---------+
 
-Each feature report contains the following components:
+See the following sections for detailed description of each HID feature report component.
 
-* Report ID - HID report identifier of the feature report used for transmitting data.
-* Recipient - Identifier of the device to which the request is addressed.
-  Needed to route requests in a multi-device setup.
+Report ID
+=========
 
-     * A recipient value that equals ``0`` means that configuration channel frame is intended for a HID device that is directly connected.
-     * Other recipient value means that the frame should be forwarded to the peripheral connected over Bluetooth LE.
+This is the HID report identifier of the feature report used for transmitting data.
 
-* Event ID - Identifier of the value that should be set or fetched; consists of a module ID and an option ID.
-* Status - Value used to exchange status of the request; also used by sender to specify the requested operation.
-* Data length - Value that indicates how many bytes of data the request/response holds.
-* Data - Arbitrary length data connected to the request/response.
+The configuration channel uses a predefined HID feature report.
 
 .. note::
-   Bluetooth® LE HID Service removes the leading report ID byte, resulting in firmware obtaining a data frame one byte shorter.
+   Bluetooth® LE HID Service removes the leading report ID byte.
+   As a result, firmware obtains a data frame shorter by one byte.
 
    The USB HID class transmits the whole report, including the report ID byte.
 
+Recipient
+=========
+
+This is the identifier of the device to which the request is addressed.
+
+This field is used to route requests in a multi-device setup.
+The field can have the following values:
+
+* ``0`` - The transaction is intended for a directly connected device.
+* Other values - The transaction should be forwarded by :ref:`nrf_desktop_hid_forward` to the peripheral connected over Bluetooth® LE.
+  The recipients connected over Bluetooth® LE are discovered during the :ref:`device discovery <nrf_desktop_config_channel_device_discovery>`.
+
+Event ID
+========
+
+This is the identifier of both module and option for set or fetch operation.
+
+The field is composed of the following subfields:
+
+* Module ID - The application module that should handle the transaction, stored on the 4 most significant bits of the Event ID field.
+* Option ID - The module option the transaction refers to, stored on the 4 least significant bits of the Event ID field.
+
+The values of Module ID and Option ID are assigned during the application build time.
+These values are obtained during the :ref:`device discovery <nrf_desktop_config_channel_device_discovery>` performed by the host.
+The same application module can have different ID value, when it was compiled at different configuration.
+
+Status
+======
+
+The usage of the Status field is different for request and response operations.
+
+Request
+-------
+
+In case of request, the value of Status field denotes requested operation.
+The request operations can be grouped as follows:
+
+Generic operations
+  There are two generic operations:
+
+  * ``CONFIG_STATUS_SET``
+  * ``CONFIG_STATUS_FETCH``
+
+  These operations perform, respectively, set or fetch actions related to a given application module and option (as denoted by Event ID).
+  The request is handled by the selected application module.
+  The content and length of the associated data depends on module and option.
+
+Module discovery operations
+  The :ref:`nrf_desktop_info` handles module discovery operations.
+  These operations are used during the :ref:`device discovery <nrf_desktop_config_channel_device_discovery>` to obtain information about the device.
+
+  The Event ID field is not used and it should be set to ``0``.
+  The following operations belong to this group:
+
+  * ``CONFIG_STATUS_GET_MAX_MOD_ID`` - Obtain the maximum value of Module ID supported by the device.
+    The maximum Module ID is returned as a single unsigned byte.
+  * ``CONFIG_STATUS_GET_HWID`` - Obtain an unique Hardware ID of the device.
+    The Hardware ID is represented as 8 bytes.
+  * ``CONFIG_STATUS_GET_BOARD_NAME`` - Obtain the device's board name.
+    The board name is part of the Zephyr board name (:kconfig:`CONFIG_BOARD`) from a beginning to the first underscore (``_``) character.
+    For example the ``nrf52840gmouse_nrf52840`` would return ``nrf52840gmouse`` as the board name.
+
+  .. note::
+    Using :ref:`nrf_desktop_info` is mandatory for every device that is configurable with the configuration channel.
+    The module provides information that are necessary to identify the device.
+
+Recipient discovery operations
+  The :ref:`nrf_desktop_hid_forward` handles recipients discovery operations.
+  These operations are performed to obtain IDs of Bluetooth® LE Peripherals connected to the device.
+  See :ref:`discovering devices connected through dongle <nrf_desktop_config_channel_recipient_discovery>` for more information.
+
+  The Event ID field is not used and it should be set to ``0``.
+  The following operations belong to this group:
+
+  * ``CONFIG_STATUS_INDEX_PEERS`` - Request Recipient ID re-evaluation.
+    Response to this request returns no data.
+    When performed device will map each connected Bluetooth® LE Peripheral to an integer.
+  * ``CONFIG_STATUS_GET_PEER`` - Obtain Recipient ID of Bluetooth® LE Peripheral.
+    Response to this request contains the following information:
+
+    * Peripheral's Hardware ID on the first 8 bytes of response data.
+    * Recipient ID assigned to the peripheral on the last meaningful byte of the response data.
+
+    Performing the operation multiple times returns information about subsequent Bluetooth® LE Peripherals.
+    This operation should be performed until Recipient ID is set to ``0xFF``, in which case there are no more peripherals.
+
+Response
+--------
+
+In case of response, the value of the Status field indicates the state of the earlier request.
+The following values are possible:
+
+* ``CONFIG_STATUS_PENDING`` - The operation is not yet completed.
+  The response is not ready and the data field should not be interpreted.
+  The host should not sent new requests before the operation completes.
+* ``CONFIG_STATUS_SUCCESS`` - The operation was successful.
+  The host tool can access data returned by the response.
+  The host can send a new request.
+* ``CONFIG_STATUS_TIMEOUT`` - The operation timed out on the device.
+  The request was accepted by an application module but the response was not prepared in time.
+  The host can send a new request.
+* ``CONFIG_STATUS_REJECT`` - The operation was rejected.
+  The host can send a new request.
+* ``CONFIG_STATUS_WRITE_FAIL`` - Forwarding configuration channel transaction failed.
+  The host can send a new request.
+* ``CONFIG_STATUS_DISCONNECTED`` - The operation failed because a module or a device addressed by the request did not respond.
+  This can happen when Bluetooth® LE Peripheral disconnects.
+  The host can send a new request.
+
+Data length
+===========
+
+Indicates how many meaningful bytes of data the request or the response holds.
+As the HID feature report has a fixed length, this field indicates the size of the meaningful data.
+
+Data
+====
+
+The piece of data of the length defined by Data length, related to the request or the response.
+
+.. _nrf_desktop_config_channel_device_discovery:
+
+Device discovery
+****************
+
+Before the device can be configured over the configuration channel, it needs to be discovered by the host scripts.
+The discovery procedure identifies the device and gets information about its configurable application modules and their options.
+
+If you are developing a custom host tool, you need to ensure your tool performs the following steps to discover the device:
+
+1. Enumerate all of the connected HID devices.
+#. Filter the enumerated devices using Vendor ID and Product ID specified for your devices.
+#. For each applicable device, perform recipient discovery.
+#. For each device, perform device identification.
+#. For each device, perform module discovery.
+
+.. tip::
+   The host tools do not need to perform complete discovery of the device every time the device is connected.
+   The Module ID and Options ID cannot change until firmware is updated on the device.
+   The module descriptor can be cached by the host for a given device and firmware version.
+
+.. _nrf_desktop_config_channel_recipient_discovery:
+
+Recipient discovery
+===================
+
+The Recipient ID equal to ``0`` is used to communicate with any device directly connected to the host.
+
+The configuration channel allows a dongle type device to act as a proxy for Bluetooth® LE Peripheral devices.
+If you are developing a custom host tool, you need to ensure your tool performs the following steps to discover all of the peripherals that are connected to the dongle over Bluetooth® LE:
+
+1. Trigger a Recipient ID re-evaluation with the ``CONFIG_STATUS_INDEX_PEERS`` request.
+#. Obtain a list of connected devices by calling the ``CONFIG_STATUS_GET_PEER`` request.
+
+Once the Recipient ID list is obtained, you can perform :ref:`nrf_desktop_config_channel_device_identification` and :ref:`nrf_desktop_config_channel_module_discovery` procedures on selected or all connected devices.
+When sending the requests, use the chosen Recipient ID.
+
+The assigned Recipient ID is valid only during the connection time between the remote device and the dongle.
+If a remote device disconnects from the dongle, the recipient discovery must be repeated when the device reconnects.
+
+.. tip::
+   The recipient discovery is not needed if the host does not interact with remote devices connected through the dongle or if the device is a directly connected peripheral.
+
+.. _nrf_desktop_config_channel_device_identification:
+
+Device identification
+=====================
+
+The following requests provide the information about the device hardware:
+
+* ``CONFIG_STATUS_GET_BOARD_NAME`` - For reading board name.
+* ``CONFIG_STATUS_GET_HWID`` - For Hardware ID.
+  The Hardware ID allows to differentiate devices of the same type (that have the same board name).
+
+If you are developing a custom host tool, use the Recipient ID linked with the device that is being discovered.
+Your tool should note which Recipient ID and HID instance on the host is associated with the board name and Hardware ID.
+
+.. _nrf_desktop_config_channel_module_discovery:
+
+Module discovery
+================
+
+The host can access options provided by the application modules.
+Before it gets access to the options, the host must identify which modules are available and what options are provided by them.
+
+Both modules and their options are identified by a name, sent as a string during discovery procedure:
+
+* The module of the given name is linked with a specific value of Module ID.
+* The option of the given name is linked with a specific value of Option ID.
+
+The Module ID and Option ID associated with the module and the option name can vary between devices, but they do not change between connections to the same device and firmware version.
+
+If you are developing a custom host tool, you need to ensure your tool performs the following steps for the module discovery procedure:
+
+1. Obtain the number of configurable application modules using the ``CONFIG_STATUS_GET_MAX_MOD_ID`` request.
+   The response returns the highest value of Module ID available on the device.
+#. Read the module descriptor of every application module (iterate Module ID from ``0`` up to and including the maximum supported Module ID).
+
+For reading the module descriptor, the following conditions must be met:
+
+* The module descriptor is read using fetch request with the current Module ID while Option ID is set to ``0``.
+  The transaction must be performed multiple times, with responses for following requests containining strings that are part of the module descriptor.
+* The end line character (``\n``) indicates the end of the descriptor.
+  After the end line character is fetched, following requests should loop around and repeat descriptor strings.
+* The module descriptor strings are provided in a predefined order, but the host should make no assumption about the descriptor string that will be provided by the device as the first one.
+* The duplicated string is fetched after the host received all of the strings related to given module.
+  The host can stop option discovery procedure when a duplicated string is fetched.
+* The module name should be provided as the first string in the module descriptor.
+* The following strings should indicate the module option names.
+  The first option on the descriptor must be identified with Option ID equal to ``1``.
+  The following options will be identified by monotonically increasing Option ID values (second option by ``2``, third by ``3``, and so on).
+* Once the descriptor is read, the module options can be accessed.
+  When performing set or fetch request on the option, the Event ID contains Option ID and Module ID of module that owns the option.
+
+The module descriptor can contain an optional ``module_variant`` option.
+The nRF Desktop application modules come in various variants with different characteristics.
+The ``module_variant`` option allows to differentiate which module variant was compiled into the firmware.
+For example, :ref:`nrf_desktop_motion` uses this option to identify a motion sensor model.
 
 Handling configuration channel in firmware
-==========================================
+******************************************
 
 To enable the configuration channel in the nRF Desktop firmware, set the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
 This option also enables the mandatory :ref:`nrf_desktop_info`.
@@ -105,31 +361,30 @@ Make sure you also configure the following configuration channel elements:
 * `Listener configuration`_
 
 Transport configuration
------------------------
+=======================
 
 The HID configurator uses the HID feature reports to exchange the data.
 
 Depending on the connection method:
 
-* If the device is connected through USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :c:func:`get_report` and :c:func:`set_report`.
-* If the device is connected over Bluetooth LE, requests are handled in :ref:`nrf_desktop_hids` in :c:func:`feature_report_handler`.
+* If the device is connected through USB, data exchange between the device and the host is handled by the :ref:`nrf_desktop_usb_state` in the functions :c:func:`get_report` and :c:func:`set_report`.
+* If the device is connected over Bluetooth® LE, data exchange between the device and the host is handled in :ref:`nrf_desktop_hids` in :c:func:`feature_report_handler`.
   The argument :c:data:`write` indicates whether the report is a GATT write (set report) or a GATT read (get report).
 
   Forwarding requests through a dongle to a connected peripheral is handled in :ref:`nrf_desktop_hid_forward`.
-  The dongle, which is a Bluetooth LE central, uses the HID Client module to find the feature report of the paired device and access it in order to forward the configuration request.
-  The report forwarding is based on recipient, which is assigned by :ref:`nrf_desktop_hid_forward`.
-  The :ref:`nrf_desktop_config_channel_script` holds the mentioned recipient internally and uses it in configuration channel data frames.
-  From the script user perspective, the device can be identified using type, board name or hardware ID.
+  The dongle, which is a Bluetooth® LE Central, uses the HID Client module to find the feature report of the paired device and access it in order to forward the request.
+  The request forwarding is based on Recipient ID, which is assigned by the :ref:`nrf_desktop_hid_forward`.
+  From the script user perspective, the device can be identified using type, board name or Hardware ID.
 
 .. note::
-   If the Low Latency Packet Mode (LLPM) connection interval is in use, the Bluetooth peripheral can provide either HID input report or config channel response during single connection event.
+   If the Low Latency Packet Mode (LLPM) connection interval is in use, the Bluetooth Peripheral can provide either an HID input report or a GATT write response during a single connection event.
 
    To prevent HID input report rate drop while forwarding config channel report set operation, nRF Desktop Dongle can forward the data using GATT write without response.
-   In that case, the peripheral does not have to provide response instead of sending HID input report.
+   In that case, the peripheral does not have to provide the GATT write response instead of sending the HID input report.
 
-   The GATT write without response operation cannot be performed on HID feature report.
-   To allow GATT write without response, the peripheral must provide an additional HID output report.
-   Use the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in nRF Desktop peripheral configuration to add the mentioned HID output report.
+   The "GATT write without response" operation cannot be performed on the HID feature report.
+   To allow the "GATT write without response", the Peripheral must provide an additional HID output report.
+   Use the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 
 The :c:struct:`config_event` is used to propagate the configuration channel data.
@@ -139,11 +394,11 @@ The response is provided as :c:struct:`config_event` with :c:member:`config_even
 In case a request is not handled by any application module, the configuration channel transport will eventually receive it and generate an error response.
 
 Listener configuration
-----------------------
+======================
 
 The configuration channel listener is an application module that provides a set of options that are accessible through the configuration channel.
 For example, depending on listener, it can provide the CPI option from :ref:`nrf_desktop_motion` or the option for searching for new peer from :ref:`nrf_desktop_ble_bond`.
-The host computer can use set or fetch operation for these options to access the option value.
+The host computer can use set or fetch request to access these options.
 
 On the firmware side, the configuration channel listener and its options are referenced with numbers, respectively module ID and option IDs.
 

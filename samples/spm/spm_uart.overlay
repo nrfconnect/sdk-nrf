@@ -1,0 +1,34 @@
+/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
+
+/ {
+	chosen {
+		zephyr,console = &spm_uart;
+	};
+};
+
+&uart0 {
+	status = "okay";
+
+	spm_uart: nrf-spm-uart {
+		compatible = "nordic,nrf-spm-uart";
+		status = "okay";
+		label = "SPM_UART";
+	};
+};
+
+/* This is a workaround for a problem that it's not possible to merge
+ * board-specific and DTC_OVERLAY_FILE defined overlays. Originally PWM was
+ * only enabled for nrf9160dk_nrf9160, but since enabling it only for that board
+ * would make spm_uart overlay selection problematic.
+ */
+&pwm1 {
+	status = "okay";
+};
+
+&pwm2 {
+	status = "okay";
+};
+
+&pwm3 {
+	status = "okay";
+};

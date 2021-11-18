@@ -19,16 +19,26 @@
 #include <sys/util.h>
 #include <sys/__assert.h>
 
-#ifndef CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS
+#ifndef CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS
 /** Maximum number of events. */
-#define CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS 0
+#define CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS 0
 #endif
+
+#ifndef CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS
+/** Number of internal events. */
+#define CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS 0
+#endif
+
+/** Maximum number of events including user application events and internal events. */
+#define PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS \
+	((CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS) + \
+	(CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS))
 
 /** @brief Bitmask indicating event is enabled.
  * This structure is private to profiler and should not be referred from outside.
  */
 struct profiler_event_enabled_bm {
-	ATOMIC_DEFINE(flags, CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS);
+	ATOMIC_DEFINE(flags, PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS);
 };
 
 /** @brief Set of flags for enabling/disabling profiling for given event types.
@@ -113,7 +123,8 @@ static inline const char *profiler_get_event_descr(size_t profiler_event_id)
 static inline bool is_profiling_enabled(size_t profiler_event_id)
 {
 	if (IS_ENABLED(CONFIG_PROFILER)) {
-		__ASSERT_NO_MSG(profiler_event_id < CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS);
+		__ASSERT_NO_MSG(profiler_event_id <
+					PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS);
 		return atomic_test_bit(_profiler_event_enabled_bm.flags, profiler_event_id);
 	}
 	return false;

@@ -21,6 +21,7 @@
 
 LOG_MODULE_DECLARE(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
+#define SOCKET_RETRIES				CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES
 #define SETTINGS_NAME				"nrf_cloud_pgps"
 #define SETTINGS_KEY_PGPS_HEADER		"pgps_header"
 #define SETTINGS_FULL_PGPS_HEADER		SETTINGS_NAME "/" SETTINGS_KEY_PGPS_HEADER
@@ -438,7 +439,7 @@ int npgps_download_init(npgps_buffer_handler_t handler)
 }
 
 int npgps_download_start(const char *host, const char *file, int sec_tag,
-			 const char *apn, size_t fragment_size)
+			 uint8_t pdn_id, size_t fragment_size)
 {
 	if (host == NULL || file == NULL) {
 		return -EINVAL;
@@ -453,11 +454,11 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	}
 	LOG_DBG("pgps_active LOCKED");
 
-	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
+	socket_retries_left = SOCKET_RETRIES;
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
-		.apn = apn,
+		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
 		.set_tls_hostname = (sec_tag != -1),
 	};
@@ -518,10 +519,12 @@ static int download_client_callback(const struct download_client_evt *event)
 		return 0;
 	}
 
-	err = download_client_disconnect(&dlc);
-	if (err) {
+	int ret = download_client_disconnect(&dlc);
+
+	if (ret) {
 		LOG_ERR("Error disconnecting from "
-			"download client:%d", err);
+			"download client:%d", ret);
+		err = ret;
 	}
 	k_sem_give(&pgps_active);
 	LOG_DBG("pgps_active UNLOCKED");

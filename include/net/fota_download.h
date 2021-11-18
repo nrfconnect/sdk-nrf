@@ -99,7 +99,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  *             and port number, e.g. https://google.com:443
  * @param file Filepath to the file you wish to download.
  * @param sec_tag Security tag you want to use with HTTPS set to -1 to Disable.
- * @param apn Access Point Name to use or NULL to use the default APN.
+ * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
  *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
  *
@@ -108,7 +108,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  *                   Otherwise, a negative value is returned.
  */
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			const char *apn, size_t fragment_size);
+			uint8_t pdn_id, size_t fragment_size);
 
 /**@brief Start downloading the given file from the given host. Validate that the
  * file type matches the expected type before starting the installation.
@@ -120,7 +120,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  *             and port number, e.g. https://google.com:443
  * @param file Filepath to the file you wish to download.
  * @param sec_tag Security tag you want to use with HTTPS set to -1 to Disable.
- * @param apn Access Point Name to use or NULL to use the default APN.
+ * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
  *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
  * @param expected_type Type of firmware file to be downloaded and installed.
@@ -130,7 +130,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  *                   Otherwise, a negative value is returned.
  */
 int fota_download_start_with_image_type(const char *host, const char *file,
-			int sec_tag, const char *apn, size_t fragment_size,
+			int sec_tag, uint8_t pdn_id, size_t fragment_size,
 			const enum dfu_target_image_type expected_type);
 
 /**@brief Cancel FOTA image downloading.

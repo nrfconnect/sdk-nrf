@@ -27,11 +27,11 @@ LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
 #define USER_NAME_STATIC	CONFIG_AZURE_IOT_HUB_HOSTNAME "/"	\
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID		\
-				"/?api-version=2018-06-30"
+				"/?api-version=2020-09-30"
 /* User name when connecting to Azure IoT Hub is on the form
- *	<IoT hub hostname>/<device ID>/?api-version=2018-06-30
+ *	<IoT hub hostname>/<device ID>/?api-version=2020-09-30
  */
-#define USER_NAME_TEMPLATE	"%s/%s/?api-version=2018-06-30"
+#define USER_NAME_TEMPLATE	"%s/%s/?api-version=2020-09-30"
 
 #define DPS_USER_NAME		CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE \
 				"/registrations/%s/api-version=2019-03-31"
@@ -72,7 +72,7 @@ static azure_iot_hub_evt_handler_t evt_handler;
 /* If DPS is used, the IoT hub hostname is obtained through that service,
  * otherwise it has to be set in compile time using
  * @option{CONFIG_AZURE_IOT_HUB_HOSTNAME}. The maximal size is length of hub
- * name + device ID length + length of "/?api-version=2018-06-30". In the case of DPS,
+ * name + device ID length + length of "/?api-version=2020-09-30". In the case of DPS,
  * the length of ".azure-devices-provisioning.net/" is also added.
  * When @option{CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP} is used, the app sets the
  * device ID in runtime, and the hostname is derived from that.
@@ -83,11 +83,11 @@ static azure_iot_hub_evt_handler_t evt_handler;
 #define USER_NAME_BUF_LEN	(CONFIG_AZURE_IOT_HUB_HOSTNAME_MAX_LEN + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
 				sizeof(".azure-devices-provisioning.net/") + \
-				sizeof("/?api-version=2018-06-30"))
+				sizeof("/?api-version=2020-09-30"))
 #else
 #define USER_NAME_BUF_LEN	(sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME "/") + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
-				sizeof("/?api-version=2018-06-30"))
+				sizeof("/?api-version=2020-09-30"))
 #endif
 
 static char user_name_buf[USER_NAME_BUF_LEN];
@@ -497,6 +497,7 @@ static void on_publish(struct mqtt_client *const client,
 	switch (topic_data.type) {
 	case TOPIC_TYPE_DEVICEBOUND:
 		evt.topic.prop_bag_count = topic_data.prop_bag_count;
+		evt.topic.type = AZURE_IOT_HUB_TOPIC_DEVICEBOUND;
 		if (evt.topic.prop_bag_count == 0) {
 			break;
 		}
@@ -1107,6 +1108,10 @@ static void fota_evt_handler(struct azure_fota_event *fota_evt)
 
 int azure_iot_hub_ping(void)
 {
+	if (client.unacked_ping) {
+		LOG_DBG("Previous MQTT ping not acknowledged");
+		return -ECONNRESET;
+	}
 	return mqtt_live(&client);
 }
 
@@ -1364,12 +1369,25 @@ start:
 
 		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			azure_iot_hub_ping();
+			ret = azure_iot_hub_ping();
+			/* -EAGAIN indicates it is not time to ping; try later;
+			 * otherwise, connection was closed due to NAT timeout.
+			 */
+			if (ret && (ret != -EAGAIN)) {
+				LOG_ERR("Cloud MQTT keepalive ping failed: %d", ret);
+				break;
+			}
 			continue;
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
-			azure_iot_hub_input();
+			ret = azure_iot_hub_input();
+			if (ret) {
+				LOG_ERR("Cloud MQTT input error: %d", ret);
+				if (ret == -ENOTCONN) {
+					break;
+				}
+			}
 
 			/* The connection might have changed during
 			 * call to azure_iot_hub_input(), as MQTT callbacks

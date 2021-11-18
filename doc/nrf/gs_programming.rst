@@ -35,7 +35,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click the :guilabel:`Open Segger Embedded Studio` button next to the version you installed to start SES.
    If you have installed SES manually, run the :file:`emStudio` executable file from the :file:`bin` directory.
 
-   .. figure:: images/gs-assistant_tm_installed.png
+   .. figure:: images/gs-assistant_tm_dropdown.png
       :alt: The Toolchain Manager options after installing the nRF Connect SDK version, cropped
 
       The Toolchain Manager options after installing the |NCS| version
@@ -47,7 +47,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
        Open nRF Connect SDK Project menu
 
-#. To import a project into SES, you must specify the following information:
+#. To add a project to SES, you must specify the following information:
 
    * :guilabel:`nRF Connect SDK Release` - Select the |NCS| version that you want to work with.
 
@@ -86,8 +86,8 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    .. build_SES_projimport_start
 
-4. Click :guilabel:`OK` to import the project into SES. You can now work with the
-   project in the IDE.
+4. Click :guilabel:`OK` to add the project to SES.
+   You can now work with the project in the IDE.
 
    .. build_SES_projimport_note_start
 
@@ -122,21 +122,29 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    To build and program an application:
 
-      a. Select your project in the Project Explorer.
-      #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
-      #. When the build completes, you can program the application to a connected development kit:
+   a. Select your project in the Project Explorer.
+      The project name displays in bold when it is selected.
+   #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
+      Alternatively, if you are working with a single-image application, you can choose the :guilabel:`Build and Debug` option that builds the application and programs it to a connected development kit when the build has completed.
+   #. When the build completes, you can program the application to a connected development kit:
 
-         * For a single-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/zephyr.elf`.
-         * For a multi-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
+      * For a single-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/zephyr.elf`.
+      * For a multi-image application, depending on your build target:
 
-      .. warning::
-	   For nRF53 family SoC, programming :file:`merged.hex` file updates only the application core.
-	   If you need to update also the network core, you must follow additional steps described in :ref:`ug_nrf5340`.
+        * If you are programming a SoC from the nRF53 Series and you also need to update the network core, you must add the network core project in |SES| and complete the additional steps, as described in the :ref:`ug_nrf5340_ses_multi_image` section of :ref:`ug_nrf5340`.
+          This is because programming the :file:`merged.hex` file at this stage updates only the application core.
+        * If you are not programming an nRF53 Series SoC or you do not need to update the network core, select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
 
-      .. note::
-	   Alternatively, choose the :guilabel:`Build and Debug` option.
-	   :guilabel:`Build and Debug` will build the application and program it when
-	   the build completes.
+   If a "Project out-of-date" warning appears, click :guilabel:`No` to ignore it and leave the option to show the dialog again selected:
+
+   .. figure:: images/ses_nrf5340_netcore_download.png
+      :alt: Ignore any 'Project out-of-date' warnings
+
+      Ignore any 'Project out-of-date' warnings
+
+   .. caution::
+      If you click :guilabel:`Yes` and disable the option to show the dialog again, you will enter a loop because of a "no input files" error.
+      To restore the default settings, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`Building` and set :guilabel:`Confirm Automatically Build Before Debug` to ``Yes``.
 
 #. To inspect the details of the code that was programmed and the memory usage, click :guilabel:`Debug` > :guilabel:`Go`.
 

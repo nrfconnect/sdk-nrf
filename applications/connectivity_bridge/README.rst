@@ -71,7 +71,7 @@ Testing
 
 After programming the sample to your kit, test it by performing the following steps:
 
-1. Connect the kit to the host via a USB cable.
+1. Connect the kit to the host using a USB cable.
 #. Observe that the CDC ACM devices enumerate on the USB host (COM ports on Windows, /dev/tty* on Linux).
 #. Use a serial client on the USB host to communicate over the kit's UART pins.
 

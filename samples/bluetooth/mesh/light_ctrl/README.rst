@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
 
 The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
@@ -37,11 +37,6 @@ Devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
 This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
-
-.. note::
-   The Bluetooth mesh specification recommends that a status message is published at the end of transitions.
-   This behavior is not reflected in the light fixture sample.
-   Make sure to implement the end-of-transition publication for your application.
 
 Provisioning
 ============
@@ -89,7 +84,7 @@ The models are used for the following purposes:
   The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
 * The three models in the second element are the product of a single instance of the Light Lightness Control (LC) Server.
   The Light LC Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
-  In this sample, the Light LC Server is enabled by default on startup.
+  In this sample, the Light LC Server is enabled by default at first boot.
 
 Other nodes can control the Light Lightness Server through the Light LC Server, by sending On/Off messages to the Light LC Server or to the Generic OnOff Server in the second element.
 
@@ -124,6 +119,11 @@ This sample is split into the following source files:
 * A :file:`main.c` file to handle initialization.
 * A file for handling mesh models, :file:`model_handler.c`.
 * A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************

@@ -77,8 +77,6 @@ endmenu # Zephyr subsystem configurations
 menu "Zephyr samples configurations"
 
 if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
-module=HCI_RPMSG
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
 
 DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
 
@@ -97,14 +95,7 @@ endmenu # NCS subsystem configurations
 
 menu "NCS samples configurations"
 
-if NRF_802154_SER_HOST && SOC_NRF5340_CPUAPP
-module=802154_RPMSG
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
-endif
-
 if BT_RPC && SOC_NRF5340_CPUAPP
-module=RPC_HOST
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
 
 DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
 
@@ -132,39 +123,6 @@ config PM_SINGLE_IMAGE
 
 DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
 
-config PM_EXTERNAL_FLASH
-	bool "[DEPRECATED] Support external flash in Partition Manager"
-	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
-	help
-	  [DEPRECATED] This value is extracted directly from devicetree. Remove
-	  its configuration. See 'Using external flash memory partitions'
-	  chapter in the documentation for instructions on how to fix this.
-
-config PM_EXTERNAL_FLASH_SUPPORT_LEGACY
-	bool "Support legacy external flash partitioning"
-	help
-	  The PM_EXTERNAL_FLASH Kconfig settings has been deprecated in favor of devicetree support.
-	  Enable this setting if your system is depending upon the old behavior.
-	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
-	depends on PM_EXTERNAL_FLASH
-
-config PM_EXTERNAL_FLASH_DEV_NAME
-	string "[DEPRECATED] Name of the external flash device"
-	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
-	help
-	  [DEPRECATED] This value is extracted directly from devicetree. Remove
-	  its configuration. See 'Using external flash memory partitions'
-	  chapter in the documentation for instructions on how to fix this.
-
-config PM_EXTERNAL_FLASH_SIZE
-	hex "[DEPRECATED] External flash size (in bytes)"
-	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
-	default 0
-	help
-	  [DEPRECATED] This value is extracted directly from devicetree. Remove
-	  its configuration. See 'Using external flash memory partitions'
-	  chapter in the documentation for instructions on how to fix this.
-
 config PM_EXTERNAL_FLASH_BASE
 	hex "External flash base address"
 	default 0
@@ -174,7 +132,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	depends on BOOTLOADER_MCUBOOT || MCUBOOT
 	# Only depend on the chosen for the parent image. The value of this
 	# option is propagated to the MCUboot child image automatically.
-	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || PM_EXTERNAL_FLASH || MCUBOOT
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
 	help
 	  Place the secondary partition of MCUboot in the external flash instead

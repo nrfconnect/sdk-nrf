@@ -18,24 +18,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include <caf/events/force_power_down_event.h>
 
 
-#define SUSPEND_DELAY K_MSEC(1000)
-
-static struct k_work_delayable suspend_trigger;
-
-
-static void suspend_worker(struct k_work *work)
-{
-	LOG_INF("Suspending");
-	force_power_down();
-}
-
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_usb_state_event(eh)) {
 		const struct usb_state_event *event = cast_usb_state_event(eh);
 
 		LOG_INF("USB state change detected");
-		k_work_cancel_delayable(&suspend_trigger);
 
 		switch (event->state) {
 		case USB_STATE_POWERED:
@@ -48,7 +36,7 @@ static bool event_handler(const struct event_header *eh)
 		case USB_STATE_SUSPENDED:
 			LOG_INF("USB suspended");
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
-			k_work_schedule(&suspend_trigger, SUSPEND_DELAY);
+			force_power_down();
 			break;
 		default:
 			/* Ignore */
@@ -65,7 +53,6 @@ static bool event_handler(const struct event_header *eh)
 
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
-			k_work_init_delayable(&suspend_trigger, suspend_worker);
 		}
 		return false;
 	}

@@ -80,6 +80,7 @@ if (CONFIG_BUILD_S1_VARIANT AND
     --output-source ${link_variant}dev_handles.c
     --kernel $<TARGET_FILE:${${link_variant}prebuilt}>
     --zephyr-base ${ZEPHYR_BASE}
+    --start-symbol "$<TARGET_PROPERTY:linker,devices_start_symbol>"
     DEPENDS $<TARGET_FILE:${${link_variant}prebuilt}>
     )
   list(APPEND ${link_variant}generated_kernel_files ${link_variant}dev_handles.c)

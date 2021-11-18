@@ -33,6 +33,7 @@ Application development
 
 * Build system:
 
+  * Added an option to control the inclusion of RPMsg samples on the nRF53 network core :kconfig:`NCS_INCLUDE_RPMSG_CHILD_IMAGE`.
   * Fixed the NCSIDB-581 bug where application signing and file conversion for Device Firmware Update (DFU) could fail in SEGGER Embedded Studio during a build.
 
 Protocols
@@ -41,18 +42,23 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
-* No entries yet.
+* :ref:`ug_zigbee`:
+
+  * Added :ref:`ug_zigee_qsg`.
 
 Applications
 ============
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
-nRF9160: Asset Tracker
-----------------------
+nRF9160: Asset Tracker v2
+-------------------------
 
 * Updated the application to start sending batch messages to the new bulk endpoint topic supported in nRF Cloud.
 * Updated the application to use nRF Cloud A-GPS directly without the A-GPS library. SUPL is no longer supported.
+* Updated the application to start sending neighbor cell measurement data to nRF Cloud.
+* Added content-type and encoding properties to outgoing Azure MQTT messages.
+* Added support for A-GPS and P-GPS in Azure IoT Hub integration.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -79,13 +85,44 @@ nRF Desktop
 
   * Updated information about custom build types.
   * Updated documentation for :ref:`nrf_desktop_usb_state`.
+  * Updated documentation for :ref:`nrf_desktop_config_channel` and added more detailed protocol description.
   * Updated documentation with information about forwarding boot reports.
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
+  * The application switched to using generic configuration file scheme.
+    It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
+    When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
+    For example, ``CONF_FILE=prj_release.conf`` is now used instead of ``CMAKE_BUILD_TYPE=ZRelease``.
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+Pelion client
+-------------
+
+* Updated:
+
+  * The application configuration files were switched to follow a generic scheme.
+    When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
+    E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+Thingy:53: Matter weather station
+---------------------------------
+
+* Updated:
+
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+nRF Machine Learning
+--------------------
+
+* Updated:
+
+  * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 nRF9160: Serial LTE modem
 -------------------------
 
+* Updated the ``#XFOTA`` command to accept an integer parameter to specify the PDN ID to be used for the download, instead of the APN name.
 * Added new AT commands related to the General Purpose Input/Output (GPIO).
 * Added the ``#XUUID`` command to read out the device UUID from the modem.
 * Added to the ``XNRFCLOUD`` command the following features:
@@ -104,7 +141,12 @@ Bluetooth samples
 
 * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
 * :ref:`ble_llpm` sample - Added role selection.
-  The user now selects the role for each board by typing "m" or "s" in the terminal emulator.
+* :ref:`peripheral_uart` sample is now the default sample for the :ref:`ble_rpc` library.
+  The sample runs out of the box with a serialized Bluetooth Low Energy Host.
+* Updated some samples to use DTS overlay instead of KConfig for external flash.
+* :ref:`peripheral_hids_mouse` sample now comes with the :ref:`ble_rpc_host` child image configuration overlay.
+  The overlay shows how to configure an application running a serialized Bluetooth Low Energy Host.
+  The :ref:`peripheral_hids_mouse` runs out the box with the :ref:`ble_rpc` library.
 
 Bluetooth mesh samples
 ----------------------
@@ -112,10 +154,27 @@ Bluetooth mesh samples
 * Added:
 
   * :ref:`bluetooth_ble_peripheral_lbs_coex` sample, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
+  * Support for :ref:`zephyr:nrf21540dk_nrf52840`.
 
 * Updated:
 
   * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+  * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+
+Matter samples
+--------------
+
+* Added:
+
+  * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
+  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
+
+NFC samples
+-----------
+
+* Added:
+
+  * :ref:`record_launch_app` sample.
 
 nRF9160 samples
 ---------------
@@ -137,13 +196,22 @@ nRF9160 samples
 
   * Modified to use runtime location service selection instead of compile-time configurations.
 
-Matter samples
---------------
+* :ref:`modem_shell_application` sample:
 
-* Added:
+  * Added a new shell command ``rest`` for sending simple REST requests and receiving responses to them.
+  * Added a new shell command ``location`` for using the Location library to retrieve device's location with different methods.
+  * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
-  * Multi-image Device Firmware Upgrade over Bluetooth LE support for nRF5340 DK in lock and light bulb samples.
-  * Low-power build support in :ref:`Matter door lock <matter_lock_sample>`.
+* :ref:`gnss_sample` sample:
+
+  * Renamed. The previous name was nRF9160: GPS with SUPL client library.
+  * Added support for nRF Cloud A-GPS and P-GPS.
+  * LTE now remains connected to the network all the time when assistance is enabled. You can enable the old behavior with A-GPS using a Kconfig option.
+
+* nRF9160: A-GPS sample:
+
+  * The sample has been removed.
+    nRF Cloud A-GPS and P-GPS are demonstrated in the :ref:`gnss_sample` sample.
 
 Zigbee samples
 --------------
@@ -176,11 +244,20 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 * Added API documentation and :ref:`conceptual documentation page <sensor_sim>` for the simulated sensor driver.
 * Added API documentation and :ref:`conceptual documentation page <paw3212>` for the PAW3212 motion sensor driver.
+* Added API documentation and :ref:`conceptual documentation page <pmw3360>` for the PMW3360 motion sensor driver.
 
 Libraries
 =========
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
+
+Bluetooth libraries
+-------------------
+
+* :ref:`ble_rpc` library:
+
+  * Added support for the GATT Server API serialization.
+  * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -200,12 +277,20 @@ Updated:
 Modem libraries
 ---------------
 
+Added:
+
+* :ref:`lib_location`.
+
+Updated:
+
 * :ref:`lte_lc_readme` library:
 
   * Changed the value of an invalid E-UTRAN cell ID from zero to UINT32_MAX for the LTE_LC_EVT_NEIGHBOR_CELL_MEAS event.
   * Added support for multiple LTE event handlers. Thus, deregistration is not possible by using lte_lc_register_handler(NULL) anymore and it is done by the :c:func:`lte_lc_deregister_handler` function in the API.
   * Added neighbor cell measurement search type parameter in :c:func:`lte_lc_neighbor_cell_measurement`.
   * Added timing advance measurement time to current cell data in :c:enum:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event.
+  * Updated the library to use the :ref:`nrfxlib:nrf_modem_at` API and the :ref:`at_monitor_readme` library for AT commands.
+  * Added support for periodic search configuration. API functions have been added to set, read and clear the configuration, and to request extra searches.
 
 * :ref:`nrf_modem_lib_readme` library:
 
@@ -214,6 +299,13 @@ Modem libraries
 * :ref:`pdn_readme` library:
 
   * Added an optional ``family`` parameter to :c:func:`pdn_activate`, which is used to report when the IP family of a PDN changes after activation.
+  * Aligned the return values of :c:func:`pdn_init` to return negative errnos on error.
+  * Added logging on modem errors.
+  * Changed the return values on modem errors to -ENOEXEC to avoid conflicts with return of other positive values.
+
+* A-GPS library:
+
+  * The A-GPS library has been deprecated in favor of using the :ref:`lib_nrf_cloud_agps` library directly.
 
 Libraries for networking
 ------------------------
@@ -238,17 +330,53 @@ Libraries for networking
   * Changed REST API for A-GPS to use GNSS interface structure instead of GPS driver structure.
     Also changed from GPS driver ``GPS_AGPS_`` request types to ``NRF_CLOUD_AGPS_`` request types.
   * Added function :c:func:`nrf_cloud_jwt_generate` that generates a JWT using the :ref:`lib_nrf_cloud` library's configured values.
-  * Fixed an issue with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
-  * Added :c:func:`nrf_cloud_pgps_request_reset` so P-GPS application request handler can indicate failure to process the request.
-    This ensures the P-GPS library tries the request again.
+  * Added handling of MQTT ping failures and MQTT input failures.
 
 * :ref:`lib_nrf_cloud_agps` library:
 
   * Removed GNSS socket API support.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed an issue with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
+  * Fixed error handling associated with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE`.
+  * Added :c:func:`nrf_cloud_pgps_request_reset` so P-GPS application request handler can indicate failure to process the request.
+    This ensures the P-GPS library tries the request again.
+  * Added :kconfig:`CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES`.
+  * Changed :c:func:`nrf_cloud_pgps_init` to limit allowable :kconfig:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` to an even number,
+    and limited :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` to this value minus 2.
+  * Updated the signature of :c:func:`npgps_download_start` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
+
 * :ref:`lib_rest_client` library:
 
   * Added REST client library for sending REST requests and receiving their responses.
+
+* :ref:`lib_aws_iot` library:
+
+  * Added handling of MQTT ping failures and MQTT input failures.
+
+* :ref:`lib_azure_iot_hub` library:
+
+  * Added handling of MQTT ping failures and MQTT input failures.
+  * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
+
+* :ref:`lib_download_client` library:
+
+  * Removed the ``apn`` field in the ``download_client_cfg`` configuration structure.
+
+* :ref:`lib_fota_download` library:
+
+  * Updated the signature of :c:func:`fota_download_start_with_image_type` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
+* :ref:`lib_nrf_cloud_cell_pos` library:
+
+  * Added callback parameter to :c:func:`nrf_cloud_cell_pos_request` to handle response data from the cloud.
+
+Libraries for NFC
+-----------------
+
+* Added:
+
+  * :ref:`nfc_launch_app` library.
 
 Trusted Firmware-M libraries
 ----------------------------
@@ -266,6 +394,11 @@ Other libraries
 * :ref:`event_manager` library:
 
   * Increased number of supported Event Manager events.
+  * Moved the Event Manager features responsible for profiling events into the new ``event_manager_profiler`` module.
+
+* :ref:`ei_wrapper` library:
+
+  * Expanded API to provide information about input data sampling frequency, every label used by the machine learning model, and results associated with every label.
 
 * :ref:`fprotect_readme` library:
 
@@ -283,11 +416,13 @@ Other libraries
 
   * Updated Python scripts to use multiple processes that communicate over sockets.
   * Increase the number of supported profiler events.
+  * Added a special profiler event for indicating a situation where the profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
 
 * :ref:`lib_spm`:
 
-  * : Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
+  * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+
 
 Libraries for Zigbee
 --------------------
@@ -296,6 +431,9 @@ Libraries for Zigbee
 * Fixes and improvements in :ref:`Zigbee Shell  <lib_zigbee_shell>` library.
 * Added :ref:`BDB command for printing install codes <bdb_ic_list>` to the :ref:`Zigbee shell <lib_zigbee_shell>` library.
 * Improve logging in :ref:`ZBOSS OSIF <lib_zigbee_osif>` library and :ref:`Zigbee Shell <lib_zigbee_shell>` library.
+* Removed experimental support for Green Power Combo Basic functionality.
+* Updated ZBOSS Zigbee stack to version v3.9.0.1+v4.0.1.
+    See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
 
 Scripts
 =======
@@ -308,6 +446,11 @@ Partition Manager
 * Partition manager information is no longer appended to the ``rom_report`` target.
   To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
 * Added the ``share_size`` functionality to let a partition share size with a partition in another region.
+
+DFU target
+----------
+
+* Fixed an issue where the offset to the last erased page was set incorrectly one page ahead whenever the flash write ended just after a page boundary.
 
 MCUboot
 =======
@@ -377,9 +520,17 @@ In addition to documentation related to the changes listed above, the following 
     * Added a section describing the Git tool.
     * Expanded the existing section about the West tool.
 
+  * :ref:`gs_programming` - Updated the :ref:`gs_programming_ses` with a warning about a "no input files" error.
+  * :ref:`gs_updating` - Added a section about :ref:`gs_updating_ses_packages`.
   * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
   * :ref:`library_template` - added a template for documenting libraries.
+  * :ref:`ug_nrf5340` - Added a note about varying folder names of the network core child image when programming with nrfjprog.
+  * :ref:`ug_nrf5340` - Updated the :ref:`ug_nrf5340_ses_multi_image` to better match the programming procedure.
 
 * Libraries:
 
   * Added the documentation page for :ref:`lib_fatal_error`.
+
+* Samples
+
+  * :ref:`radio_test` - clarified units for numerical parameters in shell commands.

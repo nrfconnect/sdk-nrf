@@ -34,7 +34,7 @@ The option selects :kconfig:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses
 
 You can use the :kconfig:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` option to enable real-time QoS information printouts through a virtual COM port (serial port emulated over USB).
 This option also enables and configures the COM port (USB CDC ACM).
-For this reason, the :kconfig:`CONFIG_USB` must be enabled.
+For this reason, the :kconfig:`CONFIG_USB_DEVICE_STACK` must be enabled.
 
 The QoS module creates additional thread for processing the QoS algorithm.
 You can define the following options:
@@ -126,7 +126,7 @@ The thread is used to periodically perform the following operations:
 If the :kconfig:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` Kconfig option is set, the module prints the following information through the virtual COM port:
 
 * HID report rate
-   The module counts the number of HID input reports received via Bluetoooth LE and prints the report rate through the virtual COM port every 100 packets.
+   The module counts the number of HID input reports received through Bluetoooth LE and prints the report rate through the virtual COM port every 100 packets.
    The report rate is printed with a timestamp.
 
    Example output:

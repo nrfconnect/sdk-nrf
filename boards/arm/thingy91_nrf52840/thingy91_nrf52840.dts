@@ -54,7 +54,7 @@
 	cts-pin = <19>;
 };
 
-&usbd {
+zephyr_udc0: &usbd {
 	status = "okay";
 };
 

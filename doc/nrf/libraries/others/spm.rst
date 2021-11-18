@@ -41,8 +41,8 @@ To configure SPM, do the following:
 * Use Kconfig to configure the security attributions for the peripherals.
 * Modify the source code of the SPM library to configure the security attributions of the SRAM.
 
-If Partition Manager is used, the security attributions of the flash memory regions are taken from the generated :file:`pm.config` file.
-Otherwise, they are taken from devicetree information.
+Partition Manager must be used with SPM.
+The security attributions of the flash memory regions are taken from the generated :file:`pm.config` file.
 
 For the SRAM and the peripherals, the following security attribution configuration is applied:
 

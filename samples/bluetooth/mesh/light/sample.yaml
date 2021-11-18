@@ -6,6 +6,7 @@ tests:
     build_only: true
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns thingy53_nrf5340_cpuapp thingy53_nrf5340_cpuapp_ns
+      nrf21540dk_nrf52840
     tags: bluetooth ci_build
     integration_platforms:
       - nrf52dk_nrf52832
@@ -14,3 +15,4 @@ tests:
       - nrf5340dk_nrf5340_cpuapp_ns
       - thingy53_nrf5340_cpuapp
       - thingy53_nrf5340_cpuapp_ns
+      - nrf21540dk_nrf52840

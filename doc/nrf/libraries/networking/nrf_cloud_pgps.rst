@@ -86,7 +86,7 @@ The P-GPS subsystem's :c:func:`nrf_cloud_pgps_init` function takes a pointer to 
 The structure at a minimum must specify the storage base address and the storage size in flash, where P-GPS subsystem stores predictions.
 It can optionally pass a pointer to a :c:func:`pgps_event_handler_t` callback function.
 
-As an example, the :ref:`agps_sample` sample shows how to pass the address of the :ref:`secondary MCUboot partition <mcuboot_ncs>`.
+As an example, the :ref:`gnss_sample` sample shows how to pass the address of the :ref:`secondary MCUboot partition <mcuboot_ncs>`.
 The address is defined by the ``PM_MCUBOOT_SECONDARY_ADDRESS`` macro and the ``PM_MCUBOOT_SECONDARY_SIZE`` macro.
 These are automatically defined by the build system in the file :file:`pm_config.h`.
 This partition is safe to store data until a FOTA job is received.
@@ -127,8 +127,9 @@ P-GPS data can be requested from the cloud using one of the following methods:
 
    * N/A
 
-The indirect methods are used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker_v2` application.
+The indirect methods are used in the :ref:`asset_tracker_v2` application.
 They are simpler to use than the direct methods.
+The direct method is used in the :ref:`gnss_sample` sample.
 
 When nRF Cloud responds with the requested P-GPS data, the application's :c:func:`cloud_evt_handler_t` function must call the :c:func:`nrf_cloud_pgps_process` function when it receives the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
 The function parses the data and stores it.
@@ -141,7 +142,7 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 * Directly, by calling the function :c:func:`nrf_cloud_pgps_find_prediction`
 * Indirectly, by calling the function :c:func:`nrf_cloud_pgps_notify_prediction`
 
-The indirect method is used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker_v2` application.
+The indirect method is used in the :ref:`gnss_sample` sample and in the :ref:`asset_tracker_v2` application.
 
 The application can inject the data contained in the prediction to the GPS unit in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
 This must be done when the GPS driver callback indicates that assistance is needed.

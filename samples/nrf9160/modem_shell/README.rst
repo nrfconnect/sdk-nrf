@@ -344,6 +344,46 @@ Examples
 
 ----
 
+Location tool
+=============
+
+MoSh command: ``location``
+
+You can use the Location tool for retrieving device's location with different methods.
+See :ref:`lib_location` library for information on the configuration of different location methods and services.
+Some default configurations are available to facilitate trials.
+
+Examples
+--------
+
+* Retrieve location with default configuration:
+
+  .. code-block:: console
+
+     location get
+
+* Retrieve location with Wi-Fi positioning.
+  You need to have a Wi-Fi-enabled device and build the sample with Wi-Fi support.
+  If the location is not found, use cellular positioning:
+
+  .. code-block:: console
+
+     location get --method wifi --wifi_timeout 60 --method cellular --cellular_service nrf
+
+* Retrieve location periodically every hour with GNSS and if not found, use cellular positioning:
+
+  .. code-block:: console
+
+     location get --interval 3600 --method gnss --gnss_timeout 300 --method cellular
+
+* Cancel ongoing location request or periodic location request:
+
+  .. code-block:: console
+
+     location cancel
+
+----
+
 GNSS
 ====
 
@@ -441,6 +481,24 @@ Examples
 
      ppp uartconf --baudrate 460800
 
+----
+
+REST client
+===========
+
+MoSh command: ``rest``
+
+You can use the REST client for sending simple REST requests and receiving responses to them.
+
+Examples
+--------
+
+* Sending a HEAD request with custom dummy headers:
+
+  .. code-block:: console
+
+     rest -d example.com -l 1024 -m head -H "X-foo1: bar1\x0D\x0A" -H "X-foo2: bar2\x0D\x0A"
+
 Requirements
 ************
 
@@ -466,9 +524,11 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_MOSH_CURL - Enable curl feature in modem shell.
 .. option:: CONFIG_MOSH_SOCK - Enable socket tool feature in modem shell.
 .. option:: CONFIG_MOSH_SMS - Enable SMS feature in modem shell.
+.. option:: CONFIG_MOSH_LOCATION - Enable Location tool in modem shell.
 .. option:: CONFIG_MOSH_GNSS - Enable GNSS feature in modem shell.
 .. option:: CONFIG_MOSH_FOTA - Enable FOTA feature in modem shell.
 .. option:: CONFIG_MOSH_PPP - Enable PPP feature in modem shell.
+.. option:: CONFIG_MOSH_REST - Enable REST feature in modem shell.
 
 .. note::
    You may not be able to use all features at the same time due to memory restrictions.
@@ -528,8 +588,18 @@ To test MoSh after programming the application and all prerequisites to your dev
 
 #. Type any of the commands listed in the Overview section to the terminal. When you type only the command, the terminal shows the usage, for example ``sock``.
 
+ESP8266 Wi-Fi support
+=====================
+
+To build the MoSh sample with ESP8266 Wi-Fi chip support, use the ``-DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay`` and  ``-DOVERLAY_CONFIG=overlay-esp-wifi.conf`` options.
+For example:
+
+``west build -p -b nrf9160dk_nrf9160_ns -d build -- -DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay -DOVERLAY_CONFIG=overlay-esp-wifi.conf``
+
+See :ref:`cmake_options` for more instructions on how to add these options.
+
 PPP support
-============
+===========
 
 To build the MoSh sample with PPP/dial up support for Windows, use the ``-DOVERLAY_CONFIG=overlay-ppp.conf`` option.
 For example:

@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "subsys/net/openthread/Kconfig.defconfig"
+
 menu "Nordic nRF Connect"
 
 #

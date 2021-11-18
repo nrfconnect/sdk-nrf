@@ -9,7 +9,7 @@ Profiler
 
 The Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
 You can use the module to profile :ref:`event_manager` events or custom events.
-The output is provided via RTT and can be visualized in a custom Python backend.
+The output is provided using RTT and can be visualized in a custom Python backend.
 
 See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
 
@@ -20,10 +20,10 @@ Apart from standard configuration parameters, there is one required setting:
 
 :kconfig:`CONFIG_PROFILER`
   Set this option to add the Profiler source code to the application.
-  If you use the Event Manager, you can also set this option by selecting :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`.
+  If you use the Event Manager, you can also set this option by selecting :kconfig:`CONFIG_EVENT_MANAGER_PROFILER`.
 
 Call :c:func:`profiler_init` during the application start to initialize the Profiler.
-If you set :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
+If you set :kconfig:`CONFIG_EVENT_MANAGER_PROFILER`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
 
 
 Profiling custom events
@@ -99,7 +99,7 @@ To use the tools, run the scripts on the command line:
 
 * ``python3 data_collector.py 5 test1``
 
-  Connects to the device via RTT, receives profiling data, and saves it to files.
+  Connects to the device using RTT, receives profiling data, and saves it to files.
   As command-line arguments, provide the time for collecting data (in seconds) and a dataset name.
 
 * ``python3 plot_from_files.py test1``
@@ -108,7 +108,7 @@ To use the tools, run the scripts on the command line:
 
 * ``python3 real_time_plot.py test1``
 
-  Connects to the device via RTT, plots data in real-time, and saves the data.
+  Connects to the device using RTT, plots data in real-time, and saves the data.
   As command line arguments, provide a dataset name.
 
 * ``python3 merge_data.py test_p sync_event_p test_c sync_event_c test_merged``

@@ -425,6 +425,7 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_0_NO_REPETITION		= 0,
 	LTE_LC_CE_LEVEL_1_LOW_REPETITION	= 1,
 	LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION	= 2,
+	LTE_LC_CE_LEVEL_3_LARGE_REPETITION	= 3,
 	LTE_LC_CE_LEVEL_UNKNOWN			= UINT8_MAX,
 };
 
@@ -624,6 +625,130 @@ enum lte_lc_neighbor_search_type {
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 2,
 };
 
+/** @brief Periodic search pattern.
+ *	   A search pattern may be of either 'range' or 'table' type.
+ */
+struct lte_lc_periodic_search_pattern {
+	enum lte_lc_periodic_search_pattern_type {
+		LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE = 0,
+		LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE = 1,
+	} type;
+
+	union {
+		/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE.
+		 */
+		struct lte_lc_periodic_search_range_cfg {
+			/** Sleep time in seconds between searches in the beginning of the range.
+			 *  Allowed values: 0 - 65535 seconds.
+			 */
+			uint16_t initial_sleep;
+
+			/** Sleep time in seconds between searches in the end of the range.
+			 *  Allowed values: 0 - 65535 seconds.
+			 */
+			uint16_t final_sleep;
+
+			/** Optional target time in minutes for achieving the @c final_sleep value.
+			 *  This can be used to determine angle factor between
+			 *  the initial and final sleep times. The timeline for the
+			 *  @c time_to_final_sleep starts from the beginning of the search pattern.
+			 *  If given, the value cannot be greater than the value of
+			 *  the @c pattern_end_point value in the same search pattern.
+			 *  If not given, the angle factor is calculated by using the
+			 *  @c pattern_end_point value so that the @c final_sleep value is reached
+			 *  at the point of @c pattern_end_point.
+			 *
+			 *  Allowed values:
+			 *  -1: Not used
+			 *   0 - 1080 minutes
+			 */
+			int16_t time_to_final_sleep;
+
+			/** Time in minutes that must elapse before entering
+			 *  the next search pattern. The timeline for @c pattern_end_point
+			 *  starts from the beginning of the limited service starting point,
+			 *  which is the moment when the first sleep period started.
+			 *
+			 *  Allowed values: 0 - 1080 minutes.
+			 */
+			int16_t pattern_end_point;
+		} range;
+
+		/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE.
+		 *  1 to 5 sleep time values for sleep between searches can be configured.
+		 *  It's mandatory to provide @c val_1, while the rest are optional.
+		 *  Unused values must be set to -1.
+		 *  After going through all values, the last value of the last search pattern
+		 *  is repeated, if not configured differently by the @c loop or
+		 *  @c return_to_pattern parameters.
+		 *
+		 *  Allowed values:
+		 *  -1: Value unused.
+		 *   0 - 65535 seconds.
+		 */
+		struct lte_lc_periodic_search_table_cfg {
+			/** Mandatory when LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE is used. */
+			int val_1;
+
+			/** Optional sleep time.
+			 *  Must be set to -1 if not used.
+			 */
+			int val_2;
+
+			/** Optional sleep time. @c val_2 must be configured for
+			 *  this parameter to have effect.
+			 *  Must be set to -1 if not used.
+			 */
+			int val_3;
+
+			/** Optional sleep time. @c val_3 must be configured for
+			 *  this parameter to have effect.
+			 *  Must be set to -1 if not used.
+			 */
+			int val_4;
+
+			/** Optional sleep time. @c val_4 must be configured for
+			 *  this parameter to have effect.
+			 *  Must be set to -1 if not used.
+			 */
+			int val_5;
+		} table;
+	};
+};
+
+/** @brief Periodic search configuration. */
+struct lte_lc_periodic_search_cfg {
+	/** Indicates if the last given pattern is looped from the beginning
+	 *  when the pattern has ended.
+	 *  If several patterns are configured, this impacts only the last pattern.
+	 */
+	bool loop;
+
+	/** Indicates if the modem can return to a given search pattern with shorter sleeps, for
+	 *  example, when radio conditions change and the given pattern index has already
+	 *  been exceeded.
+	 *
+	 *  Allowed values:
+	 *  0: No return pattern.
+	 *  1 - 4: Return to search pattern index 1..4.
+	 */
+	uint16_t return_to_pattern;
+
+	/** 0: No optimization. Every periodic search shall be all band search.
+	 *  1: Use default optimizations predefined by modem. Predefinition depends on
+	 *     the active data profile.
+	 *     See "nRF91 AT Commands - Command Reference Guide" for more information.
+	 *  2 - 20: Every n periodic search must be an all band search.
+	 */
+	uint16_t band_optimization;
+
+	/** The number of valid patterns. Range 1 - 4. */
+	size_t pattern_count;
+
+	/** Array of periodic search patterns. */
+	struct lte_lc_periodic_search_pattern patterns[4];
+};
+
 struct lte_lc_evt {
 	enum lte_lc_evt_type type;
 	union {
@@ -669,7 +794,9 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
  *	 made to establish an LTE connection. The module can be initialized
  *	 only once, and subsequent calls will return -EALREADY.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -EALREADY if the library has already been initialized.
  */
 int lte_lc_init(void);
 
@@ -681,8 +808,11 @@ int lte_lc_init(void);
  * @note After initialization, the system mode will be set to the default mode
  *	 selected with Kconfig and LTE preference set to automatic selection.
  *
- * @return Zero on success, -EPERM if the module has not been initialized,
- *	   otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EPERM if the link controller was not initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -ETIMEDOUT if a connection attempt timed out before the device was
+ *	   registered to a network.
  */
 int lte_lc_connect(void);
 
@@ -694,7 +824,11 @@ int lte_lc_connect(void);
  *	 return -EALREADY. lte_lc_connect_async() should be used on subsequent
  *	 calls.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EALREADY if the library has already been initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -ETIMEDOUT if a connection attempt timed out before the device was
+ *	   registered to a network.
  */
 int lte_lc_init_and_connect(void);
 
@@ -705,8 +839,9 @@ int lte_lc_init_and_connect(void);
  * @param handler Event handler for receiving LTE events. The parameter can be
  *	          NULL if an event handler is already registered.
  *
- * @return Zero on success, -EINVAL if no handler is provided and not already
- *	   registered, otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EINVAL if no event handler was registered.
+ * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
@@ -719,32 +854,38 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  * @param handler Event handler for receiving LTE events. The parameter can be
  *		  NULL if an event handler is already registered.
  *
- * @return Zero on success, -EINVAL if no handler is provided and not already
- *	   registered, otherwise a (negative) error code.
+ * @retval 0 if successful.
+ * @retval -EALREADY if the library has already been initialized.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -EINVAL if no event handler was registered.
  */
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
 /** @brief Deinitialize the LTE module, powers of the modem.
  *
- * @return Zero on success, -EIO if it fails.
+ * @retval 0 if successful.
+ * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_deinit(void);
 
 /** @brief Function for sending the modem to offline mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_offline(void);
 
 /** @brief Function for sending the modem to power off mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_power_off(void);
 
 /** @brief Function for sending the modem to normal mode
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if the functional mode could not be configured.
  */
 int lte_lc_normal(void);
 
@@ -757,7 +898,9 @@ int lte_lc_normal(void);
  *              Set NULL to use manufacturer-specific default value.
  * @param rat Requested active time as null-terminated string.
  *            Set NULL to use manufacturer-specific default value.
- * @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
 
@@ -765,7 +908,8 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
  *         power saving mode (PSM) using default Kconfig value or as set using
  *         `lte_lc_psm_param_set`.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_psm_req(bool enable);
 
@@ -778,7 +922,10 @@ int lte_lc_psm_req(bool enable);
  * @param active_time Pointer to the variable for parsed active time in seconds.
  *	              Positive integer, or -1 if timer is deactivated.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if no active time and/or TAU value was received.
  */
 int lte_lc_psm_get(int *tau, int *active_time);
 
@@ -795,7 +942,8 @@ int lte_lc_psm_get(int *tau, int *active_time);
  * @param ptw Paging Time Window value as null-terminated string.
  *            Set NULL to use manufacturer-specific default value.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
@@ -807,7 +955,8 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
  * @param edrx eDRX value as null-terminated string.
  *             Set NULL to use manufacturer-specific default.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
@@ -818,10 +967,10 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  *
  * @param enable Boolean value enabling or disabling the use of eDRX.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_edrx_req(bool enable);
-
 
 /** @brief Function for setting modem RAI value to be used when
  *         RAI is subsequently enabled using `lte_lc_rai_req`.
@@ -829,7 +978,8 @@ int lte_lc_edrx_req(bool enable);
  *
  * @param value RAI value.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if an input parameter was invalid.
  */
 int lte_lc_rai_param_set(const char *value);
 
@@ -839,7 +989,9 @@ int lte_lc_rai_param_set(const char *value);
  *
  * @param enable Boolean value enabling or disabling the use of RAI.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if RAI is not supported in the current system mode.
  */
 int lte_lc_rai_req(bool enable);
 
@@ -847,7 +999,9 @@ int lte_lc_rai_req(bool enable);
  *
  * @param status Pointer for network registration status.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the network registration could not be retrieved from the modem.
  */
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 
@@ -856,7 +1010,9 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
  * @param mode System mode to set.
  * @param preference System mode preference.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the network registration could not be retrieved from the modem.
  */
 int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference preference);
@@ -866,7 +1022,9 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  * @param mode Pointer to system mode variable.
  * @param preference Pointer to system mode preference variable. Can be NULL.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the system mode could not be retrieved from the modem.
  */
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
@@ -875,7 +1033,9 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  *
  * @param mode Functional mode to set.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the functional mode could not be retrieved from the modem.
  */
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 
@@ -883,7 +1043,9 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
  *
  * @param mode Pointer to functional mode variable.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the functional mode could not be retrieved from the modem.
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 
@@ -891,7 +1053,10 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  *
  * @param mode Pointer to LTE mode variable.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if the current LTE mode could not be retrieved.
+ * @retval -EBADMSG if the LTE mode was not recognized.
  */
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
@@ -916,7 +1081,9 @@ int lte_lc_neighbor_cell_measurement(enum lte_lc_neighbor_search_type type);
 
 /** @brief Cancel an ongoing neighbor cell measurement.
  *
- * @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if neighbor cell measurement was cancelled.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_neighbor_cell_measurement_cancel(void);
 
@@ -938,6 +1105,10 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * @retval 5 Evaluation failed, aborted due to higher priority operation.
  * @retval 6 Evaluation failed, UE not registered to network.
  * @retval 7 Evaluation failed, Unspecified.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if connection evaluation is not available in the current functional mode.
+ * @retval -EBADMSG if parsing of the AT command response failed.
  */
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 
@@ -950,15 +1121,59 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  *
  *  @note An event handler must be registered in order to receive events.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_modem_events_enable(void);
 
 /** @brief Disable modem domain events.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
  */
 int lte_lc_modem_events_disable(void);
+
+/** @brief Configure periodic searches. This configuration affects the periodic searches
+ *	   that the modem performs in limited service state to obtain normal service.
+ *	   See @c struct lte_lc_periodic_search_cfg and
+ *	   "nRF91 AT Commands - Command Reference Guide" for more information and
+ *	   in-depth explanations of periodic search configuration.
+ *
+ * @retval 0 if the configuration was successfully sent to the modem.
+ * @retval -EINVAL if an input parameter was NULL or contained an invalid pattern count.
+ * @retval -EFAULT if an AT command could not be sent to the modem.
+ * @retval -EBADMSG if the modem responded with an error to an AT command.
+ */
+int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cfg);
+
+/** @brief Get the configured periodic search parameters.
+ *
+ * @retval 0 if a configuration was found and populated to the provided pointer.
+ * @retval -EINVAL if input parameter was NULL.
+ * @retval -ENOENT if no periodic search was not configured.
+ * @retval -EFAULT if an AT command failed.
+ * @retval -EBADMSG if the modem responded with an error to an AT command or the
+ *		    response could not be parsed.
+ */
+int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg);
+
+/** @brief Clear the configured periodic search parameters.
+ *
+ * @retval 0 if the configuration was cleared.
+ * @retval -EFAULT if an AT command could not be sent to the modem.
+ * @retval -EBADMSG if the modem responded with an error to an AT command.
+ */
+int lte_lc_periodic_search_clear(void);
+
+/** @brief Request an extra search. This can be used for example when modem is in
+ *	   sleep state between periodic searches. The search is performed only when
+ *	   the modem is in sleep state between periodic searches.
+ *
+ * @retval 0 if the search request was successfully delivered to the modem.
+ * @retval -EFAULT if an AT command could not be sent to the modem.
+ */
+int lte_lc_periodic_search_request(void);
 
 /** @} */
 

@@ -11,8 +11,6 @@
 #include <modem/nrf_modem_lib.h>
 #include <net/tls_credentials.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <modem/modem_key_mgmt.h>
 
 #define HTTPS_PORT 443
@@ -40,27 +38,6 @@ static const char cert[] = {
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
-
-
-/* Initialize AT communications */
-int at_comms_init(void)
-{
-	int err;
-
-	err = at_cmd_init();
-	if (err) {
-		printk("Failed to initialize AT commands, err %d\n", err);
-		return err;
-	}
-
-	err = at_notif_init();
-	if (err) {
-		printk("Failed to initialize AT notifications, err %d\n", err);
-		return err;
-	}
-
-	return 0;
-}
 
 /* Provision certificate to modem */
 int cert_provision(void)
@@ -175,18 +152,6 @@ void main(void)
 	};
 
 	printk("HTTPS client sample started\n\r");
-
-	err = nrf_modem_lib_init(NORMAL_MODE);
-	if (err) {
-		printk("Failed to initialize modem library!");
-		return;
-	}
-
-	/* Initialize AT comms in order to provision the certificate */
-	err = at_comms_init();
-	if (err) {
-		return;
-	}
 
 #if !defined(CONFIG_SAMPLE_TFM_MBEDTLS)
 	/* Provision certificates before connecting to the LTE network */

@@ -9,7 +9,7 @@
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/fota_download.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include "update.h"
 
 #define FOTA_TEST "FOTA-TEST"
@@ -22,13 +22,7 @@ static bool is_test_firmware(void)
 	int err;
 
 	if (!version_read) {
-		err = at_cmd_init();
-		if (err != 0) {
-			printk("at_cmd_init failed: %d\n", err);
-			return false;
-		}
-
-		err = at_cmd_write("AT+CGMR", version, sizeof(version), NULL);
+		err = nrf_modem_at_cmd(version, sizeof(version), "AT+CGMR");
 		if (err != 0) {
 			printk("Unable to read modem version: %d\n", err);
 			return false;
@@ -74,11 +68,10 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 void update_start(void)
 {
 	int err;
-	char *apn = NULL;
 
 	/* Functions for getting the host and file */
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, get_file(), SEC_TAG,
-				  apn, 0);
+				  0, 0);
 	if (err != 0) {
 		update_sample_done();
 		printk("fota_download_start() failed, err %d\n", err);

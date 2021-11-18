@@ -36,5 +36,6 @@ rsource "pelion/Kconfig"
 rsource "modem_jwt/Kconfig"
 rsource "modem_attest_token/Kconfig"
 rsource "multicell_location/Kconfig"
+rsource "location/Kconfig"
 
 endmenu

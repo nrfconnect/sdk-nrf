@@ -155,7 +155,7 @@ Modem library
 =============
 
 The |NCS| applications for the nRF9160-based devices that communicate with the nRF9160 modem firmware must include the :ref:`nrfxlib:nrf_modem`.
-The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| via an integration layer, ``nrf_modem_lib``.
+The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| through an integration layer, ``nrf_modem_lib``.
 
 The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
 For more information on the integration, see :ref:`nrf_modem_lib_readme`.
@@ -234,7 +234,7 @@ Samples and applications implementing FOTA
 * :ref:`http_full_modem_update_sample` sample - performs a full firmware OTA update of the modem.
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
-* :ref:`aws_fota_sample` sample - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+* :ref:`aws_fota_sample` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
 * :ref:`azure_fota_sample` sample - performs a FOTA update from the Azure IoT Hub.
 * :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 
@@ -346,10 +346,9 @@ Samples using GNSS in |NCS|
 There are many examples in |NCS| that use GNSS.
 Following is a list of the samples and applications with some information about the GNSS usage:
 
-* :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS  or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
+* :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
 * :ref:`serial_lte_modem` application - Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. The application displays tracking and GNSS fix information in the serial console.
-* :ref:`agps_sample` sample - Uses nRF Cloud for A-GPS by default and can be configured to use SUPL. The sample obtains GNSS fixes and transmits them to nRF Cloud.
-* :ref:`gps_with_supl_support_sample` sample - Does not use A-GPS by default but can be configured to use SUPL. The sample displays tracking, fix information, and NMEA strings in the serial console.
+* :ref:`gnss_sample` sample - Does not use assistance by default but can be configured to use nRF Cloud A-GPS or P-GPS or a combination of both. The sample displays tracking and fix information as well as NMEA strings in the serial console.
 
 .. _nrf9160_gps_lte:
 

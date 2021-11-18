@@ -1,0 +1,143 @@
+.. _pmw3360:
+
+PMW3360 driver
+##############
+
+.. contents::
+   :local:
+   :depth: 2
+
+The PMW3360 driver implements a PMW3360 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
+
+The sensor driver supports the following features:
+
+* Motion data readouts for X and Y axes
+* :c:enum:`SENSOR_TRIG_DATA_READY` trigger
+* Configuring attributes of the PMW3360 sensor
+
+.. note::
+  The PMW3360 driver is similar to :ref:`paw3212`, but it allows customizing CPI value and downshift time, as detailed in `Kconfig configuration`_.
+  The sensor also supports `Burst mode`_.
+
+Configuration
+*************
+
+To use the sensor, you must provide a valid hardware configuration of the sensor in the Devicetree Specification (DTS) and enable and configure the driver in Kconfig.
+
+Devicetree Specification configuration
+======================================
+
+The following code snippet shows an example DTS configuration:
+
+.. code-block:: none
+
+  &spi1 {
+          compatible = "nordic,nrf-spim";
+          status = "okay";
+          sck-pin = <16>;
+          mosi-pin = <17>;
+          miso-pin = <15>;
+          cs-gpios = <&gpio0 13 0>;
+
+          pmw3360@0 {
+                  compatible = "pixart,pmw3360";
+                  reg = <0>;
+                  irq-gpios = <&gpio0 21 0>;
+                  spi-max-frequency = <2000000>;
+                  label = "PMW3360";
+          };
+  };
+
+The PMW3360 sensor node must meet the following requirements:
+
+* It must be a child node of a SPI node.
+* It must be compatible with ``pixart,pmw3360``.
+
+Moreover, you must configure the following parameters:
+
+* Pins used by the SPI that are common for all devices connected to the bus:
+
+  * ``mosi-pin`` - MOSI
+  * ``miso-pin`` - MISO
+  * ``sck-pin`` - SCK
+
+* Chip select (CS) pin for the PMW3360 motion sensor.
+  GPIOs used as chip select for the devices connected to the SPI are defined as ``cs-gpios``.
+  The ``@0`` in ``pmw3360@0`` refers to the position of the chip select pin of the motion sensor in the array.
+* Parameters inherited from the ``spi-device`` binding that are defined for every SPI device:
+
+  * ``reg`` - The slave ID number the device has on a bus.
+  * ``label`` - Name of the device.
+    Used to get device binding with :c:func:`device_get_binding`.
+  * ``spi-max-frequency`` - Used for setting the bus clock frequency.
+
+* Pin to which the motion sensor IRQ line is connected (``irq-gpios``).
+
+See :ref:`zephyr:dt-guide` for more detailed information about the DTS data structure.
+
+.. note::
+   The motion sensor driver implementation does not benefit from the SPI context lock.
+   The operation related to the PMW3360 motion sensor can be interrupted by data exchange with another sensor connected over the same SPI interface.
+   If other sensors use the same SPI interface, you must ensure that SPI operations are not preempted.
+
+Kconfig configuration
+=====================
+
+Use the following Kconfig options to configure the PMW3360 motion sensor:
+
+* :kconfig:`CONFIG_PMW3360` - This option enables the PMW3360 motion sensor driver.
+* :kconfig:`CONFIG_PMW3360_ORIENTATION_0`, :kconfig:`CONFIG_PMW3360_ORIENTATION_90`, :kconfig:`CONFIG_PMW3360_ORIENTATION_180`, or :kconfig:`CONFIG_PMW3360_ORIENTATION_270` - The selected choice option specifies the rotation of the PMW3360 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
+* :kconfig:`CONFIG_PMW3360_CPI` - This option specifies the Counts Per Inch (CPI) value.
+* :kconfig:`CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS` - Times in milliseconds after which the sensor switches to the next mode.
+  The sequence of the modes is static, with the following pattern: ``RUN`` > ``REST1`` > ``REST2`` > ``REST3``.
+  The time value specified in the Kconfig options corresponds to the respective arrows.
+
+See :ref:`kconfig_tips_and_tricks` for information about Kconfig.
+
+Sensor API calls
+****************
+
+Read the following sections for information about the :ref:`zephyr:sensor_api` calls supported by the motion sensor.
+
+.. note::
+   Driver initialization is performed asynchronously using a delayed work that resubmits itself.
+   This is done to prevent delaying system start.
+
+   The sensor returns ``-EBUSY`` if the sensor API is used before the asynchronous initialization is completed.
+
+Motion data reading
+===================
+
+Use the following operations to read the motion data:
+
+* Fetch motion data using :c:enum:`SENSOR_CHAN_ALL`.
+  Fetching sensor channels separately is not supported.
+* Read data for motion in the X and Y axes using :c:enum:`SENSOR_CHAN_POS_DX` and :c:enum:`SENSOR_CHAN_POS_DY`, respectively.
+
+Sensor trigger
+==============
+
+The sensor supports :c:enum:`SENSOR_TRIG_DATA_READY` trigger for :c:enum:`SENSOR_CHAN_ALL`.
+The trigger handler is called when motion is detected.
+
+Sensor attributes
+=================
+
+The sensor supports a custom set of attributes that are not part of generic sensor attributes defined by Zephyr's :ref:`zephyr:sensor_api` API.
+The attribues are defined as private to the motion sensor in the sensor's header file.
+See API documentation for details.
+
+Burst mode
+==========
+
+Driver uses burst mode for reading motion to improve data transfer speed.
+
+API documentation
+*****************
+
+| Header file: :file:`include/sensor/pmw3360.h`
+| Source file: :file:`drivers/sensor/pmw3360/pmw3360.c`
+
+.. doxygengroup:: pmw3360
+   :project: nrf
+   :members:

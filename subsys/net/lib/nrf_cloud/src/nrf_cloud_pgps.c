@@ -40,6 +40,13 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #define LOCATION_UNC_SEMIMINOR_K	89U
 #define LOCATION_CONFIDENCE_PERCENT	68U
 
+BUILD_ASSERT(((NUM_PREDICTIONS & 1) == 0),
+	 "NUM_PREDICTIONS must be even");
+BUILD_ASSERT(((REPLACEMENT_THRESHOLD & 1) == 0),
+	 "REPLACEMENT_THRESHOLD must be even");
+BUILD_ASSERT((NUM_PREDICTIONS != REPLACEMENT_THRESHOLD),
+	 "NUM_PREDICTIONS and REPLACEMENT_THRESHOLD cannot be equal");
+
 enum pgps_state {
 	PGPS_NONE,
 	PGPS_INITIALIZING,
@@ -473,10 +480,11 @@ static void print_time_details(const char *info,
 {
 	uint32_t tow = (day % DAYS_PER_WEEK) * SEC_PER_DAY + time_of_day;
 
-	LOG_INF("%s GPS sec:%llu, day:%u, time of day:%u, week:%lu, "
-		"day of week:%lu, time of week:%u, toe:%u",
-		info ? info : "", sec, day, time_of_day,
-		day / DAYS_PER_WEEK, day % DAYS_PER_WEEK, tow, tow / 16);
+	LOG_INF("%s GPS sec:%u, day:%u, time of day:%u, week:%u, "
+		"day of week:%u, time of week:%u, toe:%u",
+		info ? info : "", (uint32_t)sec, day, time_of_day,
+		(uint32_t)(day / DAYS_PER_WEEK), (uint32_t)(day % DAYS_PER_WEEK),
+		tow, tow / 16);
 }
 
 int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction)
@@ -527,6 +535,9 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 			LOG_WRN("Predictions not loaded yet");
 			return -ELOADING;
 		}
+		index.cur_pnum = 0xff;
+		state = PGPS_EXPIRED;
+		pgps_need_assistance = false; /* make sure we request it */
 		LOG_WRN("No data stored");
 		return -ENODATA;
 	}
@@ -582,7 +593,10 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 
 bool nrf_cloud_pgps_loading(void)
 {
-	return ((state == PGPS_REQUESTING) || (state == PGPS_LOADING));
+	LOG_DBG("Checking state:%d", state);
+	return ((state == PGPS_REQUEST_NEEDED) ||
+		(state == PGPS_REQUESTING) ||
+		(state == PGPS_LOADING));
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -615,6 +629,7 @@ static int pgps_request(const struct gps_pgps_request *request)
 	}
 
 	if (nrf_cloud_pgps_loading()) {
+		LOG_DBG("Already loading; skipping request");
 		return 0;
 	}
 
@@ -765,6 +780,9 @@ int nrf_cloud_pgps_preemptive_updates(void)
 	if (state == PGPS_NONE) {
 		LOG_ERR("P-GPS subsystem is not initialized.");
 		return -EINVAL;
+	} else if (nrf_cloud_pgps_loading()) {
+		LOG_DBG("Still loading; no need to preemptively update");
+		return 0;
 	}
 
 	if (current == 0xff) {
@@ -1433,7 +1451,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	}
 
 	return npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag,
-				    NULL, FRAGMENT_SIZE);
+				    0, FRAGMENT_SIZE);
 }
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
@@ -1443,8 +1461,6 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		.type = PGPS_EVT_INIT,
 	};
 
-	__ASSERT(((REPLACEMENT_THRESHOLD & 1) == 0),
-		 "REPLACEMENT_THRESHOLD must be even");
 	__ASSERT(param != NULL, "param must be provided");
 	__ASSERT(param->storage_base != 0, "storage must be provided");
 	__ASSERT((param->storage_size >= (NUM_BLOCKS * BLOCK_SIZE)),
@@ -1551,6 +1567,8 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 
 		if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_ALL_UPON_INIT)) {
 			err = pgps_request_all();
+		} else {
+			err = 0;
 		}
 	} else if (num_valid < count) {
 		/* read missing predictions at end */

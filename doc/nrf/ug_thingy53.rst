@@ -329,14 +329,14 @@ MCUboot bootloader
 In addition to the configurations mentioned above, an application compatible with Thingy:53 is expected to enable the following features:
 
 * USB CDC ACM as backend for logger.
-  The logs are provided via USB CDC ACM to allow accessing them without additional hardware.
+  The logs are provided using USB CDC ACM to allow accessing them without additional hardware.
 
   Most of the Thingy:53-compatible applications and samples use only a single instance of USB CDC ACM that works as logger's backend.
   No other USB classes are used.
   These samples can share common USB product name, vendor ID, and product ID.
   If a sample supports additional USB classes or more than one instance of USB CDC ACM, it must use dedicated product name, vendor ID, and product ID.
 
-* DFU over-the-air via Simple Management Protocol over Bluetooth.
+* DFU over-the-air through Simple Management Protocol over Bluetooth.
   The application acts as GATT server and allows the connected Bluetooth Central to perform the firmware update for both application and network core.
   The Bluetooth configuration is updated to allow quick DFU data transfer.
   The application supports Simple Management Protocol (SMP) handlers related to:

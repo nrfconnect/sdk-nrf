@@ -42,10 +42,11 @@ If you enable the :ref:`zigbee_light_switch_sample_nus`, make sure you have a ph
 Overview
 ********
 
-The light switch sample demonstrates the Zigbee End Device role and implements the Dimmer Light Switch profile.
+The light switch sample demonstrates the Zigbee End Device role and implements the Dimmer Switch device specification, as defined in the Zigbee Home Automation public application profile.
 
 Once the light switch is successfully commissioned, it sends a broadcast message to find devices with the implemented Level Control and On/Off clusters.
-The light switch remembers the device network address from the first response, at which point it can be controlled with the development kit buttons.
+The light switch remembers the device network address from the first response.
+At this point, you can start using the buttons on the development kit to control the clusters on the newly found devices.
 
 Sleepy End Device behavior
 ==========================
@@ -108,7 +109,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
   Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
   .. note::
-     The :file:`overlay-fota.conf` file can be used only for nRF52840 DK.
+     The :file:`overlay-fota.conf` file can be used only with a development kit that contains the nRF52840 SoC.
 
 * For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
   Check :ref:`gs_programming_board_names` for the board name to use instead of the ``nrf52840dk_nrf52840``.
@@ -145,6 +146,13 @@ Button 2:
 
 .. note::
     If the brightness level is at the minimum level, the effect of turning on the light bulb might not be noticeable.
+
+FOTA behavior assignments
+=========================
+
+LED 2:
+    Indicates the OTA activity.
+    Used only if the FOTA support is enabled.
 
 Sleepy End Device behavior assignments
 ======================================

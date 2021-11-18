@@ -59,7 +59,7 @@ static int handle_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_lightness_cli *cli = model->user_data;
-	uint16_t last = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	uint16_t last = from_actual(net_buf_simple_pull_le16(buf));
 	uint16_t *rsp;
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHTNESS_OP_LAST_STATUS, ctx->addr,
@@ -79,8 +79,7 @@ static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg
 				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_lightness_cli *cli = model->user_data;
-	uint16_t default_lvl =
-		repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	uint16_t default_lvl = from_actual(net_buf_simple_pull_le16(buf));
 	uint16_t *rsp;
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
@@ -104,8 +103,8 @@ static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_c
 	struct bt_mesh_lightness_range_status *rsp;
 
 	status.status = net_buf_simple_pull_u8(buf);
-	status.range.min = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
-	status.range.max = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	status.range.min = from_actual(net_buf_simple_pull_le16(buf));
+	status.range.max = from_actual(net_buf_simple_pull_le16(buf));
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHTNESS_OP_RANGE_STATUS, ctx->addr,
 				      (void **)&rsp)) {
@@ -269,8 +268,8 @@ int bt_mesh_lightness_cli_range_set(struct bt_mesh_lightness_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_RANGE_SET,
 				 BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_RANGE_SET);
-	net_buf_simple_add_le16(&buf, light_to_repr(range->min, ACTUAL));
-	net_buf_simple_add_le16(&buf, light_to_repr(range->max, ACTUAL));
+	net_buf_simple_add_le16(&buf, to_actual(range->min));
+	net_buf_simple_add_le16(&buf, to_actual(range->max));
 
 	return model_ackd_send(cli->model, ctx, &buf,
 			       rsp ? &cli->ack_ctx : NULL,
@@ -284,8 +283,8 @@ int bt_mesh_lightness_cli_range_set_unack(
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_RANGE_SET_UNACK,
 				 BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_RANGE_SET_UNACK);
-	net_buf_simple_add_le16(&buf, light_to_repr(range->min, ACTUAL));
-	net_buf_simple_add_le16(&buf, light_to_repr(range->max, ACTUAL));
+	net_buf_simple_add_le16(&buf, to_actual(range->min));
+	net_buf_simple_add_le16(&buf, to_actual(range->max));
 
 	return model_send(cli->model, ctx, &buf);
 }
@@ -309,7 +308,7 @@ int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET,
 				 BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET);
-	net_buf_simple_add_le16(&buf, light_to_repr(default_light, ACTUAL));
+	net_buf_simple_add_le16(&buf, to_actual(default_light));
 
 	return model_ackd_send(cli->model, ctx, &buf,
 			       rsp ? &cli->ack_ctx : NULL,
@@ -323,7 +322,7 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK,
 				 BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK);
-	net_buf_simple_add_le16(&buf, light_to_repr(default_light, ACTUAL));
+	net_buf_simple_add_le16(&buf, to_actual(default_light));
 
 	return model_send(cli->model, ctx, &buf);
 }

@@ -163,47 +163,8 @@ extern "C" {
 	}
 
 
-/* Wrappers used for defining event infos */
-#ifdef CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION
-#define EM_MEM_ADDRESS_LABEL "_em_mem_address_",
-#define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
-
-#else
-#define EM_MEM_ADDRESS_LABEL
-#define MEM_ADDRESS_TYPE
-
-#endif /* CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION */
-
-
-#ifdef CONFIG_EVENT_MANAGER_PROFILE_EVENT_DATA
-#define _ARG_LABELS_DEFINE(...) \
-	{EM_MEM_ADDRESS_LABEL __VA_ARGS__}
-#define _ARG_TYPES_DEFINE(...) \
-	 {MEM_ADDRESS_TYPE __VA_ARGS__}
-
-#else
-#define _ARG_LABELS_DEFINE(...) \
-	{EM_MEM_ADDRESS_LABEL}
-#define _ARG_TYPES_DEFINE(...) \
-	 {MEM_ADDRESS_TYPE}
-
-#endif /* CONFIG_EVENT_MANAGER_PROFILE_EVENT_DATA */
-
 
 /* Declarations and definitions - for more details refer to public API. */
-#define _EVENT_INFO_DEFINE(ename, types, labels, profile_func)							\
-	const static char *_CONCAT(ename, _log_arg_labels[]) = _ARG_LABELS_DEFINE(labels);			\
-	const static enum profiler_arg _CONCAT(ename, _log_arg_types[]) = _ARG_TYPES_DEFINE(types);		\
-	const static struct event_info _CONCAT(ename, _info) _EM_FORCED_ALIGNMENT				\
-	__attribute__((__section__("event_infos"))) = {								\
-				.profile_fn	= profile_func,							\
-				.log_arg_cnt	= ARRAY_SIZE(_CONCAT(ename, _log_arg_labels)),			\
-				.log_arg_labels	= _CONCAT(ename, _log_arg_labels),				\
-				.log_arg_types	= _CONCAT(ename, _log_arg_types)				\
-			}
-
-
-
 #define _EVENT_LISTENER(lname, notification_fn)						\
 	const struct event_listener _CONCAT(__event_listener_, lname)			\
 	__used _EM_FORCED_ALIGNMENT							\
@@ -230,25 +191,31 @@ extern "C" {
 	_EVENT_ALLOCATOR_DYNDATA_FN(ename)
 
 
-#define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)							\
-	_EVENT_SUBSCRIBERS_DEFINE(ename);										\
-	const struct event_type _CONCAT(__event_type_, ename) __used _EM_FORCED_ALIGNMENT				\
-	__attribute__((__section__("event_types"))) = {									\
-		.name				= STRINGIFY(ename),							\
-		.subs_start	= {											\
-			[_SUBS_PRIO_FIRST]	= _EVENT_SUBSCRIBERS_START(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST)),	\
-			[_SUBS_PRIO_NORMAL]	= _EVENT_SUBSCRIBERS_START(ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL)),	\
-			[_SUBS_PRIO_FINAL]	= _EVENT_SUBSCRIBERS_START(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL)),	\
-		},													\
-		.subs_stop	= {											\
-			[_SUBS_PRIO_FIRST]	= _EVENT_SUBSCRIBERS_STOP(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST)),	\
-			[_SUBS_PRIO_NORMAL]	= _EVENT_SUBSCRIBERS_STOP(ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL)),	\
-			[_SUBS_PRIO_FINAL]	= _EVENT_SUBSCRIBERS_STOP(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL)),	\
-		},													\
-		.init_log_enable		= init_log_en,								\
-		.log_event			= (IS_ENABLED(CONFIG_LOG) ? (log_fn) : (NULL)),				\
-		.ev_info			= (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_ENABLED) ?			\
-							    (ev_info_struct) : (NULL)),					\
+#define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, trace_data_pointer)			\
+	_EVENT_SUBSCRIBERS_DEFINE(ename);							\
+	const struct event_type _CONCAT(__event_type_, ename) __used _EM_FORCED_ALIGNMENT	\
+	__attribute__((__section__("event_types"))) = {						\
+		.name				= STRINGIFY(ename),				\
+		.subs_start	= {								\
+			[_SUBS_PRIO_FIRST]	= _EVENT_SUBSCRIBERS_START			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST)),	\
+			[_SUBS_PRIO_NORMAL]	= _EVENT_SUBSCRIBERS_START			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL)),	\
+			[_SUBS_PRIO_FINAL]	= _EVENT_SUBSCRIBERS_START			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL)),	\
+		},										\
+		.subs_stop	= {								\
+			[_SUBS_PRIO_FIRST]	= _EVENT_SUBSCRIBERS_STOP			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST)),	\
+			[_SUBS_PRIO_NORMAL]	= _EVENT_SUBSCRIBERS_STOP			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL)),	\
+			[_SUBS_PRIO_FINAL]	= _EVENT_SUBSCRIBERS_STOP			\
+						(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL)),	\
+		},										\
+		.init_log_enable		= init_log_en,					\
+		.log_event			= (IS_ENABLED(CONFIG_LOG) ? (log_fn) : (NULL)),	\
+		.trace_data			= (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER) ?	\
+							    (trace_data_pointer) : (NULL)),	\
 	}
 
 

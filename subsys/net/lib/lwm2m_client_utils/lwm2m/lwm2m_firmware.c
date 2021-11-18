@@ -331,7 +331,7 @@ static void start_fota_download(struct k_work *work)
 	 */
 	configure_full_modem_update();
 #endif
-	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, NULL, 0);
+	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, 0, 0);
 
 	if (ret < 0) {
 		LOG_ERR("fota_download_start() failed, return code %d", ret);

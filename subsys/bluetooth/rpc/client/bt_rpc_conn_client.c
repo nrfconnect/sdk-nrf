@@ -558,7 +558,7 @@ int bt_conn_le_create(const bt_addr_le_t *peer,
 	return result.result;
 }
 
-#if defined(CONFIG_BT_WHITELIST)
+#if defined(CONFIG_BT_FILTER_ACCEPT_LIST)
 int bt_conn_le_create_auto(const struct bt_conn_le_create_param *create_param,
 			   const struct bt_le_conn_param *conn_param)
 {
@@ -590,9 +590,9 @@ int bt_conn_create_auto_stop(void)
 
 	return result;
 }
-#endif /* defined(CONFIG_BT_WHITELIST) */
+#endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
-#if !defined(CONFIG_BT_WHITELIST)
+#if !defined(CONFIG_BT_FILTER_ACCEPT_LIST)
 int bt_le_set_auto_conn(const bt_addr_le_t *addr,
 			const struct bt_le_conn_param *param)
 {
@@ -617,7 +617,7 @@ int bt_le_set_auto_conn(const bt_addr_le_t *addr,
 
 	return result;
 }
-#endif  /* !defined(CONFIG_BT_WHITELIST) */
+#endif  /* !defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 #endif  /* defined(CONFIG_BT_CENTRAL) */
 
 #if defined(CONFIG_BT_SMP)

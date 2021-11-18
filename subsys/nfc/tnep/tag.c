@@ -198,7 +198,7 @@ static int tnep_tx_initial_msg_set(void)
 		return tnep.initial_msg_encode(&NFC_NDEF_MSG(initial_msg));
 	}
 
-	Z_STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
+	STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
 		err = tnep_tx_msg_add_rec(&NFC_NDEF_MSG(initial_msg),
 					  tnep_svc->ndef_record);
 		if (err) {
@@ -226,7 +226,7 @@ static bool ndef_check_rec_type(const struct nfc_ndef_record_desc *record,
 
 static int tnep_svc_set_active(const uint8_t *uri_name, size_t uri_length)
 {
-	Z_STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
+	STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
 		if ((tnep_svc->parameters->uri_length == uri_length) &&
 		    !memcmp(uri_name,
 			    tnep_svc->parameters->uri, uri_length)) {
@@ -622,7 +622,7 @@ int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
 		}
 	}
 
-	Z_STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
+	STRUCT_SECTION_FOREACH(nfc_tnep_tag_service, tnep_svc) {
 		err = tnep_tx_msg_add_rec(msg,
 					  tnep_svc->ndef_record);
 		if (err) {

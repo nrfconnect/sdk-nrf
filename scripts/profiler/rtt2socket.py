@@ -41,10 +41,10 @@ class Rtt2Socket:
         self.rtt_down_channels = {
             'command': None,
         }
-        self.connect()
+        self._connect_rtt()
 
     @staticmethod
-    def rtt_get_device_family(snr):
+    def _rtt_get_device_family(snr):
         family = None
         with API('UNKNOWN') as api:
             if snr is not None:
@@ -55,9 +55,9 @@ class Rtt2Socket:
             api.disconnect_from_emu()
         return family
 
-    def connect(self):
+    def _connect_rtt(self):
         snr = self.config['device_snr']
-        device_family = Rtt2Socket.rtt_get_device_family(snr)
+        device_family = Rtt2Socket._rtt_get_device_family(snr)
         self.logger.info('Recognized device family: ' + device_family)
         self.jlink = API(device_family)
         self.jlink.open()
@@ -112,30 +112,23 @@ class Rtt2Socket:
 
         self.logger.info("Connected to device via RTT")
 
-    def disconnect(self):
-        self.stop_logging_events()
-        # read remaining data to buffer
-        bufs = bytearray()
-        while True:
+    def _read_remaining_rtt_data(self):
+        # Read remaining data from device and send it.
+        self._stop_logging_events()
+
+        buf = self._read_bytes()
+        while len(buf) > 0:
             try:
-                buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
-                                          self.config['rtt_read_chunk_size'],
-                                          encoding=None)
-
-            except APIError:
-                self.logger.error("Problem with reading RTT data")
-                buf = []
-
-            if len(buf) > 0:
-                bufs.extend(buf)
-            else:
-                if len(bufs) > 0:
-                    try:
-                        self.out_stream.send_ev(bufs)
-                    except StreamError as err:
-                        self.logger.info("Unable to send remaining events: " + str(err))
+                self.out_stream.send_ev(buf)
+            except StreamError as err:
+                if err.args[1] != 'closed':
+                    self.logger.error("Error. Unable to send data: {}".format(err))
+                # Cannot send more data over socket.
                 break
 
+            buf = self._read_bytes()
+
+    def _disconnect_rtt(self):
         try:
             self.jlink.rtt_stop()
             self.jlink.disconnect_from_emu()
@@ -147,7 +140,7 @@ class Rtt2Socket:
 
         self.logger.info("Disconnected from device")
 
-    def read_bytes(self):
+    def _read_bytes(self):
         try:
             buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
                                       self.config['rtt_read_chunk_size'],
@@ -155,7 +148,7 @@ class Rtt2Socket:
 
         except APIError:
             self.logger.error("Problem with reading RTT data")
-            self.disconnect()
+            self._disconnect_rtt()
             sys.exit()
 
         return buf
@@ -171,7 +164,7 @@ class Rtt2Socket:
                                                encoding=None)
             except APIError:
                 self.logger.error("Problem with reading RTT data")
-                self.disconnect()
+                self._disconnect_rtt()
                 sys.exit()
 
             desc_buf.extend(buf_temp)
@@ -185,12 +178,12 @@ class Rtt2Socket:
             self.out_stream.send_desc(desc_buf)
         except StreamError as err:
             self.logger.error("Error. Unable to send data: {}".format(err))
-            self.disconnect()
+            self._disconnect_rtt()
             sys.exit()
 
-        self.start_logging_events()
+        self._start_logging_events()
         while True:
-            buf = self.read_bytes()
+            buf = self._read_bytes()
 
             if len(buf) > 0:
                 try:
@@ -198,18 +191,17 @@ class Rtt2Socket:
                 except StreamError as err:
                     if err.args[1] != 'closed':
                         self.logger.error("Error. Unable to send data: {}".format(err))
-                        self.disconnect()
-                        sys.exit()
-                    # Receiver has been closed
-                    self.close()
+                    # Receiver has been closed.
+                    self._disconnect_rtt()
+                    sys.exit()
 
             if len(buf) < self.config['rtt_additional_read_thresh']:
                 time.sleep(self.config['rtt_read_sleep_time'])
 
-    def start_logging_events(self):
+    def _start_logging_events(self):
         self._send_command(Command.START)
 
-    def stop_logging_events(self):
+    def _stop_logging_events(self):
         self._send_command(Command.STOP)
 
     def _send_command(self, command_type):
@@ -222,5 +214,6 @@ class Rtt2Socket:
 
     def close(self):
         self.logger.info("Real time transmission closed")
-        self.disconnect()
+        self._read_remaining_rtt_data()
+        self._disconnect_rtt()
         sys.exit()

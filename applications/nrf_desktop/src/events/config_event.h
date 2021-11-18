@@ -13,7 +13,8 @@
  * @{
  */
 
-#include "event_manager.h"
+#include <event_manager.h>
+#include <event_manager_profiler.h>
 #include "hid_report_desc.h"
 
 #ifdef __cplusplus

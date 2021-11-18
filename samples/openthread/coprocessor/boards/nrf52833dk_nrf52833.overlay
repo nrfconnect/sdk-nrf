@@ -13,3 +13,9 @@
 	current-speed = <1000000>;
 	status = "okay";
 };
+
+/ {
+	chosen {
+		zephyr,ot-uart = &uart0;
+	};
+};

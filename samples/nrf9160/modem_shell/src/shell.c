@@ -37,8 +37,14 @@
 #if defined(CONFIG_MOSH_SMS)
 #include "sms/sms_shell.h"
 #endif
+#if defined(CONFIG_MOSH_LOCATION)
+#include "location_shell.h"
+#endif
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp/ppp_shell.h"
+#endif
+#if defined(CONFIG_MOSH_REST)
+#include "rest_shell.h"
 #endif
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
@@ -200,8 +206,20 @@ SHELL_CMD_REGISTER(iperf3, NULL, "For iperf3 usage, just type \"iperf3 --manual\
 SHELL_CMD_REGISTER(sms, NULL, "Commands for sending and receiving SMS.", sms_shell);
 #endif
 
+#if defined(CONFIG_MOSH_LOCATION)
+SHELL_CMD_REGISTER(location, NULL,
+	"Commands for using the Location library.",
+	location_shell);
+#endif
+
 #if defined(CONFIG_MOSH_PPP)
 SHELL_CMD_REGISTER(ppp, NULL,
 	"Commands for controlling PPP.",
 	ppp_shell_cmd);
+#endif
+
+#if defined(CONFIG_MOSH_REST)
+SHELL_CMD_REGISTER(rest, NULL,
+	"REST client.",
+	rest_shell);
 #endif

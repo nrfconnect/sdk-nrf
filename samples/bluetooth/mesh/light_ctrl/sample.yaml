@@ -4,8 +4,9 @@ sample:
 tests:
   samples.bluetooth.mesh.light_ctrl:
     build_only: true
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf21540dk_nrf52840
     tags: bluetooth ci_build
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
+      - nrf21540dk_nrf52840

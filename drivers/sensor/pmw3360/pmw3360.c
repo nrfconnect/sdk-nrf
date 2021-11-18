@@ -113,6 +113,11 @@ LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
 
 #define SPI_WRITE_BIT				BIT(7)
 
+/* Helper macros used to convert sensor values. */
+#define PMW3360_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
+#define PMW3360_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
+#define PMW3360_SVALUE_TO_BOOL(svalue) ((svalue).val1 != 0)
+
 
 extern const size_t pmw3360_firmware_length;
 extern const uint8_t pmw3360_firmware_data[];
@@ -885,6 +890,10 @@ static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel ch
 	uint8_t data[PMW3360_BURST_SIZE];
 
 	ARG_UNUSED(dev);
+
+	if (unlikely(chan != SENSOR_CHAN_ALL)) {
+		return -ENOTSUP;
+	}
 
 	if (unlikely(!dev_data->ready)) {
 		LOG_DBG("Device is not initialized yet");

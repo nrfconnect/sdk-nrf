@@ -54,20 +54,6 @@ static struct bt_gatt_exchange_params exchange_params = {
 	.func = exchange_func,
 };
 
-static void pairing_confirm(struct bt_conn *conn)
-{
-	int err;
-
-	err = bt_conn_auth_pairing_confirm(conn);
-	if (err) {
-		printk("bt_conn_auth_pairing_confirm: %d\n", err);
-	}
-}
-
-static struct bt_conn_auth_cb conn_auth_callbacks = {
-	.pairing_confirm = pairing_confirm,
-};
-
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -359,7 +345,6 @@ void main(void)
 	uint32_t buttons = dk_get_buttons();
 
 	bt_conn_cb_register(&conn_callbacks);
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {

@@ -333,21 +333,6 @@ enum dtm_err_code {
 	DTM_ERROR_UNINITIALIZED,
 };
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(uart0), current_speed)
-/* UART Baudrate used to communicate with the DTM library. */
-#define DTM_UART_BAUDRATE DT_PROP(DT_NODELABEL(uart0), current_speed)
-
-/* The UART poll cycle in micro seconds.
- * A baud rate of e.g. 19200 bits / second, and 8 data bits, 1 start/stop bit,
- * no flow control, give the time to transmit a byte:
- * 10 bits * 1/19200 = approx: 520 us. To ensure no loss of bytes,
- * the UART should be polled every 260 us.
- */
-#define DTM_UART_POLL_CYCLE ((uint32_t) (10 * 1e6 / DTM_UART_BAUDRATE / 2))
-#else
-#error "DTM UART node not found"
-#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(uart0), currrent_speed) */
-
 /* The DTM maximum wait time for the UART command second byte. */
 #define DTM_UART_SECOND_BYTE_MAX_DELAY 5
 
@@ -356,6 +341,10 @@ enum dtm_err_code {
  *  @return 0 in case of success or negative value in case of error
  */
 int dtm_init(void);
+
+/**@brief Function for waiting between the UART poll cycles.
+ */
+void dtm_wait(void);
 
 /**@brief Function for calling when a complete command has been prepared by the
  *        Tester.

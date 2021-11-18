@@ -15,6 +15,10 @@ The sensor driver supports the following features:
 * :c:enum:`SENSOR_TRIG_DATA_READY` trigger
 * Configuring attributes of the PAW3212 sensor
 
+.. note::
+  The PAW3212 driver is similar to :ref:`pmw3360`, but it allows customizing motion data length instead of CPI and downshift values, as detailed in `Kconfig configuration`_.
+  Also, this sensor does not support burst mode.
+
 Configuration
 *************
 

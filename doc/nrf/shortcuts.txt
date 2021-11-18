@@ -1,8 +1,8 @@
 .. |NCS| replace:: nRF Connect SDK
 
-.. |release| replace:: v1.7.0
-.. |release_tt| replace:: ``v1.7.0``
-.. |release_number_tt| replace:: ``1.7.0``
+.. |release| replace:: v1.7.1
+.. |release_tt| replace:: ``v1.7.1``
+.. |release_number_tt| replace:: ``1.7.1``
 
 .. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
    :rtrim:
@@ -56,7 +56,7 @@
    When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
 
 .. |zigbee_version| replace:: Zigbee 3.0
-.. |zboss_version| replace:: 3.8.0.1
+.. |zboss_version| replace:: 3.9.0.1
 .. |zigbee_ncp_package_version| replace:: 1.0.0
 .. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
 .. |enable_zigbee_before_testing| replace:: Make sure to configure the Zigbee stack before building and testing this sample.

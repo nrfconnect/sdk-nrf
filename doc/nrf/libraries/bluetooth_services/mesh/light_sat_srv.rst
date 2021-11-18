@@ -18,7 +18,7 @@ States
 
 Saturation: ``uint16_t``
     The Saturation controls the light's color saturation.
-    If the Saturation of a light is ``0``, the light's color is a completely gray scale, i.e. white light.
+    If the Saturation of a light is ``0``, the light's color is a completely gray scale, that is, white light.
     If the Saturation of a light is the maximum value of ``65535``, the color should be fully saturated.
 
     The Saturation state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:

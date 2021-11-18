@@ -6,7 +6,7 @@
 
 menuconfig ML_APP_USB_STATE
 	bool "USB module"
-	depends on USB
+	depends on USB_DEVICE_STACK
 	depends on CAF_POWER_MANAGER
 	select CAF_FORCE_POWER_DOWN_EVENTS
 	help

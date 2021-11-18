@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/download_client.h>
 
@@ -42,26 +40,6 @@ static mbedtls_sha256_context sha256_ctx;
 #endif
 
 static int64_t ref_time;
-
-/* Initialize AT communications */
-static int at_comms_init(void)
-{
-	int err;
-
-	err = at_cmd_init();
-	if (err) {
-		printk("Failed to initialize AT commands, err %d\n", err);
-		return err;
-	}
-
-	err = at_notif_init();
-	if (err) {
-		printk("Failed to initialize AT notifications, err %d\n", err);
-		return err;
-	}
-
-	return 0;
-}
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
 /* Provision certificate to modem */
@@ -192,18 +170,6 @@ void main(void)
 	int err;
 
 	printk("Download client sample started\n");
-
-	err = nrf_modem_lib_init(NORMAL_MODE);
-	if (err) {
-		printk("Failed to initialize modem library!");
-		return;
-	}
-
-	/* Initialize AT comms in order to provision the certificate */
-	err = at_comms_init();
-	if (err) {
-		return;
-	}
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
 	/* Provision certificates before connecting to the network */

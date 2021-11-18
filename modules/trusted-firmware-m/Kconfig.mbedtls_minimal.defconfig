@@ -21,7 +21,7 @@ config MBEDTLS_DHM_C
 config MBEDTLS_ECP_C
 	default n
 
-config MBEDTLS_HMAC_DRBG_C
+config MBEDTLS_CTR_DRBG_C
 	default n
 
 config MBEDTLS_CIPHER_MODE_CBC

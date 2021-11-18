@@ -97,7 +97,7 @@ void setup_debug_module_in_init_state(void)
 	static struct module_data expected_module_data = {
 		.name = "debug",
 		.msg_q = NULL,
-		.supports_shutdown = true,
+		.supports_shutdown = false,
 	};
 
 	__wrap_watchdog_register_handler_ExpectAnyArgs();

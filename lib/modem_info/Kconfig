@@ -8,6 +8,8 @@ menuconfig MODEM_INFO
 	bool "nRF91 modem information library"
 	select NRF_MODEM_LIB
 	select AT_CMD_PARSER
+	select AT_CMD
+	select AT_NOTIF
 
 if MODEM_INFO
 

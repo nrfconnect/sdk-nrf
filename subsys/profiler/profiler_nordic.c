@@ -27,6 +27,8 @@ struct profiler_event_enabled_bm _profiler_event_enabled_bm;
 
 static K_SEM_DEFINE(profiler_sem, 0, 1);
 static atomic_t profiler_state;
+static uint16_t fatal_error_event_id;
+static struct k_spinlock lock;
 
 enum nordic_command {
 	NORDIC_COMMAND_START	= 1,
@@ -34,7 +36,7 @@ enum nordic_command {
 	NORDIC_COMMAND_INFO	= 3
 };
 
-char descr[CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS]
+char descr[PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS]
 	  [CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
 static char *arg_types_encodings[] = {
 					"u8",  /* uint8_t */
@@ -70,7 +72,7 @@ static int send_info_data(const char *data, size_t data_len)
 				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
 				  data, data_len);
 
-	while (num_bytes_send == 0) {
+	while (num_bytes_send != data_len) {
 		/* Give host time to read the data and free some space
 		 * in the buffer. */
 		k_sleep(K_MSEC(100));
@@ -107,9 +109,8 @@ static void send_system_description(void)
 			err = send_info_data(&end_line, 1);
 		}
 	}
-
 	if (!err) {
-		err = send_info_data(&end_line, 1);
+		(void)send_info_data(&end_line, 1);
 	}
 }
 
@@ -153,7 +154,8 @@ int profiler_init(void)
 	}
 
 	if (!IS_ENABLED(CONFIG_SHELL)) {
-		for (size_t i = 0; i < CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS; i++) {
+		for (size_t i = 0; i < PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS;
+		     i++) {
 			atomic_set_bit(_profiler_event_enabled_bm.flags, i);
 		}
 	}
@@ -195,8 +197,11 @@ int profiler_init(void)
 			NULL, NULL, NULL,
 			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);
 
-	k_sched_unlock();
+	/* Registering fatal error event */
+	fatal_error_event_id = profiler_register_event_type("_profiler_fatal_error_event_",
+							    NULL, NULL, 0);
 
+	k_sched_unlock();
 	return 0;
 }
 
@@ -225,6 +230,8 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 	 */
 	k_sched_lock();
 	uint8_t ne = profiler_num_events;
+
+	__ASSERT_NO_MSG(ne + 1 <= PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS);
 	size_t temp = snprintf(descr[ne],
 			CONFIG_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
 			"%s,%d", name, ne);
@@ -265,7 +272,6 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
-	__ASSERT_NO_MSG(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
 	buf->payload = buf->payload_start + sizeof(uint8_t);
 	profiler_log_encode_uint32(buf, k_cycle_get_32());
 }
@@ -334,21 +340,43 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 	profiler_log_encode_uint32(buf, (uint32_t)mem_address);
 }
 
+static bool profiler_RTT_send(struct log_event_buf *buf, uint8_t type_id)
+{
+	buf->payload_start[0] = type_id;
+	size_t data_len = buf->payload - buf->payload_start;
+
+	size_t num_bytes_send = SEGGER_RTT_WriteNoLock(
+			CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
+			buf->payload_start, data_len);
+	return (num_bytes_send == data_len);
+}
+
+static void profiler_fatal_error(void)
+{
+	struct log_event_buf buf;
+
+	profiler_log_start(&buf);
+	while (true) {
+		/* Sending Fatal Error event */
+		if (profiler_RTT_send(&buf, (uint8_t)fatal_error_event_id)) {
+			break;
+		}
+	}
+	k_oops();
+}
+
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
-	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
+	__ASSERT_NO_MSG(event_type_id <= UINT8_MAX);
+
 	if (atomic_get(&profiler_state) == STATE_ACTIVE) {
-		uint8_t type_id = event_type_id & UCHAR_MAX;
+		uint8_t type_id = event_type_id & UINT8_MAX;
 
-		buf->payload_start[0] = type_id;
-		int key = irq_lock();
+		k_spinlock_key_t key = k_spin_lock(&lock);
 
-		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
-				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
-				buf->payload_start,
-				buf->payload - buf->payload_start);
-		ARG_UNUSED(num_bytes_send);
-		irq_unlock(key);
-		__ASSERT_NO_MSG(num_bytes_send > 0);
+		if (!profiler_RTT_send(buf, type_id)) {
+			profiler_fatal_error();
+		}
+		k_spin_unlock(&lock, key);
 	}
 }

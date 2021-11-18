@@ -9,6 +9,7 @@
 
 #include <zephyr.h>
 #include <event_manager.h>
+#include <event_manager_profiler.h>
 
 #include "accelerometer.h"
 

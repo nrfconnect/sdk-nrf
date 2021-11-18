@@ -18,7 +18,6 @@ cmock_handle(${ZEPHYR_BASE}/../nrf/include/event_manager.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/date_time.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/modem/at_cmd.h )
 cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )
-cmock_handle(${ZEPHYR_BASE}/include/sys/reboot.h sys)
 
 
 

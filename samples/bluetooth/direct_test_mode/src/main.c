@@ -33,7 +33,7 @@ void main(void)
 	}
 
 	for (;;) {
-		k_busy_wait(DTM_UART_POLL_CYCLE);
+		dtm_wait();
 
 		err = uart_poll_in(uart, &rx_byte);
 		if (err) {

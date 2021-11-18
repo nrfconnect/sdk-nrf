@@ -12,10 +12,15 @@
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <net/nrf_cloud_cell_pos.h>
+#include "nrf_cloud_fsm.h"
 
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_cell_pos, CONFIG_NRF_CLOUD_LOG_LEVEL);
+
+/* Forward declarations */
+int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const cells_inf,
+					const bool request_loc, cJSON **req_obj_out);
 
 #include "nrf_cloud_codec.h"
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -23,13 +28,33 @@ LOG_MODULE_REGISTER(nrf_cloud_cell_pos, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #define CELL_POS_JSON_CELL_LOC_KEY_DOREPLY	"doReply"
 
-int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
-			       const bool request_loc)
+int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info *const cells_inf,
+			       const bool request_loc, nrf_cloud_cell_pos_response_t cb)
 {
 	int err = 0;
-	cJSON *cell_pos_req_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_CELL_POS,
+	cJSON *cell_pos_req_obj = NULL;
+
+	err = nrf_cloud_cell_pos_request_json_get(cells_inf, request_loc, &cell_pos_req_obj);
+	if (!err) {
+		if (request_loc) {
+			nfsm_set_cell_pos_response_cb(cb);
+		}
+
+		err = json_send_to_cloud(cell_pos_req_obj);
+	}
+
+	cJSON_Delete(cell_pos_req_obj);
+	return err;
+}
+#endif /* CONFIG_NRF_CLOUD_MQTT */
+
+int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const cells_inf,
+					const bool request_loc, cJSON **req_obj_out)
+{
+	int err = 0;
+	*req_obj_out = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_CELL_POS,
 						      NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-	cJSON *data_obj = cJSON_AddObjectToObject(cell_pos_req_obj, NRF_CLOUD_JSON_DATA_KEY);
+	cJSON *data_obj = cJSON_AddObjectToObject(*req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
 
 	if (!data_obj) {
 		err = -ENOMEM;
@@ -55,13 +80,12 @@ int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
 		goto cleanup;
 	}
 
-	err = json_send_to_cloud(cell_pos_req_obj);
+	return 0;
 
 cleanup:
-	cJSON_Delete(cell_pos_req_obj);
+	cJSON_Delete(*req_obj_out);
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 int nrf_cloud_cell_pos_process(const char *buf, struct nrf_cloud_cell_pos_result *result)
 {

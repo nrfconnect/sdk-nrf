@@ -63,16 +63,6 @@ Requirements*
    Use this section to list the requirements needed to use the library.
    This is not required if there are no specific requirements to use the library. It is a mandatory section if there are specific requirements that have to be met to use the library.
 
-Library files
-*************
-
-.. note::
-   Use this section to indicate the location of the library files.
-
-.. |library path| replace:: :file:`path_to_library_files`
-
-This library is found under |library path| in the |NCS| folder structure.
-
 Configuration*
 **************
 

@@ -57,10 +57,9 @@ static void led_transition_start(struct led_ctx *led)
 
 static void led_status(struct led_ctx *led, struct bt_mesh_onoff_status *status)
 {
-	status->remaining_time =
-		k_ticks_to_ms_ceil32(
-			k_work_delayable_remaining_get(&led->work)) +
-		led->remaining;
+	/* Do not include delay in the remaining time. */
+	status->remaining_time = led->remaining ? led->remaining :
+		k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&led->work));
 	status->target_on_off = led->value;
 	/* As long as the transition is in progress, the onoff state is "on": */
 	status->present_on_off = led->value || status->remaining_time;

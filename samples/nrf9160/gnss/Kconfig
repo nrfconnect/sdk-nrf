@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "GNSS sample"
+
+config GNSS_SAMPLE_NMEA_ONLY
+	bool "Output only NMEA strings"
+	help
+	  Outputs only NMEA strings from the GNSS.
+
+choice GNSS_SAMPLE_ANTENNA
+	default GNSS_SAMPLE_ANTENNA_ONBOARD
+	prompt "Select which antenna to use for GNSS"
+
+config GNSS_SAMPLE_ANTENNA_ONBOARD
+	bool "Use onboard antenna"
+
+config GNSS_SAMPLE_ANTENNA_EXTERNAL
+	bool "Use external antenna"
+
+endchoice
+
+config GNSS_SAMPLE_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
+	help
+	  Defines the AT%XMAGPIO command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+config GNSS_SAMPLE_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_SAMPLE_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_SAMPLE_ANTENNA_EXTERNAL
+	help
+	  Defines the AT%XCOEX0 command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+endmenu
+
+choice GNSS_SAMPLE_ASSISTANCE
+	default GNSS_SAMPLE_ASSISTANCE_NONE
+	prompt "Select whether GNSS assistance is used or not"
+
+config GNSS_SAMPLE_ASSISTANCE_NONE
+	bool "Assistance not used"
+
+config GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD
+	bool "Use nRF Cloud A-GPS or P-GPS"
+	select NRF_CLOUD
+	select NRF_CLOUD_REST
+	imply NRF_CLOUD_AGPS
+	select MODEM_JWT
+	select MODEM_INFO
+
+config GNSS_SAMPLE_ASSISTANCE_SUPL
+	bool "Use SUPL A-GPS"
+	select SUPL_CLIENT_LIB
+
+endchoice
+
+if !GNSS_SAMPLE_ASSISTANCE_NONE
+
+config GNSS_SAMPLE_LTE_ON_DEMAND
+	bool "LTE is activated only when needed to fetch A-GPS data"
+	depends on !NRF_CLOUD_PGPS
+	help
+	  Activates LTE only when it is needed to fetch A-GPS data. This is not supported when
+	  P-GPS is enabled.
+
+endif # !GNSS_SAMPLE_ASSISTANCE_NONE
+
+if GNSS_SAMPLE_ASSISTANCE_SUPL
+
+config GNSS_SAMPLE_SUPL_HOSTNAME
+	string "SUPL server hostname"
+	help
+	  SUPL server hostname.
+
+config GNSS_SAMPLE_SUPL_PORT
+	int "SUPL server port number"
+	range 0 65535
+	default 7276
+	help
+	  SUPL server port number.
+
+endif # GNSS_SAMPLE_ASSISTANCE_SUPL
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = GNSS_SAMPLE
+module-str = GNSS sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -77,7 +77,7 @@ void *npgps_block_to_pointer(int block);
 /* download functions */
 int npgps_download_init(npgps_buffer_handler_t handler);
 int npgps_download_start(const char *host, const char *file, int sec_tag,
-			 const char *apn, size_t fragment_size);
+			 uint8_t pdn_id, size_t fragment_size);
 
 
 #ifdef __cplusplus

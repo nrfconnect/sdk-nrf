@@ -9,7 +9,7 @@
 #include <sys/printk.h>
 #include <zephyr/types.h>
 
-#if defined(CONFIG_USB)
+#if defined(CONFIG_USB_DEVICE_STACK)
 #include <usb/usb_device.h>
 #include <drivers/uart.h>
 #endif
@@ -188,14 +188,14 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	}
 
 	/* make sure we're not scanning or advertising */
-	if (conn_info.role == BT_CONN_ROLE_MASTER) {
+	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
 		bt_scan_stop();
 	} else {
 		bt_le_adv_stop();
 	}
 
 	printk("Connected as %s\n",
-	       conn_info.role == BT_CONN_ROLE_MASTER ? "master" : "slave");
+	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
 	printk("Conn. interval is %u units (1.25 ms/unit)\n",
 	       conn_info.le.interval);
 
@@ -217,7 +217,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		default_conn = NULL;
 	}
 
-	if (conn_info.role == BT_CONN_ROLE_MASTER) {
+	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
 		scan_start();
 	} else {
 		adv_start();
@@ -375,7 +375,7 @@ static void test_run(void)
 	test_ready = false;
 
 	/* Switch to LLPM short connection interval */
-	if (conn_info.role == BT_CONN_ROLE_MASTER) {
+	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
 		printk("Press any key to set LLPM short connection interval (1 ms)\n");
 		console_getchar();
 
@@ -420,9 +420,8 @@ void main(void)
 		.le_param_updated = le_param_updated,
 	};
 
-#if defined(CONFIG_USB)
-	const struct device *uart_dev = device_get_binding(
-			CONFIG_UART_CONSOLE_ON_DEV_NAME);
+#if defined(CONFIG_USB_DEVICE_STACK)
+	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	uint32_t dtr = 0;
 
 	if (usb_enable(NULL)) {

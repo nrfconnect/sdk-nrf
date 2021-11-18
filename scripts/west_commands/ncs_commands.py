@@ -133,6 +133,7 @@ class NcsWestCommand(WestCommand):
         z_west_yml = cp.stdout.decode('utf-8')
         try:
             return Manifest.from_data(source_data=yaml.safe_load(z_west_yml),
+                                      import_flags=ImportFlag.IGNORE,
                                       topdir=self.topdir)
         except MalformedManifest:
             log.die(f"can't load zephyr manifest; file {z_west_yml} "
@@ -493,5 +494,5 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/telink',
      'modules/hal/ti',
      'modules/hal/xtensa',
-     'modules/lib/tensorflow',
+     'modules/lib/tflite-micro',
      ])

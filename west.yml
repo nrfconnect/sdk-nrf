@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 15be5e615498377e9326cb2eb5819c7c62005299
+      revision: 35654ffa6d06c49912e1af93cf6548895624e6dc
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -88,6 +88,7 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
+          - openthread
           - segger
           - tinycbor
           - tinycrypt
@@ -98,16 +99,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 7606d9cad32c95a0d6fb7e872b070c71e85f931d
+      revision: 1639cfb8ff88fef1ea14804c56a88fe31bf9f9d9
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 2b0ddce6086ad6819e5d487b7ecfef80503be41b
+      revision: c1fe5a41c45f41adcfc008fe0ae2a4265e148d81
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: d2e93153863e7add9fae3849faf7de430258c0de
+      revision: f9884923ea99cd96d47432b4fa04eb760cc2fa1a
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -126,17 +127,13 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v1.7.0
+      revision: 5216309d0610b838526d5b9c43815603aad2adaa
       groups:
       - nrf-802154
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: de387884c80094df8e310353c3a487c13c0c056b
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -165,17 +162,17 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: 97cd0692edde464625bb3c6a1b24d89df631fd32
+      revision: 5d36cf6696e9d8c5f589934a8a6e7964b58c0d84
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 4488adb531668d84de3b9d348823495282698abc
+      revision: 7d5abb066c35c01a65ee6c0c5525ff13caec939c
       groups:
       - find-my
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.26.1
+      revision: 0.27.1
       remote: memfault
 
   # West-related configuration for the nrf repository.

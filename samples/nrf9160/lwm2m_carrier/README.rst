@@ -36,7 +36,7 @@ After programming the sample and all prerequisites to the development kit, test 
 #. Open a terminal emulator and observe that the kit prints the following information::
 
         LWM2M Carrier library sample.
-#. Observe that the application receives events from the **LwM2M carrier** library via the registered event handler.
+#. Observe that the application receives events from the **LwM2M carrier** library using the registered event handler.
 
 
 Troubleshooting
@@ -56,7 +56,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
+* |NCS| modules abstracted by the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
 
   .. include:: /libraries/bin/lwm2m_carrier/app_integration.rst
     :start-after: lwm2m_osal_mod_list_start

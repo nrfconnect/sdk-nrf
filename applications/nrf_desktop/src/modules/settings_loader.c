@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <settings/settings.h>
 
-#include "event_manager.h"
+#include <event_manager.h>
 
 #define MODULE settings_loader
 #include <caf/events/module_state_event.h>
