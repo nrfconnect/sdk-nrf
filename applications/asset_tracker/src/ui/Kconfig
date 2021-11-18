@@ -26,11 +26,6 @@ config UI_LED_PWM_DEV_NAME
 	string "PWM device name for RGB LED"
 	default "PWM_0" if BOARD_THINGY91_NRF9160_NS
 
-config UI_LED_PWM_FREQUENCY
-	int "LED PWM frequency"
-	range 100 1000000
-	default 20000
-
 config UI_LED_RED_PIN
 	int "Red LED pin number"
 	default 29 if BOARD_THINGY91_NRF9160_NS

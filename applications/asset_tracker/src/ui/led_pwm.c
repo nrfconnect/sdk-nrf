@@ -15,6 +15,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ui_led_pwm, CONFIG_UI_LOG_LEVEL);
 
+#define LED_PWM_FREQUENCY 20000
+
 struct led {
 	const struct device *pwm_dev;
 
@@ -91,7 +93,7 @@ static void pwm_out(struct led *led, struct led_color *color)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
 		pwm_pin_set_usec(led->pwm_dev, led_pins[i],
-				 (1000000 / CONFIG_UI_LED_PWM_FREQUENCY),
+				 (1000000 / LED_PWM_FREQUENCY),
 				 color->c[i], 0);
 	}
 }
