@@ -53,7 +53,7 @@ struct nfc_ndef_msg_parser_msg_2 {
  *
  *  @param[in] max_count_of_records Maximum number of records to hold.
  */
-#define NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(max_count_of_records)          \
+#define NFC_NDEF_PARSER_REQUIRED_MEM(max_count_of_records)          \
 	(sizeof(struct nfc_ndef_msg_parser_msg_1) +                           \
 	 ((NFC_NDEF_MSG_PARSER_DELTA) * ((uint32_t)(max_count_of_records) - 1)))
 
