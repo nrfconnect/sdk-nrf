@@ -25,7 +25,7 @@ The following code example shows how to parse an NDEF message, after you have us
 .. code-block:: c
 
    int  err;
-   uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+   uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(MAX_NDEF_RECORDS)];
    size_t desc_buf_len = sizeof(desc_buf);
 
    err = nfc_ndef_msg_parse(desc_buf,
