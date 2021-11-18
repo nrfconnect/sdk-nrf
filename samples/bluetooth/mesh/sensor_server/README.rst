@@ -22,12 +22,15 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :sample-yaml-rows:
+   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
+
+.. note::
+   |thingy53_sample_note|
 
 Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
 The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
@@ -42,7 +45,7 @@ The following Bluetooth mesh sensor types are used in this sample:
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
 
-Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used.
+Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
 
 Provisioning
 ============
@@ -57,15 +60,17 @@ Models
 
 The following table shows the Bluetooth mesh sensor composition data for this sample:
 
-   +---------------+
-   |  Element 1    |
-   +===============+
-   | Config Server |
-   +---------------+
-   | Health Server |
-   +---------------+
-   | Sensor Server |
-   +---------------+
+   +---------------------+
+   | Element 1           |
+   +=====================+
+   | Config Server       |
+   +---------------------+
+   | Health Server       |
+   +---------------------+
+   | Sensor Server       |
+   +---------------------+
+   | Sensor Setup Server |
+   +---------------------+
 
 The models are used for the following purposes:
 
@@ -73,8 +78,11 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 * Sensor Server provides sensor data to one or more :ref:`mesh sensor observers <bt_mesh_sensor_cli_readme>`.
+* Sensor Setup Server is used for configuration of the Sensor Server.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the ``TEMP_NRF5`` temperature sensor, and the :ref:`dk_buttons_and_leds_readme` library to detect button presses.
+The model handling is implemented in :file:src/model_handler.c.
+It uses the TEMP_NRF5 or BME680 temperature sensor depending on the platform.
+The :ref:dk_buttons_and_leds_readme library is used to detect button presses.
 
 User interface
 **************
@@ -97,7 +105,9 @@ Source file setup
 This sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
-* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
+* A file for handling mesh models, :file:`model_handler.c`.
+* A :file:`thingy53.c` file, used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
+  It is only compiled when the sample is built for the :ref:`zephyr:thingy53_nrf5340` board.
 
 FEM support
 ===========
