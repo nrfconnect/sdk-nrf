@@ -9,6 +9,20 @@
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
 
+#if DT_NODE_EXISTS(DT_ALIAS(bme680))
+/** Thingy53 */
+#define SENSOR_INST DT_PROP(DT_ALIAS(bme680), label)
+#define SENSOR_DATA_TYPE SENSOR_CHAN_AMBIENT_TEMP
+#elif DT_NODE_EXISTS(DT_NODELABEL(temp))
+/** nRF52 DK */
+#define SENSOR_INST DT_PROP(DT_NODELABEL(temp), label)
+#define SENSOR_DATA_TYPE SENSOR_CHAN_DIE_TEMP
+#else
+#define SENSOR_INST NULL
+#define SENSOR_DATA_TYPE NULL
+#error "Unsupported board!"
+#endif
+
 /* The columns (temperature ranges) for relative
  * runtime in a chip temperature
  */
@@ -32,7 +46,7 @@ static int chip_temp_get(struct bt_mesh_sensor *sensor,
 
 	sensor_sample_fetch(dev);
 
-	err = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, rsp);
+	err = sensor_channel_get(dev, SENSOR_DATA_TYPE, rsp);
 
 	if (err) {
 		printk("Error getting temperature sensor data (%d)\n", err);
@@ -177,10 +191,18 @@ static void attention_blink(struct k_work *work)
 {
 	static int idx;
 	const uint8_t pattern[] = {
-		BIT(0) | BIT(1),
-		BIT(1) | BIT(2),
-		BIT(2) | BIT(3),
-		BIT(3) | BIT(0),
+#if DT_NODE_EXISTS(DT_ALIAS(led0))
+		BIT(0),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led1))
+		BIT(1),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led2))
+		BIT(2),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led3))
+		BIT(3),
+#endif
 	};
 
 	if (attention) {
@@ -234,7 +256,7 @@ const struct bt_mesh_comp *model_handler_init(void)
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&end_of_presence_work, end_of_presence);
 
-	dev = device_get_binding(DT_PROP(DT_NODELABEL(temp), label));
+	dev = device_get_binding(SENSOR_INST);
 
 	if (dev == NULL) {
 		printk("Could not initiate temperature sensor\n");
