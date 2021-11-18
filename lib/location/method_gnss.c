@@ -429,24 +429,19 @@ static bool method_gnss_psm_enabled(void)
 	int ret = 0;
 	int tau;
 	int active_time;
-	enum lte_lc_system_mode mode;
 
-	lte_lc_system_mode_get(&mode, NULL);
-
-	/* Don't care about PSM if we are in GNSS only mode */
-	if (mode != LTE_LC_SYSTEM_MODE_GPS) {
-		ret = lte_lc_psm_get(&tau, &active_time);
-		if (ret < 0) {
-			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
-			return false;
-		}
-
-		LOG_DBG("LTE active time: %d seconds", active_time);
-
-		if (active_time >= 0) {
-			return true;
-		}
+	ret = lte_lc_psm_get(&tau, &active_time);
+	if (ret < 0) {
+		LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
+		return false;
 	}
+
+	LOG_DBG("LTE active time: %d seconds", active_time);
+
+	if (active_time >= 0) {
+		return true;
+	}
+
 	return false;
 }
 
@@ -486,6 +481,15 @@ static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 
 static bool method_gnss_allowed_to_start(void)
 {
+	enum lte_lc_system_mode mode;
+
+	lte_lc_system_mode_get(&mode, NULL);
+
+	/* Don't care about LTE state if we are in GNSS only mode */
+	if (mode == LTE_LC_SYSTEM_MODE_GPS) {
+		return true;
+	}
+
 	LOG_DBG("Waiting for the RRC connection release...");
 
 	/* If semaphore is reset during the waiting period, the position request was canceled.*/

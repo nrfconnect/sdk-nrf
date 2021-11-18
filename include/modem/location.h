@@ -218,6 +218,7 @@ typedef void (*location_event_handler_t)(const struct location_event_data *event
  * @brief Initializes the library.
  *
  * @details Initializes the library and sets the event handler function.
+ * The first call to this function must be called before going to LTE normal mode.
  * This can be called multiple times, which sets the event handler again.
  *
  * @param[in] event_handler Event handler function.
