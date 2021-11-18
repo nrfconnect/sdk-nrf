@@ -49,6 +49,9 @@
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
+/* This delay is necessary for at_host to send response message in low baud rate. */
+#define SLM_UART_RESPONSE_DELAY 50
+
 /**@brief Shutdown modes. */
 enum shutdown_modes {
 	SHUTDOWN_MODE_IDLE,
@@ -75,9 +78,10 @@ extern struct uart_config slm_uart;
 /* global functions defined in different files */
 void enter_idle(bool full_idle);
 void enter_sleep(void);
-int set_uart_baudrate(uint32_t baudrate);
+int slm_uart_configure(void);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
+extern int slm_setting_uart_save(void);
 
 static void modem_power_off(void)
 {
@@ -181,7 +185,7 @@ static int handle_at_reset(enum at_cmd_type type)
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
 		rsp_send(ok_str, strlen(ok_str));
-		k_sleep(K_MSEC(50));
+		k_sleep(K_MSEC(SLM_UART_RESPONSE_DELAY));
 		slm_at_host_uninit();
 		modem_power_off();
 		sys_reboot(SYS_REBOOT_COLD);
@@ -218,11 +222,21 @@ static int handle_at_uuid(enum at_cmd_type type)
 
 static void set_uart_wk(struct k_work *work)
 {
-	set_uart_baudrate(slm_work.data);
+	int err;
+
+	err = slm_uart_configure();
+	if (err != 0) {
+		LOG_ERR("slm_uart_configure: %d", err);
+		return;
+	}
+	err = slm_setting_uart_save();
+	if (err != 0) {
+		LOG_ERR("uart_config_set: %d", err);
+	}
 }
 
 /**@brief handle AT#XSLMUART commands
- *  AT#XSLMUART[=<baud_rate>]
+ *  AT#XSLMUART[=<baud_rate>,<hwfc>]
  *  AT#XSLMUART?
  *  AT#XSLMUART=?
  */
@@ -231,52 +245,58 @@ static int handle_at_slmuart(enum at_cmd_type type)
 	int ret = -EINVAL;
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		uint32_t baudrate = 115200;
+		uint32_t baudrate;
+		uint16_t hwfc;
 
-		if (at_params_valid_count_get(&at_param_list) > 1) {
-			ret = at_params_unsigned_int_get(&at_param_list, 1, &baudrate);
-			if (ret) {
-				LOG_ERR("AT parameter error");
+		ret = at_params_unsigned_int_get(&at_param_list, 1, &baudrate);
+
+		if (ret == 0) {
+			switch (baudrate) {
+			case 1200:
+			case 2400:
+			case 4800:
+			case 9600:
+			case 14400:
+			case 19200:
+			case 38400:
+			case 57600:
+			case 115200:
+			case 230400:
+			case 460800:
+			case 921600:
+			case 1000000:
+				slm_uart.baudrate = baudrate;
+				break;
+			default:
+				LOG_ERR("Invalid uart baud rate provided. %d", baudrate);
 				return -EINVAL;
 			}
 		}
-		switch (baudrate) {
-		case 1200:
-		case 2400:
-		case 4800:
-		case 9600:
-		case 14400:
-		case 19200:
-		case 38400:
-		case 57600:
-		case 115200:
-		case 230400:
-		case 460800:
-		case 921600:
-		case 1000000:
-			slm_work.data = baudrate;
-			k_work_reschedule(&slm_work.uart_work, K_MSEC(50));
+		ret = at_params_unsigned_short_get(&at_param_list, 2, &hwfc);
+		if (ret == 0) {
+			if ((hwfc != UART_CFG_FLOW_CTRL_RTS_CTS) &&
+				(hwfc != UART_CFG_FLOW_CTRL_NONE)) {
+				LOG_ERR("Invalid uart hwfc provided.");
+				return -EINVAL;
+			}
+			slm_uart.flow_ctrl = (uint8_t)hwfc;
+		}
+		ret = k_work_reschedule(&slm_work.uart_work, K_MSEC(SLM_UART_RESPONSE_DELAY));
+		if (ret > 0) {
 			ret = 0;
-			break;
-		default:
-			LOG_ERR("Invalid uart baud rate provided.");
-			return -EINVAL;
 		}
 	}
-
 	if (type == AT_CMD_TYPE_READ_COMMAND) {
-		sprintf(rsp_buf, "\r\n#XSLMUART: %d\r\n", slm_uart.baudrate);
+		sprintf(rsp_buf, "\r\n#XSLMUART: %d,%d\r\n", slm_uart.baudrate, slm_uart.flow_ctrl);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
-
 	if (type == AT_CMD_TYPE_TEST_COMMAND) {
 		sprintf(rsp_buf, "\r\n#XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,"
-				 "115200,230400,460800,921600,1000000)\r\n");
+				 "115200,230400,460800,921600,1000000),(0,1)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
-
 	return ret;
 }
 

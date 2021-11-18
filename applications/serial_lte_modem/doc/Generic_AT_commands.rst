@@ -205,17 +205,18 @@ The ``#XSLMUART`` command manages the UART settings.
 Set command
 -----------
 
-The set command changes the UART settings.
+The set command changes the UART baud rate and hardware flow control settings.
+These settings are stored in the flash memory and applied during the application startup.
 
 Syntax
 ~~~~~~
 
 ::
 
-   #XSLMUART[=<baud_rate>]
+   #XSLMUART[=<baud_rate>,<hwfc>]
 
 The ``<baud_rate>`` parameter is an integer.
-It accepts only the following values:
+It accepts the following values:
 
 * ``1200`` - 1200 bps
 * ``2400`` - 2400 bps
@@ -231,7 +232,20 @@ It accepts only the following values:
 * ``921600`` - 921600 bps
 * ``1000000`` - 1000000 bps
 
-The default value is ``115200``.
+Its default value is ``115200``.
+When not specified, it is set to the last value set for the variable and stored in the flash memory.
+If there is no value stored for the variable, it is set to its default value.If not specified , will use previous value.
+
+The ``<hwfc>`` parameter accepts the following integer values:
+
+* ``0`` - Disable UART hardware flow control.
+
+* ``1`` - Enable UART hardware flow control.
+  In this mode, SLM configures both the RTS and the CTS pins according to the device-tree file.
+
+Its default value is ``1``.
+When not specified, it is set to the last value set for the variable and stored in the flash memory.
+If there is no value stored for the variable, it is set to its default value.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -243,7 +257,7 @@ Example
 
 ::
 
-   AT#XSLMUART=1000000
+   AT#XSLMUART=1000000,1
    OK
 
 Read command
@@ -263,7 +277,7 @@ Response syntax
 
 ::
 
-   #XSLMUART: <baud_rate>
+   #XSLMUART: <baud_rate>,<hwfc>
 
 Example
 ~~~~~~~
@@ -271,7 +285,7 @@ Example
 ::
 
    AT#XSLMUART?
-   #XSLMUART: 115200
+   #XSLMUART: 115200,1
    OK
 
 Test command
@@ -291,7 +305,7 @@ Response syntax
 
 ::
 
-   #XSLMUART: (list of the available baud rate options)
+   #XSLMUART: (list of the available baud rate options),(disable or enable hwfc)
 
 Example
 ~~~~~~~
@@ -299,7 +313,7 @@ Example
 ::
 
    AT#XSLMUART=?
-   #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000)
+   #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000),(0,1)
 
 
 Device UUID #XUUID
