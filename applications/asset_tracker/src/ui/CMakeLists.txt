@@ -5,14 +5,7 @@
 #
 
 zephyr_include_directories(include)
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ui.c)
-target_sources_ifdef(CONFIG_UI_BUZZER
-	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buzzer.c
-	)
-target_sources_ifdef(CONFIG_UI_NMOS
-	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/nmos.c
-	)
-target_sources_ifdef(
-	CONFIG_UI_LED_USE_PWM
-	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_pwm.c
-	)
+target_sources(app PRIVATE ui.c)
+target_sources_ifdef(CONFIG_UI_BUZZER app PRIVATE buzzer.c)
+target_sources_ifdef(CONFIG_UI_NMOS app PRIVATE nmos.c)
+target_sources_ifdef(CONFIG_UI_LED_USE_PWM app PRIVATE led_pwm.c)

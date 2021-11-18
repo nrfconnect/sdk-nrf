@@ -6,6 +6,8 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+cmake_policy(SET CMP0076 NEW)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(asset_tracker)
 zephyr_compile_definitions(PROJECT_NAME=${PROJECT_NAME})

@@ -5,4 +5,4 @@
 #
 
 zephyr_include_directories(.)
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/carrier_certs.c)
+target_sources(app PRIVATE carrier_certs.c)

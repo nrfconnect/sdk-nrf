@@ -6,4 +6,4 @@
 
 zephyr_include_directories(.)
 
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/light_sensor.c)
+target_sources(app PRIVATE light_sensor.c)
