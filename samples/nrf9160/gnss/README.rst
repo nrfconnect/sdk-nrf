@@ -27,7 +27,7 @@ See :ref:`nrfxlib:gnss_interface` for more information.
 Overview
 ********
 
-This sample operates in two different modes.
+This sample operates in two different output modes.
 
 In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and NMEA strings.
 The sample can also be configured to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
@@ -37,6 +37,9 @@ You can enable A-GPS and P-GPS support for both the default mode (PVT and NMEA) 
 When assistance support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
+
+By default, the sample runs in continuous tracking mode.
+It can also be configured to run in periodic mode, where fixes are acquired periodically with the configured interval.
 
 Requirements
 ************
@@ -71,6 +74,11 @@ Check and configure the following configuration options for the sample:
 
    This configuration option enables A-GPS usage.
 
+.. option:: CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
+
+   This configuration option enables periodic fixes instead of continuous tracking.
+   Set :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
+
 Building and running
 ********************
 
@@ -97,8 +105,8 @@ After programming the sample and all the prerequisites to the development kit, y
 
           .. code-block:: console
 
-                Tracking: 0 Using: 0 Unhealthy: 0
-                ---------------------------------
+                Tracking:  0 Using:  0 Unhealthy: 0
+                -----------------------------------
                 Seconds since last fix: 1
                 Searching [-]
 
@@ -116,16 +124,21 @@ After programming the sample and all the prerequisites to the development kit, y
 
           .. code-block:: console
 
-                Tracking: 7 Using: 5 Unhealthy: 0
-                ---------------------------------
-                Latitude:   61.491275
-                Longitude:  23.771611
-                Altitude:   116.3 m
-                Accuracy:   4.2 m
-                Speed:      0.0 m/s
-                Heading:    0.0 deg
-                Date:       2020-03-06
-                Time (UTC): 05:48:24
+                Tracking:  7 Using:  5 Unhealthy: 0
+                -----------------------------------
+                Latitude:       61.491275
+                Longitude:      23.771611
+                Altitude:       116.3 m
+                Accuracy:       4.2 m
+                Speed:          0.0 m/s
+                Speed accuracy: 0.8 m/s
+                Heading:        0.0 deg
+                Date:           2020-03-06
+                Time (UTC):     05:48:24
+                PDOP:           3.1
+                HDOP:           2.1
+                VDOP:           2.3
+                TDOP:           1.8
 
                 NMEA strings:
 
@@ -165,7 +178,7 @@ After programming the sample and all the prerequisites to the development kit, y
 
            .. code-block:: console
 
-              Assistance data needed, ephe 0xffffffff, alm 0xffffffff, flags 0x3b
+              [00:00:04.488,494] <inf> gnss_sample: Assistance data needed, ephe 0xffffffff, alm 0xffffffff, flags 0x3b
 
    b. Observe the following actions in the terminal emulator:
 

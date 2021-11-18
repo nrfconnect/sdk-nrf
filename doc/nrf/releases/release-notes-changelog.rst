@@ -218,7 +218,11 @@ nRF9160 samples
 
   * Renamed. The previous name was nRF9160: GPS with SUPL client library.
   * Added support for nRF Cloud A-GPS and P-GPS.
-  * LTE now remains connected to the network all the time when assistance is enabled. You can enable the old behavior with A-GPS using a Kconfig option.
+  * LTE now remains connected to the network all the time when assistance is enabled.
+    With A-GPS, the sample can be configured to connect to network only when needed.
+  * Added support for periodic fixes.
+  * Added support for power saving.
+  * Added support for low accuracy fixes.
 
 * nRF9160: A-GPS sample:
 
