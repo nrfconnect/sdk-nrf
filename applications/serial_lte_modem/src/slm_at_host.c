@@ -197,7 +197,7 @@ int poweroff_uart(void)
 
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_OFF);
+	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 	if (err) {
 		LOG_ERR("Can't power off uart: %d", err);
 	}
@@ -833,7 +833,7 @@ void slm_at_host_uninit(void)
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_OFF);
+	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
 	if (err) {
 		LOG_WRN("Can't power off uart: %d", err);
 	}
