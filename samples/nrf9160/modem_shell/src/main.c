@@ -20,8 +20,11 @@
 #include <shell/shell_uart.h>
 
 #include <modem/nrf_modem_lib.h>
+
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
+#include <modem/at_monitor.h>
+
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 
@@ -143,6 +146,9 @@ void main(void)
 	at_cmd_init();
 #if !defined(CONFIG_AT_NOTIF_SYS_INIT)
 	at_notif_init();
+#endif
+#if !defined(CONFIG_AT_MONITOR_SYS_INIT)
+	at_monitor_init();
 #endif
 	lte_lc_init();
 #else
