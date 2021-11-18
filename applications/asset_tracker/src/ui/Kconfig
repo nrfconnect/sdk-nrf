@@ -61,14 +61,6 @@ config UI_BUZZER_PIN
 	int "Buzzer pin number"
 	default 28 if BOARD_THINGY91_NRF9160_NS
 
-config UI_BUZZER_MIN_FREQUENCY
-	int "Minimum buzzer frequency"
-	default 100
-
-config UI_BUZZER_MAX_FREQUENCY
-	int "Maximum buzzer frequency"
-	default 10000
-
 endif # UI_BUZZER
 
 config UI_NMOS
