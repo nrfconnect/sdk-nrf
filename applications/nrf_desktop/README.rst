@@ -817,6 +817,13 @@ Selecting a build type
 
 Before you start testing the application, you can select one of the :ref:`nrf_desktop_requirements_build_types`, depending on your development kit and building method.
 
+Selecting a build type in |VSC|
+-------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_vsc_start
+   :end-before: build_types_selection_vsc_end
+
 Selecting a build type in SES
 -----------------------------
 

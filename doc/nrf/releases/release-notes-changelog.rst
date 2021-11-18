@@ -31,6 +31,9 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
+* Integrated partition manager with the new build type configuration scheme and updated several applications accordingly.
+  The new scheme infers the build type from ``CONF_FILE`` instead of using the CMake variable ``CMAKE_BUILD_TYPE``.
+  See :ref:`gs_modifying_build_types` for details.
 * Build system:
 
   * Added an option to control the inclusion of RPMsg samples on the nRF53 network core :kconfig:`NCS_INCLUDE_RPMSG_CHILD_IMAGE`.
@@ -100,9 +103,8 @@ nRF Machine Learning (Edge Impulse)
 * Updated:
 
   * Updated information about custom build types.
-  * The application configuration files were switched to follow a generic scheme.
-    When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
-    E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
+  * The application switched to using the configuration file scheme based on :file:`prj.conf` files.
+    See :ref:`gs_modifying_build_types` for details.
 
 nRF Desktop
 -----------
@@ -128,10 +130,8 @@ nRF Desktop
     See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
   * Fixed an issue that was causing the HID keyboard LEDs to remain turned on after host disconnection while no other hosts were connected.
   * Fixed an issue that was causing an assertion failure in the :ref:`nrf_desktop_hid_state` on the nRF Desktop peripheral device during the boot of the host device connected through USB.
-  * The application switched to using generic configuration file scheme.
-    It now uses application-specific :file:`prj.conf` files instead of build types selected through CMake build type variables.
-    When selecting the build file, point to build type specific :file:`prj.conf` file using the ``CONF_FILE`` variable.
-    For example, ``CONF_FILE=prj_release.conf`` is now used instead of ``CMAKE_BUILD_TYPE=ZRelease``.
+  * The application switched to using the configuration file scheme based on :file:`prj.conf` files.
+    See :ref:`gs_modifying_build_types` for details.
   * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 Pelion client
@@ -139,9 +139,8 @@ Pelion client
 
 * Updated:
 
-  * The application configuration files were switched to follow a generic scheme.
-    When selecting the build file, instead of setting up a CMAKE_BUILD_TYPE, point to build type specific prj file using CONF_FILE.
-    E.g. CONF_FILE=prj_release.conf will now be used instead of CMAKE_BUILD_TYPE=ZRelease.
+  * The application switched to using the configuration file scheme based on :file:`prj.conf` files.
+    See :ref:`gs_modifying_build_types` for details.
   * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 Thingy:53: Matter weather station
@@ -154,6 +153,8 @@ Thingy:53: Matter weather station
 * Updated:
 
   * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+  * The application switched to using the configuration file scheme based on :file:`prj.conf` files.
+    See :ref:`gs_modifying_build_types` for details.
 
 nRF Machine Learning
 --------------------
@@ -161,6 +162,8 @@ nRF Machine Learning
 * Updated:
 
   * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
+  * The application switched to using the configuration file scheme based on :file:`prj.conf` files.
+    See :ref:`gs_modifying_build_types` for details.
 
 nRF9160: Serial LTE modem
 -------------------------
