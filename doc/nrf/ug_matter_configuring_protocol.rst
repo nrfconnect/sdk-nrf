@@ -9,18 +9,6 @@ Configuring Matter in |NCS|
 
 This page describes what is needed to start working with Matter in the |NCS|.
 
-.. _ug_matter_configuring_requirements:
-
-Required components for Matter network
-**************************************
-
-The Matter network requires the following components to properly operate:
-
-* Matter controller - configured either on PC or mobile
-* Thread Border Router - configured either on PC or Raspberry Pi
-
-For information about how to configure these components, read :ref:`ug_matter_configuring`.
-
 .. _ug_matter_configuring_mandatory:
 
 Mandatory configuration
@@ -40,6 +28,8 @@ Optional configuration
 
 After enabling the Matter protocol and defining the path to the Matter configuration file, you can enable additional options in Kconfig.
 
+.. _ug_matter_configuring_optional_ot:
+
 OpenThread configuration
 ========================
 
@@ -53,6 +43,8 @@ This option sets the :kconfig:`CONFIG_OPENTHREAD_MTD_SED` Kconfig option.
 
 For more information about configuring OpenThread in the |NCS|, see :ref:`ug_thread_configuring`.
 
+.. _ug_matter_configuring_optional_nfc:
+
 Commissioning with NFC
 ======================
 
@@ -60,11 +52,15 @@ You can configure the Matter protocol to use NFC tag for :doc:`commissioning <ma
 
 To enable NFC for commissioning and share the onboarding payload in an NFC tag, set the :kconfig:`CONFIG_CHIP_NFC_COMMISSIONING` Kconfig option.
 
+.. _ug_matter_configuring_optional_log:
+
 Logging configuration
 =====================
 
 Logging is handled with the :kconfig:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
+
+.. _ug_matter_configuring_optional_shell:
 
 Matter shell commands
 =====================
@@ -73,3 +69,15 @@ You can enable the Matter shell library using the :kconfig:`CONFIG_CHIP_LIB_SHEL
 This option lets you use the Matter shell commands with :ref:`matter_samples`.
 
 See :doc:`matter:nrfconnect_examples_cli` in the Matter documentation for the list of available Matter shell commands.
+
+.. _ug_matter_configuring_requirements:
+
+Required components for Matter network
+**************************************
+
+The Matter protocol is centered around the Matter network, which requires the following components to operate properly:
+
+* Matter controller - configured either on PC or mobile
+* Thread Border Router - configured either on PC or Raspberry Pi
+
+For information about how to configure these components, read :ref:`ug_matter_configuring_controller` and :ref:`ug_matter_configuring_env`.

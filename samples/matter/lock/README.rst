@@ -252,20 +252,11 @@ Commissioning the device
 
 .. matter_door_lock_sample_commissioning_start
 
-To commission the device, go to the :ref:`ug_matter_configuring` page and complete the steps for the Matter controller you want to use.
+To commission the device, go to the :ref:`ug_matter_configuring_env` page and complete the steps for the Matter controller you want to use.
 As part of this tutorial, you will configure Thread Border Router, build and install the Matter controller, commission the device, and send Matter commands that cover scenarios described in the `Testing`_ section.
 If you are new to Matter, the recommended approach is :ref:`ug_matter_configuring_mobile` using an Android smartphone.
 
-In Matter, the commissioning procedure takes place over Bluetooth LE between a Matter accessory device and the Matter controller, where the controller has the commissioner role.
-When the procedure has completed, the device should be equipped with all information needed to securely operate in the Matter network.
-
-During the last part of the commissioning procedure (the provisioning operation), the Matter controller sends the Thread network credentials to the Matter accessory device.
-As a result, the device can join the Thread network and communicate with other Thread devices in the network.
-
 .. matter_door_lock_sample_commissioning_end
-
-To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
 
 Upgrading the device firmware
 =============================
