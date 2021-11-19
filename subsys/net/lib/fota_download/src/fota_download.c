@@ -120,7 +120,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH;
 				err = -EPROTOTYPE;
 			} else {
-				err = dfu_target_init(img_type, file_size,
+				err = dfu_target_init(img_type, 0, file_size,
 						      dfu_target_callback_handler);
 				if ((err < 0) && (err != -EBUSY)) {
 					LOG_ERR("dfu_target_init error %d", err);
