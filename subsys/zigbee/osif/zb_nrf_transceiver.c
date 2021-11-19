@@ -17,7 +17,7 @@
 
 #define PHR_LENGTH                1
 #define FCS_LENGTH                2
-#define ACK_PKT_LENGTH            3
+#define ACK_PKT_LENGTH            5
 #define FRAME_TYPE_MASK           0x07
 #define FRAME_TYPE_ACK            0x02
 
