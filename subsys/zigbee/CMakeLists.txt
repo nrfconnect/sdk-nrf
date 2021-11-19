@@ -45,3 +45,6 @@ zephyr_library_sources_ifdef(
 )
 
 zephyr_library_link_libraries(zboss)
+
+zephyr_compile_definitions(CUSTOM_IEEE802154_L2=ZIGBEE_L2)
+zephyr_compile_definitions(ZIGBEE_L2=ZIGBEE)
