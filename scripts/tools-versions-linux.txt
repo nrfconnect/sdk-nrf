@@ -9,6 +9,6 @@ gnuarmemb-short=9-2019q4
 ses=5.60
 ccache=3.7.7
 dfu_util=0.9-1
-west=0.11.1
+west=0.12.0
 gn=1880
 doxygen=1.9.2
