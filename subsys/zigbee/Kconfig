@@ -27,6 +27,13 @@ if ZIGBEE
 
 rsource "lib/Kconfig"
 
+config NET_L2_ZIGBEE
+	bool "Zigbee L2"
+	depends on NETWORKING
+	select NET_L2_CUSTOM_IEEE802154
+	select NET_PKT_TIMESTAMP
+	select IEEE802154_NRF5_FCS_IN_LENGTH
+
 choice ZIGBEE_CHANNEL_SELECTION_MODE
 	prompt "Zigbee channel selection mode"
 	default ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
