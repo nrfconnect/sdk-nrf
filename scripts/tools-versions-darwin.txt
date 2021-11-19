@@ -7,6 +7,6 @@ dtc=1.4.7;hash=0747cc9d6b50ac8a3b1b576e4509494f2258aef2
 gnuarmemb=9-2019-q4-major
 gnuarmemb-short=9-2019q4
 ses=5.60
-west=0.11.1
+west=0.12.0
 gn=1880
 doxygen=1.9.2
