@@ -228,7 +228,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 			configure_full_modem_update();
 		}
 #endif
-		ret = dfu_target_init(image_type, total_size, dfu_target_cb);
+		ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
 		if (ret < 0) {
 			LOG_ERR("Failed to init DFU target, err: %d", ret);
 			goto cleanup;

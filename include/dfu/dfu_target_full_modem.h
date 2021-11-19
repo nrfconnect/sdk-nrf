@@ -70,12 +70,13 @@ bool dfu_target_full_modem_identify(const void *const buf);
  * @brief Initialize dfu target, perform steps necessary to receive firmware.
  *
  * @param[in] file_size Size of the current file being downloaded.
+ * @param[in] img_num Image pair index. The value is not used currently.
  * @param[in] callback  Not in use. In place to be compatible with DFU target
  *                      API.
  *
  * @retval 0 If successful, negative errno otherwise.
  */
-int dfu_target_full_modem_init(size_t file_size,
+int dfu_target_full_modem_init(size_t file_size, int img_num,
 			       dfu_target_callback_t callback);
 
 /**

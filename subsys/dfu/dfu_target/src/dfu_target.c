@@ -59,7 +59,7 @@ int dfu_target_img_type(const void *const buf, size_t len)
 	return -ENOTSUP;
 }
 
-int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
+int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
 	const struct dfu_target *new_target = NULL;
 
@@ -96,7 +96,7 @@ int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 
 	current_target = new_target;
 
-	return current_target->init(file_size, cb);
+	return current_target->init(file_size, img_num, cb);
 }
 
 int dfu_target_offset_get(size_t *offset)

@@ -61,7 +61,7 @@ static void init(void)
 
 	zassert_true(ret > 0, "Valid type not recognized");
 
-	err = dfu_target_init(ret, FILE_SIZE, NULL);
+	err = dfu_target_init(ret, 0, FILE_SIZE, NULL);
 	zassert_equal(err, 0, NULL);
 }
 
@@ -84,10 +84,10 @@ static void test_init(void)
 	ret = dfu_target_img_type(buf, sizeof(buf));
 	zassert_true(ret > 0, "Valid type not recognized");
 
-	err = dfu_target_init(ret, FILE_SIZE, NULL);
+	err = dfu_target_init(ret, 0, FILE_SIZE, NULL);
 	zassert_equal(err, 0, NULL);
 
-	err = dfu_target_init(ret, FILE_SIZE, NULL);
+	err = dfu_target_init(ret, 0, FILE_SIZE, NULL);
 	zassert_equal(err, 0, "Re-initialization should pass");
 
 	err = dfu_target_done(true);
@@ -96,17 +96,17 @@ static void test_init(void)
 	/* Now clean up and try invalid types */
 	done();
 
-	err = dfu_target_init(0, FILE_SIZE, NULL);
+	err = dfu_target_init(0, 0, FILE_SIZE, NULL);
 	zassert_true(err < 0, "Did not fail when invalid type is used");
 
 	done();
 
-	err = dfu_target_init(2, FILE_SIZE, NULL);
+	err = dfu_target_init(2, 0, FILE_SIZE, NULL);
 	zassert_true(err < 0, "Did not fail when invalid type is used");
 
 	init_retval = -42;
 
-	err = dfu_target_init(ret, FILE_SIZE, NULL);
+	err = dfu_target_init(ret, 0, FILE_SIZE, NULL);
 	zassert_equal(err, -42, "Did not return error code from target");
 
 	done();

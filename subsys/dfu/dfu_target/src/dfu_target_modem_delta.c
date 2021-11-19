@@ -66,7 +66,7 @@ bool dfu_target_modem_delta_identify(const void *const buf)
 	return ((const struct modem_delta_header *)buf)->magic == MODEM_MAGIC;
 }
 
-int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
+int dfu_target_modem_delta_init(size_t file_size, int img_num, dfu_target_callback_t cb)
 {
 	int err;
 	int offset;
