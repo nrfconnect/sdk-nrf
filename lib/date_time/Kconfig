@@ -6,14 +6,22 @@
 
 menuconfig DATE_TIME
 	bool "Date time library"
+	select POSIX_CLOCK
 
 if DATE_TIME
+
+config DATE_TIME_AUTO_UPDATE
+	bool "Trigger date-time update when LTE is connected"
+	select AT_MONITOR if DATE_TIME_MODEM
+	default y if (DATE_TIME_MODEM || DATE_TIME_NTP)
+	help
+	  Date-time update is triggered automatically when the LTE network becomes available.
 
 config DATE_TIME_UPDATE_INTERVAL_SECONDS
 	int "Date time update interval, in seconds"
 	default 3600
 	help
-		Setting this option to 0 disables sequential date time updates.
+	  Setting this option to 0 disables sequential date time updates.
 
 config DATE_TIME_MODEM
 	bool "Get date time from the nRF9160 onboard modem"

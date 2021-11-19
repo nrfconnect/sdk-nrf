@@ -521,6 +521,11 @@ Other libraries
 
   * Added PSM and eDRX configuration metrics that are collected when :kconfig:`MEMFAULT_NCS_LTE_METRICS` is enabled.
 
+* :ref:`lib_date_time` library:
+
+  * The library now stores the received date-time information as Zephyr and modem time.
+    Also modem XTIME notifications are used as time source.
+    Added the :kconfig:`CONFIG_DATE_TIME_AUTO_UPDATE` option to trigger a time update when device has connected to LTE.
 
 Libraries for Zigbee
 --------------------

@@ -9,31 +9,40 @@
 #include <zephyr/types.h>
 #include <device.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <posix/time.h>
+
 #if defined(CONFIG_DATE_TIME_MODEM)
 #include <nrf_modem_at.h>
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
+#include <modem/at_monitor.h>
+#endif
 #endif
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
-#include <time.h>
-#include <errno.h>
-#include <string.h>
+#if defined(CONFIG_DATE_TIME_NTP)
 #include <net/sntp.h>
 #include <net/socketutils.h>
-#include <sys/timeutil.h>
+#endif
 
+#include <errno.h>
+#include <string.h>
+#include <sys/timeutil.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
 #if defined(CONFIG_DATE_TIME_MODEM)
-/* The magic number 115 corresponds to the year 2015 which is the default
- * year given by the modem when the cellular network has not pushed time
- * the modem.
- */
-#define MODEM_TIME_DEFAULT 115
-#endif
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
+/* AT monitor for %XTIME notifications */
+AT_MONITOR(xtime, "%XTIME", date_time_at_xtime_handler);
+
+/* Indicates whether modem network time has been received with XTIME notification. */
+static bool modem_valid_network_time;
+#else
+static bool modem_valid_network_time = true;
+#endif /* defined(CONFIG_DATE_TIME_AUTO_UPDATE) */
+#endif /* defined(CONFIG_DATE_TIME_MODEM) */
 
 #if defined(CONFIG_DATE_TIME_NTP)
 #define UIO_IP      "ntp.uio.no"
@@ -63,7 +72,8 @@ static struct sntp_time sntp_time;
 
 K_SEM_DEFINE(time_fetch_sem, 0, 1);
 
-static struct k_work_delayable time_work;
+static void date_time_handler(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(time_work, date_time_handler);
 
 static struct time_aux {
 	int64_t date_time_utc;
@@ -99,11 +109,86 @@ static void date_time_schedule_update(void)
 	}
 }
 
+static int current_time_check(void)
+{
+	if (time_aux.last_date_time_update == 0 ||
+	    time_aux.date_time_utc == 0) {
+		LOG_DBG("Date time never set");
+		return -ENODATA;
+	}
+
+	if ((k_uptime_get() - time_aux.last_date_time_update) >=
+	    CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS * MSEC_PER_SEC) {
+		LOG_DBG("Current date time too old");
+		return -ENODATA;
+	}
+
+	return 0;
+}
+
+static void date_time_store(int64_t curr_time_ms)
+{
+	struct timespec tp = { 0 };
+	struct tm ltm = { 0 };
+	int ret;
+
+	tp.tv_sec = curr_time_ms / 1000;
+	tp.tv_nsec = (curr_time_ms % 1000) * 1000000;
+
+	ret = clock_settime(CLOCK_REALTIME, &tp);
+	if (ret != 0) {
+		LOG_ERR("Could not set system time, %d", ret);
+		return;
+	}
+	gmtime_r(&tp.tv_sec, &ltm);
+	LOG_DBG("System time updated: %04u-%02u-%02u %02u:%02u:%02u",
+		ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday,
+		ltm.tm_hour, ltm.tm_min, ltm.tm_sec);
+
+#if defined(CONFIG_DATE_TIME_MODEM)
+	/* Set modem time if modem has not got it from the LTE network */
+	if (!modem_valid_network_time) {
+		/* AT+CCLK=<time>
+		 * "<time> sring type value; format is ""yy/MM/dd,hh:mm:ss±zz"",
+		 *         where characters indicate year (two last digits),
+		 *         month, day, hour, minutes, seconds and time zone
+		 *         (indicates the difference, expressed in quarters of an hour,
+		 *         between the local time and GMT; range -48...+48)."
+		 * Example command:
+		 *   "AT+CCLK="18/12/06,22:10:00+08"
+		 */
+
+		/* Time zone is not known and it's mandatory so setting to zero.
+		 * POSIX year is relative to 1900 which doesn't affect as last two digits are taken
+		 * with modulo 100.
+		 * POSIX month is in range 0-11 so adding 1.
+		 */
+		ret = nrf_modem_at_printf("AT+CCLK=\"%02u/%02u/%02u,%02u:%02u:%02u+%02u\"",
+			ltm.tm_year % 100, ltm.tm_mon + 1, ltm.tm_mday,
+			ltm.tm_hour, ltm.tm_min, ltm.tm_sec, 0);
+		if (ret) {
+			LOG_ERR("Setting modem time failed, %d", ret);
+			return;
+		}
+
+		LOG_DBG("Modem time updated");
+	}
+#endif /* defined(CONFIG_DATE_TIME_MODEM) */
+}
+
 #if defined(CONFIG_DATE_TIME_MODEM)
 static int time_modem_get(void)
 {
 	int rc;
 	struct tm date_time;
+
+	if (!modem_valid_network_time) {
+		/* We will get here whenever we haven't received XTIME notification meaning
+		 * that we don't want to query modem time when it has been set with AT+CCLK.
+		 */
+		LOG_DBG("Modem has not got time from LTE network, so not using it");
+		return -ENODATA;
+	}
 
 	/* Example of modem time response:
 	 * "+CCLK: \"20/02/25,17:15:02+04\"\r\n\000{"
@@ -123,18 +208,13 @@ static int time_modem_get(void)
 		LOG_WRN("Did not get time from cellular network (error: %d). "
 			"This is normal as some cellular networks don't provide it or "
 			"time may not be available yet.", rc);
-		return rc;
+		return -ENODATA;
 	}
 
 	/* Relative to 1900, as per POSIX */
 	date_time.tm_year = date_time.tm_year + 2000 - 1900;
 	/* Range is 0-11, as per POSIX */
 	date_time.tm_mon = date_time.tm_mon - 1;
-
-	if (date_time.tm_year == MODEM_TIME_DEFAULT) {
-		LOG_DBG("Modem time never set");
-		return -ENODATA;
-	}
 
 	time_aux.date_time_utc = (int64_t)timeutil_timegm64(&date_time) * 1000;
 	time_aux.last_date_time_update = k_uptime_get();
@@ -143,7 +223,139 @@ static int time_modem_get(void)
 
 	return 0;
 }
+
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
+/**
+ * @brief Converts an octet having two semi-octets into a decimal.
+ *
+ * @details Semi-octet representation is explained in 3GPP TS 23.040 Section 9.1.2.3.
+ * An octet has semi-octets in the following order:
+ *   semi-octet-digit2, semi-octet-digit1
+ * Octet for decimal number '21' is hence represented as semi-octet bits:
+ *   00010010
+ *
+ * @param[in] value Octet to be converted.
+ *
+ * @return Decimal value.
+ */
+static uint8_t semioctet_to_dec(uint8_t value)
+{
+	/* 4 LSBs represent decimal that should be multiplied by 10. */
+	/* 4 MSBs represent decimal that should be added as is. */
+	return ((value & 0xf0) >> 4) + ((value & 0x0f) * 10);
+}
+
+static void date_time_at_xtime_handler(const char *notif)
+{
+	struct tm date_time;
+	uint8_t time_buf[6];
+	size_t time_buf_len;
+	char *time_str_start;
+	int err;
+
+	if (notif == NULL) {
+		return;
+	}
+	modem_valid_network_time = true;
+
+	/* Check if current time is valid */
+	err = current_time_check();
+	if (err == 0) {
+		LOG_DBG("Previously obtained time is not too old. Discarding XTIME notification.");
+		return;
+	}
+
+	/* %XTIME: [<local_time_zone>],[<universal_time>],[<daylight_saving_time>]"
+	 * <unversal_time> string in hex format, seven bytes long optional field for
+	 *                 universal time as specified in 3GPP TS 24.008 ch 10.5.3.9
+	 *                 and received from network.
+	 * Examples of modem time response:
+	 * %XTIME: "08","81109251714208","01"
+	 * %XTIME: ,"81109251714208",
+	 */
+	time_str_start = strchr(notif, ',');
+	if (time_str_start == NULL) {
+		LOG_ERR("%%XTIME notification doesn't contain ',': %s", notif);
+		return;
+	}
+	if (strlen(time_str_start) < 17) {
+		LOG_ERR("%%XTIME notification too short: %s", notif);
+		return;
+	}
+	if (*(time_str_start + 1) != '"') {
+		LOG_ERR("%%XTIME notification doesn't contain '\"' after ',': %s", notif);
+		return;
+	}
+
+	time_str_start += 2;
+	time_buf_len = hex2bin(time_str_start, 12, time_buf, sizeof(time_buf));
+
+	if (time_buf_len < sizeof(time_buf)) {
+		LOG_ERR("%%XTIME notification decoding failed (ret=%d): %s", time_buf_len, notif);
+	}
+
+	date_time.tm_year = semioctet_to_dec(time_buf[0]);
+	date_time.tm_mon  = semioctet_to_dec(time_buf[1]);
+	date_time.tm_mday = semioctet_to_dec(time_buf[2]);
+	date_time.tm_hour = semioctet_to_dec(time_buf[3]);
+	date_time.tm_min  = semioctet_to_dec(time_buf[4]);
+	date_time.tm_sec  = semioctet_to_dec(time_buf[5]);
+
+	/* Relative to 1900, as per POSIX */
+	date_time.tm_year = date_time.tm_year + 2000 - 1900;
+	/* Range is 0-11, as per POSIX */
+	date_time.tm_mon = date_time.tm_mon - 1;
+
+	time_aux.date_time_utc = (int64_t)timeutil_timegm64(&date_time) * 1000;
+	time_aux.last_date_time_update = k_uptime_get();
+
+	LOG_DBG("Time obtained from cellular network (XTIME notification)");
+
+	initial_valid_time = true;
+	evt.type = DATE_TIME_OBTAINED_MODEM;
+	date_time_store(time_aux.date_time_utc);
+	date_time_schedule_update();
+	date_time_notify_event(&evt);
+}
+#endif /* defined(CONFIG_DATE_TIME_AUTO_UPDATE) */
+#endif /* defined(CONFIG_DATE_TIME_MODEM) */
+
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE) && defined(CONFIG_LTE_LINK_CONTROL)
+
+void date_time_lte_ind_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+
+		switch (evt->nw_reg_status) {
+		case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
+		case LTE_LC_NW_REG_REGISTERED_HOME:
+		case LTE_LC_NW_REG_REGISTERED_ROAMING:
+			if (!initial_valid_time && !k_work_delayable_is_pending(&time_work)) {
+				k_work_schedule(&time_work, K_SECONDS(1));
+			}
+			break;
+#if defined(CONFIG_DATE_TIME_MODEM)
+		case LTE_LC_NW_REG_SEARCHING: {
+			/* Subscribe to modem time notifications */
+			int err = nrf_modem_at_printf("AT%%XTIME=1");
+
+			if (err) {
+				LOG_ERR("Subscribing to modem AT%%XTIME notifications failed, "
+					"err=%d", err);
+			}
+			break;
+		}
 #endif
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+#endif /* defined(CONFIG_DATE_TIME_AUTO_UPDATE) && defined(CONFIG_LTE_LINK_CONTROL) */
 
 #if defined(CONFIG_DATE_TIME_NTP)
 static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
@@ -258,24 +470,6 @@ static int time_NTP_server_get(void)
 }
 #endif
 
-static int current_time_check(void)
-{
-	if (time_aux.last_date_time_update == 0 ||
-	    time_aux.date_time_utc == 0) {
-		LOG_DBG("Date time never set");
-		return -ENODATA;
-	}
-
-	if ((k_uptime_get() - time_aux.last_date_time_update) >=
-	    CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS * MSEC_PER_SEC) {
-
-		LOG_DBG("Current date time too old");
-		return -ENODATA;
-	}
-
-	return 0;
-}
-
 static void new_date_time_get(void)
 {
 	int err;
@@ -303,6 +497,7 @@ static void new_date_time_get(void)
 		if (err == 0) {
 			initial_valid_time = true;
 			evt.type = DATE_TIME_OBTAINED_MODEM;
+			date_time_store(time_aux.date_time_utc);
 			date_time_schedule_update();
 			date_time_notify_event(&evt);
 			continue;
@@ -315,6 +510,7 @@ static void new_date_time_get(void)
 		if (err == 0) {
 			initial_valid_time = true;
 			evt.type = DATE_TIME_OBTAINED_NTP;
+			date_time_store(time_aux.date_time_utc);
 			date_time_schedule_update();
 			date_time_notify_event(&evt);
 			continue;
@@ -339,11 +535,20 @@ static void date_time_handler(struct k_work *work)
 
 static int date_time_init(const struct device *unused)
 {
+#if (defined(CONFIG_DATE_TIME_MODEM) && \
+	defined(CONFIG_DATE_TIME_AUTO_UPDATE) && \
+	!defined(CONFIG_AT_MONITOR_SYS_INIT))
+	at_monitor_init();
+#endif
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE) && defined(CONFIG_LTE_LINK_CONTROL)
+	lte_lc_register_handler(date_time_lte_ind_handler);
+#endif
+
+#if !defined(CONFIG_DATE_TIME_AUTO_UPDATE)
 	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
-		k_work_init_delayable(&time_work, date_time_handler);
 		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
 	}
-
+#endif
 	return 0;
 }
 
@@ -403,6 +608,7 @@ int date_time_set(const struct tm *new_date_time)
 	time_aux.last_date_time_update = k_uptime_get();
 	time_aux.date_time_utc = (int64_t)timeutil_timegm64(new_date_time) * 1000;
 
+	date_time_store(time_aux.date_time_utc);
 	evt.type = DATE_TIME_OBTAINED_EXT;
 	date_time_notify_event(&evt);
 
@@ -432,13 +638,13 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 
 	*uptime += time_aux.date_time_utc - time_aux.last_date_time_update;
 
-	/** Check if the passed in uptime was allready converted,
+	/* Check if the passed in uptime was already converted,
 	 * meaning that after a second conversion it is greater than the
 	 * current date time UTC.
 	 */
 	if (*uptime > time_aux.date_time_utc +
 	    (k_uptime_get() - time_aux.last_date_time_update)) {
-		LOG_WRN("Uptime to large or previously converted");
+		LOG_WRN("Uptime too large or previously converted");
 		LOG_WRN("Clear variable or set a new uptime");
 		*uptime = uptime_prev;
 		return -EINVAL;

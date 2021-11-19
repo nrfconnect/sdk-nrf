@@ -8,8 +8,8 @@
 #define DATE_TIME_H__
 
 #include <zephyr/types.h>
-#include <time.h>
 #include <stdbool.h>
+#include <time.h>
 
 /**
  * @defgroup date_time Date Time Library
