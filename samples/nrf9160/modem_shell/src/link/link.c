@@ -18,7 +18,6 @@
 #include <modem/pdn.h>
 
 #include <nrf_socket.h>
-#include <date_time.h>
 
 #include "link_settings.h"
 #include "link_shell.h"
@@ -42,10 +41,6 @@
 static bool link_subscribe_for_rsrp;
 
 extern bool uart_disable_during_sleep_requested;
-
-#if defined(CONFIG_DATE_TIME)
-static bool date_time_received;
-#endif
 
 struct pdn_activation_status_info {
 	bool activated;
@@ -146,42 +141,6 @@ static void link_api_get_pdn_activation_status(
 
 /* ****************************************************************************/
 
-#if defined(CONFIG_DATE_TIME)
-static void link_date_time_evt_handler(const struct date_time_evt *evt)
-{
-	struct timespec tp = { 0 };
-	int64_t curr_time_ms;
-	int ret;
-
-	if (evt->type == DATE_TIME_NOT_OBTAINED) {
-		mosh_warn("Time couldn't be updated from modem or through NTP");
-		return;
-	}
-
-	ret = date_time_now(&curr_time_ms);
-
-	tp.tv_sec = curr_time_ms / 1000;
-	tp.tv_nsec = (curr_time_ms % 1000) * 1000000;
-
-	ret = clock_settime(CLOCK_REALTIME, &tp);
-	if (ret != 0) {
-		mosh_error("Could not set date %d", ret);
-		return;
-	}
-
-	date_time_received = true;
-	mosh_print(
-		"System time updated from %s",
-		evt->type == DATE_TIME_OBTAINED_MODEM ?
-		"cellular network" :
-		evt->type == DATE_TIME_OBTAINED_NTP ?
-		"NTP" :
-		"external source");
-}
-#endif
-
-/* ****************************************************************************/
-
 static void link_registered_work(struct k_work *unused)
 {
 	struct pdn_activation_status_info pdn_act_status_arr[CONFIG_PDN_CONTEXTS_MAX];
@@ -201,13 +160,6 @@ static void link_registered_work(struct k_work *unused)
 	k_sleep(K_MSEC(1500));
 
 	link_api_modem_info_get_for_shell(true);
-
-#if defined(CONFIG_DATE_TIME)
-	/* Request time update if not already received. Modem needs some time before this. */
-	if (!date_time_received) {
-		date_time_update_async(link_date_time_evt_handler);
-	}
-#endif
 }
 
 /******************************************************************************/
