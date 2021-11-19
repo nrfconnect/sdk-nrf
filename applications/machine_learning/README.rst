@@ -22,7 +22,7 @@ It also uses the `Edge Impulse's data forwarder`_ protocol.
 Sampling sensors
 ================
 
-The application handles the sensor sampling using the :ref:`caf_sensor_sampler`.
+The application handles the sensor sampling using the :ref:`caf_sensor_manager`.
 This module uses Zephyr's :ref:`zephyr:sensor_api` to handle the sampling.
 This approach allows to use any sensor available in Zephyr.
 
@@ -509,7 +509,7 @@ The nRF Machine Learning application uses the following modules available in CAF
 * :ref:`caf_buttons`
 * :ref:`caf_click_detector`
 * :ref:`caf_leds`
-* :ref:`caf_sensor_sampler`
+* :ref:`caf_sensor_manager`
 
 See the module pages for more information about the modules and their configuration.
 

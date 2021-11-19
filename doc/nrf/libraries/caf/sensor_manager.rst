@@ -1,13 +1,14 @@
 .. _caf_sensor_sampler:
+.. _caf_sensor_manager:
 
-CAF: Sensor sampler module
+CAF: Sensor manager module
 ##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The |sensor_sampler| of the :ref:`lib_caf` (CAF) generates the following types of events in relation with the sensor defined in the module configuration:
+The |sensor_manager| of the :ref:`lib_caf` (CAF) generates the following types of events in relation with the sensor defined in the module configuration:
 
 * ``sensor_event`` when the sensor is sampled.
 * ``sensor_state_event`` when the sensor state changes.
@@ -21,16 +22,16 @@ To use the module, you must complete the following requirements:
    For more information about adding sensor device to devicetree, refer to :ref:`zephyr:use-dt-overlays`.
 #. Enable the following Kconfig options:
 
-   * :kconfig:`CONFIG_CAF_SENSOR_SAMPLER` - This option enables the |sensor_sampler|.
+   * :kconfig:`CONFIG_CAF_SENSOR_MANAGER` - This option enables the |sensor_manager|.
    * :kconfig:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
 
 Additionally, you need to configure the sensor that you want to use in your application and enable it in the sensor Kconfig option.
 
 The following Kconfig options are also available for the module:
 
-* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH`
-* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE`
-* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY`
+* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH`
+* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE`
+* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY`
 
 Adding module configuration file
 ================================
@@ -39,7 +40,7 @@ In addition to setting the Kconfig options, you must also add a module configura
 
 To do so, complete the following steps:
 
-1. Add a file that defines the following information for every sensor that should be handled by the |sensor_sampler| in an array of :c:struct:`sensor_config`:
+1. Add a file that defines the following information for every sensor that should be handled by the |sensor_manager| in an array of :c:struct:`sensor_config`:
 
    * :c:member:`sensor_config.dev_name` - Sensor device name.
      The name must match the sensor label in the :file:`BOARD.dts` file.
@@ -61,7 +62,7 @@ To do so, complete the following steps:
 
    .. code-block:: c
 
-        #include <caf/sensor_sampler.h>
+        #include <caf/sensor_manager.h>
 
         static const struct sampled_channel accel_chan[] = {
                 {
@@ -81,7 +82,7 @@ To do so, complete the following steps:
                 },
         };
 
-#. Specify the location of the file with the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH` Kconfig option.
+#. Specify the location of the file with the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` Kconfig option.
 
 .. note::
     |only_configured_module_note|
@@ -89,8 +90,8 @@ To do so, complete the following steps:
 Enabling sensor trigger
 =======================
 
-The |sensor_sampler| supports the sensor trigger functionality.
-This functionality allows the |sensor_sampler| to stop sampling a specific sensor when specified conditions are met.
+The |sensor_manager| supports the sensor trigger functionality.
+This functionality allows the |sensor_manager| to stop sampling a specific sensor when specified conditions are met.
 For more details about the sensor trigger, see Zephyr's :ref:`zephyr:sensor_api` driver.
 
 .. note::
@@ -112,7 +113,7 @@ To use the sensor trigger, complete the following steps:
         * :c:member:`trigger.cfg.chan` - Channel on which the trigger is set.
           The channel depends on the particular sensor.
 
-      * ``.activation`` information that depends on the |sensor_sampler|:
+      * ``.activation`` information that depends on the |sensor_manager|:
 
         * :c:member:`trigger.activation.type` - Sensor value comparison method.
           See `Sensor trigger activation`_ for more details.
@@ -123,7 +124,7 @@ To use the sensor trigger, complete the following steps:
 
    .. code-block:: c
 
-        #include <caf/sensor_sampler.h>
+        #include <caf/sensor_manager.h>
 
         static const struct sampled_channel accel_chan[] = {
                 {
@@ -162,27 +163,27 @@ To use the sensor trigger, complete the following steps:
 Implementation details
 **********************
 
-The |sensor_sampler| starts in reaction to ``module_state_event``.
+The |sensor_manager| starts in reaction to ``module_state_event``.
 When started, it can do the following operations:
 
 * Periodically sample the configured sensors.
 * Submit ``sensor_event`` when the sensor channels are sampled.
 * Submit ``sensor_state_event`` if the sensor state changes.
 
-The |sensor_sampler| samples sensors periodically, according to the configuration specified for each sensor.
+The |sensor_manager| samples sensors periodically, according to the configuration specified for each sensor.
 Sampling of the sensors is done from a dedicated preemptive thread.
-You can change the thread priority by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY` Kconfig option.
+You can change the thread priority by setting the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY` Kconfig option.
 Use the preemptive thread priority to make sure that the thread does not block other operations in the system.
 
-For each sensor, the |sensor_sampler| limits the number of ``sensor_event`` events that it submits, but whose processing has not been completed.
+For each sensor, the |sensor_manager| limits the number of ``sensor_event`` events that it submits, but whose processing has not been completed.
 This is done to prevent out-of-memory error if the system workqueue is blocked.
 The limit value for the maximum number of unprocessed events for each sensor is placed in the ``sensor_config.active_events_limit`` structure field in the configuration file.
-The ``active_sensor_events_cnt`` counter is incremented when ``sensor_event`` is sent and decremented when the event is processed by the sensor sampler that is the final subscriber of the event.
+The ``active_sensor_events_cnt`` counter is incremented when ``sensor_event`` is sent and decremented when the event is processed by the sensor manager that is the final subscriber of the event.
 A situation can occur that the ``active_sensor_events_cnt`` counter will already be decremented but the memory allocated by the event would not yet be freed.
 Because of this behavior, the maximum number of allocated sensor events for the given sensor is equal to ``active_events_limit`` plus one.
 
 The dedicated thread uses its own thread stack.
-You can change the size of the stack by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE` Kconfig option.
+You can change the size of the stack by setting the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE` Kconfig option.
 The thread stack size must be big enough for the sensors used.
 
 Sensor state events
@@ -199,14 +200,14 @@ Each sensor can be in one of the following states:
 The following figure shows the possible state transitions.
 
 .. figure:: images/caf_sensor_states.svg
-   :alt: State transitions of the sensors used by the sensor sampler module
+   :alt: State transitions of the sensors used by the sensor manager module
 
-   State transitions of the sensors used by the sensor sampler module
+   State transitions of the sensors used by the sensor manager module
 
-The |sensor_sampler| submits ``sensor_state_event`` whenever the sensor state changes.
+The |sensor_manager| submits ``sensor_state_event`` whenever the sensor state changes.
 Each sensor starts in the ``SENSOR_STATE_DISABLED`` state, which is not reported by the module.
 Also, each sensor acts independently to others.
-If one of the sensors reports an error, it does not stop the sensor sampler from sampling other sensors.
+If one of the sensors reports an error, it does not stop the sensor manager from sampling other sensors.
 
 After the initialization, each sensor changes its state to :c:enumerator:`SENSOR_STATE_ACTIVE` and start periodic sampling.
 In case of an error sensor submits ``sensor_state_event`` with the :c:enumerator:`SENSOR_STATE_ERROR` state.
@@ -226,6 +227,6 @@ The sensor trigger activation type can be of the following type:
 * :c:enumerator:`ACT_TYPE_ABS` - Absolute deviation.
 * :c:enumerator:`ACT_TYPE_PERC` - Percentage deviation.
 
-.. |sensor_sampler| replace:: sensor sampler module
+.. |sensor_manager| replace:: sensor manager module
 .. |only_configured_module_note| replace::    Only the configured module should include the configuration file.
    Do not include the configuration file in other source files.

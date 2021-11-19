@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _SENSOR_SAMPLER_H_
-#define _SENSOR_SAMPLER_H_
+#ifndef _SENSOR_MANAGER_H_
+#define _SENSOR_MANAGER_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,15 +18,15 @@ enum act_type {
 	ACT_TYPE_ABS,
 };
 
-struct trigger_activation {
+struct sm_trigger_activation {
 	enum act_type type;
 	float thresh;
 	unsigned int timeout_ms;
 };
 
-struct trigger {
+struct sm_trigger {
 	struct sensor_trigger cfg;
-	struct trigger_activation activation;
+	struct sm_trigger_activation activation;
 };
 
 /**
@@ -34,7 +34,7 @@ struct trigger {
  *
  * The description of the channel to do the measurement on.
  */
-struct sampled_channel {
+struct sm_sampled_channel {
 	/** @brief Channel identifier */
 	enum sensor_channel chan;
 	/** @brief Number of data samples in selected channel */
@@ -45,9 +45,9 @@ struct sampled_channel {
  * @brief Sensor configuration
  *
  * The sensor configuration is provided by the application in file specified by
- * the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH` option.
+ * the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` option.
  */
-struct sensor_config {
+struct sm_sensor_config {
 	/**
 	 * @brief Device name
 	 *
@@ -65,9 +65,9 @@ struct sensor_config {
 	/**
 	 * @brief Used channels description
 	 *
-	 * Channels in the sensor that should be handled by sensor sampler module
+	 * Channels in the sensor that should be handled by sensor manager module
 	 */
-	const struct sampled_channel *chans;
+	const struct sm_sampled_channel *chans;
 	/**
 	 * @brief Number of channels
 	 *
@@ -92,7 +92,7 @@ struct sensor_config {
 	 * Trigger is used for sensor activity checking and to wake up
 	 * from suspend.
 	 */
-	struct trigger *trigger;
+	struct sm_trigger *trigger;
 	/**
 	 * @brief Power state used to suspend sensor
 	 *
@@ -105,4 +105,4 @@ struct sensor_config {
 }
 #endif
 
-#endif /* _SENSOR_SAMPLER_H_ */
+#endif /* _SENSOR_MANAGER_H_ */

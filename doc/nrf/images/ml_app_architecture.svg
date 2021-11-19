@@ -108,9 +108,9 @@
 			<text x="14.82" y="465.23" class="st3">Buttons</text>		</g>
 		<g id="shape80-66" transform="translate(387.076,-119.798)">
 			<title>Nordic Blue.161</title>
-			<desc>Sensor sampler</desc>
+			<desc>Sensor manager</desc>
 			<rect x="0" y="448.769" width="61.4714" height="26.9291" class="st2"/>
-			<text x="16.99" y="459.23" class="st3">Sensor <tspan x="14.39" dy="1.2em" class="st4">sampler</tspan></text>		</g>
+			<text x="16.99" y="459.23" class="st3">Sensor <tspan x="14.39" dy="1.2em" class="st4">manager</tspan></text>		</g>
 		<g id="shape81-70" transform="translate(273.837,-146.727)">
 			<title>Dynamic connector.163</title>
 			<path d="M0 465.5 L0 465.14 L0 455.6 L-46 455.6 L-46 443.84" class="st7"/>

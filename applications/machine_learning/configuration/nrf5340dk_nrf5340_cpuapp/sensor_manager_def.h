@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <caf/sensor_sampler.h>
+#include <caf/sensor_manager.h>
 
-/* This configuration file is included only once from sensor_sampler module and holds
+/* This configuration file is included only once from sensor_manager module and holds
  * information about the sampled sensors.
  */
 
 /* This structure enforces the header file is included only once in the build.
  * Violating this requirement triggers a multiple definition error at link time.
  */
-const struct {} sensor_sampler_def_include_once;
+const struct {} sensor_manager_def_include_once;
 
 
-static const struct sampled_channel accel_chan[] = {
+static const struct sm_sampled_channel accel_chan[] = {
 	{
 		.chan = SENSOR_CHAN_ACCEL_X,
 		.data_cnt = 1,
@@ -31,7 +31,7 @@ static const struct sampled_channel accel_chan[] = {
 	},
 };
 
-static const struct sensor_config sensor_configs[] = {
+static const struct sm_sensor_config sensor_configs[] = {
 	{
 		.dev_name = CONFIG_SENSOR_SIM_DEV_NAME,
 		.event_descr = "accel_sim_xyz",
