@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/PelionIoT
     - name: memfault
       url-base: https://github.com/memfault
+    - name: rlubos
+      url-base: https://github.com/rlubos
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -53,8 +55,9 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
+      remote: rlubos
       repo-path: sdk-zephyr
-      revision: f80aea343f37aa4d5e3fb707ce2dcf842bf0e06a
+      revision: net/add-custom-154-L2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
