@@ -41,7 +41,7 @@ static bool fail_on_start;
 static bool download_with_offset_success;
 static download_client_callback_t download_client_event_handler;
 
-int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
+int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
 	return 0;
 }

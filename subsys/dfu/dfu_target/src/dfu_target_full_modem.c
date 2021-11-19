@@ -48,7 +48,7 @@ int dfu_target_full_modem_cfg(const struct dfu_target_full_modem_params *params)
 	return 0;
 }
 
-int dfu_target_full_modem_init(size_t file_size,
+int dfu_target_full_modem_init(size_t file_size, int img_num,
 			       dfu_target_callback_t callback)
 {
 	if (!configured) {

@@ -202,7 +202,7 @@ static uint8_t ota_dfu_target_init(const uint8_t *magic_word_buf)
 		return err;
 	}
 
-	err = dfu_target_init(img_type, ota_ctx.bin_size,
+	err = dfu_target_init(img_type, 0, ota_ctx.bin_size,
 			      ota_dfu_target_callback_handler);
 	if (err < 0) {
 		LOG_ERR("dfu_target_init err %d", err);
