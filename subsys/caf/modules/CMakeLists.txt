@@ -28,7 +28,7 @@ zephyr_library_sources_ifdef(CONFIG_CAF_NET_STATE_OT net_state_ot.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_POWER_MANAGER power_manager.c)
 
-zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_SAMPLER sensor_sampler.c)
+zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_MANAGER sensor_manager.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_SMP ble_smp.c)
 zephyr_library_link_libraries_ifdef(CONFIG_MCUMGR MCUMGR)
