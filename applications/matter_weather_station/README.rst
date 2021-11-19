@@ -180,14 +180,7 @@ After programming the application, perform the following steps to test the Matte
 1. Turn on the Thingy:53.
    The application starts in an unprovisioned state.
    The advertising over Bluetooth LE and DFU start automatically, and **LED 1** starts blinking blue (short flash on).
-#. Commission the device into a Thread network by following the guides linked on the :ref:`ug_matter_configuring` page for the mobile Matter controller.
-   As part of this procedure, you will complete the following steps:
-
-   * Configure Thread Border Router.
-   * Build and install the mobile Matter controller.
-   * Commission the device.
-   * Send Matter commands.
-
+#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_configuring_mobile`.
    During the commissioning procedure, **LED 1** of the Matter device starts blinking blue (rapid even flashing).
    This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
 
