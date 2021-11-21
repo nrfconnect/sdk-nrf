@@ -624,9 +624,28 @@ This container package can be used by update tools to pass both images during th
 Getting logging output
 **********************
 
-When connected to the computer, the nRF5340 DK emulates three virtual COM ports.
-In the default configuration:
+When connected to a computer, the nRF5340 DK emulates three virtual COM ports.
+In the default configuration, they are set up as follows:
 
-* Logging output from the application core sample is available on the third (last) COM port.
-* Logging output from the network core (if available) is routed to the first COM port.
-* The second (middle) COM port is silent.
+* The first COM port outputs the log from the network core (if available).
+* The second (middle) COM port is routed to the **P24** connector of the nRF5340 DK.
+* The third (last) COM port outputs the log from the application core sample.
+
+You can use the second COM port as follows:
+
+1. Map **rx-pin**, **tx-pin**, **rts-pin**, and **cts-pin** to four different pins on the development kit, using, for example, using :ref:`devicetree overlays<zephyr:devicetree-intro>`.
+   See the following example, using the :ref:`zephyr:dtbinding_nordic_nrf_uarte` bindings.
+
+   .. code-block::
+
+        &uart0 {
+        status = "okay";
+        compatible = "nordic,nrf-uarte";
+        current-speed = <115200>;
+        tx-pin = <20>;
+        rx-pin = <21>;
+        rts-pin = <18>;
+        cts-pin = <16>;
+        };
+
+#. Wire the previously mapped pins (**rx-pin**, **tx-pin**, **rts-pin**, and **cts-pin**) respectively to **TxD**, **RxD**, **CTS**, and **RTS** on the **P24** connector.

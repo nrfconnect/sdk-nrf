@@ -97,7 +97,7 @@ TF-M employs two UART interfaces for logging: one for the secure part (MCUboot a
 The logs arrive on different COM ports on the host PC.
 
 On the nRF5340 DK, you must connect specific wires on the kit to receive secure logs on the host PC.
-Wire the pins P0.25 and P0.26 to RxD and TxD respectively.
+Specifically, wire the pins **P0.25** and **P0.26** of the **P2** connector respectively to **RxD** and **TxD**  of the **P24** connector.
 
 Limitations
 ***********
