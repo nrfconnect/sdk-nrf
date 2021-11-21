@@ -12,8 +12,27 @@
 #include "psa/crypto.h"
 #include <tfm/tfm_ioctl_api.h>
 #include <pm_config.h>
+#include <hal/nrf_gpio.h>
 
 #define HELLO_PATTERN "Hello World! %s"
+
+#define PIN_XL1 0
+#define PIN_XL2 1
+
+/* Check if MCU selection is required */
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+static void gpio_pin_mcu_select(uint32_t pin_number, nrf_gpio_pin_mcusel_t mcu)
+{
+	uint32_t err;
+	enum tfm_platform_err_t plt_err;
+
+	plt_err = tfm_platform_gpio_pin_mcu_select(pin_number, mcu, &err);
+	if (plt_err != TFM_PLATFORM_ERR_SUCCESS || err != 0) {
+		printk("tfm_..._gpio_pin_mcu_select failed: plt_err: 0x%x, err: 0x%x\n",
+			plt_err, err);
+	}
+}
+#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 
 static uint32_t secure_read_word(intptr_t ptr)
 {
@@ -82,4 +101,14 @@ void main(void)
 		printk("SHA256 digest:\n");
 		print_hex_number(hello_digest, 32);
 	}
+
+#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+	/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
+	 * oscillator (LFXO) can be used.
+	 * This configuration has already been done by TF-M so this is redundant.
+	 */
+	printk("Configuring MCU selection for LFXO\n");
+	gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+	gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 }

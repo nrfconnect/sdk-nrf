@@ -21,6 +21,7 @@ common:
         - "Hashing 'Hello World! .*'"
         - "SHA256 digest:"
         - "0x[0-9a-f]{64}"
+        - "(Configuring MCU selection for LFXO)?"
 tests:
   sample.tfm.helloworld:
     tags: tfm ci_build
