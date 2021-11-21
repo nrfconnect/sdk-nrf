@@ -47,6 +47,7 @@ After programming the sample, the following output is displayed in the console:
     Hashing 'Hello World! nrf5340dk_nrf5340_cpuapp'
     SHA256 digest:
     0x12f0c84eecba8497cc0bec1ebc5a785df2ae027a2545921d6cdc0920c5aaefd7
+    Configuring MCU selection for LFXO
 
 Dependencies
 *************
