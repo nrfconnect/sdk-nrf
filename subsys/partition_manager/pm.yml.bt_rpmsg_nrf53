@@ -5,3 +5,6 @@ rpmsg_nrf53_sram:
   placement: {before: end}
   size: CONFIG_RPMSG_NRF53_SRAM_SIZE
   region: sram_primary
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+  inside: sram_nonsecure
+#endif
