@@ -181,7 +181,7 @@ Once the BDB initialization procedure is finished, depending on the data stored 
 * `New device scenario`_: Generate the `ZB_BDB_SIGNAL_DEVICE_FIRST_START`_ signal for factory new devices.
 * `Commissioned device scenario`_: Perform a single attempt to rejoin the Zigbee network based on NVRAM contents and then generate the `ZB_BDB_SIGNAL_DEVICE_REBOOT`_ signal.
 
-Both scenarios cause different behavior of the the default signal handler.
+Both scenarios cause different behavior of the default signal handler.
 
 .. _zarco_signal_handler_bdb_initialization_new_devices:
 
@@ -315,9 +315,9 @@ The rejoin procedure is different for routers and end devices in the following a
   It is safe to call this function from an interrupt and to call it multiple times.
 
   .. figure:: images/zigbee_signal_handler_10_rejoin_user_input.svg
-     :alt: User input restarting the the rejoin procedure
+     :alt: User input restarting the rejoin procedure
 
-     User input restarting the the rejoin procedure
+     User input restarting the rejoin procedure
 
 .. note::
     The Zigbee network rejoin procedure is managed from multiple signals in :c:func:`zigbee_default_signal_handler`.
