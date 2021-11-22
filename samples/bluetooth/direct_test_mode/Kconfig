@@ -28,6 +28,7 @@ config DTM_TIMER_IRQ_PRIORITY
 
 config ANOMALY_172_TIMER_IRQ_PRIORITY
 	int "Anomaly 172 timer interrupt priority"
+	depends on SOC_NRF52840
 	range 0 5 if ZERO_LATENCY_IRQS
 	range 0 6
 	default 2
