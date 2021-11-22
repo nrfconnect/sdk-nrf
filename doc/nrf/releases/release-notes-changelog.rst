@@ -80,6 +80,7 @@ nrf9160: Asset Tracker
 ----------------------
 
 * Added timestamps to environment sensor data when compiled with :kconfig:`CONFIG_USE_BME680_BSEC`
+* Updated the application to clear the ephemeris and almanac flags from an A-GPS request when P-GPS is enabled.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -422,6 +423,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_agps` library:
 
   * Removed GNSS socket API support.
+  * Updated to always request ephemerides and almanacs. The application is now responsible for clearing the flags if P-GPS is enabled.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
