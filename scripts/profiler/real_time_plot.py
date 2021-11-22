@@ -6,43 +6,52 @@
 from multiprocessing import Process, Event, active_children
 import argparse
 import logging
-import os
 import signal
 from stream import Stream
 from rtt2stream import Rtt2Stream
 from model_creator import ModelCreator
 from plot_nordic import PlotNordic
 
-def rtt2stream(stream, event_plot, event_model_creator, log_lvl_number):
+is_waiting = True
+def signal_handler(sig, frame):
+    global is_waiting
+    is_waiting = False
+
+def rtt2stream(stream, event_plot, event_model_creator, event_close, log_lvl_number):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     try:
-        rtt2s = Rtt2Stream(stream, log_lvl=log_lvl_number)
+        rtt2s = Rtt2Stream(stream, event_close, log_lvl=log_lvl_number)
         event_plot.wait()
         event_model_creator.wait()
         rtt2s.read_and_transmit_data()
-    except KeyboardInterrupt:
-        rtt2s.close()
+    except Exception as e:
+        print("[ERROR] Unhandled exception in Profiler Rtt to stream module: {}".format(e))
 
-def model_creator(stream, event, dataset_name, log_lvl_number):
+def model_creator(stream, event, event_close, dataset_name, log_lvl_number):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     try:
-        mc = ModelCreator(stream,
-                          sending_events=True,
+        mc = ModelCreator(stream, event_close, sending_events=True,
                           event_filename=dataset_name + ".csv",
                           event_types_filename=dataset_name + ".json",
                           log_lvl=log_lvl_number)
         event.set()
         mc.start()
-    except KeyboardInterrupt:
-        mc.close()
+    except Exception as e:
+        print("[ERROR] Unhandled exception in Profiler model creator module: {}".format(e))
 
-def dynamic_plot(stream, event, log_lvl_number):
+def dynamic_plot(stream, event, event_close, log_lvl_number):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     try:
-        pn = PlotNordic(stream=stream, log_lvl=log_lvl_number)
+        pn = PlotNordic(stream=stream, event_close=event_close, log_lvl=log_lvl_number)
         event.set()
         pn.plot_events_real_time()
-    except KeyboardInterrupt:
-        pn.close_event(None)
+    except Exception as e:
+        print("[ERROR] Unhandled exception in Plot Nordic module: {}".format(e))
+
 
 def main():
+    signal.signal(signal.SIGINT, signal_handler)
+
     parser = argparse.ArgumentParser(
         description='Collecting data from Nordic profiler for given time, plotting and saving to files.')
     parser.add_argument('dataset_name', help='Name of dataset')
@@ -54,46 +63,48 @@ def main():
     else:
         log_lvl_number = logging.INFO
 
-    # events are made to ensure that PlotNordic and ModelCreator classes are initialized before Rtt2Stream starts sending data
+    # Events are made to ensure that PlotNordic and ModelCreator classes are initialized before Rtt2Stream starts sending data.
     event_plot = Event()
     event_model_creator = Event()
+    # Setting these events results in closing corresponding modules.
+    event_close_rtt2stream = Event()
+    event_close_model_creator = Event()
+    event_close_plot = Event()
 
     streams = Stream.create_stream(3)
 
-    try:
-        processes = []
-        processes.append(Process(target=rtt2stream,
-                                 args=(streams[0], event_plot, event_model_creator,
-                                       log_lvl_number),
-                                 daemon=True))
-        processes.append(Process(target=model_creator,
-                                 args=(streams[1], event_model_creator,
-                                       args.dataset_name, log_lvl_number),
-                                 daemon=True))
-        processes.append(Process(target=dynamic_plot,
-                                 args=(streams[2], event_plot, log_lvl_number),
-                                 daemon=True))
+    processes = []
+    processes.append((Process(target=rtt2stream,
+                              args=(streams[0], event_plot, event_model_creator,
+                                    event_close_rtt2stream, log_lvl_number),
+                              daemon=True),
+                      event_close_rtt2stream))
+    processes.append((Process(target=model_creator,
+                              args=(streams[1], event_model_creator, event_close_model_creator,
+                                    args.dataset_name, log_lvl_number),
+                              daemon=True),
+                      event_close_model_creator))
+    processes.append((Process(target=dynamic_plot,
+                              args=(streams[2], event_plot, event_close_plot, log_lvl_number),
+                              daemon=True),
+                      event_close_plot))
 
-        for p in processes:
-            p.start()
+    for p, _ in processes:
+        p.start()
 
-        is_waiting = True
-        while is_waiting:
-            for p in processes:
-                p.join(timeout=0.5)
-                # Terminate other processes if one of the processes is not active.
-                if len(processes) > len(active_children()):
-                    is_waiting = False
-                    break
+    global is_waiting
+    while is_waiting:
+        for p, _ in processes:
+            p.join(timeout=0.5)
+            # Terminate other processes if one of the processes is not active.
+            if len(processes) > len(active_children()):
+                is_waiting = False
+                break
 
-        for p in processes:
-            if p.is_alive():
-                os.kill(p.pid, signal.SIGINT)
-                # Ensure that we stop processes in order to prevent profiler data drop.
-                p.join()
-
-    except KeyboardInterrupt:
-        for p in processes:
+    for p, event_close in processes:
+        if p.is_alive():
+            event_close.set()
+            # Ensure that we stop processes in order to prevent profiler data drop.
             p.join()
 
 if __name__ == "__main__":
