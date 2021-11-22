@@ -166,18 +166,22 @@ static void output_ready(int64_t timestamp, float iaq, uint8_t iaq_accuracy,
 			bsec_library_return_t bsec_status, float static_iaq,
 			float co2_equivalent, float breath_voc_equivalent)
 {
+	int64_t ts = k_uptime_get();
 	k_spinlock_key_t key = k_spin_lock(&(temp_sensor.lock));
-
 	temp_sensor.sensor.value = temperature;
+	temp_sensor.sensor.ts = ts;
 	k_spin_unlock(&(temp_sensor.lock), key);
 	key = k_spin_lock(&(humid_sensor.lock));
 	humid_sensor.sensor.value = humidity;
+	humid_sensor.sensor.ts = ts;
 	k_spin_unlock(&(humid_sensor.lock), key);
 	key = k_spin_lock(&(pressure_sensor.lock));
 	pressure_sensor.sensor.value = pressure / 1000;
+	pressure_sensor.sensor.ts = ts;
 	k_spin_unlock(&(pressure_sensor.lock), key);
 	key = k_spin_lock(&(air_quality_sensor.lock));
 	air_quality_sensor.sensor.value = iaq;
+	air_quality_sensor.sensor.ts = ts;
 	k_spin_unlock(&(air_quality_sensor.lock), key);
 }
 

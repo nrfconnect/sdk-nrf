@@ -66,6 +66,11 @@ nRF9160: Asset Tracker v2
 * Added content-type and encoding properties to outgoing Azure MQTT messages.
 * Added support for A-GPS and P-GPS in Azure IoT Hub integration.
 
+nrf9160: Asset Tracker
+----------------------
+
+* Added timestamps to environment sensor data when compiled with :kconfig:`CONFIG_USE_BME680_BSEC`
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
