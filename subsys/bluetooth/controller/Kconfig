@@ -131,6 +131,7 @@ choice SOFTDEVICE_CONTROLLER_VARIANT
 						     BT_CTLR_ADV_EXT || \
 						     BT_CTLR_PHY_CODED || \
 						     BT_CTLR_ADV_PERIODIC || \
+						     MPSL_CX_BT_1WIRE || \
 						     MPSL_CX_BT_3WIRE || \
 						     SOC_NRF5340_CPUNET)
 	default SOFTDEVICE_CONTROLLER_CENTRAL if BT_OBSERVER
