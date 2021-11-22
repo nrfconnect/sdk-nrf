@@ -417,6 +417,38 @@ void cloud_error_handler(int err)
 	error_handler(ERROR_CLOUD, err);
 }
 
+#if defined(CONFIG_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+/* Converts the A-GPS data request from GPS driver to GNSS API format. */
+static void agps_request_convert(
+	struct nrf_modem_gnss_agps_data_frame *dest,
+	const struct gps_agps_request *src)
+{
+	/* It is not necessary to request ephemerides and almanacs when P-GPS is enabled. */
+	dest->sv_mask_ephe = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0 : src->sv_mask_ephe;
+	dest->sv_mask_alm = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0 : src->sv_mask_alm;
+
+	dest->data_flags = 0;
+	if (src->utc) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
+	}
+	if (src->klobuchar) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+	if (src->nequick) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+	}
+	if (src->system_time_tow) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+	if (src->position) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+	}
+	if (src->integrity) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	}
+}
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_cloud_pgps_prediction *prediction;
 
@@ -439,7 +471,11 @@ static void manage_pgps(struct k_work *work)
 	int err;
 
 	LOG_INF("Sending prediction to modem...");
-	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+	struct nrf_modem_gnss_agps_data_frame request;
+
+	agps_request_convert(&request, &agps_request);
+
+	err = nrf_cloud_pgps_inject(prediction, &request);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
@@ -521,36 +557,6 @@ static void periodic_search_work_fn(struct k_work *work)
 }
 
 #endif /* CONFIG_CELL_POS_MULTICELL */
-
-#if defined(CONFIG_AGPS)
-/* Converts the A-GPS data request from GPS driver to GNSS API format. */
-static void agps_request_convert(
-	struct nrf_modem_gnss_agps_data_frame *dest,
-	const struct gps_agps_request *src)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-	dest->data_flags = 0;
-	if (src->utc) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
-	}
-	if (src->klobuchar) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
-	}
-	if (src->nequick) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
-	}
-	if (src->system_time_tow) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
-	}
-	if (src->position) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
-	}
-	if (src->integrity) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
-	}
-}
-#endif
 
 static void send_agps_request(struct k_work *work)
 {

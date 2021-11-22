@@ -90,7 +90,6 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 		types[type_count++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
 	}
 
-#if !defined(CONFIG_NRF_CLOUD_PGPS)
 	if (request->sv_mask_ephe) {
 		types[type_count++] = NRF_CLOUD_AGPS_EPHEMERIDES;
 	}
@@ -98,7 +97,6 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	if (request->sv_mask_alm) {
 		types[type_count++] = NRF_CLOUD_AGPS_ALMANAC;
 	}
-#endif
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
 		types[type_count++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
