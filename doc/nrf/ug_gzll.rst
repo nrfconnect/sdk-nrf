@@ -123,8 +123,8 @@ When the disabling operation is complete, Gazell calls the :c:func:`nrf_gzll_dis
 When this callback is completed, the Gazell CPU context, radio and Gazell timer stop.
 You can now call any of the configuration set functions, which will be valid, once Gazell is enabled again.
 
-Package transactions
-********************
+Packet transactions
+*******************
 
 A typical packet transaction between a Device and a Host consists of a Device initiating the transaction by sending a data packet to the Host and the Host sending an ACK packet in return.
 
@@ -153,9 +153,9 @@ The ACK packets are still sent in return to the Device.
 This prevents the application receiving duplicate data packets at the Host.
 
 .. figure:: images/gzll_fig8_host_dev_trans_fail.svg
-   :alt: Example on failing package transaction.
+   :alt: Example on failing packet transaction.
 
-   Example on failing package transaction.
+   Example on failing packet transaction.
 
 In the figure, the maximum number of allowed transmission attempts is set to 3.
 
