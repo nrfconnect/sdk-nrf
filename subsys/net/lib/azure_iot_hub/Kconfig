@@ -13,6 +13,7 @@ config $(module)
 	prompt "Azure IoT Hub [EXPERIMENTAL]" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_LIB
 	select MQTT_LIB_TLS
+	select EXPERIMENTAL
 
 if AZURE_IOT_HUB
 
