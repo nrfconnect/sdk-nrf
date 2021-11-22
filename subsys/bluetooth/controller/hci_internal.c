@@ -903,6 +903,12 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
+#ifdef CONFIG_MPSL_CX_BT
+	case SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY:
+		return sdc_hci_cmd_vs_config_coex_priority((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_SCAN_MODE:
+		return sdc_hci_cmd_vs_config_coex_scan_mode((void *)cmd_params);
+#endif	/* CONFIG_MPSL_CX_BT */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

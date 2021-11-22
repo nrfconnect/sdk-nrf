@@ -45,6 +45,22 @@ For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays
 A sample devicetree overlay is available at :file:`samples/bluetooth/radio_coex_3wire/boards/nrf52840dk_nrf52840.overlay`.
 The elements are described in the bindings: :file:`dts/bindings/radio_coex/sdc-radio-coex-three-wire.yaml`.
 
+Run-time configuration
+======================
+
+Per-state priorities
+--------------------
+
+It is possible to use a different priority when requesting a session, depending on the session's role: either advertising, scanning, in a connection as master or as a slave.
+To do so, use the HCI VS command :c:enum:`SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY`. Its parameters are described in  :c:type:`sdc_hci_cmd_vs_config_coex_priority_t`.
+
+Scanner request mode
+--------------------
+
+It is possible to configure the scanner's behavior when requesting sessions:
+Either request a coex session as soon as it has received a valid access address, or request only before transmitting.
+To do so, use the HCI VS command :c:enum:`SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_SCAN_MODE`. Its parameters are described in  :c:type:`sdc_hci_cmd_vs_config_coex_scan_mode_t`.
+
 .. _ug_bt_coex_sample:
 
 Sample application

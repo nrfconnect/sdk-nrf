@@ -11,6 +11,9 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/uuid.h>
+#include <bluetooth/hci.h>
+#include <sdc_hci_vs.h>
+#include <mpsl_coex.h>
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_egu.h>
@@ -263,8 +266,83 @@ static void console_print_thread(void)
 	}
 }
 
+static int set_prio(void)
+{
+	int err = 0;
+	struct net_buf *buf;
+	sdc_hci_cmd_vs_config_coex_priority_t *cmd_params;
+
+	/* All bluetooth states except SLAVE will use a low priority. */
+	for (int state = SDC_HCI_VS_COEX_BT_STATE_ADVERTISING;
+	     state < SDC_HCI_VS_COEX_BT_STATE_CONN_SLAVE;
+	     state++) {
+		buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY,
+					sizeof(*cmd_params));
+		if (!buf) {
+			printk("Could not allocate command buffer\n");
+			return -ENOMEM;
+		}
+		cmd_params = net_buf_add(buf, sizeof(*cmd_params));
+		cmd_params->state = state;
+		cmd_params->priority = MPSL_COEX_PRIORITY_LOW;
+		cmd_params->escalation_threshold = MPSL_COEX_ESCALATION_THRESHOLD_OFF;
+		err |= bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY, buf, NULL);
+		if(err) return err;
+	}
+	/* SLAVE state uses a low priority, escalating to high after 5 denied
+	 * requests. */
+	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY,
+				sizeof(*cmd_params));
+	if (!buf) {
+		printk("Could not allocate command buffer\n");
+		return -ENOMEM;
+	}
+	cmd_params = net_buf_add(buf, sizeof(*cmd_params));
+	cmd_params->state = SDC_HCI_VS_COEX_BT_STATE_CONN_SLAVE;
+	cmd_params->priority = MPSL_COEX_PRIORITY_LOW;
+	cmd_params->escalation_threshold = 5;
+	err |= bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_PRIORITY, buf, NULL);
+
+	if (err) {
+		return err;
+	}
+
+	printk("Successfully set state priorities\n");
+
+	return 0;
+}
+
+static int set_scan_mode(void)
+{
+	int err = 0;
+	struct net_buf *buf;
+	sdc_hci_cmd_vs_config_coex_scan_mode_t *cmd_params;
+
+	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_SCAN_MODE,
+				sizeof(*cmd_params));
+	if (!buf) {
+		printk("Could not allocate command buffer\n");
+		return -ENOMEM;
+	}
+
+	cmd_params = net_buf_add(buf, sizeof(*cmd_params));
+	cmd_params->mode = SDC_HCI_VS_COEX_SCAN_MODE_REQUEST_ON_TX;
+
+	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_CONFIG_COEX_SCAN_MODE, buf, NULL);
+
+	if (err) {
+		return err;
+	}
+
+	printk("Successfully set scan mode\n");
+
+	return 0;
+}
+
 void main(void)
 {
+	int err;
+
 	printk("Starting Radio Coex Demo 3wire on board %s\n", CONFIG_BOARD);
 
 	if (bt_enable(NULL)) {
@@ -272,6 +350,18 @@ void main(void)
 		return;
 	}
 	printk("Bluetooth initialized\n");
+
+	/* Demonstrate how to set the role priorities and scan mode, even though
+	 * this sample only does advertising. */
+	err = set_prio();
+	if(err) {
+		printk("Error setting coex per-state priorities: %d\n", err);
+	}
+
+	err = set_scan_mode();
+	if(err) {
+		printk("Error setting coex scan mode: %d\n", err);
+	}
 
 	setup_radio_event_counter();
 
