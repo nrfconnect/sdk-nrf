@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/__assert.h>
 #include <hal/nrf_gpio.h>
+#include <soc_secure.h>
 
 static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
 {
@@ -49,28 +50,28 @@ static int fem_nrf21540_gpio_pins_forward(void)
 	uint8_t tx_en_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), tx_en_gpios);
 
 	fem_pin_num_correction(&tx_en_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), tx_en_gpios));
-	nrf_gpio_pin_mcu_select(tx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(tx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
 	uint8_t rx_en_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), rx_en_gpios);
 
 	fem_pin_num_correction(&rx_en_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), rx_en_gpios));
-	nrf_gpio_pin_mcu_select(rx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(rx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
 	uint8_t pdn_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), pdn_gpios);
 
 	fem_pin_num_correction(&pdn_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), pdn_gpios));
-	nrf_gpio_pin_mcu_select(pdn_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(pdn_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
 	uint8_t mode_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), mode_gpios);
 
 	fem_pin_num_correction(&mode_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), mode_gpios));
-	nrf_gpio_pin_mcu_select(mode_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(mode_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
@@ -78,7 +79,7 @@ static int fem_nrf21540_gpio_pins_forward(void)
 
 	fem_pin_num_correction(&ant_sel_pin,
 			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios));
-	nrf_gpio_pin_mcu_select(ant_sel_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(ant_sel_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
@@ -88,10 +89,10 @@ static int fem_nrf21540_gpio_pins_forward(void)
 	uint8_t mosi_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), mosi_pin);
 
 	fem_pin_num_correction(&cs_pin, DT_SPI_DEV_CS_GPIOS_LABEL(MPSL_FEM_SPI_IF));
-	nrf_gpio_pin_mcu_select(cs_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	nrf_gpio_pin_mcu_select(sck_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	nrf_gpio_pin_mcu_select(miso_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	nrf_gpio_pin_mcu_select(mosi_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(cs_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(sck_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(miso_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(mosi_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 	return 0;
@@ -107,14 +108,14 @@ static int fem_simple_gpio_pins_forward(void)
 	uint8_t ctx_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), ctx_gpios);
 
 	fem_pin_num_correction(&ctx_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), ctx_gpios));
-	nrf_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
 	uint8_t crx_pin = DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), crx_gpios);
 
 	fem_pin_num_correction(&crx_pin, DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), crx_gpios));
-	nrf_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 	return 0;
