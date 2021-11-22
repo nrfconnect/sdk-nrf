@@ -33,7 +33,7 @@ Enabling coexistence and MPSL
 Make sure that the following Kconfig options are enabled:
 
    * :kconfig:`CONFIG_MPSL_CX`
-   * :kconfig:`CONFIG_MPSL_CX_BT`
+   * :kconfig:`CONFIG_MPSL_CX_BT_3WIRE`
 
 .. _ug_bt_coex_config:
 
