@@ -23,6 +23,7 @@ config MPSL_CX_THREAD
 	select GPIO
 	depends on !BT
 	bool "Thread Radio Coexistence [EXPERIMENTAL]"
+	select EXPERIMENTAL
 	help
 	  Radio Coexistence interface implementation according to Thread Radio
 	  Coexistence Practical recommendations for using a 3-wire PTA

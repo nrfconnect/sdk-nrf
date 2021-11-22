@@ -8,6 +8,7 @@ menuconfig AZURE_FOTA
 	bool "Azure FOTA library [EXPERIMENTAL]"
 	depends on FOTA_DOWNLOAD
 	depends on CJSON_LIB
+	select EXPERIMENTAL
 
 if AZURE_FOTA
 
