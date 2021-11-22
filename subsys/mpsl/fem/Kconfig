@@ -30,6 +30,7 @@ config MPSL_FEM_PIN_FORWARDER
 	bool "Forward pin control for front-end module (FEM) to the radio core"
 	depends on SOC_NRF5340_CPUAPP
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
+	depends on !TRUSTED_EXECUTION_NONSECURE || BUILD_WITH_TFM
 	default y
 
 if MPSL_FEM || MPSL_FEM_PIN_FORWARDER
