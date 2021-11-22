@@ -114,6 +114,11 @@ Common Application Framework (CAF)
     ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
     The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
 
+Bootloader libraries
+--------------------
+
+* Added a separate section for :ref:`lib_bootloader`.
+
 Modem libraries
 ---------------
 
@@ -124,6 +129,11 @@ sdk-nrfxlib
 -----------
 
 See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
+
+Other libraries
+---------------
+
+* Moved :ref:`lib_bootloader` to a section of their own.
 
 Modem library
 +++++++++++++
