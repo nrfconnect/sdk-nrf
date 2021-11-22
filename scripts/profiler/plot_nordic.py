@@ -61,7 +61,7 @@ class DrawState():
 
 class PlotNordic():
 
-    def __init__(self, stream=None, log_lvl=logging.WARNING):
+    def __init__(self, stream=None, event_close=None, log_lvl=logging.WARNING):
         plt.rcParams['toolbar'] = 'None'
         plt.ioff()
         self.plot_config = PlotNordicConfig
@@ -75,11 +75,14 @@ class PlotNordic():
 
         if stream is not None:
             timeouts = {
-                'descriptions': None,
+                'descriptions': 1,
                 'events': 0
             }
             self.in_stream = stream
             self.in_stream.set_timeouts(timeouts)
+
+        if event_close is not None:
+            self.event_close = event_close
 
         self.logger = logging.getLogger('Plot Nordic')
         self.logger_console = logging.StreamHandler()
@@ -450,17 +453,26 @@ class PlotNordic():
 
         self.draw_state.ax.add_collection(PatchCollection(rects))
         plt.gcf().canvas.flush_events()
+        if self.event_close.is_set():
+            self.close_event(None)
         if self.close_event_flag:
             sys.exit()
 
     def plot_events_real_time(self, selected_events_types=None):
         self.start_time = time.time()
         #Receive event descriptions
-        try:
-            bytes = self.in_stream.recv_desc()
-        except StreamError as err:
-            self.logger.error("Receiving error: {}. Exiting".format(err))
-            sys.exit()
+        while True:
+            try:
+                bytes = self.in_stream.recv_desc()
+                break
+            except StreamError as err:
+                if err.args[1] == StreamError.TIMEOUT_MSG:
+                    if self.event_close.is_set():
+                        self.logger.info("Module closed before receiving event descriptions.")
+                        sys.exit()
+                    continue
+                self.logger.error("Receiving error: {}. Exiting".format(err))
+                sys.exit()
         data_str = bytes.decode()
         event_types_dict = json.loads(data_str)
         self.processed_events.registered_events_types = dict((int(k), EventType.deserialize(v))

@@ -18,10 +18,12 @@ class Command(Enum):
     INFO = 3
 
 class Rtt2Stream:
-    def __init__(self, out_stream, config=RttNordicConfig, log_lvl=logging.INFO):
+    def __init__(self, out_stream, event_close, config=RttNordicConfig, log_lvl=logging.INFO):
         self.config = config
 
         self.out_stream = out_stream
+
+        self.event_close = event_close
 
         self.logger = logging.getLogger('Profiler Rtt to stream')
         self.logger_console = logging.StreamHandler()
@@ -151,6 +153,11 @@ class Rtt2Stream:
         desc_buf = bytearray()
         # Empty field is sent after last event description
         while True:
+            if self.event_close.is_set():
+                self.logger.info("Module closed before receiving event descriptions.")
+                self._disconnect_rtt()
+                sys.exit()
+
             try:
                 buf_temp = self.jlink.rtt_read(self.rtt_up_channels['info'],
                                                self.config['rtt_read_chunk_size'],
@@ -176,6 +183,9 @@ class Rtt2Stream:
 
         self._start_logging_events()
         while True:
+            if self.event_close.is_set():
+                self.close()
+
             buf = self._read_bytes()
 
             if len(buf) > 0:
