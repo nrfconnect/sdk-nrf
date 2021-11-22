@@ -169,9 +169,11 @@ Testing
 =======
 
 .. note::
-    The testing procedure assumes you are using the mobile Matter controller application.
-    You can also obtain the measurement values using the PC command-line-based Matter controller and invoking the read commands manually.
-    To see how to send read commands from the PC Matter controller, read the :doc:`matter:python_chip_controller_building` guide in the Matter documentation.
+   The testing procedure assumes you are using the mobile Matter controller application.
+   You can also obtain the measurement values using the PC command-line-based Matter controller and invoking the read commands manually.
+   Compared with the PC Matter controller, the mobile Matter controller only gives access to a subset of clusters supported by the Matter weather station application.
+   If you want to access all the supported clusters, including Descriptor, Identify, and Power Source clusters, use the PC Matter controller.
+   To see how to send commands from the PC Matter controller, read the :doc:`matter:python_chip_controller_building` guide in the Matter documentation.
 
 After programming the application, perform the following steps to test the Matter weather station application on the Thingy:53 with the mobile Matter controller application:
 

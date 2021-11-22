@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Matter weather station application"
+
+config AVERAGE_CURRENT_CONSUMPTION
+	int "Average device current consumption in microamperes"
+	default 0
+	help
+	  The predicted average current consumption of the Matter weather station
+	  device, used to estimate the remaining battery time.
+
+source "Kconfig.zephyr"

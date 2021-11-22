@@ -4,12 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
-
 /*
  * This file is used to enable a partition which is used through the flash API
  * but which is in reality stored in RAM. This is done to load data from
@@ -70,6 +64,11 @@
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
 		zephyr,shell-uart = &cdc_acm_uart0;
+		nordic,pm-ext-flash = &mx25r64;
+	};
+
+	aliases {
+		buzzer-pwm = &pwm1;
 	};
 };
 
@@ -89,16 +88,7 @@
 };
 
 /* Disable unused peripherals to reduce power consumption */
-&adc {
-	status = "disabled";
-};
-&gpio1 {
-	status = "disabled";
-};
 &pwm0 {
-	status = "disabled";
-};
-&pwm1 {
 	status = "disabled";
 };
 &pwm2 {

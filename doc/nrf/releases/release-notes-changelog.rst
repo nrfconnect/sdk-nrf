@@ -133,6 +133,10 @@ Pelion client
 Thingy:53: Matter weather station
 ---------------------------------
 
+* Added:
+  * Support for the Power Source cluster, used to expose information about the battery.
+  * Support for the Identify cluster, which uses the built-in buzzer to help find the device.
+
 * Updated:
 
   * Updated to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
