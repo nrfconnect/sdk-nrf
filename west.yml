@@ -172,7 +172,7 @@ manifest:
       - find-my
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.27.1
+      revision: 0.27.3
       remote: memfault
 
   # West-related configuration for the nrf repository.
