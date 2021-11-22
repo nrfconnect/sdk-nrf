@@ -109,14 +109,14 @@ static void trace_register_events(void)
 	}
 }
 
-int event_manager_event_manager_trace_event_init(void)
+int event_manager_trace_event_init(void)
 {
 	/* Every profiled Event Manager event registers a single profiler event.
 	 * Apart from that 2 additional profiler events are used to indicate processing
 	 * start and end of an Event Manager event.
 	 */
 	__ASSERT_NO_MSG(__stop_profiler_info - __start_profiler_info + 2 <=
-			CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS);
+			CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS);
 
 	if (profiler_init()) {
 		LOG_ERR("System profiler: initialization problem\n");
