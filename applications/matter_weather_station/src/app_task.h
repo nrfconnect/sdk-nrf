@@ -9,6 +9,7 @@
 #include "app_event.h"
 #include "led_widget.h"
 
+#include <app/clusters/identify-server/identify-server.h>
 #include <platform/CHIPDeviceLayer.h>
 
 #ifdef CONFIG_MCUMGR_SMP_BT
@@ -22,7 +23,9 @@ public:
 	int StartApp();
 
 	void PostEvent(const AppEvent &aEvent);
-	void UpdateClusterState();
+	void UpdateClustersState();
+	static void OnIdentifyStart(Identify *);
+	static void OnIdentifyStop(Identify *);
 
 private:
 	friend AppTask &GetAppTask();
@@ -30,6 +33,10 @@ private:
 	int Init();
 	void OpenPairingWindow();
 	void DispatchEvent(AppEvent &event);
+	void UpdateTemperatureClusterState();
+	void UpdatePressureClusterState();
+	void UpdateRelativeHumidityClusterState();
+	void UpdatePowerSourceClusterState();
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);
@@ -39,6 +46,7 @@ private:
 	static void ButtonReleaseHandler();
 	static void FunctionTimerHandler();
 	static void MeasurementsTimerHandler();
+	static void IdentifyTimerHandler();
 	static void UpdateStatusLED();
 	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);

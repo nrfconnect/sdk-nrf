@@ -6,11 +6,14 @@
 
 #include "app_task.h"
 
+#include "battery.h"
+#include "buzzer.h"
 #include "led_widget.h"
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
+#include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
@@ -25,6 +28,7 @@
 
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
+using namespace ::chip::app;
 
 LOG_MODULE_DECLARE(app);
 
@@ -32,6 +36,10 @@ namespace
 {
 enum class FunctionTimerMode { kDisabled, kFactoryResetTrigger, kFactoryResetComplete };
 enum class LedState { kAlive, kAdvertisingBle, kConnectedBle, kProvisioned };
+
+#if CONFIG_AVERAGE_CURRENT_CONSUMPTION <= 0
+#error Invalid CONFIG_AVERAGE_CURRENT_CONSUMPTION value set
+#endif
 
 constexpr size_t kAppEventQueueSize = 10;
 constexpr size_t kFactoryResetTriggerTimeoutMs = 3000;
@@ -49,10 +57,28 @@ constexpr uint8_t kPressureMeasurementEndpointId = 3;
 constexpr int16_t kPressureMeasurementAttributeMaxValue = 0x7fff;
 constexpr int16_t kPressureMeasurementAttributeMinValue = 0x8001;
 constexpr int16_t kPressureMeasurementAttributeInvalidValue = 0x8000;
+constexpr uint8_t kPowerSourceEndpointId = 0;
+constexpr int16_t kMinimalOperatingVoltageMv = 3200;
+constexpr int16_t kMaximalOperatingVoltageMv = 4050;
+constexpr int16_t kWarningThresholdVoltageMv = 3450;
+constexpr int16_t kCriticalThresholdVoltageMv = 3250;
+constexpr uint8_t kMinBatteryPercentage = 0;
+/* Value is expressed in half percent units ranging from 0 to 200. */
+constexpr uint8_t kMaxBatteryPercentage = 200;
+/* Battery capacity in uAh */
+constexpr uint32_t kBatteryCapacityUaH = 1350000;
+/* Average device current consumption in uA */
+constexpr uint32_t kDeviceAverageCurrentConsumptionUa = CONFIG_AVERAGE_CURRENT_CONSUMPTION;
+/* Fully charged battery operation time in seconds */
+constexpr uint32_t kFullBatteryOperationTime = kBatteryCapacityUaH / kDeviceAverageCurrentConsumptionUa * 3600;
+constexpr uint8_t kIdentifyEndpointId = 0;
+/* It is recommended to toggle the signalled state with 0.5 s interval. */
+constexpr size_t kIdentifyTimerIntervalMs = 500;
 
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
 k_timer sMeasurementsTimer;
+k_timer sIdentifyTimer;
 FunctionTimerMode sFunctionTimerMode = FunctionTimerMode::kDisabled;
 
 LEDWidget sRedLED;
@@ -66,7 +92,10 @@ bool sHaveBLEConnections;
 
 LedState sLedState = LedState::kAlive;
 
-const device *kBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
+Identify sIdentify = { chip::EndpointId{ kIdentifyEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
+		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+
+const device *sBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
 } /* namespace */
 
 AppTask AppTask::sAppTask;
@@ -90,8 +119,28 @@ int AppTask::Init()
 		return ret;
 	}
 
-	if (!kBme688SensorDev) {
+	if (!sBme688SensorDev) {
 		LOG_ERR("BME688 sensor init failed");
+		return -1;
+	}
+
+	if (BatteryMeasurementInit()) {
+		LOG_ERR("Battery measurement init failed");
+		return -1;
+	}
+
+	if (BatteryMeasurementEnable()) {
+		LOG_ERR("Enabling battery measurement failed");
+		return -1;
+	}
+
+	if (BatteryChargeControlInit()) {
+		LOG_ERR("Battery charge control init failed");
+		return -1;
+	}
+
+	if (BuzzerInit()) {
+		LOG_ERR("Buzzer init failed");
 		return -1;
 	}
 
@@ -108,6 +157,8 @@ int AppTask::Init()
 		&sMeasurementsTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::MeasurementsTimer }); },
 		nullptr);
 	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
+	k_timer_init(
+		&sIdentifyTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::IdentifyTimer }); }, nullptr);
 
 	/* Init ZCL Data Model and start server */
 	chip::Server::GetInstance().Init();
@@ -189,6 +240,9 @@ void AppTask::DispatchEvent(AppEvent &event)
 	case AppEvent::MeasurementsTimer:
 		MeasurementsTimerHandler();
 		break;
+	case AppEvent::IdentifyTimer:
+		IdentifyTimerHandler();
+		break;
 	case AppEvent::UpdateLedState:
 		event.UpdateLedStateEvent.LedWidget->UpdateState();
 		break;
@@ -250,21 +304,30 @@ void AppTask::FunctionTimerHandler()
 
 void AppTask::MeasurementsTimerHandler()
 {
-	sAppTask.UpdateClusterState();
+	sAppTask.UpdateClustersState();
 }
 
-void AppTask::UpdateClusterState()
+void AppTask::OnIdentifyStart(Identify *)
 {
-	struct sensor_value sTemperature, sPressure, sHumidity;
-	int result = sensor_sample_fetch(kBme688SensorDev);
+	k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs), K_MSEC(kIdentifyTimerIntervalMs));
+}
+
+void AppTask::OnIdentifyStop(Identify *)
+{
+	k_timer_stop(&sIdentifyTimer);
+	BuzzerSetState(false);
+}
+
+void AppTask::IdentifyTimerHandler()
+{
+	BuzzerToggleState();
+}
+
+void AppTask::UpdateTemperatureClusterState()
+{
+	struct sensor_value sTemperature;
 	EmberAfStatus status;
-
-	if (result != 0) {
-		LOG_ERR("Fetching data from BME688 sensor failed with: %d", result);
-		return;
-	}
-
-	result = sensor_channel_get(kBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &sTemperature);
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &sTemperature);
 	if (result == 0) {
 		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
 		 * 0.01 degC. val1 is an integer part of the value and val2 is fractional part in one-millionth
@@ -277,18 +340,21 @@ void AppTask::UpdateClusterState()
 			newValue = kTemperatureMeasurementAttributeInvalidValue;
 		}
 
-		status = emberAfWriteAttribute(kTemperatureMeasurementEndpointId, ZCL_TEMP_MEASUREMENT_CLUSTER_ID,
-					       ZCL_TEMP_MEASURED_VALUE_ATTRIBUTE_ID, CLUSTER_MASK_SERVER,
-					       reinterpret_cast<uint8_t *>(&newValue), ZCL_INT16S_ATTRIBUTE_TYPE);
-
+		status = Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
+			kTemperatureMeasurementEndpointId, newValue);
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating temperature measurement %x", status);
 		}
 	} else {
 		LOG_ERR("Getting temperature measurement data from BME688 failed with: %d", result);
 	}
+}
 
-	result = sensor_channel_get(kBme688SensorDev, SENSOR_CHAN_PRESS, &sPressure);
+void AppTask::UpdatePressureClusterState()
+{
+	struct sensor_value sPressure;
+	EmberAfStatus status;
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_PRESS, &sPressure);
 	if (result == 0) {
 		/* Defined by cluster pressure measured value = 10 x pressure in kPa with resolution of 0.1 kPa.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
@@ -301,18 +367,21 @@ void AppTask::UpdateClusterState()
 			newValue = kPressureMeasurementAttributeInvalidValue;
 		}
 
-		status = emberAfWriteAttribute(kPressureMeasurementEndpointId, ZCL_PRESSURE_MEASUREMENT_CLUSTER_ID,
-					       ZCL_PRESSURE_MEASURED_VALUE_ATTRIBUTE_ID, CLUSTER_MASK_SERVER,
-					       reinterpret_cast<uint8_t *>(&newValue), ZCL_INT16S_ATTRIBUTE_TYPE);
-
+		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
+										       newValue);
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating pressure measurement %x", status);
 		}
 	} else {
 		LOG_ERR("Getting pressure measurement data from BME688 failed with: %d", result);
 	}
+}
 
-	result = sensor_channel_get(kBme688SensorDev, SENSOR_CHAN_HUMIDITY, &sHumidity);
+void AppTask::UpdateRelativeHumidityClusterState()
+{
+	struct sensor_value sHumidity;
+	EmberAfStatus status;
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_HUMIDITY, &sHumidity);
 	if (result == 0) {
 		/* Defined by cluster humidity measured value = 100 x humidity in %RH with resolution of 0.01 %.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
@@ -325,17 +394,116 @@ void AppTask::UpdateClusterState()
 			newValue = kHumidityMeasurementAttributeInvalidValue;
 		}
 
-		status = emberAfWriteAttribute(kHumidityMeasurementEndpointId,
-					       ZCL_RELATIVE_HUMIDITY_MEASUREMENT_CLUSTER_ID,
-					       ZCL_RELATIVE_HUMIDITY_MEASURED_VALUE_ATTRIBUTE_ID, CLUSTER_MASK_SERVER,
-					       reinterpret_cast<uint8_t *>(&newValue), ZCL_INT16U_ATTRIBUTE_TYPE);
-
+		status = Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Set(
+			kHumidityMeasurementEndpointId, newValue);
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating relative humidity measurement %x", status);
 		}
 	} else {
 		LOG_ERR("Getting humidity measurement data from BME688 failed with: %d", result);
 	}
+}
+
+void AppTask::UpdatePowerSourceClusterState()
+{
+	EmberAfStatus status;
+	int32_t voltage = BatteryMeasurementReadVoltageMv();
+	/* Value is expressed in half percent units ranging from 0 to 200. */
+	uint8_t batteryPercentage;
+	uint32_t batteryTimeRemaining;
+	EmberAfPowerSourceStatus batteryStatus;
+	EmberAfBatChargeLevel batteryChargeLevel;
+	bool batteryPresent;
+	EmberAfBatChargeState batteryCharged;
+
+	if (voltage < 0) {
+		voltage = 0;
+		batteryPercentage = 0;
+		batteryStatus = EMBER_ZCL_POWER_SOURCE_STATUS_UNAVAILABLE;
+		batteryPresent = false;
+
+		LOG_ERR("Battery level measurement failed %d", voltage);
+	} else {
+		batteryStatus = EMBER_ZCL_POWER_SOURCE_STATUS_ACTIVE;
+		batteryPresent = true;
+	}
+
+	if (voltage <= kMinimalOperatingVoltageMv) {
+		batteryPercentage = kMinBatteryPercentage;
+	} else if (voltage >= kMaximalOperatingVoltageMv) {
+		batteryPercentage = kMaxBatteryPercentage;
+	} else {
+		batteryPercentage = kMaxBatteryPercentage * (voltage - kMinimalOperatingVoltageMv) /
+				    (kMaximalOperatingVoltageMv - kMinimalOperatingVoltageMv);
+	}
+
+	batteryTimeRemaining = kFullBatteryOperationTime * batteryPercentage / kMaxBatteryPercentage;
+
+	if (voltage < kCriticalThresholdVoltageMv) {
+		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_CRITICAL;
+	} else if (voltage < kWarningThresholdVoltageMv) {
+		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_WARNING;
+	} else {
+		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_OK;
+	}
+
+	if (BatteryCharged()) {
+		batteryCharged = EMBER_ZCL_BAT_CHARGE_STATE_IS_CHARGING;
+	} else {
+		batteryCharged = EMBER_ZCL_BAT_CHARGE_STATE_IS_NOT_CHARGING;
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryVoltage::Set(kPowerSourceEndpointId, voltage);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery voltage failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryPercentRemaining::Set(kPowerSourceEndpointId,
+										 batteryPercentage);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery percentage failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryTimeRemaining::Set(kPowerSourceEndpointId,
+									      batteryTimeRemaining);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery time remaining failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryChargeLevel::Set(kPowerSourceEndpointId, batteryChargeLevel);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery charge level failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId, batteryStatus);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery status failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryPresent::Set(kPowerSourceEndpointId, batteryPresent);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery present failed %x", status);
+	}
+
+	status = Clusters::PowerSource::Attributes::BatteryChargeState::Set(kPowerSourceEndpointId, batteryCharged);
+	if (status != EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_ERR("Updating battery charge failed %x", status);
+	}
+}
+
+void AppTask::UpdateClustersState()
+{
+	const int result = sensor_sample_fetch(sBme688SensorDev);
+
+	if (result == 0) {
+		UpdateTemperatureClusterState();
+		UpdatePressureClusterState();
+		UpdateRelativeHumidityClusterState();
+	} else {
+		LOG_ERR("Fetching data from BME688 sensor failed with: %d", result);
+	}
+
+	UpdatePowerSourceClusterState();
 }
 
 void AppTask::UpdateStatusLED()
