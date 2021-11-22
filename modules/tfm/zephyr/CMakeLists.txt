@@ -68,3 +68,5 @@ if (CONFIG_TFM_MINIMAL)
     -DPLATFORM_NV_COUNTER_MODULE_DISABLED=TRUE
     )
 endif()
+
+zephyr_include_directories(${NRF_DIR}/include/tfm)
