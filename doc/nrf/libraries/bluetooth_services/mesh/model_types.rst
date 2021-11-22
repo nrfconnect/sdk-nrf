@@ -22,7 +22,7 @@ Categorization
 Each model is classified into one of the following categories:
 
 * Server -- which contains states.
-* Client -- which reads and writes the the Server's states.
+* Client -- which reads and writes the Server's states.
 
 Moreover, some models also include a *Setup Server* model instance.
 The two server model instances share the states of the server model, but accept different messages.

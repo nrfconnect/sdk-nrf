@@ -35,7 +35,7 @@ Overview*
 
 .. note::
    Use this section to give a general overview of the library.
-   This is optional if the library is so small the the initial short description also gives an overview of the library.
+   This is optional if the library is so small the initial short description also gives an overview of the library.
 
 Implementation
 ==============
@@ -82,7 +82,7 @@ Usage*
 
 .. note::
    Use this section to explain how to use the library.
-   This is optional if the library is so small the the initial short description also gives information about how to use the library.
+   This is optional if the library is so small the initial short description also gives information about how to use the library.
 
 Samples using the library*
 **************************

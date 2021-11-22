@@ -98,7 +98,7 @@ For more details about the sensor trigger, see Zephyr's :ref:`zephyr:sensor_api`
 
 To use the sensor trigger, complete the following steps:
 
-1. Enable the sensor trigger option in the the sensor-specific Kconfig file.
+1. Enable the sensor trigger option in the sensor-specific Kconfig file.
    The Kconfig option name is different for each sensor.
    For example, for the LIS2DH accelerometer, set the ``CONFIG_LIS2DH_TRIGGER_GLOBAL_THREAD`` option to ``y``.
 #. Extend the module configuration file by adding :c:member:`sensor_config.trigger` in an array of :c:struct:`sensor_config`.

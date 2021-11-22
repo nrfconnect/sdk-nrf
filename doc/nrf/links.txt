@@ -621,16 +621,18 @@
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
 
-.. ### Source: avsystem.com
+.. ### Source: Chocolatey
 
-.. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
-.. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
+.. _`Install chocolatey`: https://chocolatey.org/install
+.. _`Chocolatey`: https://chocolatey.org/
+.. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
 
 .. ### Source: other
 
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
 
 .. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
+.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
 .. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
@@ -709,8 +711,6 @@
 
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
-.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
-
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
 
 .. _`CMock`: https://www.throwtheswitch.org/cmock
@@ -752,11 +752,10 @@
 
 .. _`Polte Location API`: https://www.polte.com/solutions/polte-location-api
 
-.. _`Install chocolatey`: https://chocolatey.org/install
-.. _`Chocolatey`: https://chocolatey.org/
-.. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
-
 .. _`SPDX tool`: https://spdx.dev/
 .. _`SPDX identifier`: https://spdx.dev/ids/
 
 .. _`dfu-util tool`: http://dfu-util.sourceforge.net/
+
+.. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
+.. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/

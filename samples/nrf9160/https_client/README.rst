@@ -108,4 +108,4 @@ In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`
 
-This sample offers also a possibility to use the TF-M module that is at :file:`modules/tee/tfm/` in the the |NCS| folder structure.
+This sample offers also a possibility to use the TF-M module that is at :file:`modules/tee/tfm/` in the |NCS| folder structure.
