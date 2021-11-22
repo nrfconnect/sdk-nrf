@@ -27,10 +27,17 @@ static int cx_thread_configure(void)
 
 	return mpsl_cx_thread_interface_config_set(&cfg);
 }
+#elif IS_ENABLED(CONFIG_MPSL_CX_BT_1WIRE)
+#include <mpsl/mpsl_cx_config_bluetooth.h>
+
+static inline int cx_bluetooth_1wire_configure(void)
+{
+	return mpsl_cx_bt_interface_1wire_config_set();
+}
 #elif IS_ENABLED(CONFIG_MPSL_CX_BT_3WIRE)
 #include <mpsl/mpsl_cx_config_bluetooth.h>
 
-static inline int cx_bluetooth_configure(void)
+static inline int cx_bluetooth_3wire_configure(void)
 {
 	return mpsl_cx_bt_interface_3wire_config_set();
 }
@@ -42,8 +49,10 @@ static int mpsl_cx_configure(void)
 
 #if IS_ENABLED(CONFIG_MPSL_CX_THREAD)
 	err = cx_thread_configure();
+#elif IS_ENABLED(CONFIG_MPSL_CX_BT_1WIRE)
+	err = cx_bluetooth_1wire_configure();
 #elif IS_ENABLED(CONFIG_MPSL_CX_BT_3WIRE)
-	err = cx_bluetooth_configure();
+	err = cx_bluetooth_3wire_configure();
 #else
 #error Incomplete CONFIG_MPSL_CX configuration. No supported coexistence protocol found.
 #endif

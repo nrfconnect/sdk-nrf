@@ -1,0 +1,23 @@
+# Copyright (c) 2021 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a representation of an external radio coexistence setup that has a
+    one-pin control interface (GRANT). This extends that interface with
+    additional parameters.
+
+compatible: "sdc-radio-coex-one-wire"
+
+include: generic-radio-coex-one-wire.yaml
+
+properties:
+    concurrency-mode:
+        type: int
+        required: true
+        description: |
+            Concurrency mode with the external modem supported by 1-wire coexistence.
+            The possible values are:
+            0: 1-wire configuration to allow no concurrency with the external modem
+               when the grant line is asserted.
+            1: 1-wire configuration to allow the radio to allow RX mode concurrency
+               with the external modem when the grant line is asserted.

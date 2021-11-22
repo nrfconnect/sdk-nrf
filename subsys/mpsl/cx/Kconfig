@@ -35,10 +35,21 @@ config MPSL_CX_BT_3WIRE
 	select NRFX_GPIOTE
 	select GPIO
 	select NRFX_TIMER1
-	bool "Bluetooth Radio Coexistence"
+	bool "Bluetooth Radio 3-Wire Coexistence"
 	help
 	  Radio Coexistence interface implementation using a 3-wire PTA
 	  implementation for co-located 2.4 GHz radios.
+
+config MPSL_CX_BT_1WIRE
+	depends on SOC_SERIES_NRF52X
+	select NRFX_GPIOTE
+	select GPIO
+	select NRFX_TIMER1
+	select EXPERIMENTAL
+	bool "Bluetooth Radio 1-Wire Coexistence [EXPERIMENTAL]"
+	help
+	  Radio Coexistence interface implementation using a simple 1-wire PTA
+	  implementation for co-located radios.
 
 endchoice # MPSL_CX_CHOICE
 
