@@ -603,6 +603,11 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
+	if (srv->property_count > CONFIG_BT_MESH_PROP_MAXCOUNT) {
+		BT_ERR("Property counter is larger than max allowed value");
+		return -EINVAL;
+	}
+
 #if CONFIG_BT_SETTINGS
 	k_work_init_delayable(&srv->store_timer, store_timeout);
 #endif
