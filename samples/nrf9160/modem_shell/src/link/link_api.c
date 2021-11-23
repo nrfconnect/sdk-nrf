@@ -262,9 +262,6 @@ clean_exit:
 
 /* ****************************************************************************/
 
-/** SNR offset value that is used when mapping to dBs  */
-#define link_API_SNR_OFFSET_VALUE 25
-
 void link_api_coneval_read_for_shell(void)
 {
 	static const char * const coneval_result_strs[] = {
@@ -349,7 +346,7 @@ void link_api_coneval_read_for_shell(void)
 	mosh_print("  rsrq:            %d", params.rsrq);
 
 	mosh_print("  snr:             %d: %ddB", params.snr,
-			(params.snr - link_API_SNR_OFFSET_VALUE));
+			(params.snr - LINK_SNR_OFFSET_VALUE));
 	mosh_print("  cell_id:         %d", params.cell_id);
 
 	mosh_print("  mcc/mnc:         %d/%d", params.mcc, params.mnc);
@@ -368,37 +365,26 @@ void link_api_coneval_read_for_shell(void)
 
 /* ****************************************************************************/
 
-#define OP_FULL_NAME_STR_MAX_LEN 128
-#define OP_SHORT_NAME_STR_MAX_LEN 64
-#define OP_CELL_ID_STR_MAX_LEN 32
-#define OP_PLMN_STR_MAX_LEN 32
-
-/* Note: not all stored / parsed from xmonitor response */
-struct lte_xmonitor_resp_t {
-	int32_t rsrp;
-	int32_t snr;
-	uint32_t band;
-
-	char full_name_str[OP_FULL_NAME_STR_MAX_LEN + 1];
-	char short_name_str[OP_SHORT_NAME_STR_MAX_LEN + 1];
-	char plmn_str[OP_PLMN_STR_MAX_LEN + 1];
-	char cell_id_str[OP_CELL_ID_STR_MAX_LEN + 1];
-};
-
 /* For having a numeric constant in scanf string length */
 #define L(x) STRINGIFY(x)
 
-static int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
+int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 {
 	int ret = 0;
+	int len;
+	char tmp_cell_id_str[OP_CELL_ID_STR_MAX_LEN + 1] = { 0 };
+	char tmp_tac_str[OP_TAC_STR_MAX_LEN + 1] = { 0 };
 
 	memset(resp, 0, sizeof(struct lte_xmonitor_resp_t));
 
-	/* Following might not be included in a response if not camping on a cell,
+	/* All might not be included in a response if not camping on a cell,
 	 * thus marking these specifically
 	 */
 	resp->rsrp = -1;
 	resp->snr = -1;
+	resp->pci = -1;
+	resp->cell_id = -1;
+	resp->tac = -1;
 
 	ret = nrf_modem_at_scanf("AT%XMONITOR",
 				 "%%XMONITOR: "
@@ -406,25 +392,43 @@ static int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 				 "%"L(OP_FULL_NAME_STR_MAX_LEN)"[^,]," /* <full_name> with quotes */
 				 "%"L(OP_SHORT_NAME_STR_MAX_LEN)"[^,],"/* <short_name> with quotes*/
 				 "%"L(OP_PLMN_STR_MAX_LEN)"[^,],"      /* <plmn> */
-				 "%*[^,],"                             /* <tac>: ignored */
+				 "%"L(OP_TAC_STR_MAX_LEN)"[^,],"       /* <tac> with quotes */
 				 "%*d,"                                /* <AcT>: ignored */
 				 "%u,"                                 /* <band> */
 				 "%"L(OP_CELL_ID_STR_MAX_LEN)"[^,],"   /* <cell_id> with quotes */
-				 "%*u,"                                /* <phys_cell_id>: ignored */
+				 "%u,"                                 /* <phys_cell_id> */
 				 "%*u,"                                /* <EARFCN>: ignored */
 				 "%d,"                                 /* <rsrp> */
 				 "%d",                                 /* <snr> */
 					resp->full_name_str,
 					resp->short_name_str,
 					resp->plmn_str,
+					tmp_tac_str,
 					&resp->band,
-					resp->cell_id_str,
+					tmp_cell_id_str,
+					&resp->pci,
 					&resp->rsrp,
 					&resp->snr);
 	if (ret < 0) {
-		mosh_error("nrf_modem_at_scanf for XMONITOR returned err: %d", ret);
+		/* We don't want to print shell error from here, that should
+		 * be done in a caller.
+		 */
 		return ret;
 	}
+
+	/* Strip out the quotes and convert to decimal */
+	len = strlen(tmp_cell_id_str);
+	if (len > 2 && len <= OP_CELL_ID_STR_MAX_LEN) {
+		strncpy(resp->cell_id_str, tmp_cell_id_str + 1, len - 2);
+		resp->cell_id = strtol(resp->cell_id_str, NULL, 16);
+	}
+
+	len = strlen(tmp_tac_str);
+	if (len > 2 && len <= OP_TAC_STR_MAX_LEN) {
+		strncpy(resp->tac_str, tmp_tac_str + 1, len - 2);
+		resp->tac = strtol(resp->tac_str, NULL, 16);
+	}
+
 	return 0;
 }
 
@@ -434,11 +438,9 @@ static void link_api_modem_operator_info_read_for_shell(void)
 {
 	struct lte_xmonitor_resp_t xmonitor_resp;
 	int ret = link_api_xmonitor_read(&xmonitor_resp);
-	int cell_id;
-	int len;
 
 	if (ret) {
-		mosh_error("Operation failed, result: ret %d", ret);
+		mosh_error("link_api_xmonitor_read failed, result: ret %d", ret);
 		return;
 	}
 
@@ -454,18 +456,22 @@ static void link_api_modem_operator_info_read_for_shell(void)
 		mosh_print("Operator PLMN:        %s", xmonitor_resp.plmn_str);
 	}
 
-	len = strlen(xmonitor_resp.cell_id_str);
-	if (len > 2 && len <= OP_CELL_ID_STR_MAX_LEN) {
-		char tmp_array[OP_CELL_ID_STR_MAX_LEN + 1] = { 0 };
+	if (xmonitor_resp.cell_id >= 0) {
+		mosh_print("Current cell id:       %d (0x%s)", xmonitor_resp.cell_id,
+			   xmonitor_resp.cell_id_str);
+	}
 
-		/* Strip out the quotes */
-		strncpy(tmp_array, xmonitor_resp.cell_id_str + 1, len - 2);
-		cell_id = strtol(tmp_array, NULL, 16);
-		mosh_print("Current cell id:       %d (0x%s)", cell_id, tmp_array);
+	if (xmonitor_resp.pci >= 0) {
+		mosh_print("Current phy cell id:   %d", xmonitor_resp.pci);
 	}
 
 	if (xmonitor_resp.band) {
 		mosh_print("Current band:          %d", xmonitor_resp.band);
+	}
+
+	if (xmonitor_resp.tac >= 0) {
+		mosh_print("Current TAC:           %d (0x%s)", xmonitor_resp.tac,
+			   xmonitor_resp.tac_str);
 	}
 
 	if (xmonitor_resp.rsrp >= 0) {
@@ -479,7 +485,7 @@ static void link_api_modem_operator_info_read_for_shell(void)
 		mosh_print(
 			"Current snr:           %d: %ddB",
 			xmonitor_resp.snr,
-			(xmonitor_resp.snr - link_API_SNR_OFFSET_VALUE));
+			(xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE));
 	}
 }
 

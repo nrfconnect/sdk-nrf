@@ -13,6 +13,9 @@
 
 #include "mosh_defines.h"
 
+/** SNR offset value that is used when mapping to dBs  */
+#define LINK_SNR_OFFSET_VALUE 24
+
 #define PDP_TYPE_UNKNOWN 0x00
 #define PDP_TYPE_IPV4    0x01
 #define PDP_TYPE_IPV6    0x02
@@ -45,9 +48,31 @@ struct pdp_context_info_array {
 	size_t size;
 };
 
+#define OP_FULL_NAME_STR_MAX_LEN 128
+#define OP_SHORT_NAME_STR_MAX_LEN 64
+#define OP_CELL_ID_STR_MAX_LEN 32
+#define OP_PLMN_STR_MAX_LEN 32
+#define OP_TAC_STR_MAX_LEN 8
+
+struct lte_xmonitor_resp_t {
+	int32_t pci;
+	int32_t rsrp;
+	int32_t snr;
+	int32_t cell_id;
+	uint32_t band;
+	int32_t tac;
+
+	char full_name_str[OP_FULL_NAME_STR_MAX_LEN + 1];
+	char short_name_str[OP_SHORT_NAME_STR_MAX_LEN + 1];
+	char plmn_str[OP_PLMN_STR_MAX_LEN + 1];
+	char cell_id_str[OP_CELL_ID_STR_MAX_LEN + 1];
+	char tac_str[OP_TAC_STR_MAX_LEN + 1];
+};
+
 void link_api_modem_info_get_for_shell(bool connected);
 
-#if defined(CONFIG_AT_CMD)
+int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp);
+
 void link_api_coneval_read_for_shell(void);
 
 int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info);
@@ -71,6 +96,5 @@ struct pdp_context_info *link_api_get_pdp_context_info_by_pdn_cid(int pdn_cid);
  * @return 0 if operation was successful, otherwise an error code.
  */
 int link_api_rai_status(bool *rai_status);
-#endif
 
 #endif /* MOSH_LINK_API_H */

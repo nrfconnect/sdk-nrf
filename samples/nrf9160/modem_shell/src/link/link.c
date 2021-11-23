@@ -55,6 +55,20 @@ struct pdn_activation_status_info {
 /* Work for getting the modem info that ain't in lte connection ind: */
 static struct k_work registered_work;
 
+/* Work for getting the data needed to be shown after the cell change: */
+struct cell_change_data {
+	struct k_work work;
+
+	/* Data from LTE_LC_EVT_CELL_UPDATE: */
+
+	/* E-UTRAN cell ID, range 0 - LTE_LC_CELL_EUTRAN_ID_MAX */
+	uint32_t cell_id;
+
+	/* Tracking area code. */
+	uint32_t tac;
+};
+static struct cell_change_data cell_change_work_data;
+
 /* Work for a signal info: */
 static struct k_work modem_info_signal_work;
 
@@ -67,8 +81,9 @@ static struct k_work continuous_ncellmeas_work;
 static enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
 static enum lte_lc_neighbor_search_type ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 
-static void link_continuous_ncellmeas(struct k_work *work)
+static void link_continuous_ncellmeas(struct k_work *unused)
 {
+	ARG_UNUSED(unused);
 	if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 		link_ncellmeas_start(true,
 				     LINK_NCELLMEAS_MODE_CONTINUOUS,
@@ -197,6 +212,28 @@ static void link_registered_work(struct k_work *unused)
 
 /******************************************************************************/
 
+static void link_cell_change_work(struct k_work *work_item)
+{
+	struct cell_change_data *data = CONTAINER_OF(work_item, struct cell_change_data, work);
+	struct lte_xmonitor_resp_t xmonitor_resp;
+	int ret = link_api_xmonitor_read(&xmonitor_resp);
+
+	if (ret) {
+		mosh_print(
+			"LTE cell changed: ID: %d, Tracking area: %d",
+			data->cell_id, data->tac);
+		return;
+	}
+	mosh_print(
+		"LTE cell changed: ID: %d (0x%s), PCI %d, Tracking area: %d (0x%s), Band: %d, RSRP: %d (%ddBm), SNR: %d (%ddB)",
+		xmonitor_resp.cell_id, xmonitor_resp.cell_id_str, xmonitor_resp.pci,
+		xmonitor_resp.tac, xmonitor_resp.tac_str, xmonitor_resp.band,
+		xmonitor_resp.rsrp, (xmonitor_resp.rsrp - MODEM_INFO_RSRP_OFFSET_VAL),
+		xmonitor_resp.snr, (xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE));
+}
+
+/******************************************************************************/
+
 static void link_rsrp_signal_handler(char rsrp_value)
 {
 	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
@@ -206,10 +243,11 @@ static void link_rsrp_signal_handler(char rsrp_value)
 /******************************************************************************/
 
 #define MOSH_RSRP_UPDATE_INTERVAL_IN_SECS 5
-static void link_rsrp_signal_update(struct k_work *work)
+static void link_rsrp_signal_update(struct k_work *unused)
 {
 	static uint32_t timestamp_prev;
 
+	ARG_UNUSED(unused);
 	if ((timestamp_prev != 0) &&
 	    (k_uptime_get_32() - timestamp_prev <
 	     MOSH_RSRP_UPDATE_INTERVAL_IN_SECS * MSEC_PER_SEC)) {
@@ -226,6 +264,7 @@ static void link_rsrp_signal_update(struct k_work *work)
 
 void link_init(void)
 {
+	k_work_init(&cell_change_work_data.work, link_cell_change_work);
 	k_work_init(&registered_work, link_registered_work);
 	k_work_init(&modem_info_signal_work, link_rsrp_signal_update);
 	modem_info_rsrp_register(link_rsrp_signal_handler);
@@ -344,9 +383,9 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
-		mosh_print(
-			"LTE cell changed: Cell ID: %d, Tracking area: %d",
-			evt->cell.id, evt->cell.tac);
+		cell_change_work_data.cell_id = evt->cell.id;
+		cell_change_work_data.tac = evt->cell.tac;
+		k_work_submit(&cell_change_work_data.work);
 		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 			k_work_submit(&continuous_ncellmeas_work);
 		}
