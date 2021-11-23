@@ -31,6 +31,10 @@ int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const ce
 int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info *const cells_inf,
 			       const bool request_loc, nrf_cloud_cell_pos_response_t cb)
 {
+	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
+		return -EACCES;
+	}
+
 	int err = 0;
 	cJSON *cell_pos_req_obj = NULL;
 

@@ -77,6 +77,10 @@ static int json_add_types_array(cJSON * const obj, enum nrf_cloud_agps_type *typ
 int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 {
 #if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
+	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
+		return -EACCES;
+	}
+
 	int err;
 	enum nrf_cloud_agps_type types[9];
 	size_t type_count = 0;

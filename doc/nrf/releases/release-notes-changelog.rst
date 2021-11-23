@@ -417,6 +417,7 @@ Libraries for networking
   * Added handling of MQTT ping failures and MQTT input failures.
   * Updated the :c:func:`nrf_cloud_configured_client_id_get` function to use :c:func:`nrf_modem_at_cmd` instead of the deprecated :c:func:`at_cmd_write`.
   * Added functions :c:func:`nrf_cloud_rest_shadow_state_update` and :c:func:`nrf_cloud_rest_shadow_service_info_update` to the :ref:`lib_nrf_cloud_rest` library. They enable device shadow updates using REST.
+  * Added state checks to functions :c:func:`nrf_cloud_agps_request`, :c:func:`nrf_cloud_cell_pos_request`, :c:func:`nrf_cloud_pgps_request`, and :c:func:`json_send_to_cloud`. These functions should be called only after the device has connected to the nRF Cloud `` d2c`` topic.
 
 * :ref:`lib_nrf_cloud_agps` library:
 

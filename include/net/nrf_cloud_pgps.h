@@ -225,7 +225,9 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
  * if the GPS time of day is larger than 86339; or if the prediction_period_min
  * field is not within the range 120 to 480.
  *
- * @return 0 if successful, otherwise a (negative) error code.
+ * @retval 0       Request sent successfully.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
 
