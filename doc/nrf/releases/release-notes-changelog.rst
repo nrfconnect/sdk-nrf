@@ -405,6 +405,7 @@ Libraries for networking
   * Added support for Polte location service.
   * Removed device ID from the :c:func:`multicell_location_get` parameter list. nRF Cloud and HERE did not use it. Skyhook will now set modem UUID as its device ID.
   * Selection of location service changed from compile-time to runtime configuration.
+  * Added support for MQTT transport for nRF Cloud service.
 
 * :ref:`lib_nrf_cloud` library:
 

@@ -44,15 +44,15 @@ Each location method has its own implementation for the location retrieval:
    * :ref:`lte_lc_readme` for getting visible cellular base stations.
    * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.
       * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-      * The data transport method for the service is REST.
       * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
+      * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
 * Wi-Fi positioning
    * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
    * Sending access point information to the selected location service and getting the calculated location back to the device:
       * The location library has an implementation for the Wi-Fi location services.
       * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-      * The data transport method for the service is REST.
       * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
+      * The data transport method for the service is REST.
 
 Requirements
 ************
@@ -117,7 +117,7 @@ The following options control the use of GNSS assistance data:
 
 The following options control the transport method used with `nRF Cloud`_:
 
-* :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_.
+* :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:`CONFIG_NRF_CLOUD_MQTT` is not set.
 * :kconfig:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
 * :kconfig:`CONFIG_REST_CLIENT` - Enable :ref:`lib_rest_client` library.
 
