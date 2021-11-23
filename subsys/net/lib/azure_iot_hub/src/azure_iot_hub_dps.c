@@ -501,13 +501,18 @@ int dps_init(struct dps_config *cfg)
 int dps_start(void)
 {
 	int err;
+	static bool initial_load_done;
 
 	dps_reg_status.state = DPS_STATE_NOT_STARTED;
 
-	err = k_sem_take(&dps_reg_status.settings_loaded, K_SECONDS(1));
-	if (err) {
-		LOG_ERR("Settings were not loaded in time");
-		return -ETIMEDOUT;
+	if (!initial_load_done) {
+		err = k_sem_take(&dps_reg_status.settings_loaded, K_SECONDS(1));
+		if (err) {
+			LOG_ERR("Settings were not loaded in time");
+			return -ETIMEDOUT;
+		}
+
+		initial_load_done = true;
 	}
 
 	if (strlen(dps_reg_status.assigned_hub) > 0) {
@@ -642,4 +647,28 @@ bool dps_reg_in_progress(void)
 enum dps_reg_state dps_get_reg_state(void)
 {
 	return dps_reg_status.state;
+}
+
+int dps_reset(void)
+{
+	int err;
+
+	dps_reg_status.state = DPS_STATE_NOT_STARTED;
+	dps_reg_status.assigned_hub[0] = '\0';
+
+	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_KEY);
+	if (err) {
+		LOG_ERR("Failed to delete Azure IoT Hub hostname, error: %d", err);
+
+		return err;
+	}
+
+	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_LEN_KEY);
+	if (err) {
+		LOG_ERR("Failed to delete Azure IoT Hub hostname length, error: %d", err);
+
+		return err;
+	}
+
+	return 0;
 }

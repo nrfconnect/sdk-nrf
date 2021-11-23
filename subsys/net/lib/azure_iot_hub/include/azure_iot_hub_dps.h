@@ -104,6 +104,13 @@ enum dps_reg_state dps_get_reg_state(void);
  */
 bool dps_reg_in_progress(void);
 
+/* @brief Reset DPS information. This will trigger a new device provisioning
+ *	  upon the next connection establishment to Azure IoT Hub.
+ *
+ * @retval 0 if successul, otherwise a negative error code.
+ */
+int dps_reset(void);
+
 /**
  *@}
  */
