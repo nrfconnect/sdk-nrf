@@ -51,8 +51,9 @@ int link_sett_save_normal_mode_at_cmd_str(const char *at_str, uint8_t mem_slot);
 int link_sett_clear_normal_mode_at_cmd_str(uint8_t mem_slot);
 void link_sett_normal_mode_at_cmds_shell_print(void);
 
-int link_sett_save_normal_mode_autoconn_enabled(bool enabled);
+int link_sett_save_normal_mode_autoconn_enabled(bool enabled, bool use_rel14);
 bool link_sett_is_normal_mode_autoconn_enabled(void);
+bool link_sett_is_normal_mode_autoconn_rel14_used(void);
 void link_sett_normal_mode_autoconn_shell_print(void);
 
 void link_sett_modem_factory_reset(enum link_sett_modem_reset_type type);

@@ -154,11 +154,11 @@ static const char link_connect_usage_str[] =
 static const char link_sysmode_usage_str[] =
 	"Usage: link sysmode [options] | --read | --reset\n"
 	"Options:\n"
-	"  -r, --read,            Read system modes set in modem and by 'link sysmode'\n"
-	"      --reset,           Reset the set sysmode as default\n"
-	"  -m, --ltem,            Set LTE-M (LTE Cat-M1) system mode\n"
-	"  -n, --nbiot,           Set NB-IoT (LTE Cat-NB1) system mode\n"
-	"      --ltem_nbiot,      Set LTE-M + NB-IoT system mode\n"
+	"  -r, --read,             Read system modes set in modem and by 'link sysmode'\n"
+	"      --reset,            Reset the set sysmode as default\n"
+	"  -m, --ltem,             Set LTE-M (LTE Cat-M1) system mode\n"
+	"  -n, --nbiot,            Set NB-IoT (LTE Cat-NB1) system mode\n"
+	"      --ltem_nbiot,       Set LTE-M + NB-IoT system mode\n"
 	"  -g, --gnss,             Set GNSS system mode\n"
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
@@ -182,6 +182,7 @@ static const char link_funmode_usage_str[] =
 	"  -r, --read,              Read modem functional mode\n"
 	"  -0, --pwroff,            Set modem power off\n"
 	"  -1, --normal,            Set modem normal mode\n"
+	"      --normal_no_rel14,   Set modem normal mode without setting Release 14 features\n"
 	"  -4, --flightmode,        Set modem offline.\n"
 	"      --lteoff,            Deactivates LTE without shutting down GNSS services.\n"
 	"      --lteon,             Activates LTE without changing GNSS.\n"
@@ -202,11 +203,12 @@ static const char link_normal_mode_at_usage_str[] =
 	"                    \"link nmodeat --mem2 \"\"\"\n";
 
 static const char link_normal_mode_auto_usage_str[] =
-	"Usage: link nmodeauto --read | --enable | --disable\n"
+	"Usage: link nmodeauto --read | --enable | --enable_no_rel14 | --disable\n"
 	"Options:\n"
-	"  -r, --read,       Read and print current setting\n"
-	"  -e, --enable,     Enable autoconnect (default)\n"
-	"  -d, --disable,    Disable autoconnect\n";
+	"  -r, --read,            Read and print current setting\n"
+	"  -e, --enable,          Enable autoconnect (default)\n"
+	"      --enable_no_rel14, Enable autoconnect without setting Release 14 features\n"
+	"  -d, --disable,         Disable autoconnect\n";
 
 static const char link_edrx_usage_str[] =
 	"Usage: link edrx --enable --ltem|--nbiot [options] | --disable\n"
@@ -321,6 +323,7 @@ enum {
 	LINK_SHELL_OPT_SINGLE,
 	LINK_SHELL_OPT_CONTINUOUS,
 	LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE,
+	LINK_SHELL_OPT_NMODE_NO_REL14,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -347,6 +350,7 @@ static struct option long_options[] = {
 	{ "ltem_gnss", no_argument, 0, 'M' },
 	{ "nbiot_gnss", no_argument, 0, 'N' },
 	{ "enable", no_argument, 0, 'e' },
+	{ "enable_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ "disable", no_argument, 0, 'd' },
 	{ "edrx_value", required_argument, 0, 'x' },
 	{ "ptw", required_argument, 0, 'w' },
@@ -375,6 +379,7 @@ static struct option long_options[] = {
 	{ "continuous", no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
 	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
 	{ "search_type", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
+	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ 0, 0, 0, 0 }
 };
 
@@ -550,6 +555,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	bool require_pdn_cid = false;
 	bool require_subscribe = false;
 	bool require_option = false;
+	bool nmode_use_rel14 = true;
 	char *apn = NULL;
 	char *family = NULL;
 	int protocol = 0;
@@ -894,6 +900,16 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
+		case LINK_SHELL_OPT_NMODE_NO_REL14:
+			if (link_cmd_args.command == LINK_CMD_NORMAL_MODE_AUTO) {
+				/* Enable autoconnect without REL14 features */
+				link_cmd_args.common_option = LINK_COMMON_ENABLE;
+			} else if (link_cmd_args.command == LINK_CMD_FUNMODE) {
+				/* Go to normal mode without REL14 features */
+				link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_NORMAL;
+			}
+			nmode_use_rel14 = false;
+			break;
 		case '?':
 			goto show_usage;
 		default:
@@ -1105,7 +1121,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 		} else if (link_cmd_args.funmode_option !=
 			   LINK_FUNMODE_NONE) {
-			ret = link_func_mode_set(link_cmd_args.funmode_option);
+			ret = link_func_mode_set(link_cmd_args.funmode_option, nmode_use_rel14);
 			if (ret < 0) {
 				mosh_error("Cannot set functional mode: %d", ret);
 			} else {
@@ -1146,10 +1162,10 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			link_sett_normal_mode_autoconn_shell_print();
 		} else if (link_cmd_args.common_option ==
 			   LINK_COMMON_ENABLE) {
-			link_sett_save_normal_mode_autoconn_enabled(true);
+			link_sett_save_normal_mode_autoconn_enabled(true, nmode_use_rel14);
 		} else if (link_cmd_args.common_option ==
 			   LINK_COMMON_DISABLE) {
-			link_sett_save_normal_mode_autoconn_enabled(false);
+			link_sett_save_normal_mode_autoconn_enabled(false, nmode_use_rel14);
 		} else {
 			goto show_usage;
 		}

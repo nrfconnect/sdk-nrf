@@ -59,6 +59,7 @@
 /* ****************************************************************************/
 
 #define LINK_SETT_NORMAL_MODE_AUTOCONN_ENABLED "normal_mode_autoconn_enabled"
+#define LINK_SETT_NORMAL_MODE_AUTOCONN_REL14_USED "normal_mode_autoconn_rel14_used"
 
 /* ****************************************************************************/
 struct link_sett_t {
@@ -85,6 +86,7 @@ struct link_sett_t {
 	[CONFIG_MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN + 1];
 
 	bool normal_mode_autoconn_enabled;
+	bool normal_mode_autoconn_rel14_used;
 };
 static struct link_sett_t link_settings;
 
@@ -199,6 +201,15 @@ static int link_sett_handler(const char *key, size_t len,
 			sizeof(link_settings.normal_mode_autoconn_enabled));
 		if (err < 0) {
 			mosh_error("Failed to read normal mode autoconnect, error: %d", err);
+			return err;
+		}
+		return 0;
+	} else if (strcmp(key, LINK_SETT_NORMAL_MODE_AUTOCONN_REL14_USED) == 0) {
+		err = read_cb(
+			cb_arg, &link_settings.normal_mode_autoconn_rel14_used,
+			sizeof(link_settings.normal_mode_autoconn_rel14_used));
+		if (err < 0) {
+			mosh_error("Failed to read normal mode autoconnect rel14, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -598,23 +609,37 @@ void link_sett_normal_mode_at_cmds_shell_print(void)
 
 /* ****************************************************************************/
 
-int link_sett_save_normal_mode_autoconn_enabled(bool enabled)
+int link_sett_save_normal_mode_autoconn_enabled(bool enabled, bool use_rel14)
 {
-	const char *key =
+	const char *key_enabled =
 		LINK_SETT_KEY "/" LINK_SETT_NORMAL_MODE_AUTOCONN_ENABLED;
+	const char *key_rel14 =
+		LINK_SETT_KEY "/" LINK_SETT_NORMAL_MODE_AUTOCONN_REL14_USED;
 	int err;
 
 	link_settings.normal_mode_autoconn_enabled = enabled;
-	mosh_print("link nmodeauto %s", ((enabled == true) ? "enabled" : "disabled"));
+	link_settings.normal_mode_autoconn_rel14_used = use_rel14;
+
+	mosh_print("link nmodeauto %s %s",
+		((enabled == true) ? "enabled" : "disabled"),
+		((use_rel14 == true) ? "with REL14" : "without REL14"));
 
 	err = settings_save_one(
-		key, &link_settings.normal_mode_autoconn_enabled,
+		key_enabled, &link_settings.normal_mode_autoconn_enabled,
 		sizeof(link_settings.normal_mode_autoconn_enabled));
-
 	if (err) {
-		mosh_error("link_sett_save_defcont_enabled: err %d from settings_save_one()", err);
+		mosh_error("normal_mode_autoconn_enabled: err %d from settings_save_one()", err);
 		return err;
 	}
+
+	err = settings_save_one(
+		key_rel14, &link_settings.normal_mode_autoconn_rel14_used,
+		sizeof(link_settings.normal_mode_autoconn_rel14_used));
+	if (err) {
+		mosh_error("normal_mode_autoconn_rel14_used: err %d from settings_save_one()", err);
+		return err;
+	}
+
 	return 0;
 }
 
@@ -623,12 +648,21 @@ bool link_sett_is_normal_mode_autoconn_enabled(void)
 	return link_settings.normal_mode_autoconn_enabled;
 }
 
+bool link_sett_is_normal_mode_autoconn_rel14_used(void)
+{
+	return link_settings.normal_mode_autoconn_rel14_used;
+}
+
 void link_sett_normal_mode_autoconn_shell_print(void)
 {
 	mosh_print("link nmodeauto settings:");
 	mosh_print(
 		"  Autoconnect enabled: %s",
 		link_settings.normal_mode_autoconn_enabled ? "true" : "false");
+	mosh_print(
+		"  Release 14 features enabled: %s",
+		link_settings.normal_mode_autoconn_rel14_used ? "true" : "false");
+
 }
 
 /* ****************************************************************************/
@@ -676,7 +710,7 @@ void link_sett_defaults_set(void)
 	link_sett_clear_normal_mode_at_cmd_str(2);
 	link_sett_clear_normal_mode_at_cmd_str(3);
 
-	link_sett_save_normal_mode_autoconn_enabled(true);
+	link_sett_save_normal_mode_autoconn_enabled(true, true);
 
 	mosh_print("link settings reseted");
 }
