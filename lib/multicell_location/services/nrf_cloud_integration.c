@@ -6,7 +6,11 @@
 
 #include <zephyr.h>
 #include <modem/modem_jwt.h>
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+#include <net/nrf_cloud_cell_pos.h>
+#else
 #include <net/nrf_cloud_rest.h>
+#endif
 #include <net/multicell_location.h>
 #include "location_service.h"
 
@@ -14,9 +18,14 @@
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+static struct multicell_location nrf_cloud_location;
+static K_SEM_DEFINE(location_ready, 0, 1);
+#else
 #define NRF_CLOUD_INTEGRATION_JWT_VALID_TIME (5 * 60)
 
 static char jwt_buf[600];
+#endif
 
 /* TLS certificate:
  *	CN=Starfield Services Root Certificate Authority - G2
@@ -60,6 +69,51 @@ const char *location_service_get_certificate_nrf_cloud(void)
 	return tls_certificate;
 }
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_result *const result)
+{
+	if (result != NULL) {
+		nrf_cloud_location.latitude = result->lat;
+		nrf_cloud_location.longitude = result->lon;
+		nrf_cloud_location.accuracy = (double)result->unc;
+	}
+	k_sem_give(&location_ready);
+}
+
+int location_service_get_cell_location_nrf_cloud(
+	const struct lte_lc_cells_info *cell_data,
+	char * const rcv_buf,
+	const size_t rcv_buf_len,
+	struct multicell_location *const location)
+{
+	ARG_UNUSED(rcv_buf);
+	ARG_UNUSED(rcv_buf_len);
+
+	int err;
+
+	k_sem_reset(&location_ready);
+
+	err = nrf_cloud_cell_pos_request(cell_data, true, location_service_location_ready_cb);
+	if (err == -EACCES) {
+		LOG_ERR("Cloud connection is not established");
+		return err;
+	} else if (err) {
+		LOG_ERR("Failed to request cell pos data, error: %d", err);
+		return err;
+	}
+
+	LOG_INF("Cellular positioning request sent");
+
+	if (k_sem_take(&location_ready, K_SECONDS(20)) == -EAGAIN) {
+		LOG_ERR("Cellular positioning data request timed out");
+		return -ETIMEDOUT;
+	}
+
+	*location = nrf_cloud_location;
+
+	return err;
+}
+#else /* defined(CONFIG_NRF_CLOUD_MQTT) */
 int location_service_get_cell_location_nrf_cloud(
 	const struct lte_lc_cells_info *cell_data,
 	char * const rcv_buf,
@@ -99,3 +153,4 @@ int location_service_get_cell_location_nrf_cloud(
 
 	return err;
 }
+#endif /* defined(CONFIG_NRF_CLOUD_MQTT) */
