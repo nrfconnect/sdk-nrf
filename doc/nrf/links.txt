@@ -146,7 +146,7 @@
 .. _`API documentation`:
 .. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/zigbee_devguide.html
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/using_zigbee__z_c_l.html#stack_start_initiation
-.. _`ZBOSS NCP Host`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_host_v1.0.0.zip
+.. _`ZBOSS NCP Host`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_host_v2.0.0.zip
 .. _`NCP Host documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/zboss_ncp_host_intro.html
 .. _`Rebuilding the ZBOSS libraries for host`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/zboss_ncp_host.html#rebuilding_libs
 .. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/using_zigbee__z_c_l.html#process_zcl_cmd
