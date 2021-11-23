@@ -282,7 +282,8 @@ void link_init(void)
  */
 #if !defined(CONFIG_LWM2M_CARRIER)
 	if (link_sett_is_normal_mode_autoconn_enabled() == true) {
-		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
+				   link_sett_is_normal_mode_autoconn_rel14_used());
 	}
 #endif
 }
@@ -587,7 +588,7 @@ void link_modem_tau_notifications_unsubscribe(void)
 	}
 }
 
-int link_func_mode_set(enum lte_lc_func_mode fun)
+int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 {
 	int return_value = 0;
 	int sysmode;
@@ -604,8 +605,10 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 		return_value = lte_lc_offline();
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
-		/* Enable Rel14 features before going to normal mode */
-		link_enable_rel14_features();
+		if (rel14_used) {
+			/* Enable Rel14 features before going to normal mode */
+			link_enable_rel14_features();
+		}
 
 		/* (Re)register for PDN lib notifications */
 		link_shell_pdn_events_subscribe();
