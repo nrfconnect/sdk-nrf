@@ -107,7 +107,7 @@ void zb_osif_serial_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 	}
 
 	if (k_sem_take(&ringbuf_sem, K_FOREVER)) {
-		LOG_ERR("Couldn't take semaphore, dropping %u bytes", len);
+		LOG_DBG("Couldn't take semaphore, dropping %u bytes", len);
 		return;
 	}
 
