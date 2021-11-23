@@ -15,9 +15,6 @@ currently is able to:
 - Publish data to the Google IOT Cloud
 - Send/Receive keep alive / pings from cloud server
 
-The source code for this sample application can be found at:
-:zephyr_file:`samples/net/cloud/google_iot_mqtt`.
-
 Requirements
 ************
 - Entropy source
@@ -31,25 +28,31 @@ This application has been built and tested on the Nordic nRF9160-DK.
 ECDSA keys are required to authenticate to the Google IOT Cloud.
 The application includes a key creation script.
 
-Run ``bash create_keys.sh`` in the
+Run ``bash create_keys.sh <device-id>`` in the
 ``samples/net/cloud/google_iot_mqtt/src/private_info/`` directory.
 
 Clone the `cred utility <https://github.com/inductivekickback/cred>`_ for programming credentials to the modem. 
 
 Program the client private key:
-.. code-block: bash
+
+.. code-block:: bash
+
   python3 cred.py \
-    --client_private_key ../google_iot_mqtt/src/private_info/my_device-ec_private.pem \
+    --client_private_key <device-id>-ec_private.pem \
     --sec_tag 10
 
 Download cloud-side certs (primary and backup)
-`primary <https://pki.goog/gtsltsr/gtsltsr.crt>`_
-`backup <https://pki.goog/gsr4/GSR4.crt>`_
 
-NOTE: It is not necessary to change the certs to to "C-Style\n" formatting. 
+- `primary <https://pki.goog/gtsltsr/gtsltsr.crt>`_
+
+- `backup <https://pki.goog/gsr4/GSR4.crt>`_
+
+NOTE: It is not necessary to change the certs to to ``"C-Style\n"`` formatting.
 
 Program the cloud-side certs:
-.. code-block: bash
+
+.. code-block:: bash
+
   python3 cred.py \
     --CA_cert gtsltsr.pem \
     --sec_tag 202
@@ -58,10 +61,11 @@ Program the cloud-side certs:
     --sec_tag 203
 
 Assign keys on Google Cloud IoT Core 
+
 - Device Details -> Assign Public Key 
 - Input Method: Enter Manually 
 - Public key format: ES256
-- Public key value: content of google_iot_mqtt/src/private_info/<device-id>-ec_public.pem
+- Public key value: content of ``<device-id>-ec_public.pem``
 
 Users will also be required to configure the following Kconfig options
 based on their Google Cloud IOT project.  The following values come
@@ -80,7 +84,7 @@ from the Google Cloud Platform itself:
 From these values, the config values can be set using the following
 template:
 
-.. code-block: kconfig
+.. code-block:: kconfig
 
    CLOUD_CLIENT_ID="projects/PROJECT_ID/locations/REGION/registries/REGISTRY_ID/devices/DEVICE_ID"
    CLOUD_AUDIENCE="PROJECT_ID"
