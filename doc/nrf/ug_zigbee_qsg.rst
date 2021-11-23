@@ -39,7 +39,7 @@ Each of the samples we are going to use for forming the network is based on the 
 * :ref:`Zigbee light switch <zigbee_light_switch_sample>` demonstrates the Zigbee End Device role and implements the Dimmer Switch device specification, as defined in the Zigbee Home Automation public application profile.
   Once commissioned into the network, it looks for devices with the implemented Level Control and On/Off clusters and can control the one that answers first.
 
-The light bulb and the light switch samples also implement the Basic and Identify clusters, which are the basic Zigbee clusters.
+All these samples also implement the Basic and Identify clusters, which are the basic Zigbee clusters.
 
 Zigbee topologies
 =================

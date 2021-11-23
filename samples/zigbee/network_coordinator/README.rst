@@ -32,8 +32,10 @@ You can mix different development kits.
 Overview
 ********
 
-This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role.
+This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role and implements two clusters (Basic and Identify) that used to be required by the Zigbee Home Automation profile.
 It is a minimal implementation that supports only the network steering commissioning mechanism.
+The Basic cluster provides attributes and commands for determining basic information about the node.
+The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
 
 Configuration
 *************

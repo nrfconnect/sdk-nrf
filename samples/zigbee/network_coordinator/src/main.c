@@ -20,22 +20,36 @@
 #include <zb_nrf_platform.h>
 
 
-#define RUN_STATUS_LED          DK_LED1
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_STATUS_LED                         DK_LED1
+#define RUN_LED_BLINK_INTERVAL                 1000
 
-/* LED indicating that network is opened for new nodes */
-#define ZIGBEE_NETWORK_STATE_LED          DK_LED3
+/* Device endpoint, used to receive ZCL commands. */
+#define ZIGBEE_COORDINATOR_ENDPOINT            10
 
-/* Button which reopens the Zigbee Network */
-#define KEY_ZIGBEE_NETWORK_REOPEN         DK_BTN1_MSK
+/* Type of power sources available for the device.
+ * For possible values see section 3.2.2.2.8 of ZCL specification.
+ */
+#define COORDINATOR_INIT_BASIC_POWER_SOURCE    ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE
+
+/* LED indicating that device successfully joined Zigbee network. */
+#define ZIGBEE_NETWORK_STATE_LED               DK_LED3
+
+/* LED used for device identification. */
+#define IDENTIFY_LED                           DK_LED4
+
+/* Button which reopens the Zigbee Network. */
+#define KEY_ZIGBEE_NETWORK_REOPEN              DK_BTN1_MSK
+
+/* Button used to enter the Identify mode. */
+#define IDENTIFY_MODE_BUTTON                   DK_BTN4_MSK
 
 /**
  * If set to ZB_TRUE then device will not open the network
  * after forming or reboot.
  */
-#define ZIGBEE_MANUAL_STEERING            ZB_FALSE
+#define ZIGBEE_MANUAL_STEERING                 ZB_FALSE
 
-#define ZIGBEE_PERMIT_LEGACY_DEVICES      ZB_FALSE
+#define ZIGBEE_PERMIT_LEGACY_DEVICES           ZB_FALSE
 
 #ifndef ZB_COORDINATOR_ROLE
 #error Define ZB_COORDINATOR_ROLE to compile coordinator source code.
@@ -43,6 +57,106 @@
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
+/* Main application customizable context.
+ * Stores all settings and static values.
+ */
+struct zb_device_ctx {
+	zb_zcl_basic_attrs_t     basic_attr;
+	zb_zcl_identify_attrs_t  identify_attr;
+};
+
+/* Zigbee device application context storage. */
+static struct zb_device_ctx dev_ctx;
+
+ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
+	identify_attr_list,
+	&dev_ctx.identify_attr.identify_time);
+
+ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
+	basic_attr_list,
+	&dev_ctx.basic_attr.zcl_version,
+	&dev_ctx.basic_attr.power_source);
+
+ZB_HA_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
+	nwk_coordinator_clusters,
+	basic_attr_list,
+	identify_attr_list);
+
+ZB_HA_DECLARE_RANGE_EXTENDER_EP(
+	nwk_coordinator_ep,
+	ZIGBEE_COORDINATOR_ENDPOINT,
+	nwk_coordinator_clusters);
+
+ZBOSS_DECLARE_DEVICE_CTX_1_EP(
+	nwk_coordinator,
+	nwk_coordinator_ep);
+
+
+/**@brief Function for initializing all clusters attributes. */
+static void app_clusters_attr_init(void)
+{
+	/* Basic cluster attributes data. */
+	dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
+	dev_ctx.basic_attr.power_source = COORDINATOR_INIT_BASIC_POWER_SOURCE;
+
+	/* Identify cluster attributes data. */
+	dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
+}
+
+/**@brief Function to toggle the identify LED.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void toggle_identify_led(zb_bufid_t bufid)
+{
+	static int blink_status;
+
+	dk_set_led(IDENTIFY_LED, (++blink_status) % 2);
+	ZB_SCHEDULE_APP_ALARM(toggle_identify_led, bufid, ZB_MILLISECONDS_TO_BEACON_INTERVAL(100));
+}
+
+/**@brief Function to handle identify notification events on the first endpoint.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void identify_cb(zb_bufid_t bufid)
+{
+	zb_ret_t zb_err_code;
+
+	if (bufid) {
+		/* Schedule a self-scheduling function that will toggle the LED. */
+		ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
+	} else {
+		/* Cancel the toggling function alarm and turn off LED. */
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(toggle_identify_led, ZB_ALARM_ANY_PARAM);
+		ZVUNUSED(zb_err_code);
+
+		dk_set_led(IDENTIFY_LED, 0);
+	}
+}
+
+/**@brief Starts identifying the device.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void start_identifying(zb_bufid_t bufid)
+{
+	zb_ret_t zb_err_code;
+
+	ZVUNUSED(bufid);
+
+	/* Check if endpoint is in identifying mode,
+	 * if not, put desired endpoint in identifying mode.
+	 */
+	if (dev_ctx.identify_attr.identify_time == ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+		LOG_INF("Enter identify mode");
+		zb_err_code = zb_bdb_finding_binding_target(ZIGBEE_COORDINATOR_ENDPOINT);
+		ZB_ERROR_CHECK(zb_err_code);
+	} else {
+		LOG_INF("Cancel identify mode");
+		zb_bdb_finding_binding_target_cancel();
+	}
+}
 
 /**@brief Callback used in order to visualise network steering period.
  *
@@ -80,6 +194,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		} else {
 			LOG_INF("Top level comissioning hasn't finished yet!");
 		}
+	} else if (buttons & IDENTIFY_MODE_BUTTON) {
+		ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
 	}
 }
 
@@ -206,6 +322,14 @@ void main(void)
 
 	/* Initialize */
 	configure_gpio();
+
+	/* Register device context (endpoints). */
+	ZB_AF_REGISTER_DEVICE_CTX(&nwk_coordinator);
+
+	app_clusters_attr_init();
+
+	/* Register handlers to identify notifications. */
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(ZIGBEE_COORDINATOR_ENDPOINT, identify_cb);
 
 	/* Start Zigbee default thread */
 	zigbee_enable();
