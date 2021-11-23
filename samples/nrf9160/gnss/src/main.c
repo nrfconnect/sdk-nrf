@@ -21,7 +21,7 @@ static struct k_work_q agps_work_q;
 static struct k_work agps_data_get_work;
 static volatile bool requesting_assistance;
 
-#define AGPS_WORKQ_THREAD_STACK_SIZE 2048
+#define AGPS_WORKQ_THREAD_STACK_SIZE 2304
 #define AGPS_WORKQ_THREAD_PRIORITY   5
 
 K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
