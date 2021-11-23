@@ -24,6 +24,7 @@
 LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
 #include "nrf_cloud_transport.h"
+#include "nrf_cloud_fsm.h"
 #include "nrf_cloud_pgps_schema_v1.h"
 #include "nrf_cloud_pgps_utils.h"
 #include "nrf_cloud_codec.h"
@@ -602,6 +603,10 @@ bool nrf_cloud_pgps_loading(void)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request)
 {
+	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
+		return -EACCES;
+	}
+
 	return pgps_request(request);
 }
 

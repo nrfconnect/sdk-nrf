@@ -6,6 +6,7 @@
 
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_fsm.h"
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
@@ -697,6 +698,10 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 int json_send_to_cloud(cJSON *const request)
 {
 	__ASSERT_NO_MSG(request != NULL);
+
+	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
+		return -EACCES;
+	}
 
 	char *msg_string;
 	int err;

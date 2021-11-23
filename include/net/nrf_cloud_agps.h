@@ -28,7 +28,9 @@ extern "C" {
  *
  * @param request Structure containing specified A-GPS data to be requested.
  *
- * @return 0 if successful, otherwise a (negative) error code.
+ * @retval 0       Request sent successfully.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request);
 
