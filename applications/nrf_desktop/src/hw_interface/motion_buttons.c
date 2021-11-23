@@ -126,7 +126,7 @@ static bool handle_button_event(const struct button_event *event)
 		state = STATE_PENDING;
 	}
 
-	return true;
+	return false;
 }
 
 static bool handle_module_state_event(const struct module_state_event *event)
