@@ -416,7 +416,7 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 			    uint8_t idx)
 {
-	struct tm sched_time;
+	struct tm sched_time = {0};
 	struct bt_mesh_schedule_entry *entry = &srv->sch_reg[idx];
 
 	int64_t current_uptime = k_uptime_get();
