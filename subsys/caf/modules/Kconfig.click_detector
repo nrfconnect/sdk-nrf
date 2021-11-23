@@ -17,6 +17,14 @@ config CAF_CLICK_DETECTOR_DEF_PATH
 	help
 	  Location of configuration file for click detector module.
 
+config CAF_CLICK_DETECTOR_LONG_CLICK_MSEC
+	int "Minimum button hold time to decide that the click is long"
+	default 5000
+
+config CAF_CLICK_DETECTOR_SHORT_CLICK_MSEC
+	int "Maximum button hold time to decide that the click is short"
+	default 500
+
 config CAF_CLICK_DETECTOR_PM_EVENTS
 	bool "Power management events support"
 	depends on CAF_PM_EVENTS
