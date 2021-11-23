@@ -306,6 +306,15 @@ int azure_iot_hub_method_respond(struct azure_iot_hub_result *result);
  */
 int azure_iot_hub_keepalive_time_left(void);
 
+/** @brief Reset the stored Azure IoT Hub device provisioning data. This can be used to trigger
+ *	   a new provisioning of the device upon next time the device initiates connection
+ *	   to an IoT Hub.
+ *
+ *  @retval 0 If successful.
+ *            Otherwise, a (negative) error code is returned.
+ */
+int azure_iot_hub_dps_reset(void);
+
 #ifdef __cplusplus
 }
 #endif

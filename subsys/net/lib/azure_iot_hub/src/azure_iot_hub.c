@@ -1353,6 +1353,11 @@ int azure_iot_hub_method_respond(struct azure_iot_hub_result *result)
 	return mqtt_publish(&client, &param);
 }
 
+int azure_iot_hub_dps_reset(void)
+{
+	return dps_reset();
+}
+
 static void azure_iot_hub_run(void)
 {
 	int ret;

@@ -427,6 +427,7 @@ Libraries for networking
 
   * Added handling of MQTT ping failures and MQTT input failures.
   * Updated the API version used in MQTT connection to Azure IoT Hub to 2020-09-30.
+  * Added the :c:func:`azure_iot_hub_dps_reset` function for resetting the DPS information.
 
 * :ref:`lib_download_client` library:
 
