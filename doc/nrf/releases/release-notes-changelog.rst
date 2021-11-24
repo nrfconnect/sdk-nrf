@@ -153,6 +153,10 @@ Common Application Framework (CAF)
 ----------------------------------
 
 * Migrated :ref:`nRF Desktop settings loader <nrf_desktop_settings_loader>` to :ref:`lib_caf` as :ref:`CAF: Settings loader module <caf_settings_loader>`.
+* :ref:`caf_leds`:
+
+  * Added new LED effect macro: :c:macro:`LED_EFFECT_LED_BLINK2`.
+  * Added a macro to pass color arguments between macro calls: :c:macro:`LED_COLOR_ARG_PASS`.
 * Updated:
 
   * Unify module ID reference location.

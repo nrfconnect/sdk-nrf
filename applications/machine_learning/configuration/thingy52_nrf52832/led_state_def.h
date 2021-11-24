@@ -37,7 +37,7 @@ static const struct led_effect ei_data_forwarder_led_effects[] = {
 static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = NULL,
-		.effect = LED_EFFECT_LED_BLINK(200, LED_COLOR(255, 255, 255)),
+		.effect = LED_EFFECT_LED_BLINK2(100, 200, LED_COLOR(255, 255, 255)),
 	},
 	{
 		.label = ANOMALY_LABEL,
