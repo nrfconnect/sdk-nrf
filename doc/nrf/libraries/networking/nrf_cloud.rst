@@ -170,21 +170,8 @@ Following are the supported UI types on nRF Cloud:
 Removing the link between device and user
 *****************************************
 
-If you want to remove the link between a device and an nRF Cloud user, you must do this from nRF Cloud.
-It is not possible for a device to unlink itself.
-
-When a user disassociates a device, the library disallows any further sensor data to be sent to the cloud and generates an :c:enumerator:`NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST` event.
-The application can then decide to associate again by responding with :c:func:`nrf_cloud_user_associate` with the new input sequence.
-See the following message sequence chart:
-
-.. msc:
-   hscale = "1.3";
-   Module,Application;
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
-   Module<<Application      [label="nrf_cloud_user_associate()"];
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
-   Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
+If you want to remove the link between a device and an nRF Cloud account, you must do this from nRF Cloud.
+A device cannot remove itself from an nRF Cloud account.
 
 .. _use_nrfcloud_cloudapi:
 
