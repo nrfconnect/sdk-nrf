@@ -406,6 +406,8 @@ CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
 		 (const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
 		  struct net_buf_simple *buf), (addr, rssi, adv_type, buf));
 
+#if defined(CONFIG_BT_BROADCASTER)
+
 void bt_le_adv_param_dec(struct ser_scratchpad *scratchpad, struct bt_le_adv_param *data)
 {
 	CborValue *value = scratchpad->value;
@@ -527,6 +529,8 @@ static void bt_le_adv_stop_rpc_handler(CborValue *value, void *handler_data)
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_stop, BT_LE_ADV_STOP_RPC_CMD,
 			 bt_le_adv_stop_rpc_handler, NULL);
+
+#endif /* defined(CONFIG_BT_BROADCASTER) */
 
 size_t bt_le_oob_buf_size(const struct bt_le_oob *data)
 {
@@ -1969,10 +1973,10 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_cb_register_on_remote,
 #endif /* defined(CONFIG_BT_PER_ADV_SYNC) */
 
 #if defined(CONFIG_SETTINGS)
-static void bt_rpc_settings_load_rpc_handler(CborValue *_value,
-					     void *_handler_data)
+static void bt_rpc_settings_load_rpc_handler(CborValue *value,
+					     void *handler_data)
 {
-	nrf_rpc_cbor_decoding_done(_value);
+	nrf_rpc_cbor_decoding_done(value);
 
 	settings_load();
 	ser_rsp_send_void();
