@@ -9,11 +9,9 @@
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/location.h>
-#if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <date_time.h>
-#endif /* CONFIG_NRF_CLOUD_PGPS */
 
-K_SEM_DEFINE(location_event, 0, 1);
+static K_SEM_DEFINE(location_event, 0, 1);
 
 static void antenna_configure(void)
 {
@@ -34,40 +32,12 @@ static void antenna_configure(void)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-K_SEM_DEFINE(time_update_finished, 0, 1);
+static K_SEM_DEFINE(time_update_finished, 0, 1);
 
 static void date_time_evt_handler(const struct date_time_evt *evt)
 {
-	/* Don't care about the event, just indicate that we got it. */
 	k_sem_give(&time_update_finished);
 }
-
-static int current_time_get(void)
-{
-	int err;
-
-	/* If we wait for a while after LTE attach, it's more likely that modem has got the current
-	 * time from the LTE network and no NTP is needed.
-	 */
-	k_sleep(K_SECONDS(1));
-
-	err = date_time_update_async(date_time_evt_handler);
-	if (err) {
-		printk("Requesting the current time failed, error: %d\n", err);
-		return -1;
-	}
-
-	k_sem_take(&time_update_finished, K_FOREVER);
-
-	if (date_time_is_valid() == false) {
-		printk("Failed to get current time");
-		return -1;
-	}
-
-	return 0;
-}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 static void location_event_handler(const struct location_event_data *event_data)
 {
@@ -247,6 +217,13 @@ int main(void)
 
 	antenna_configure();
 
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		/* Registering early for date_time event handler to avoid missing
+		 * the first event after LTE is connected.
+		 */
+		date_time_register_handler(date_time_evt_handler);
+	}
+
 	printk("Connecting to LTE...\n");
 
 	lte_lc_init();
@@ -254,16 +231,19 @@ int main(void)
 	lte_lc_psm_req(true);
 	lte_lc_connect();
 
-	printk("Connected to LTE\n\n");
+	printk("Connected to LTE\n");
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* P-GPS needs to know the current time. */
-	err = current_time_get();
-	if (err) {
-		printk("Getting current time for P-GPS use failed");
-		return -1;
+	/* A-GPS/P-GPS needs to know the current time. */
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		printk("Waiting for current time\n");
+
+		/* Wait for an event from the Date Time library. */
+		k_sem_take(&time_update_finished, K_MINUTES(10));
+
+		if (!date_time_is_valid()) {
+			printk("Failed to get current time. Continuing anyway.\n");
+		}
 	}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 	err = location_init(location_event_handler);
 	if (err) {
