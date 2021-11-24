@@ -20,21 +20,21 @@
 
 
 /* Device endpoint, used to receive ZCL commands. */
-#define APP_TEMPLATE_ENDPOINT           10
+#define APP_TEMPLATE_ENDPOINT               10
 
 /* Type of power sources available for the device.
  * For possible values see section 3.2.2.2.8 of ZCL specification.
  */
-#define BULB_INIT_BASIC_POWER_SOURCE    ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE
+#define TEMPLATE_INIT_BASIC_POWER_SOURCE    ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE
 
 /* LED indicating that device successfully joined Zigbee network. */
-#define ZIGBEE_NETWORK_STATE_LED        DK_LED3
+#define ZIGBEE_NETWORK_STATE_LED            DK_LED3
 
 /* LED used for device identification. */
-#define IDENTIFY_LED                    DK_LED4
+#define IDENTIFY_LED                        DK_LED4
 
 /* Button used to enter the Identify mode. */
-#define IDENTIFY_MODE_BUTTON            DK_BTN4_MSK
+#define IDENTIFY_MODE_BUTTON                DK_BTN4_MSK
 
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
@@ -79,7 +79,7 @@ static void app_clusters_attr_init(void)
 {
 	/* Basic cluster attributes data */
 	dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
-	dev_ctx.basic_attr.power_source = BULB_INIT_BASIC_POWER_SOURCE;
+	dev_ctx.basic_attr.power_source = TEMPLATE_INIT_BASIC_POWER_SOURCE;
 
 	/* Identify cluster attributes data. */
 	dev_ctx.identify_attr.identify_time =
