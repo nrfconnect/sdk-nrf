@@ -217,6 +217,22 @@ The Encrypted User Data may be compromised if both these conditions are met:
 * Attacker eavesdrops the user data exchange.
 * The current Dynamic Key has been compromised.
 
+Configuration
+*************
+
+The prerequisite :ref:`ug_gzll` should be enabled as described in :ref:`ug_gzll_configuration`.
+
+To enable the Gazell Pairing, set the :kconfig:`CONFIG_GAZELL_PAIRING` Kconfig option.
+
+Select the role by either of the following Kconfig options:
+
+* :kconfig:`CONFIG_GAZELL_PAIRING_DEVICE` - Device.
+* :kconfig:`CONFIG_GAZELL_PAIRING_HOST` - Host.
+
+To support persistent storage of pairing data, set the :kconfig:`CONFIG_GAZELL_PAIRING_SETTINGS` Kconfig option.
+
+To support encryption, set the :kconfig:`CONFIG_GAZELL_PAIRING_CRYPT` Kconfig option.
+
 Resource requirements
 *********************
 
