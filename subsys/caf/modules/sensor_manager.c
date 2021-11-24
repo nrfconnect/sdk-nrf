@@ -385,52 +385,53 @@ static void configure_max_power_state(void)
 	}
 }
 
-static int sensor_init(void)
+static size_t sensor_init(void)
 {
-	int err = 0;
+	size_t alive_sensors = 0;
 	int64_t cur_uptime = k_uptime_get();
 
-	for (size_t i = 0; !err && (i < ARRAY_SIZE(sensor_data)); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(sensor_data); i++) {
 		struct sensor_data *sd = &sensor_data[i];
 		const struct sm_sensor_config *sc = &sensor_configs[i];
 
 		sd->dev = device_get_binding(sc->dev_name);
 		if (!sd->dev) {
-			err = -ENXIO;
 			update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
-			break;
+			LOG_ERR("%s sensor cannot get binding", sc->dev_name);
+			continue;
 		}
 		sd->sampling_period = sc->sampling_period_ms;
 		sd->sample_timeout = cur_uptime + sc->sampling_period_ms;
 
 		if (sc->trigger) {
-			err = sensor_trigger_init(sc, sd);
+			int err = sensor_trigger_init(sc, sd);
+
 			if (err) {
 				update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
-				break;
+				LOG_ERR("%s sensor cannot initialize trigger", sc->dev_name);
+				continue;
 			}
 		}
 
 		update_sensor_state(sc, sd, SENSOR_STATE_ACTIVE);
+		alive_sensors++;
 	}
 
-	return err;
+	return alive_sensors;
 }
 
 static void sample_thread_fn(void)
 {
 	size_t alive_sensors = 0;
 	int64_t next_timeout = 0;
-	int err = 0;
 
 	k_sem_init(&can_sample, 0, 1);
 
-	err = sensor_init();
+	alive_sensors = sensor_init();
 
-	if (!err) {
+	if (alive_sensors) {
 		module_set_state(MODULE_STATE_READY);
 
-		alive_sensors = ARRAY_SIZE(sensor_data);
 		while (alive_sensors > 0) {
 			k_sem_take(&can_sample, K_TIMEOUT_ABS_MS(next_timeout));
 
