@@ -67,9 +67,31 @@ struct led_effect {
  */
 #define COLOR_BRIGHTNESS_TO_PCT(_val) ((_val * 100) / UINT8_MAX)
 
+/**
+ * @brief Pass a color value as a macro argument
+ *
+ * @ref LED_COLOR macro contains commas in its body.
+ * This means that after the argument is expanded, the macro is to be treated
+ * as multiple arguments. This also makes it impossible to pass an argument
+ * from macro level to another macro.
+ * The macro allows the usage of the color argument as an argument to
+ * another macro level.
+ *
+ * @param ... Any list of arguments that have to be treated as
+ *            a single argument for the macro.
+ */
+#define LED_COLOR_ARG_PASS(...) __VA_ARGS__
+
 /** Create LED color initializer for LED turned on.
  *
  * @note As arguments, pass the brightness levels for every color channel.
+ *
+ * @note The macro returns the structure initializer that once expanded
+ *       contains commas not placed in brackets.
+ *       This means that when passed as an argument, this argument
+ *       cannot be passed simply to another macro.
+ *       Use @ref LED_COLOR_ARG_PASS macro for the preprocessor
+ *       to treat it as a single argument again.
  */
 #define LED_COLOR(_r, _g, _b) {				\
 		.c = {					\
@@ -141,31 +163,49 @@ struct led_effect {
 		.loop_forever = false,						\
 	}
 
-/** Create LED blinking effect initializer.
+/** Create LED blinking effect initializer with two periods as arguments.
  *
  * LED color is periodically changed between the selected color and the LED
  * turned off.
+ * This macro takes two periods: for on and off time.
  *
- * @param _period	Period of time between LED color switches.
+ * @param _period_on	Period of time for which LED is on.
+ * @param _period_off	Period of time for which LED is off.
  * @param _color	Selected LED color.
+ *
+ * @sa LED_EFFECT_LED_BLINK
  */
-#define LED_EFFECT_LED_BLINK(_period, _color)					\
+#define LED_EFFECT_LED_BLINK2(_period_on, _period_off, _color)			\
 	{									\
 		.steps = ((const struct led_effect_step[]) {			\
 			{							\
 				.color = _color,				\
 				.substep_count = 1,				\
-				.substep_time = (_period),			\
+				.substep_time = (_period_off),			\
 			},							\
 			{							\
 				.color = LED_NOCOLOR(),				\
 				.substep_count = 1,				\
-				.substep_time = (_period),			\
+				.substep_time = (_period_on),			\
 			},							\
 		}),								\
 		.step_count = 2,						\
 		.loop_forever = true,						\
 	}
+
+/** Create LED blinking effect initializer with one period given
+ *
+ * LED color is periodically changed between the selected color and the LED
+ * turned off.
+ * The same time is used for both: on and off time.
+ *
+ * @param _period	Period of time between LED color switches.
+ * @param _color	Selected LED color.
+ *
+ * @sa LED_EFFECT_LED_BLINK
+ */
+#define LED_EFFECT_LED_BLINK(_period, _color) \
+	LED_EFFECT_LED_BLINK2(_period, _period, LED_COLOR_ARG_PASS(_color))
 
 /** @def _BREATH_SUBSTEPS
  *
