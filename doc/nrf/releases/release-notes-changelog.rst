@@ -74,7 +74,13 @@ nRF Desktop
 
 * Added:
 
-  * Added possibility to ask for bootloader variant using config channel.
+  * Possibility to ask for bootloader variant using config channel.
+  * Added Kconfig options that allow erasing dongle bond on the gaming mouse using buttons or config channel.
+  * Added two states to enable erasing dongle peer: ``STATE_DONGLE_ERASE_PEER`` and ``STATE_DONGLE_ERASE_ADV``.
+
+* Updated:
+
+   * Documentation and diagrams for the Bluetooth LE bond internal module.
 
 Samples
 =======
