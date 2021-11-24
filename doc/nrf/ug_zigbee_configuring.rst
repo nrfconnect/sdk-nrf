@@ -135,6 +135,14 @@ Custom logging per module
 Logging is handled with the :kconfig:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
+.. _zigbee_ug_logging_application_logs:
+
+Default Zigbee application logging
+----------------------------------
+
+The Zigbee application uses the ``INF`` logging level by default.
+This level can be changed only by modifying the sample code.
+
 .. _zigbee_ug_logging_stack_logs:
 
 Stack logs
@@ -179,9 +187,6 @@ If NCP transport channel is used, stack logs are stored in the buffer used for N
 
 Zephyr's logger options
 -----------------------
-
-Zephyr's :ref:`zephyr:logging_api` starts with the default ``ERR`` logging level (only errors reported).
-This level is used by default by the application.
 
 You can configure custom logger options for each Zigbee and ZBOSS module.
 To do this, configure the related Kconfig option for one or more modules:

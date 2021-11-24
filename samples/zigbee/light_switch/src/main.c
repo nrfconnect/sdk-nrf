@@ -88,7 +88,7 @@
 #error Define ZB_ED_ROLE to compile light switch (End Device) source code.
 #endif
 
-LOG_MODULE_REGISTER(app);
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 struct bulb_context {
 	zb_uint8_t     endpoint;

@@ -37,7 +37,7 @@
 #define IDENTIFY_MODE_BUTTON            DK_BTN4_MSK
 
 
-LOG_MODULE_REGISTER(app);
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* Main application customizable context.
  * Stores all settings and static values.
