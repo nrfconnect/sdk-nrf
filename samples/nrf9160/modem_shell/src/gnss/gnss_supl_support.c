@@ -20,6 +20,7 @@
 
 #include "mosh_print.h"
 
+/* This sample uses Google SUPL server by default. For commercial use, a license is required. */
 #define SUPL_SERVER "supl.google.com"
 #define SUPL_SERVER_PORT 7276
 
