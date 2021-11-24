@@ -499,6 +499,29 @@ Examples
 
      rest -d example.com -l 1024 -m head -H "X-foo1: bar1\x0D\x0A" -H "X-foo2: bar2\x0D\x0A"
 
+----
+
+Cloud
+=========
+
+MoSh command: ``cloud``
+
+nRF Cloud is a platform for providing, among other things, various location services.
+Modem Shell enables you to establish an MQTT connection to nRF Cloud using the :ref:`lib_nrf_cloud` library.
+Currently, the ``cloud`` command is useful mostly when using the location services and MQTT is the desired transport protocol.
+However, you can use any nRF Cloud services once the MQTT connection is established.
+
+Examples
+--------
+
+* Establish the connection to nRF Cloud, request the cell-based location of the device, and disconnect when ready:
+
+  .. code-block:: console
+
+     cloud connect
+     location get --method cellular
+     cloud disconnect
+
 Requirements
 ************
 
@@ -683,6 +706,16 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-pgps.conf
+
+Cloud
+=====
+
+To build the MoSh sample with cloud connectivity, use the ``-DOVERLAY_CONFIG=overlay-cloud_mqtt.conf`` option.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
 
 Dependencies
 ************

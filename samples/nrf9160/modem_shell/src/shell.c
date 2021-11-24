@@ -31,9 +31,6 @@
 #if defined(CONFIG_MOSH_CURL)
 #include <nrf_curl.h>
 #endif
-#if defined(CONFIG_MOSH_GNSS)
-#include "gnss/gnss_shell.h"
-#endif
 #if defined(CONFIG_MOSH_SMS)
 #include "sms/sms_shell.h"
 #endif

@@ -44,3 +44,18 @@ tests:
       - nrf9160dk_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-lwm2m_carrier.conf
     tags: ci_build
+  samples.nrf9160.modem_shell.cloud_mqtt:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-cloud_mqtt.conf
+    tags: ci_build
+  samples.nrf9160.modem_shell.cloud_mqtt_rest:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: CONFIG_MOSH_CLOUD=y
+                CONFIG_NRF_CLOUD_REST=y
+    tags: ci_build

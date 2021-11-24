@@ -84,6 +84,13 @@ config MOSH_REST
 	help
 	  REST client for sending and receiving simple REST requests/responses.
 
+config MOSH_CLOUD
+	bool "MQTT connection to nRFCloud"
+	select NRF_CLOUD_MQTT
+	select NRF_CLOUD_CELL_POS if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	help
+	  MQTT connection to nRFCloud.
+
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
 	default 1024
