@@ -106,7 +106,7 @@
 #error Define ZB_ROUTER_ROLE to compile router source code.
 #endif
 
-LOG_MODULE_REGISTER(app);
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* Main application customizable context.
  * Stores all settings and static values.

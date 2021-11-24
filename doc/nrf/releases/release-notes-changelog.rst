@@ -56,6 +56,7 @@ Zigbee
 * Added new version of the :ref:`ug_zigbee_tools_ncp_host` (v2.0.0).
 * Added :ref:`ug_zigee_qsg`.
 * Removed experimental support for Green Power Combo Basic functionality.
+* Changed the default logging level in Zigbee applications to ``INF`` from Zephyr's :ref:`zephyr:logging_api` default level, which is set to ``ERR`` by default.
 
 Applications
 ============

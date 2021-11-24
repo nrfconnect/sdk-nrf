@@ -24,7 +24,7 @@
 #include <dfu/mcuboot.h>
 #endif
 
-LOG_MODULE_REGISTER(app);
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 #if DT_NODE_EXISTS(DT_ALIAS(rst0))
 #define RST_PIN_PORT DT_GPIO_LABEL(DT_ALIAS(rst0), gpios)

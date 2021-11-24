@@ -41,7 +41,7 @@
 #error Define ZB_COORDINATOR_ROLE to compile coordinator source code.
 #endif
 
-LOG_MODULE_REGISTER(app);
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 
 /**@brief Callback used in order to visualise network steering period.
