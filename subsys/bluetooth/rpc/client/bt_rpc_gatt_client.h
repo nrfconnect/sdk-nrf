@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef BT_RPC_GATT_SVC_CLIENT_H_
-#define BT_RPC_GATT_SVC_CLIENT_H_
+#ifndef BT_RPC_GATT_CLIENT_H_
+#define BT_RPC_GATT_CLIENT_H_
 
 /**
  * @file
- * @defgroup bt_rpc_gatt_svc_client RPC GATT service client API
+ * @defgroup bt_rpc_gatt_client RPC GATT client API
  * @{
- * @brief API for the RPC GATT service client.
+ * @brief API for the RPC GATT client.
  */
 
 #ifdef __cplusplus
@@ -36,4 +36,4 @@ int bt_rpc_gatt_init(void);
  * @}
  */
 
-#endif /* BT_RPC_GATT_SVC_CLIENT_H_ */
+#endif /* BT_RPC_GATT_CLIENT_H_ */

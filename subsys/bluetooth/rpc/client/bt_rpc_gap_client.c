@@ -13,7 +13,7 @@
 
 #include <nrf_rpc_cbor.h>
 
-#include "bt_rpc_gatt_svc_client.h"
+#include "bt_rpc_gatt_client.h"
 #include "bt_rpc_conn_client.h"
 #include "bt_rpc_common.h"
 #include "serialize.h"
