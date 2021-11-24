@@ -7,6 +7,7 @@
 #include <string.h>
 #include <zephyr.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/at_monitor.h>
@@ -42,14 +43,7 @@ static char response[64];
 
 static void cereg_mon(const char *notif)
 {
-	int ret;
-
-	ret = sscanf(notif, "+CEREG: %d", &cereg_status);
-	if (ret != 1) {
-		printk("Could not parse notification (%d, status: %d)\n",
-		       ret, cereg_status);
-		return;
-	}
+	cereg_status = atoi(notif + strlen("+CEREG: "));
 
 	printk("Network registration status: %s\n", cereg_str[cereg_status]);
 
@@ -60,14 +54,7 @@ static void cereg_mon(const char *notif)
 
 static void cesq_mon(const char *notif)
 {
-	int ret;
-
-	ret = sscanf(notif, "%%CESQ: %d", &rsps_status);
-	if (ret != 1) {
-		printk("Could not parse notification (%d, status: %d)\n",
-		       ret, rsps_status);
-		return;
-	}
+	rsps_status = atoi(notif + strlen("%CESQ: "));
 
 #define FLOOR 140
 	printk("Link quality: %d dBm\n", rsps_status - FLOOR);
