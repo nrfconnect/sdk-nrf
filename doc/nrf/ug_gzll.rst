@@ -39,6 +39,17 @@ Gazell provides the following features:
 * Capability to control the RF front-end module.
 * Generates transmission statistics for each RF channel.
 
+.. _ug_gzll_configuration:
+
+Configuration
+*************
+
+To enable the Gazell support in the |NCS|, set the following Kconfig options:
+
+* :kconfig:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
+* :kconfig:`CONFIG_CLOCK_CONTROL_NRF` - This option enables the nRF5 HFCLK controller support.
+* :kconfig:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
+
 .. _ug_gzll_resources:
 
 Resources
@@ -51,6 +62,8 @@ To ensure correct operation, Gazell requires exclusive access to the following r
 * Timer
 * Three PPI channels
 * Software interrupt (SWI)
+
+The :ref:`gzll_glue` module specifies the resources used by the :ref:`nrfxlib:gzll` library.
 
 The Gazell interrupt priorities are configured by applications.
 The radio and timer interrupt handlers should run at priority level 0 (highest priority), and the Gazell callback functions can run at priority level 1.
@@ -95,6 +108,7 @@ Gazell automatically notifies the application when a packet is received.
 
 To set up a Gazell application, do the following:
 
+* Initialize GZLL glue code using :c:func:`gzll_glue_init()`.
 * Initialize Gazell using :c:func:`nrf_gzll_init()` and choose either Host or Device.
 * Reconfigure Gazell's default parameters.
   At a minimum, reconfigure the addresses and channels to avoid interfering with other Gazell networks.
