@@ -30,7 +30,7 @@ RING_BUF_DECLARE(uart_rb, 10240);
 
 static void uart_irq_handler(const struct device *dev, void *context)
 {
-	uint8_t *data_tx;
+	uint8_t *data_tx = NULL;
 
 	uart_irq_update(dev);
 	if (uart_irq_tx_ready(dev)) {
@@ -45,7 +45,7 @@ static void uart_irq_handler(const struct device *dev, void *context)
 	}
 
 	if (uart_irq_rx_ready(dev)) {
-		uint8_t buf[10];
+		uint8_t buf[10] = {0};
 		int len = uart_fifo_read(dev, buf, sizeof(buf));
 
 		if (len) {
