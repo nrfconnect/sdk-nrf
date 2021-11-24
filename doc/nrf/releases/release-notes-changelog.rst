@@ -80,6 +80,13 @@ Bluetooth samples
 
 * |no_changes_yet_note|
 
+nRF9160 samples
+---------------
+
+* :ref:`modem_shell_application` sample:
+
+  * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
+
 Drivers
 =======
 
