@@ -6,6 +6,8 @@
 
 #ifdef CONFIG_LWM2M_CARRIER
 #include <lwm2m_carrier.h>
+#include <lwm2m_os.h>
+#include <power/reboot.h>
 #endif /* CONFIG_LWM2M_CARRIER */
 #include <zephyr.h>
 
@@ -78,6 +80,43 @@ void print_deferred(const lwm2m_carrier_event_t *evt)
 		def->timeout);
 }
 
+void lwm2m_carrier_check_error(const lwm2m_carrier_event_t *event)
+{
+	lwm2m_carrier_event_error_t *error_event = (lwm2m_carrier_event_error_t *)(event->data);
+
+	if (error_event->code != LWM2M_CARRIER_ERROR_BOOTSTRAP || error_event->value != EACCES) {
+		return;
+	}
+
+	/*
+	 * Error cause: SIM does not have MSISDN.
+	 *
+	 * This happens on new a SIM which have not been registered on the network yet.
+	 * Handle this by waiting for 3 minutes to let the registration happen, and then
+	 * reboot to initialize the lwm2m_carrier library again.
+	 *
+	 * Retry up to 3 times to avoid an infinite reboot loop in case of other errors.
+	 */
+
+	uint32_t msisdn_retry_count = 0;
+	int rc = lwm2m_os_storage_read(0xCAE6, &msisdn_retry_count, sizeof(uint32_t));
+
+	if (rc == -ENOENT || (rc == sizeof(uint32_t) && msisdn_retry_count < 3)) {
+		msisdn_retry_count++;
+		rc = lwm2m_os_storage_write(0xCAE6, &msisdn_retry_count, sizeof(uint32_t));
+
+		if (rc != sizeof(uint32_t)) {
+			return;
+		}
+
+		printk("New SIM detected, wait 3 minutes for network registration (%d)\n",
+		       msisdn_retry_count);
+
+		k_sleep(K_MINUTES(3));
+		sys_reboot(SYS_REBOOT_COLD);
+	}
+}
+
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	switch (event->type) {
@@ -116,6 +155,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		printk("LWM2M_CARRIER_EVENT_REBOOT\n");
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
+		lwm2m_carrier_check_error(event);
 		printk("LWM2M_CARRIER_EVENT_ERROR\n");
 		print_err(event);
 		break;
