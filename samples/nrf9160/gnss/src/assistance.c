@@ -15,7 +15,6 @@
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <pm_config.h>
-#include <date_time.h>
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
@@ -36,7 +35,6 @@ static struct gps_pgps_request pgps_request;
 static struct nrf_cloud_pgps_prediction *prediction;
 static struct k_work get_pgps_data_work;
 static struct k_work inject_pgps_data_work;
-static K_SEM_DEFINE(time_sem, 0, 1);
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 static struct k_work_q *work_q;
@@ -197,11 +195,6 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	}
 }
-
-void date_time_evt_handler(const struct date_time_evt *evt)
-{
-	k_sem_give(&time_sem);
-}
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 int assistance_init(struct k_work_q *assistance_work_q)
@@ -211,23 +204,6 @@ int assistance_init(struct k_work_q *assistance_work_q)
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
 	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
-
-	/* If we wait for a while after LTE attach, it's more likely that modem has got the current
-	 * time from the LTE network and no NTP is needed.
-	 */
-	k_sleep(K_SECONDS(1));
-
-	if (date_time_update_async(date_time_evt_handler) != 0) {
-		LOG_ERR("Failed to request current time");
-		return -1;
-	}
-
-	k_sem_take(&time_sem, K_FOREVER);
-
-	if (!date_time_is_valid()) {
-		LOG_ERR("Failed to get current time");
-		return -1;
-	}
 
 	struct nrf_cloud_pgps_init_param pgps_param = {
 		.event_handler = pgps_event_handler,

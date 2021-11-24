@@ -10,6 +10,7 @@
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #include <modem/lte_lc.h>
+#include <date_time.h>
 
 LOG_MODULE_REGISTER(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 
@@ -32,9 +33,10 @@ static const char update_indicator[] = {'\\', '|', '/', '-'};
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
 
 K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
-K_SEM_DEFINE(pvt_data_sem, 0, 1);
+static K_SEM_DEFINE(pvt_data_sem, 0, 1);
+static K_SEM_DEFINE(time_sem, 0, 1);
 
-struct k_poll_event events[2] = {
+static struct k_poll_event events[2] = {
 	K_POLL_EVENT_STATIC_INITIALIZER(K_POLL_TYPE_SEM_AVAILABLE,
 					K_POLL_MODE_NOTIFY_ONLY,
 					&pvt_data_sem, 0),
@@ -185,6 +187,11 @@ static void agps_data_get(struct k_work *item)
 }
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
 
+static void date_time_evt_handler(const struct date_time_evt *evt)
+{
+	k_sem_give(&time_sem);
+}
+
 static int modem_init(void)
 {
 	if (strlen(CONFIG_GNSS_SAMPLE_AT_MAGPIO) > 0) {
@@ -204,6 +211,10 @@ static int modem_init(void)
 	if (lte_lc_init() != 0) {
 		LOG_ERR("Failed to initialize LTE link controller");
 		return -1;
+	}
+
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		date_time_register_handler(date_time_evt_handler);
 	}
 
 #if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
@@ -226,6 +237,17 @@ static int modem_init(void)
 	}
 
 	LOG_INF("Connected to LTE network");
+
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		LOG_INF("Waiting for current time");
+
+		/* Wait for an event from the Date Time library. */
+		k_sem_take(&time_sem, K_MINUTES(10));
+
+		if (!date_time_is_valid()) {
+			LOG_WRN("Failed to get current time, continuing anyway");
+		}
+	}
 #endif
 
 	return 0;
