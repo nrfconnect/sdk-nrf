@@ -45,8 +45,10 @@ enum state {
 	STATE_ERASE_PEER,
 	STATE_ERASE_ADV,
 	STATE_SELECT_PEER,
-	STATE_DONGLE_CONN,
-	STATE_DONGLE_CONN_STANDBY
+	STATE_DONGLE,
+	STATE_DONGLE_STANDBY,
+	STATE_DONGLE_ERASE_PEER,
+	STATE_DONGLE_ERASE_ADV
 };
 
 struct state_switch {
@@ -68,24 +70,29 @@ static void erase_adv_confirm(void);
 static void erase_confirm(void);
 
 static const struct state_switch state_switch[] = {
-	 /* State           Event         Next state         Callback */
+	 /* State                 Event         Next state               Callback */
 #if CONFIG_DESKTOP_BLE_PEER_SELECT
-	{STATE_IDLE,        CLICK_SHORT,  STATE_SELECT_PEER, select_start},
-	{STATE_SELECT_PEER, CLICK_SHORT,  STATE_SELECT_PEER, select_next},
-	{STATE_SELECT_PEER, CLICK_DOUBLE, STATE_IDLE,        select_confirm},
+	{STATE_IDLE,              CLICK_SHORT,  STATE_SELECT_PEER,       select_start},
+	{STATE_SELECT_PEER,       CLICK_SHORT,  STATE_SELECT_PEER,       select_next},
+	{STATE_SELECT_PEER,       CLICK_DOUBLE, STATE_IDLE,              select_confirm},
 #endif
 
 #if CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
-	{STATE_IDLE,        CLICK_SHORT,  STATE_IDLE,        scan_request},
+	{STATE_IDLE,              CLICK_SHORT,  STATE_IDLE,              scan_request},
 #endif
 
 #if CONFIG_DESKTOP_BLE_PEER_ERASE
-	{STATE_IDLE,        CLICK_LONG,   STATE_ERASE_PEER,  erase_start},
+	{STATE_IDLE,              CLICK_LONG,   STATE_ERASE_PEER,        erase_start},
 #if CONFIG_BT_PERIPHERAL
-	{STATE_ERASE_PEER,  CLICK_DOUBLE, STATE_ERASE_ADV,   erase_adv_confirm},
+	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_ERASE_ADV,         erase_adv_confirm},
 #elif CONFIG_BT_CENTRAL
-	{STATE_ERASE_PEER,  CLICK_DOUBLE, STATE_IDLE,	     erase_confirm},
+	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_IDLE,              erase_confirm},
 #endif /* CONFIG_BT_PERIPHERAL */
+
+#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
+	{STATE_DONGLE,            CLICK_LONG,   STATE_DONGLE_ERASE_PEER, erase_start},
+	{STATE_DONGLE_ERASE_PEER, CLICK_DOUBLE, STATE_DONGLE_ERASE_ADV,  erase_adv_confirm},
+#endif /* CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON */
 #endif /* CONFIG_DESKTOP_BLE_PEER_ERASE */
 
 #if CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START
@@ -108,7 +115,7 @@ const static char * const opt_descr[] = {
 };
 
 static enum state state;
-static uint8_t cur_peer_id;
+static uint8_t cur_ble_peer_id;
 static bool cur_peer_id_valid;
 static uint8_t tmp_peer_id;
 static bool dongle_peer_selected_on_init;
@@ -136,6 +143,16 @@ static bool bt_stack_id_lut_valid;
 
 static struct k_work_delayable timeout;
 
+static uint8_t get_app_id(void)
+{
+	if ((state == STATE_DONGLE) || (state == STATE_DONGLE_ERASE_PEER) ||
+	    (state == STATE_DONGLE_ERASE_ADV) || (state == STATE_DONGLE_STANDBY)) {
+		return DONGLE_PEER_ID;
+	} else {
+		return cur_ble_peer_id;
+	}
+}
+
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
@@ -143,14 +160,14 @@ static int settings_set(const char *key, size_t len_rd,
 
 	if (!strcmp(key, PEER_ID_STORAGE_NAME)) {
 		/* Ignore record when size is improper. */
-		if (len_rd != sizeof(cur_peer_id)) {
+		if (len_rd != sizeof(cur_ble_peer_id)) {
 			cur_peer_id_valid = false;
 			return 0;
 		}
 
-		rc = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
+		rc = read_cb(cb_arg, &cur_ble_peer_id, sizeof(cur_ble_peer_id));
 
-		if (rc == sizeof(cur_peer_id)) {
+		if (rc == sizeof(cur_ble_peer_id)) {
 			cur_peer_id_valid = true;
 		} else {
 			cur_peer_id_valid = false;
@@ -192,8 +209,8 @@ SETTINGS_STATIC_HANDLER_DEFINE(ble_bond, MODULE_NAME, NULL, settings_set, NULL,
 static uint8_t get_bt_stack_peer_id(uint8_t id)
 {
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		if ((state == STATE_ERASE_PEER) ||
-		    (state == STATE_ERASE_ADV)) {
+		if ((state == STATE_ERASE_PEER) || (state == STATE_ERASE_ADV) ||
+		(state == STATE_DONGLE_ERASE_PEER) || (state == STATE_DONGLE_ERASE_ADV)) {
 			return bt_stack_id_lut[TEMP_PEER_ID];
 		} else {
 			return bt_stack_id_lut[id];
@@ -222,11 +239,11 @@ static int store_bt_stack_id_lut(void)
 
 static void swap_bt_stack_peer_id(void)
 {
-	__ASSERT_NO_MSG(state == STATE_ERASE_ADV);
+	__ASSERT_NO_MSG((state == STATE_ERASE_ADV) || (state == STATE_DONGLE_ERASE_ADV));
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_DEFAULT_ID)) {
 		if ((bt_stack_id_lut[0] == BT_ID_DEFAULT) &&
-		    (cur_peer_id == 0)) {
+		    (get_app_id() == 0)) {
 			int err = bt_unpair(BT_ID_DEFAULT, NULL);
 
 			if (err) {
@@ -239,8 +256,8 @@ static void swap_bt_stack_peer_id(void)
 	}
 	uint8_t temp = bt_stack_id_lut[TEMP_PEER_ID];
 
-	bt_stack_id_lut[TEMP_PEER_ID] = bt_stack_id_lut[cur_peer_id];
-	bt_stack_id_lut[cur_peer_id] = temp;
+	bt_stack_id_lut[TEMP_PEER_ID] = bt_stack_id_lut[get_app_id()];
+	bt_stack_id_lut[get_app_id()] = temp;
 
 	int err = store_bt_stack_id_lut();
 
@@ -292,7 +309,17 @@ static int shell_show_peers(const struct shell *shell, size_t argc, char **argv)
 static int shell_remove_peers(const struct shell *shell, size_t argc,
 			      char **argv)
 {
-	return remove_peers(cur_peer_id);
+	int err;
+
+	if ((state != STATE_DONGLE) && (state != STATE_DONGLE_STANDBY) &&
+	(state != STATE_DONGLE_ERASE_PEER) && (state != STATE_DONGLE_ERASE_ADV)) {
+		err = remove_peers(cur_ble_peer_id);
+	} else {
+		shell_print(shell,
+					"Failed to remove peers. Change to other state from dongle state.");
+		err = 0;
+	}
+	return err;
 }
 
 static void cancel_operation(void)
@@ -304,13 +331,17 @@ static void cancel_operation(void)
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
-	event->op = (state == STATE_ERASE_ADV) ?
+	event->op = ((state == STATE_ERASE_ADV) || (state == STATE_DONGLE_ERASE_ADV)) ?
 		(PEER_OPERATION_ERASE_ADV_CANCEL) : (PEER_OPERATION_CANCEL);
-	event->bt_app_id = cur_peer_id;
+	event->bt_app_id = get_app_id();
 
 	/* Updating state to send proper bt_stack_id. */
-	state = STATE_IDLE;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	if ((state == STATE_DONGLE_ERASE_PEER) || (state == STATE_DONGLE_ERASE_ADV)) {
+		state = STATE_DONGLE;
+	} else {
+		state = STATE_IDLE;
+	}
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -332,7 +363,7 @@ static void select_start(void)
 {
 	LOG_INF("Start peer select");
 
-	tmp_peer_id = next_peer_id(cur_peer_id);
+	tmp_peer_id = next_peer_id(cur_ble_peer_id);
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
@@ -380,11 +411,11 @@ static void select_confirm(void)
 
 	enum peer_operation op;
 
-	if (tmp_peer_id != cur_peer_id) {
-		cur_peer_id = tmp_peer_id;
+	if (tmp_peer_id != get_app_id()) {
+		cur_ble_peer_id = tmp_peer_id;
 		op = PEER_OPERATION_SELECTED;
 
-		int err = store_peer_id(cur_peer_id);
+		int err = store_peer_id(get_app_id());
 
 		if (err) {
 			module_set_state(MODULE_STATE_ERROR);
@@ -397,8 +428,8 @@ static void select_confirm(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = op;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -415,8 +446,8 @@ static void scan_request(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_SCAN_REQUEST;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -428,8 +459,8 @@ static void erase_start(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_ERASE;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -443,8 +474,8 @@ static void erase_confirm(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_ERASED;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -456,13 +487,15 @@ static void erase_adv_confirm(void)
 	/* Update state to ensure that proper bt_stack_id will be used. */
 	if (state == STATE_IDLE) {
 		state = STATE_ERASE_PEER;
+	} else if (state == STATE_DONGLE) {
+		state = STATE_DONGLE_ERASE_PEER;
 	}
 
-	int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id), NULL, NULL);
+	int err = bt_id_reset(get_bt_stack_peer_id(get_app_id()), NULL, NULL);
 
 	if (err < 0) {
 		LOG_ERR("Cannot reset id %u (err:%d)",
-			get_bt_stack_peer_id(cur_peer_id), err);
+			get_bt_stack_peer_id(get_app_id()), err);
 		module_set_state(MODULE_STATE_ERROR);
 		return;
 	}
@@ -472,8 +505,8 @@ static void erase_adv_confirm(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_ERASE_ADV;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -481,21 +514,18 @@ static void erase_adv_confirm(void)
 static void select_dongle_peer(void)
 {
 	if (state == STATE_IDLE) {
-		state = STATE_DONGLE_CONN;
+		state = STATE_DONGLE;
 	} else {
 		__ASSERT_NO_MSG(state == STATE_STANDBY);
-		state = STATE_DONGLE_CONN_STANDBY;
+		state = STATE_DONGLE_STANDBY;
 	}
 
 	LOG_INF("Selected dongle peer");
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_SELECTED;
-	event->bt_app_id = DONGLE_PEER_ID;
-	event->bt_stack_id = get_bt_stack_peer_id(DONGLE_PEER_ID);
-
-	/* BT stack ID for dongle peer should not be changed. */
-	__ASSERT_NO_MSG(event->bt_stack_id == (event->bt_app_id + 1));
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -503,9 +533,9 @@ static void select_dongle_peer(void)
 static void select_ble_peers(void)
 {
 	LOG_INF("Selected BLE peers");
-	if (state == STATE_DONGLE_CONN) {
+	if (state == STATE_DONGLE) {
 		state = STATE_IDLE;
-	} else if (state == STATE_DONGLE_CONN_STANDBY) {
+	} else if (state == STATE_DONGLE_STANDBY) {
 		state = STATE_STANDBY;
 	} else {
 		__ASSERT_NO_MSG((state == STATE_STANDBY) ||
@@ -515,8 +545,8 @@ static void select_ble_peers(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_SELECTED;
-	event->bt_app_id = cur_peer_id;
-	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+	event->bt_app_id = get_app_id();
+	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 	EVENT_SUBMIT(event);
 }
@@ -532,10 +562,11 @@ static void handle_click(enum click click)
 				}
 				state = state_switch[i].next_state;
 
-				if (state != STATE_IDLE) {
+				if ((state != STATE_IDLE) && (state != STATE_DONGLE)) {
 					k_timeout_t work_delay;
 
-					if (state == STATE_ERASE_ADV) {
+					if ((state == STATE_ERASE_ADV) ||
+					    (state == STATE_DONGLE_ERASE_ADV)) {
 						work_delay = ERASE_ADV_TIMEOUT;
 					} else {
 						work_delay = CONFIRM_TIMEOUT;
@@ -557,6 +588,8 @@ static void handle_click(enum click click)
 
 	if ((state == STATE_ERASE_PEER) ||
 	    (state == STATE_ERASE_ADV) ||
+	    (state == STATE_DONGLE_ERASE_PEER) ||
+	    (state == STATE_DONGLE_ERASE_ADV) ||
 	    (state == STATE_SELECT_PEER)) {
 		cancel_operation();
 	}
@@ -566,6 +599,8 @@ static void timeout_handler(struct k_work *work)
 {
 	__ASSERT_NO_MSG((state == STATE_ERASE_PEER) ||
 			(state == STATE_ERASE_ADV) ||
+			(state == STATE_DONGLE_ERASE_PEER) ||
+			(state == STATE_DONGLE_ERASE_ADV) ||
 			(state == STATE_SELECT_PEER));
 
 	cancel_operation();
@@ -647,7 +682,7 @@ static bool storage_data_is_valid(void)
 		return false;
 	}
 
-	if (cur_peer_id >= DONGLE_PEER_ID) {
+	if (cur_ble_peer_id >= DONGLE_PEER_ID) {
 		return false;
 	}
 
@@ -664,10 +699,10 @@ static void storage_data_overwrite(void)
 {
 	LOG_WRN("No valid data in storage, write default values");
 
-	cur_peer_id = 0;
+	cur_ble_peer_id = 0;
 	init_bt_stack_id_lut();
 
-	int err = store_peer_id(cur_peer_id);
+	int err = store_peer_id(cur_ble_peer_id);
 
 	if (!err) {
 		err = store_bt_stack_id_lut();
@@ -733,7 +768,7 @@ static int init(void)
 
 static bool ble_peer_event_handler(const struct ble_peer_event *event)
 {
-	if (state != STATE_ERASE_ADV) {
+	if ((state != STATE_ERASE_ADV) && (state != STATE_DONGLE_ERASE_ADV)) {
 		return false;
 	}
 
@@ -760,7 +795,7 @@ static bool ble_peer_event_handler(const struct ble_peer_event *event)
 			return false;
 		}
 
-		if (bt_info.id != get_bt_stack_peer_id(cur_peer_id)) {
+		if (bt_info.id != get_bt_stack_peer_id(get_app_id())) {
 			LOG_INF("Connection for old id - ignored");
 			int err = bt_conn_disconnect(event->id,
 					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
@@ -776,14 +811,18 @@ static bool ble_peer_event_handler(const struct ble_peer_event *event)
 		LOG_INF("Erased peer");
 		swap_bt_stack_peer_id();
 
-		state = STATE_IDLE;
+		if (state == STATE_DONGLE_ERASE_ADV) {
+			state = STATE_DONGLE;
+		} else {
+			state = STATE_IDLE;
+		}
 
 		struct ble_peer_operation_event *event =
 			new_ble_peer_operation_event();
 
 		event->op = PEER_OPERATION_ERASED;
-		event->bt_app_id = cur_peer_id;
-		event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+		event->bt_app_id = get_app_id();
+		event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
 		EVENT_SUBMIT(event);
 		/* Cancel cannot fail if executed from another work's context. */
@@ -823,8 +862,10 @@ static void selector_event_handler(const struct selector_event *event)
 		case STATE_DISABLED_STANDBY:
 			dongle_peer_selected_on_init = true;
 			break;
-		case STATE_DONGLE_CONN:
-		case STATE_DONGLE_CONN_STANDBY:
+		case STATE_DONGLE:
+		case STATE_DONGLE_STANDBY:
+		case STATE_DONGLE_ERASE_PEER:
+		case STATE_DONGLE_ERASE_ADV:
 			/* Ignore */
 			break;
 		case STATE_ERASE_PEER:
@@ -843,6 +884,7 @@ static void selector_event_handler(const struct selector_event *event)
 	} else {
 		switch (state) {
 		case STATE_DISABLED:
+		case STATE_DISABLED_STANDBY:
 			dongle_peer_selected_on_init = false;
 			break;
 		case STATE_IDLE:
@@ -852,10 +894,12 @@ static void selector_event_handler(const struct selector_event *event)
 		case STATE_ERASE_PEER:
 		case STATE_ERASE_ADV:
 		case STATE_SELECT_PEER:
+		case STATE_DONGLE_ERASE_PEER:
+		case STATE_DONGLE_ERASE_ADV:
 			cancel_operation();
 			/* Fall-through */
-		case STATE_DONGLE_CONN:
-		case STATE_DONGLE_CONN_STANDBY:
+		case STATE_DONGLE:
+		case STATE_DONGLE_STANDBY:
 			select_ble_peers();
 			break;
 		default:
@@ -870,7 +914,7 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 	ARG_UNUSED(data);
 	ARG_UNUSED(size);
 
-	if (state != STATE_IDLE) {
+	if ((state != STATE_IDLE) && (state != STATE_DONGLE)) {
 		LOG_WRN(MODULE_NAME " is busy");
 		return;
 	}
@@ -888,10 +932,19 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 	case BLE_BOND_OPT_PEER_ERASE:
 		LOG_INF("Remote peer erase request");
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			if ((!IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL)
+				&& (state == STATE_DONGLE))) {
+				LOG_WRN("Peer erase not supported");
+				return;
+			}
 			erase_adv_confirm();
-			state = STATE_ERASE_ADV;
+			if (state == STATE_ERASE_PEER) {
+				state = STATE_ERASE_ADV;
+			} else if (state == STATE_DONGLE_ERASE_PEER) {
+				state = STATE_DONGLE_ERASE_ADV;
+			}
 
-			k_work_reschedule(&timeout, ERASE_ADV_TIMEOUT);
+				k_work_reschedule(&timeout, ERASE_ADV_TIMEOUT);
 
 		} else if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			erase_confirm();
@@ -927,8 +980,13 @@ static bool handle_power_down_event(const struct power_down_event *event)
 		module_set_state(MODULE_STATE_OFF);
 		break;
 
-	case STATE_DONGLE_CONN:
-		state = STATE_DONGLE_CONN_STANDBY;
+	case STATE_DONGLE_ERASE_PEER:
+	case STATE_DONGLE_ERASE_ADV:
+		cancel_operation();
+		/* Fall-through */
+
+	case STATE_DONGLE:
+		state = STATE_DONGLE_STANDBY;
 		module_set_state(MODULE_STATE_OFF);
 		break;
 
@@ -936,7 +994,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 		/* Fall-through */
 	case STATE_DISABLED_STANDBY:
 		/* Fall-through */
-	case STATE_DONGLE_CONN_STANDBY:
+	case STATE_DONGLE_STANDBY:
 		/* No action. */
 		break;
 
@@ -960,8 +1018,8 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 		module_set_state(MODULE_STATE_READY);
 		break;
 
-	case STATE_DONGLE_CONN_STANDBY:
-		state = STATE_DONGLE_CONN;
+	case STATE_DONGLE_STANDBY:
+		state = STATE_DONGLE;
 		module_set_state(MODULE_STATE_READY);
 		break;
 
@@ -975,7 +1033,11 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 		/* Fall-through */
 	case STATE_SELECT_PEER:
 		/* Fall-through */
-	case STATE_DONGLE_CONN:
+	case STATE_DONGLE_ERASE_PEER:
+		/* Fall-through */
+	case STATE_DONGLE_ERASE_ADV:
+		/* Fall-through */
+	case STATE_DONGLE:
 		/* No action. */
 		break;
 

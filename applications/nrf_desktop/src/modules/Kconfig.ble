@@ -115,6 +115,13 @@ config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
 	  If the selector is set to any other position, other Bluetooth LE
 	  peers are selected.
 
+config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
+	bool "Allow earasing dongle peer using button"
+
+config DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL
+	bool "Allow earasing dongle peer using config channel"
+	depends on  DESKTOP_CONFIG_CHANNEL_ENABLE
+
 endif
 
 if !DESKTOP_BLE_DONGLE_PEER_ENABLE

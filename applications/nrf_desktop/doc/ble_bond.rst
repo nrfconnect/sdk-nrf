@@ -61,6 +61,12 @@ Every transition is triggered by an :ref:`event_manager` event with a predefined
 Some transitions can be also triggered by internal timeout.
 For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerator:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal timeout.
 
+When the transition occurs:
+
+a. The :c:struct:`ble_peer_operation_event` with the defined :c:member:`ble_peer_operation_event.op` is submitted.
+   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
+#. The currently selected application local identity is updated (if anything changed).
+
 The following diagram shows states and transitions between these states after the module is initialized:
 
 .. figure:: /images/nrf_desktop_ble_bond.svg
@@ -69,31 +75,45 @@ The following diagram shows states and transitions between these states after th
    nRF Desktop Bluetooth LE bond module state diagram
 
 .. note::
-  The diagram does not present the states related to module going into standby (:c:enum:`STATE_STANDBY`, :c:enum:`STATE_DISABLED_STANDBY`, :c:enum:`STATE_DONGLE_CONN_STANDBY`).
+  The diagram does not present the states related to module going into standby (:c:enum:`STATE_STANDBY`, :c:enum:`STATE_DISABLED_STANDBY`, :c:enum:`STATE_DONGLE_STANDBY`).
   For more information about the standby states, see `Standby states`_.
 
-Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :c:enumerator:`STATE_IDLE`.
-This does not apply to :c:enumerator:`STATE_DONGLE_CONN`.
+Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :c:enumerator:`STATE_IDLE` or :c:enumerator:`STATE_DONGLE`.
+This does not apply to :c:enumerator:`STATE_DONGLE`.
 In this state, all the peer operations triggered by ``click_event`` are disabled.
 
-When the transition occurs:
+Idle (:c:enumerator:`STATE_IDLE`)
+=================================
 
-a. The :c:struct:`ble_peer_operation_event` with the defined :c:member:`ble_peer_operation_event.op` is submitted.
-   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
-#. The currently selected application local identity is updated (if anything changed).
+This is the default state of the module.
 
-Peer erasing
-============
+When in this state, the following transitions are possible:
+
+* Start peer erase with :c:enumerator:`PEER_OPERATION_ERASE` by triggering a ``click_event`` with the ``CLICK_LONG`` click type.
+* Start erase advertising with :c:enumerator:`PEER_OPERATION_ERASE_ADV` by triggering a ``click_event`` with the ``ON_START_CLICK(CLICK_LONG)`` click type.
+* Select next peer with :c:enumerator:`PEER_OPERATION_SELECT` by triggering a ``click_event`` with the ``CLICK_SHORT`` click type.
+* Select the dongle peer with :c:enumerator:`PEER_OPERATION_SELECTED` by triggering a ``selector_event`` with the selector in the :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
+
+It is also possible to trigger looking for a new peer with :c:enumerator:`PEER_OPERATION_SCAN_REQUEST` with a ``click_event`` of the ``CLICK_SHORT`` click type.
+
+.. _ble_bond_peer_erasing:
+
+Peer erasing (:c:enumerator:`STATE_ERASE_PEER`)
+===============================================
+
+Peer erasing is triggered with the reception of a ``click_event`` of the ``CLICK_LONG`` type.
 
 Depending on the device type:
 
 * The nRF Desktop central erases all bonded peers on the erase confirmation.
 * The nRF Desktop peripheral starts erase advertising on the erase confirmation.
 
-Erase advertising
------------------
+.. _ble_bond_erase_adv:
 
-The erase advertising is used to make sure that the user will be able to switch back to the old peer if the new one fails to connect or bond.
+Erase advertising (:c:enumerator:`STATE_ERASE_ADV`)
+===================================================
+
+The erase advertising is used to make sure that the user is able to switch back to the old peer if the new one fails to connect or bond.
 The peripheral uses an additional Bluetooth local identity that is not associated with any application local identity.
 The peripheral resets the identity and starts advertising using it.
 
@@ -110,19 +130,50 @@ The application local identity still uses the Bluetooth local identity that was 
    The timeout is increased to a bigger value when the passkey authentication is enabled (:kconfig:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
    This gives the end user enough time to enter the passkey.
 
+Peer selection (:c:enumerator:`STATE_SELECT_PEER`)
+==================================================
+
+In this state, the module waits for confirmation before the peer is switched.
+The connected peer remains unchanged until the selection is confirmed.
+
+Dongle states
+=============
+
+The module can go into one of the following dongle states:
+
+* :c:enumerator:`STATE_DONGLE` - This is the default state of the module when the hardware selector used to select the dongle peer is placed in the :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
+  This state is used for connection with the nRF Desktop dongle.
+* :c:enumerator:`STATE_DONGLE_STANDBY` - The Bluetooth LE bond module is suspended when the dongle peer is selected.
+  See :ref:`ble_bond_standby_states`.
+* :c:enumerator:`STATE_DONGLE_ERASE_PEER` - As :ref:`ble_bond_peer_erasing`, but for erasing dongle peer.
+* :c:enumerator:`STATE_DONGLE_ERASE_ADV` - As :ref:`ble_bond_erase_adv`, but for erasing dongle peer.
+  Similarly, the device waits with erasing the previous peer until it is connected and bonded with a new one.
+
+.. figure:: /images/nrf_desktop_ble_bond_dongle.svg
+   :alt: nRF Desktop Bluetooth LE bond module dongle state diagram
+
+   nRF Desktop Bluetooth LE bond module dongle state diagram
+
+.. _ble_bond_standby_states:
+
 Standby states
 ==============
 
 The module can go into one of the following standby states to make sure that the peer operations are not triggered when the device is suspended by :ref:`nrf_desktop_power_manager`:
 
-* :c:enumerator:`STATE_DISABLED_STANDBY` - the module is suspended before initialization.
-* :c:enumerator:`STATE_DONGLE_CONN_STANDBY` - the module is suspended while the dongle peer is selected.
-* :c:enumerator:`STATE_STANDBY` - the module is suspended while other Bluetooth peers are selected.
+* :c:enumerator:`STATE_DISABLED_STANDBY` - The module is suspended before initialization.
+* :c:enumerator:`STATE_DONGLE_STANDBY` - The module is suspended when the dongle peer is selected.
+* :c:enumerator:`STATE_STANDBY` - The module is suspended when other Bluetooth peers are selected.
 
-Going into the standby states and leaving them happens in reaction to the following events:
+Going into the standby states and leaving these states happens in reaction to the following events:
 
-* ``power_down_event`` - on this event, the module goes into one of the standby states and the ongoing peer operation is cancelled.
-* ``wake_up_event`` - on this event, the module returns from the standby state.
+* ``power_down_event`` - On this event, the module goes into one of the standby states and the ongoing peer operation is cancelled.
+* ``wake_up_event`` - On this event, the module returns from the standby state.
+
+.. figure:: /images/nrf_desktop_ble_bond_standby.svg
+   :alt: nRF Desktop Bluetooth LE bond module standby state diagram
+
+   nRF Desktop Bluetooth LE bond module standby state diagram
 
 Configuration
 *************
@@ -196,8 +247,16 @@ The peer bonded with the default Bluetooth local identity is unpaired.
 The default identity on given device uses the same Bluetooth address after every programming.
 This feature can be useful for automatic tests.
 
-Configuration channel
-*********************
+Erasing dongle peers
+====================
+
+To enable erasing dongle peer you have to enable the following options:
+
+* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON` - If you want to enable erasing peers using buttons.
+* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL` - If you want to enable erasing peers using `Configuration channel options`_.
+
+Configuration channel options
+*****************************
 
 The module provides the following :ref:`nrf_desktop_config_channel` options:
 
@@ -207,7 +266,7 @@ The module provides the following :ref:`nrf_desktop_config_channel` options:
 * ``peer_search`` - Request scanning for new peripherals.
   The option is available only for the nRF Desktop central.
 
-Perform :ref:`nrf_desktop_config_channel` set operation on selected option to trigger the operation.
+Perform a :ref:`nrf_desktop_config_channel` set operation on the selected option to trigger the operation.
 The options can be used only if the module is in :c:enumerator:`STATE_IDLE`.
 Because of this, they cannot be used when the device is suspended by :ref:`nrf_desktop_power_manager`.
 The device must be woken up from suspended state before the operation is started.
