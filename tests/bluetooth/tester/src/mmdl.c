@@ -1888,7 +1888,7 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 	struct mesh_sensor_setting_set *cmd = (void *)data;
 	const struct bt_mesh_sensor_type *sensor;
 	const struct bt_mesh_sensor_type *setting;
-	struct sensor_value value;
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	struct bt_mesh_sensor_setting_status rsp;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -1931,15 +1931,15 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	memset(&value, 0, sizeof(value));
-	memcpy(&value, cmd->data, cmd->len);
+	memset(value, 0, sizeof(value));
+	memcpy(value, cmd->data, cmd->len);
 
 	if (cmd->ack) {
 		err = bt_mesh_sensor_cli_setting_set(&sensor_cli, &ctx, sensor,
-						     setting, &value, &rsp);
+						     setting, value, &rsp);
 	} else {
 		err = bt_mesh_sensor_cli_setting_set_unack(
-			&sensor_cli, &ctx, sensor, setting, &value);
+			&sensor_cli, &ctx, sensor, setting, value);
 	}
 
 	if (err) {
