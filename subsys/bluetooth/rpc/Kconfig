@@ -17,7 +17,6 @@ config BT_RPC
 	depends on !BT_HCI_RAW
 	depends on !BT_DF
 	depends on !BT_OTS
-	depends on !BT_GATT_CLIENT
 	depends on !NET_L2_BT
 	depends on !NET_L2_BT_SHELL
 	depends on !BT_BREDR

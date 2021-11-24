@@ -88,6 +88,26 @@
 		return (uint64_t)_low_ret | ((uint64_t)_ret << 32); \
 	}
 
+/** @brief Declares a handler for output callback proxy.
+ *
+ * This declaration can be placed in the header file to share one handler
+ * in multiple source files.
+ *
+ * All parameter must be the same as in related handler defined by
+ * the CBKPROXY_HANDLER macro except callback_name which should be skipped in this macro.
+ */
+#define CBKPROXY_HANDLER_DECL(...) _CBKPROXY_HANDLER_CAT(_CBKPROXY_HANDLER_DECL_, \
+	_CBKPROXY_HANDLER_DECL_CNT(__VA_ARGS__)) (__VA_ARGS__)
+#define _CBKPROXY_HANDLER_DECL_CNT(...) \
+	_CBKPROXY_HANDLER_CNT2(_, __VA_ARGS__, RET_PARAM, VOID_PARAM, RET_VOID, VOID_VOID)
+#define _CBKPROXY_HANDLER_DECL_VOID_VOID(f) \
+	uint64_t f(uint32_t callback_slot, uint32_t _rsv0, uint32_t _rsv1, uint32_t _ret)
+#define _CBKPROXY_HANDLER_DECL_RET_VOID(f, r) \
+	uint64_t f(uint32_t callback_slot, uint32_t _rsv0, uint32_t _rsv1, uint32_t _ret)
+#define _CBKPROXY_HANDLER_DECL_VOID_PARAM(f, p, a) \
+	uint64_t f _CBKPROXY_HANDLER_PAR(p)
+#define _CBKPROXY_HANDLER_DECL_RET_PARAM(f, r, p, a) \
+	uint64_t f _CBKPROXY_HANDLER_PAR(p)
 
 /** @brief Get output callback proxy.
  *

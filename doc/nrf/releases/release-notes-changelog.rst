@@ -179,9 +179,9 @@ Bluetooth samples
 * :ref:`peripheral_uart` sample is now the default sample for the :ref:`ble_rpc` library.
   The sample runs out of the box with a serialized Bluetooth Low Energy Host.
 * Updated some samples to use DTS overlay instead of KConfig for external flash.
-* :ref:`peripheral_hids_mouse` sample now comes with the :ref:`ble_rpc_host` child image configuration overlay.
+* :ref:`peripheral_hids_mouse` and :ref:`central_uart` samples now come with the :ref:`ble_rpc_host` child image configuration overlay.
   The overlay shows how to configure an application running a serialized Bluetooth Low Energy Host.
-  The :ref:`peripheral_hids_mouse` runs out the box with the :ref:`ble_rpc` library.
+  These samples run out the box with the :ref:`ble_rpc` library.
 
 Bluetooth mesh samples
 ----------------------
@@ -311,7 +311,7 @@ Bluetooth libraries
 
 * :ref:`ble_rpc` library:
 
-  * Added support for the GATT Server API serialization.
+  * Added support for the GATT API serialization.
   * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
 
 Added:
