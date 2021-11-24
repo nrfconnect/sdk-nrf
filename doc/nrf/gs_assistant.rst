@@ -64,6 +64,11 @@ There are several ways you can build an application:
 * To build on the command line, use the following steps:
 
    1. With admin permissions enabled, download and install the `nRF Command Line Tools`_.
+
+      .. include:: gs_installing.rst
+         :start-after: macos_x86_note_start
+         :end-before: macos_x86_note_end
+
    #. Restart the Toolchain Manager application.
    #. Follow the instructions in :ref:`gs_programming_cmd`.
 

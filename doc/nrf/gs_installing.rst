@@ -644,5 +644,15 @@ Define the required environment variables as follows, depending on your operatin
       See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
 You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
+
+.. macos_x86_note_start
+
+.. note::
+
+   On macOS, along with :file:`Install nRF Tools`, make sure to run :file:`J-link for x86-version` when you get to choose between :file:`J-link for M1` and :file:`J-link for x86-version`.
+   This is because some of our applications that are using Rosetta 2 (x86 emulation) currently depend on :file:`J-link for x86`.
+
+.. macos_x86_note_end
+
 The west command programs the development kit by using nrfjprog by default.
 For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
