@@ -43,10 +43,7 @@
 /* Button used to enter the Identify mode. */
 #define IDENTIFY_MODE_BUTTON                   DK_BTN4_MSK
 
-/**
- * If set to ZB_TRUE then device will not open the network
- * after forming or reboot.
- */
+/* If set to ZB_TRUE then device will not open the network after forming or reboot. */
 #define ZIGBEE_MANUAL_STEERING                 ZB_FALSE
 
 #define ZIGBEE_PERMIT_LEGACY_DEVICES           ZB_FALSE
@@ -165,6 +162,7 @@ static void start_identifying(zb_bufid_t bufid)
 static void steering_finished(zb_uint8_t param)
 {
 	ARG_UNUSED(param);
+
 	LOG_INF("Network steering finished");
 	dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
 }
@@ -172,23 +170,18 @@ static void steering_finished(zb_uint8_t param)
 /**@brief Callback for button events.
  *
  * @param[in]   button_state  Bitmask containing buttons state.
- * @param[in]   has_changed   Bitmask containing buttons
- *                            that has changed their state.
+ * @param[in]   has_changed   Bitmask containing buttons that has changed their state.
  */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	/* Calculate bitmask of buttons that are pressed
-	 * and have changed their state.
-	 */
+	/* Calculate bitmask of buttons that are pressed and have changed their state. */
 	uint32_t buttons = button_state & has_changed;
 	zb_bool_t comm_status;
 
 	if (buttons & KEY_ZIGBEE_NETWORK_REOPEN) {
-		(void)(ZB_SCHEDULE_APP_ALARM_CANCEL(
-			steering_finished, ZB_ALARM_ANY_PARAM));
+		(void)(ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM));
 
-		comm_status = bdb_start_top_level_commissioning(
-			ZB_BDB_NETWORK_STEERING);
+		comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
 		if (comm_status) {
 			LOG_INF("Top level comissioning restated");
 		} else {
@@ -217,8 +210,7 @@ static void configure_gpio(void)
 
 /**@brief Zigbee stack event handler.
  *
- * @param[in]   bufid   Reference to the Zigbee stack buffer
- *                      used to pass signal.
+ * @param[in]   bufid   Reference to the Zigbee stack buffer used to pass signal.
  */
 void zboss_signal_handler(zb_bufid_t bufid)
 {
@@ -258,8 +250,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 				zb_bdb_set_legacy_device_support(1);
 			}
 
-			/* Schedule an alarm to notify about the end
-			 * of steering period
+			/* Schedule an alarm to notify about the end of steering period.
 			 */
 			LOG_INF("Network steering started");
 			zb_err_code = ZB_SCHEDULE_APP_ALARM(
@@ -278,8 +269,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		LOG_INF("New device commissioned or rejoined (short: 0x%04hx)",
 			dev_annce_params->device_short_addr);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished,
-							   ZB_ALARM_ANY_PARAM);
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM);
 		if (zb_err_code == RET_OK) {
 			LOG_INF("Joining period extended.");
 			zb_err_code = ZB_SCHEDULE_APP_ALARM(
@@ -296,7 +286,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		break;
 	}
 
-	/* Update network status LED */
+	/* Update network status LED. */
 	if (ZB_JOINED() &&
 	    (ZB_SCHEDULE_GET_ALARM_TIME(steering_finished, ZB_ALARM_ANY_PARAM,
 					&timeout_bi) == RET_OK)) {
