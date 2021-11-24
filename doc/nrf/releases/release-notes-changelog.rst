@@ -343,6 +343,8 @@ Updated:
 * The :ref:`caf_power_manager` now has a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
 * Sensor sampler renamed to sensor manager. All references updated.
 * Extended the functionality of the :ref:`caf_sensor_manager` with passive and active power management.
+* Aligned initialization of the :ref:`caf_sensor_manager` with the documentation.
+  The module now reports error state at init, only if all sensors fail to initialize.
 
 
 Modem libraries
