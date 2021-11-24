@@ -14,6 +14,7 @@
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_gatt_svc_client.h"
+#include "bt_rpc_conn_client.h"
 #include "bt_rpc_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
@@ -120,6 +121,7 @@ int bt_enable(bt_ready_cb_t cb)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		bt_rpc_conn_init();
 		result = bt_rpc_gatt_init();
 	}
 
@@ -1940,8 +1942,8 @@ void bt_foreach_bond(uint8_t id, void (*func)(const struct bt_bond_info *info,
 static int rpc_settings_set(const char *key, size_t len_rd, settings_read_cb read_cb,
 				    void *cb_arg)
 {
-	struct nrf_rpc_cbor_ctx _ctx;
-	size_t _buffer_size_max = 0;
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
 	ssize_t len;
 	const char *next;
 
@@ -1953,10 +1955,10 @@ static int rpc_settings_set(const char *key, size_t len_rd, settings_read_cb rea
 	len = settings_name_next(key, &next);
 
 	if (!strncmp(key, "network", len)) {
-		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
 		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_SETTINGS_LOAD_RPC_CMD,
-					&_ctx, ser_rsp_decode_void, NULL);
+					&ctx, ser_rsp_decode_void, NULL);
 
 	}
 
