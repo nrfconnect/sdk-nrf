@@ -59,4 +59,8 @@ static const struct ml_result_led_effect ml_result_led_effects[] = {
 		.label = "idle",
 		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR(100, 100, 100)),
 	},
+	{
+		.label = "off",
+		.effect = LED_EFFECT_LED_BLINK2(50, 500, LED_COLOR(0, 50, 0)),
+	},
 };

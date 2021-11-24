@@ -41,6 +41,9 @@ static const struct led_effect *blocking_led_effect;
 static const char *cur_label;
 static size_t prediction_streak;
 
+static bool ml_runner_active;
+static bool forwarder_active;
+
 
 static bool is_led_effect_valid(const struct led_effect *le)
 {
@@ -102,6 +105,14 @@ static void ml_result_set_signin_state(bool state)
 	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
 }
 
+static void display_forwarder_state(void)
+{
+	enum ei_data_forwarder_state state =
+		forwarder_active ? forwarder_state : EI_DATA_FORWARDER_STATE_DISABLED;
+
+	send_led_event(led_map[LED_ID_ML_STATE], &ei_data_forwarder_led_effects[state]);
+}
+
 static void display_sensor_sim(const char *label)
 {
 	static const struct ml_result_led_effect *sensor_sim_effect;
@@ -132,8 +143,6 @@ static void display_ml_result(const char *label, bool force_update)
 		return;
 	}
 
-	__ASSERT_NO_MSG(!force_update || !label);
-
 	if (!force_update) {
 		if (!label) {
 			LOG_INF("Anomaly detected");
@@ -159,6 +168,11 @@ static void display_ml_result(const char *label, bool force_update)
 		blocking_led_effect = NULL;
 		ml_result_set_signin_state(true);
 	}
+}
+
+static void display_ml_default(void)
+{
+	display_ml_result(ml_runner_active ? NULL : "off", true);
 }
 
 static void update_ml_result(const char *label, float value, float anomaly)
@@ -231,14 +245,12 @@ static bool handle_sensor_sim_event(const struct sensor_sim_event *event)
 
 static bool handle_ei_data_forwarder_event(const struct ei_data_forwarder_event *event)
 {
-	__ASSERT_NO_MSG(event->state != EI_DATA_FORWARDER_STATE_DISABLED);
 	forwarder_state = event->state;
 
 	__ASSERT_NO_MSG(is_led_effect_valid(&ei_data_forwarder_led_effects[forwarder_state]));
 
 	if (ml_state == ML_STATE_DATA_FORWARDING) {
-		send_led_event(led_map[LED_ID_ML_STATE],
-			       &ei_data_forwarder_led_effects[forwarder_state]);
+		display_forwarder_state();
 	}
 
 	return false;
@@ -249,7 +261,7 @@ static bool handle_led_ready_event(const struct led_ready_event *event)
 	if ((event->led_id == led_map[LED_ID_ML_STATE]) &&
 	    (ml_state == ML_STATE_MODEL_RUNNING) &&
 	    (blocking_led_effect == event->led_effect)) {
-		display_ml_result(NULL, true);
+		display_ml_default();
 	}
 
 	return false;
@@ -261,10 +273,9 @@ static bool handle_ml_state_event(const struct ml_state_event *event)
 
 	if (event->state == ML_STATE_MODEL_RUNNING) {
 		clear_prediction();
-		display_ml_result(NULL, true);
+		display_ml_default();
 	} else if (event->state == ML_STATE_DATA_FORWARDING) {
-		send_led_event(led_map[LED_ID_ML_STATE],
-			       &ei_data_forwarder_led_effects[forwarder_state]);
+		display_forwarder_state();
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
@@ -288,6 +299,29 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		module_set_state(MODULE_STATE_READY);
 		initialized = true;
 		ml_result_set_signin_state(true);
+
+		return false;
+	}
+	if (event->module_id == MODULE_ID(ml_runner)) {
+		bool new_ml_runner_active = (event->state == MODULE_STATE_READY);
+
+		if (new_ml_runner_active != ml_runner_active) {
+			ml_runner_active = new_ml_runner_active;
+			if (ml_state == ML_STATE_MODEL_RUNNING) {
+				clear_prediction();
+				display_ml_default();
+			}
+		}
+	}
+	if (event->module_id == MODULE_ID(ei_data_forwarder)) {
+		bool new_data_forwarder_active = (event->state == MODULE_STATE_READY);
+
+		if (new_data_forwarder_active != forwarder_active) {
+			forwarder_active = new_data_forwarder_active;
+			if (ml_state == ML_STATE_DATA_FORWARDING) {
+				display_forwarder_state();
+			}
+		}
 	}
 
 	return false;

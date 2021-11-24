@@ -42,7 +42,8 @@ enum state {
 	STATE_ACTIVE,
 	STATE_SUSPENDED,
 	STATE_BLOCKED,
-	STATE_ERROR
+	STATE_ERROR,
+	STATE_FORCE_BROADCAST,
 };
 
 struct ei_data_packet {
@@ -66,12 +67,11 @@ static sys_slist_t send_queue;
 static struct k_work send_queued;
 static size_t pipeline_cnt;
 static atomic_t sent_cnt;
+static bool sensor_active;
 
 
 static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwarder_state)
 {
-	__ASSERT_NO_MSG(forwarder_state != EI_DATA_FORWARDER_STATE_DISABLED);
-
 	struct ei_data_forwarder_event *event = new_ei_data_forwarder_event();
 
 	event->state = forwarder_state;
@@ -103,8 +103,15 @@ static void update_state(enum state new_state)
 {
 	static enum ei_data_forwarder_state forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
 	enum ei_data_forwarder_state new_forwarder_state;
+	bool force_broadcast = false;
 
 	switch (new_state) {
+	case STATE_FORCE_BROADCAST:
+		/* Broadcast the previous state */
+		new_forwarder_state = forwarder_state;
+		force_broadcast = true;
+		break;
+
 	case STATE_DISABLED_ACTIVE:
 	case STATE_DISABLED_SUSPENDED:
 		new_forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
@@ -131,10 +138,13 @@ static void update_state(enum state new_state)
 		break;
 	}
 
-	state = new_state;
+	if (new_state != STATE_FORCE_BROADCAST)
+		state = new_state;
 
-	if (new_forwarder_state != forwarder_state) {
-		broadcast_ei_data_forwarder_state(new_forwarder_state);
+	if ((new_forwarder_state != forwarder_state) || force_broadcast) {
+		if (sensor_active) {
+			broadcast_ei_data_forwarder_state(new_forwarder_state);
+		}
 		forwarder_state = new_forwarder_state;
 	}
 }
@@ -216,7 +226,9 @@ static bool handle_sensor_event(const struct sensor_event *event)
 		return false;
 	}
 
-	if ((state != STATE_ACTIVE) || !is_nus_conn_valid(nus_conn, conn_state)) {
+	if ((state != STATE_ACTIVE) ||
+	    !is_nus_conn_valid(nus_conn, conn_state) ||
+	    !sensor_active) {
 		return false;
 	}
 
@@ -251,6 +263,28 @@ static bool handle_sensor_event(const struct sensor_event *event)
 			memcpy(packet->buf, buf, pos);
 			packet->size = pos;
 			sys_slist_append(&send_queue, &packet->node);
+		}
+	}
+
+	return false;
+}
+
+static bool handle_sensor_state_event(const struct sensor_state_event *event)
+{
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	bool new_sensor_state = event->state == SENSOR_STATE_ACTIVE;
+
+	if (new_sensor_state != sensor_active) {
+		sensor_active = new_sensor_state;
+		if (sensor_active) {
+			module_set_state(MODULE_STATE_READY);
+			update_state(STATE_FORCE_BROADCAST);
+		} else {
+			module_set_state(MODULE_STATE_OFF);
 		}
 	}
 
@@ -322,6 +356,7 @@ static int init_nus(void)
 
 static void init(void)
 {
+	LOG_INF("Current state: %d", state);
 	__ASSERT_NO_MSG((state == STATE_DISABLED_ACTIVE) || (state == STATE_DISABLED_SUSPENDED));
 
 	k_work_init(&send_queued, send_queued_fn);
@@ -412,6 +447,9 @@ static bool event_handler(const struct event_header *eh)
 	if (is_sensor_event(eh)) {
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
+	if (is_sensor_state_event(eh)) {
+		return handle_sensor_state_event(cast_sensor_state_event(eh));
+	}
 
 	if (ML_STATE_CONTROL &&
 	    is_ml_state_event(eh)) {
@@ -439,6 +477,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
+EVENT_SUBSCRIBE(MODULE, sensor_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if ML_STATE_CONTROL

@@ -58,6 +58,7 @@ static const char *handled_sensor_event_descr = CONFIG_ML_APP_ML_RUNNER_SENSOR_E
 static uint8_t ml_control;
 static enum state state;
 static struct module_flags active_listeners;
+static bool sensor_active;
 
 
 static void report_error(void)
@@ -68,6 +69,8 @@ static void report_error(void)
 
 static enum state current_active_state(void)
 {
+	if (!sensor_active)
+		return STATE_READY;
 	return module_flags_check_zero(&active_listeners) ? STATE_READY : STATE_ACTIVE;
 }
 
@@ -174,6 +177,12 @@ static void result_ready_cb(int err)
 	if (!drop_result) {
 		submit_result();
 	}
+
+	if (!sensor_active) {
+		__ASSERT_NO_MSG(!(ml_control & ML_RUNNING));
+		__ASSERT_NO_MSG(state != STATE_ACTIVE);
+		module_set_state(MODULE_STATE_OFF);
+	}
 }
 
 static int init(void)
@@ -208,6 +217,45 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	if (err) {
 		LOG_ERR("Cannot add data for EI wrapper (err %d)", err);
 		report_error();
+	}
+
+	return false;
+}
+
+static bool handle_sensor_state_event(const struct sensor_state_event *event)
+{
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	bool new_sensor_state = event->state == SENSOR_STATE_ACTIVE;
+
+	if (new_sensor_state != sensor_active) {
+		k_sched_lock();
+		sensor_active = new_sensor_state;
+		if ((state == STATE_READY) || (state == STATE_ACTIVE)) {
+			enum state new_state = current_active_state();
+
+			if (state != new_state) {
+				LOG_INF("State changed because of sensor state, new state: %s",
+					new_state == STATE_READY ? "READY" : "ACTIVE");
+
+				if (new_state == STATE_ACTIVE) {
+					start_prediction();
+				} else {
+					(void)buf_cleanup();
+				}
+				state = new_state;
+			}
+		}
+
+		if (sensor_active) {
+			module_set_state(MODULE_STATE_READY);
+		} else if (!(ml_control & ML_RUNNING)) {
+			module_set_state(MODULE_STATE_OFF);
+		}
+		k_sched_unlock();
 	}
 
 	return false;
@@ -277,6 +325,9 @@ static bool event_handler(const struct event_header *eh)
 	if (is_sensor_event(eh)) {
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
+	if (is_sensor_state_event(eh)) {
+		return handle_sensor_state_event(cast_sensor_state_event(eh));
+	}
 
 	if (APP_CONTROLS_ML_STATE &&
 	    is_ml_state_event(eh)) {
@@ -300,6 +351,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
+EVENT_SUBSCRIBE(MODULE, sensor_state_event);
 EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
 #if APP_CONTROLS_ML_STATE
 EVENT_SUBSCRIBE(MODULE, ml_state_event);

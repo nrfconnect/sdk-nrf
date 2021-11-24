@@ -37,6 +37,7 @@ static const char *handled_sensor_event_descr = CONFIG_ML_APP_EI_DATA_FORWARDER_
 static const struct device *dev;
 static atomic_t uart_busy;
 static enum state state = STATE_DISABLED;
+static bool sensor_active;
 
 
 static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwarder_state)
@@ -53,8 +54,15 @@ static void update_state(enum state new_state)
 {
 	static enum ei_data_forwarder_state forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
 	enum ei_data_forwarder_state new_forwarder_state;
+	bool force_broadcast = false;
 
 	switch (new_state) {
+	case STATE_DISABLED:
+		/* Broadcast the previous state */
+		new_forwarder_state = forwarder_state;
+		force_broadcast = true;
+		break;
+
 	case STATE_ACTIVE:
 		new_forwarder_state = EI_DATA_FORWARDER_STATE_TRANSMITTING;
 		break;
@@ -70,10 +78,13 @@ static void update_state(enum state new_state)
 		break;
 	}
 
-	state = new_state;
+	if (new_state != STATE_DISABLED)
+		state = new_state;
 
-	if (new_forwarder_state != forwarder_state) {
-		broadcast_ei_data_forwarder_state(new_forwarder_state);
+	if ((new_forwarder_state != forwarder_state) || force_broadcast) {
+		if (sensor_active) {
+			broadcast_ei_data_forwarder_state(new_forwarder_state);
+		}
 		forwarder_state = new_forwarder_state;
 	}
 }
@@ -91,7 +102,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 		return false;
 	}
 
-	if (state != STATE_ACTIVE) {
+	if ((state != STATE_ACTIVE) || !sensor_active) {
 		return false;
 	}
 
@@ -125,6 +136,28 @@ static bool handle_sensor_event(const struct sensor_event *event)
 		atomic_cas(&uart_busy, true, false);
 		LOG_ERR("uart_tx error: %d", err);
 		report_error();
+	}
+
+	return false;
+}
+
+static bool handle_sensor_state_event(const struct sensor_state_event *event)
+{
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	bool new_sensor_state = event->state == SENSOR_STATE_ACTIVE;
+
+	if (new_sensor_state != sensor_active) {
+		sensor_active = new_sensor_state;
+		if (sensor_active) {
+			module_set_state(MODULE_STATE_READY);
+			update_state(STATE_DISABLED);
+		} else {
+			module_set_state(MODULE_STATE_OFF);
+		}
 	}
 
 	return false;
@@ -197,6 +230,9 @@ static bool event_handler(const struct event_header *eh)
 	if (is_sensor_event(eh)) {
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
+	if (is_sensor_state_event(eh)) {
+		return handle_sensor_state_event(cast_sensor_state_event(eh));
+	}
 
 	if (ML_STATE_CONTROL &&
 	    is_ml_state_event(eh)) {
@@ -216,6 +252,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
+EVENT_SUBSCRIBE(MODULE, sensor_state_event);
 #if ML_STATE_CONTROL
 EVENT_SUBSCRIBE(MODULE, ml_state_event);
 #endif /* ML_STATE_CONTROL */

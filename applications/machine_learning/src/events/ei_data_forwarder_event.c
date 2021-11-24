@@ -9,6 +9,7 @@
 #include "ei_data_forwarder_event.h"
 
 static const char * const ei_data_forwarder_state_name[] = {
+	[EI_DATA_FORWARDER_STATE_DISABLED] = "DISABLED",
 	[EI_DATA_FORWARDER_STATE_DISCONNECTED] = "DISCONNECTED",
 	[EI_DATA_FORWARDER_STATE_CONNECTED] = "CONNECTED",
 	[EI_DATA_FORWARDER_STATE_TRANSMITTING] = "TRANSMITTING",
@@ -19,7 +20,6 @@ static int log_ei_data_forwarder_event(const struct event_header *eh, char *buf,
 	const struct ei_data_forwarder_event *event = cast_ei_data_forwarder_event(eh);
 
 	BUILD_ASSERT(ARRAY_SIZE(ei_data_forwarder_state_name) == EI_DATA_FORWARDER_STATE_COUNT);
-	__ASSERT_NO_MSG(event->state != EI_DATA_FORWARDER_STATE_DISABLED);
 	__ASSERT_NO_MSG(event->state < EI_DATA_FORWARDER_STATE_COUNT);
 	__ASSERT_NO_MSG(ei_data_forwarder_state_name[event->state] != NULL);
 

@@ -55,4 +55,8 @@ static const struct ml_result_led_effect ml_result_led_effects[] = {
 		.label = "tap",
 		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 0, 255)),
 	},
+	{
+		.label = "off",
+		.effect = LED_EFFECT_LED_BLINK2(50, 500, LED_COLOR(255, 255, 255)),
+	},
 };

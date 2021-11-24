@@ -26,6 +26,8 @@ static const uint8_t led_map[] = {
 };
 
 static const struct led_effect ei_data_forwarder_led_effects[] = {
+	[EI_DATA_FORWARDER_STATE_DISABLED]      =
+		LED_EFFECT_LED_BLINK2(50, 500, LED_COLOR(50, 50, 50)),
 	[EI_DATA_FORWARDER_STATE_DISCONNECTED]	=
 		LED_EFFECT_LED_BLINK(2000, LED_COLOR(100, 100, 100)),
 	[EI_DATA_FORWARDER_STATE_CONNECTED]	=
@@ -58,5 +60,9 @@ static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = "idle",
 		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR(100, 100, 100)),
+	},
+	{
+		.label = "off",
+		.effect = LED_EFFECT_LED_BLINK2(50, 500, LED_COLOR(0, 50, 0)),
 	},
 };
