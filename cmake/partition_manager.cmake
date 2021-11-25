@@ -206,22 +206,6 @@ if (DEFINED ext_flash_dev)
     PLACEMENT start_to_end
     DEVICE ${dev_name}
     )
-elseif(CONFIG_PM_EXTERNAL_FLASH)
-  if (NOT CONFIG_PM_EXTERNAL_FLASH_SUPPORT_LEGACY)
-    message(WARNING "\
-External flash for partition manager is configured through Kconfig. This \
-should now be done through devicetree instead. See 'Using external flash \
-memory partitions' chapter in the documentation for instructions on how to \
-fix this, or enable `CONFIG_PM_EXTERNAL_FLASH_SUPPORT_LEGACY` in Kconfig.")
-  endif()
-
-  add_region(
-    NAME external_flash
-    SIZE ${CONFIG_PM_EXTERNAL_FLASH_SIZE}
-    BASE ${CONFIG_PM_EXTERNAL_FLASH_BASE}
-    PLACEMENT start_to_end
-    DEVICE ${CONFIG_PM_EXTERNAL_FLASH_DEV_NAME}
-    )
 endif()
 
 # If simultaneous updates of the network core and application core is supported
