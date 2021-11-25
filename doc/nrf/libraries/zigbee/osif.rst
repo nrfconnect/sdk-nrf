@@ -108,11 +108,15 @@ Zigbee serial logger configuration options
 
 Use the following options to configure the Zigbee serial logger:
 
-  * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables logging ZBOSS traces with Zigbee serial logger.
-  * :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - This option selects the UART serial backend.
-  * :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects the USB CDC ACM serial backend.
-  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
-  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables logging ZBOSS traces with Zigbee serial logger.
+* :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - This option selects the UART serial backend.
+* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects the USB CDC ACM serial backend.
+
+   .. note::
+      See :ref:`zephyr:usb_device_cdc_acm` for more information about how to configure USB CDC ACM instance for logging ZBOSS trace messages.
+
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
 
 Zigbee logger
 =============
@@ -125,8 +129,8 @@ Zigbee logger configuration options
 
 Use the following options to configure the Zigbee logger:
 
-  * :kconfig:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - This option enables Logging ZBOSS Traces with Zigbee logger.
-  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies size of internal ring buffer.
+* :kconfig:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - This option enables Logging ZBOSS Traces with Zigbee logger.
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies size of internal ring buffer.
 
 API documentation
 *****************
