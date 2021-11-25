@@ -79,17 +79,18 @@ Serial communication setup
 The communication channel uses Zephyr's :ref:`zephyr:uart_api` API.
 This serial device is selected with :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME`.
 
-By default, the NCP sample communicates through the UART serialization (``UART0``).
-As a result, Zephyr's logger is configured to use ``UART1``, which is available through GPIO pins (**P1.00** and **P1.01**).
+By default, Zephyr's logger uses ``UART_0`` and the NCP sample communicates through the UART serialization using ``UART_1``.
+The DTS overlay file configures ``UART_1`` to be connected to the on-board J-Link instead of ``UART_0``.
+As the result, Zephyr's logger ``UART_0`` is available only through GPIO pins (**P1.00** and **P1.01**).
 
-The ``UART0`` pins are configured by Devicetree :file:`overlay` files for each supported development kit in the :file:`boards` directory.
+The ``UART_0`` pins are configured by Devicetree overlay files for each supported development kit in the :file:`boards` directory.
 
 Communication through USB
 -------------------------
 
-You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file and adding the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
+You can change the communication channel from the default UART to nRF USB CDC ACM ``CDC_ACM_0`` by using the :file:`prj_usb.conf` configuration file and adding the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
 See :ref:`cmake_options` for instructions on how to add this flag to your build.
-For example, when building on the command line, you can do so as follows:
+For example, when building from the command line, you can use the following command:
 
 .. code-block:: console
 
@@ -100,33 +101,51 @@ The USB device VID and PID are configured by the sample's Kconfig file.
 .. note::
     The USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
-When communication channel is changed to nRF USB, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are being printed by default in binary format using ``UART1``.
-This is configured by setting:
+When you change the communication channel to nRF USB with :file:`prj_usb.conf`, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` start to be printed by default in binary format using ``UART_1``.
+This is configured in the :file:`prj_usb.conf` file with the following settings:
 
 * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
 * :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - to select the UART serial over the nRF USB serial.
   This option is set by default when the binary format is enabled.
 * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - to select the serial device to use for printing Zigbee stack logs.
-  This option is set to ``"UART_1"`` when the UART serial selected.
+  This option is set to ``"UART_1"`` when the UART serial is selected.
 
-Alternatively, you can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format using independent CDC ACM device of the same nRF USB.
-This can be configured by setting:
+Alternatively, you can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format using an independent CDC ACM device of the same nRF USB.
+To do so, complete the following steps:
 
-* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
-* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - to select nRF USB serial over UART serial.
-* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - to select the serial device for printing Zigbee stack logs, set to ``"CDC_ACM_1"``.
+1. Set the following Kconfig options:
 
-To create two instances of USB CDC ACM for application, set the following:
+   * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables the binary format.
+   * :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects nRF USB serial over UART serial.
+   * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option selects the serial device for printing Zigbee stack logs, set to ``"CDC_ACM_1"``.
 
-* :kconfig:`CONFIG_USB_CDC_ACM_DEVICE_COUNT` - defines number of USB CDC ACM devices to create, set to ``2`` in this configuration of NCP sample.
-* :kconfig:`CONFIG_USB_COMPOSITE_DEVICE` - to enable composite USB device driver.
+#. Create two instances of USB CDC ACM for application by completing the following steps:
 
-.. note::
-    With this configuration, you will see two serial ports created by the NCP sample.
-    Use the first one for NCP communication.
-    Use second serial port for collecting Zigbee stack logs.
+   a. Create two entries in the DTS overlay file for the selected board, one for each USB CDC ACM instance.
+      See :ref:`zephyr:usb_device_cdc_acm` for more information.
+   #. While the NCP sample configures single USB CDC ACM instance ``"CDC_ACM_0"`` by default, configure the second USB CDC ACM instance ``"CDC_ACM_1"`` by extending ``zephyr_udc0`` node in the DTS overlay file with the following code:
 
-Also, complete configuration of Zigbee stack logs over nRF USB serial is present in the :file:`prj_usb.conf`.
+      .. code-block:: devicetree
+
+         &zephyr_udc0 {
+            cdc_acm_uart0: cdc_acm_uart0 {
+               compatible = "zephyr,cdc-acm-uart";
+               label = "CDC_ACM_0";
+            };
+
+            cdc_acm_uart1: cdc_acm_uart1 {
+               compatible = "zephyr,cdc-acm-uart";
+               label = "CDC_ACM_1";
+            };
+         };
+
+#. Enable the composite USB device driver using the :kconfig:`CONFIG_USB_COMPOSITE_DEVICE` Kconfig option.
+
+With this configuration, you will see two serial ports created by the NCP sample.
+Use the first one for NCP communication.
+Use second serial port for collecting Zigbee stack logs.
+
+You can also check the :file:`prj_usb.conf` file, which contains the complete Kconfig configuration of Zigbee stack logs over nRF USB serial commented out.
 For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>`.
 
 .. _zigbee_ncp_bootloader:
