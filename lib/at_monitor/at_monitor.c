@@ -52,7 +52,7 @@ static void at_monitor_task(struct k_work *work)
 
 	while ((at_notif = k_fifo_get(&at_monitor_fifo, K_NO_WAIT))) {
 		/* Match notification with all monitors */
-		LOG_DBG("AT notif: %s", at_notif->data);
+		LOG_DBG("AT notif: %s", log_strdup(at_notif->data));
 		STRUCT_SECTION_FOREACH(at_monitor_entry, e) {
 			if (!e->paused &&
 			   (e->filter == ANY || strstr(at_notif->data, e->filter))) {
