@@ -16,7 +16,7 @@
 
 #include <caf/events/ble_common_event.h>
 #include "ble_event.h"
-#include "ble_discovery_def.h"
+#include CONFIG_DESKTOP_BLE_DISCOVERY_DEF_PATH
 #include "dev_descr.h"
 
 #include <logging/log.h>

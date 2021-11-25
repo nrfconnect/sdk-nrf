@@ -22,6 +22,13 @@ config DESKTOP_BATTERY_MEAS
 
 endchoice
 
+config DESKTOP_BATTERY_MEAS_DEF_PATH
+	string "Configuration file"
+	depends on DESKTOP_BATTERY_MEAS
+	default "battery_def.h"
+	help
+	  Location of configuration file for desktop battery measurement module.
+
 config DESKTOP_BATTERY_MEAS_MIN_LEVEL
 	int "Minimum battery voltage [mV] that corresponds to 0% level"
 	depends on DESKTOP_BATTERY_MEAS

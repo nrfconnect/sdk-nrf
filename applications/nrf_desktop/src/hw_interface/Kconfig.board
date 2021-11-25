@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2019-2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_BOARD_DEF_PATH
+	string "Configuration file"
+	default "port_state_def.h"
+	help
+	  Location of configuration file for desktop board module.
+
+module = DESKTOP_BOARD
+module-str = board module
+source "subsys/logging/Kconfig.template.log_config"

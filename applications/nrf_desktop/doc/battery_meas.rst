@@ -40,7 +40,7 @@ The following defines specify the values of these two resistors (in kOhm):
 
 The module measures the voltage over the lower resistor.
 
-The battery voltage is converted to the state of charge (in percentage level units) according to the lookup table defined in the :file:`battery_def.h` file.
+The battery voltage is converted to the state of charge (in percentage level units) according to the lookup table defined in the configuration file specified by the :kconfig:`CONFIG_DESKTOP_BATTERY_MEAS_DEF_PATH` option.
 You can find this file the in board-specific directory in the application configuration directory.
 
 Remember to also define the following battery parameters (otherwise, the default values will be used):

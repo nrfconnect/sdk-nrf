@@ -10,7 +10,7 @@
 #include <drivers/gpio.h>
 
 #include "port_state.h"
-#include "port_state_def.h"
+#include CONFIG_DESKTOP_BOARD_DEF_PATH
 
 #include <caf/events/power_event.h>
 

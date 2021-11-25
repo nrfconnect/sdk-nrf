@@ -28,7 +28,8 @@ For this reason, you should set :kconfig:`CONFIG_GPIO` option.
 
 Set :kconfig:`CONFIG_DESKTOP_SELECTOR_HW_ENABLE` option to enable the module.
 The configuration for this module is an array of :c:struct:`selector_config` pointers.
-The array is written in the :file:`selector_hw_def.h` file located in the board-specific directory in the application configuration directory.
+The array is written in the configuration file specified by the :kconfig:`CONFIG_DESKTOP_SELECTOR_HW_DEF_PATH` option.
+The configuration file should be placed in the board-specific directory in the application configuration directory.
 
 For every hardware selector, define the following parameters:
 

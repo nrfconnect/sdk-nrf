@@ -24,6 +24,13 @@ config DESKTOP_PASSKEY_BUTTONS
 
 endchoice
 
+config DESKTOP_PASSKEY_DEF_PATH
+	string "Configuration file"
+	depends on !DESKTOP_PASSKEY_NONE
+	default "passkey_def.h"
+	help
+	  Location of configuration file for desktop passkey module.
+
 config DESKTOP_PASSKEY_MAX_LEN
 	int "Max number of digits in passkey"
 	range 0 9

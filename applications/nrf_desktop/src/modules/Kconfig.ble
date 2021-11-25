@@ -142,6 +142,13 @@ config DESKTOP_BLE_SCANNING_ENABLE
 	help
 	  Enable device to scan for peripheral devices.
 
+config DESKTOP_BLE_SCANNING_DEF_PATH
+	string "Configuration file"
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+	default "ble_scan_def.h"
+	help
+	  Location of configuration file for desktop Bluetooth LE scanning module.
+
 config DESKTOP_BLE_SCAN_START_TIMEOUT_S
 	int "Scan start timeout [s]"
 	default 5
@@ -189,6 +196,12 @@ config DESKTOP_BLE_DISCOVERY_ENABLE
 	  Device Information Service and discover HIDS.
 
 if DESKTOP_BLE_DISCOVERY_ENABLE
+
+config DESKTOP_BLE_DISCOVERY_DEF_PATH
+	string "Configuration file"
+	default "ble_discovery_def.h"
+	help
+	  Location of configuration file for desktop Bluetooth LE discovery module.
 
 module = DESKTOP_BLE_DISCOVERY
 module-str = BLE discovery

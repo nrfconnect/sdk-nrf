@@ -26,9 +26,10 @@ Configuration
 The module uses Zephyr's :ref:`zephyr:gpio_api` driver to set the pin state.
 For this reason, set the :kconfig:`CONFIG_GPIO` option.
 
-For every configuration, you must define the :file:`port_state_def.h` file in the board-specific directory in the application configuration directory.
+For every configuration, you must define the configuration file specified by the :kconfig:`CONFIG_DESKTOP_BOARD_DEF_PATH` option.
+The configuration file should be placed in the board-specific directory in the application configuration directory.
 
-The :file:`port_state_def.h` file defines the states set to the GPIO ports by the following arrays:
+The configuration file defines the states set to the GPIO ports by the following arrays:
 
 * ``port_state_on`` - State set on the system start and wake-up.
 * ``port_state_off`` - State set when the system enters the low-power mode.

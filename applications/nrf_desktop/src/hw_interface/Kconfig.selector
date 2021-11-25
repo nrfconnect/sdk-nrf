@@ -15,6 +15,13 @@ config DESKTOP_SELECTOR_HW_ENABLE
 
 if DESKTOP_SELECTOR_HW_ENABLE
 
+config DESKTOP_SELECTOR_HW_DEF_PATH
+	string "Configuration file"
+	depends on DESKTOP_SELECTOR_HW_ENABLE
+	default "selector_hw_def.h"
+	help
+	  Location of configuration file for desktop selector hw module.
+
 module = DESKTOP_SELECTOR_HW
 module-str = selector hw module
 source "subsys/logging/Kconfig.template.log_config"

@@ -35,7 +35,7 @@ You must configure the following options:
 * :kconfig:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
   The module remembers the pressed keys to send proper key releases.
 
-In the file :file:`fn_keys_def.h`, define all the dual-purpose keys.
+In the configuration file specified by the :kconfig:`CONFIG_DESKTOP_FN_KEYS_DEF_PATH` option, define all the dual-purpose keys.
 The ``fn_keys`` array must be sorted by key ID (the module uses binary search).
 
 Implementation details

@@ -13,7 +13,7 @@
 #define MODULE buttons_sim
 #include <caf/events/module_state_event.h>
 
-#include "buttons_sim_def.h"
+#include CONFIG_DESKTOP_BUTTONS_SIM_DEF_PATH
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BUTTONS_SIM_LOG_LEVEL);

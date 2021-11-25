@@ -9,7 +9,7 @@
 #include <device.h>
 #include <drivers/gpio.h>
 
-#include "selector_hw_def.h"
+#include CONFIG_DESKTOP_SELECTOR_HW_DEF_PATH
 
 #include <event_manager.h>
 #include "selector_event.h"

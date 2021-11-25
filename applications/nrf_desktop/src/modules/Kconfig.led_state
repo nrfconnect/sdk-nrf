@@ -8,6 +8,12 @@ if CAF_LED_EVENTS
 
 menu "LED state"
 
+config DESKTOP_LED_STATE_DEF_PATH
+	string "Configuration file"
+	default "led_state_def.h"
+	help
+	  Location of configuration file for desktop LED state module.
+
 module = DESKTOP_LED_STATE
 module-str = LED state
 source "subsys/logging/Kconfig.template.log_config"

@@ -30,7 +30,8 @@ To configure the passkey module, complete the following steps:
 1. Enable and configure the :ref:`caf_buttons`.
 #. Enable the passkey module by using the :kconfig:`CONFIG_DESKTOP_PASSKEY_BUTTONS` Kconfig option.
 #. Define the maximum number of digits in the passkey by using :kconfig:`CONFIG_DESKTOP_PASSKEY_MAX_LEN` option.
-#. Define the IDs of the keys used by the passkey module in the :file:`passkey_buttons_def.h` file located in the board-specific directory in the :file:`configuration` directory.
+#. Define the IDs of the keys used by the passkey module in the file specified by the :kconfig:`CONFIG_DESKTOP_PASSKEY_DEF_PATH` option.
+   The configuration file should be placed in the board-specific directory in the :file:`configuration` directory.
    You must define the IDs of the following keys:
 
    * Keys used to input the digits.
@@ -41,7 +42,7 @@ To configure the passkey module, complete the following steps:
    This is to ensure that the user will be able to input the passkey.
    The index of key ID in the input configuration array represents the digit.
 
-The example configuration of the module can be found in the :file:`configuration/nrf52kbd_nrf52832/passkey_buttons_def.h` file.
+The example configuration of the module can be found in the :file:`configuration/nrf52kbd_nrf52832/passkey_def.h` file.
 
 Implementation details
 **********************

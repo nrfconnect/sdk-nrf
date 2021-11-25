@@ -17,7 +17,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 
 #include "led_state.h"
-#include "led_state_def.h"
+#include CONFIG_DESKTOP_LED_STATE_DEF_PATH
 
 
 static enum led_system_state system_state = LED_SYSTEM_STATE_IDLE;

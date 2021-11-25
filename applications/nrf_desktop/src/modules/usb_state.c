@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include <caf/events/power_event.h>
 
 #if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
-  #include "usb_state_def.h"
+  #include CONFIG_DESKTOP_USB_DEF_PATH
 #else
   #if (CONFIG_DESKTOP_HID_STATE_ENABLE) && (CONFIG_USB_HID_DEVICE_COUNT > 1)
     #error USB selective HID subscription must be enabled.

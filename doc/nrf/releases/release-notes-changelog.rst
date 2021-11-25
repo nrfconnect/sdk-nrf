@@ -105,6 +105,7 @@ nRF Desktop
 
   * Added documentation for :ref:`nrf_desktop_usb_state_pm`.
   * Added :ref:`nrf_desktop_ble_state_pm`.
+  * Added support for various module configuration files.
 
 * Removed:
 

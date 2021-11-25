@@ -65,7 +65,8 @@ Complete the following steps to enable the |ble_scan|:
    If filters are not cleared by the application, the Bluetooth Central will be unable to reconnect to the peripheral after exceeding the maximum connection attempts.
 #. Configure the maximum number of bonded mice (:kconfig:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT`) and keyboards (:kconfig:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT`) for the nRF Desktop central.
    By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
-#. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
+#. Define the Bluetooth name filters in the configuration file specified by the :kconfig:`CONFIG_DESKTOP_BLE_SCANNING_DEF_PATH` option.
+   The configuration file should be placed in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
    For an example, see :file:`configuration/nrf52840dongle_nrf52840/ble_scan_def.h`.
 

@@ -15,6 +15,12 @@ config DESKTOP_BUTTONS_SIM_ENABLE
 
 if DESKTOP_BUTTONS_SIM_ENABLE
 
+config DESKTOP_BUTTONS_SIM_DEF_PATH
+	string "Configuration file"
+	default "buttons_sim_def.h"
+	help
+	  Location of configuration file for desktop buttons sim module.
+
 config DESKTOP_BUTTONS_SIM_INTERVAL
 	int "Interval between subsequent simulated button presses [ms]"
 	default 1000

@@ -17,7 +17,7 @@
 #include <event_manager.h>
 #include <caf/events/power_event.h>
 #include "battery_event.h"
-#include "battery_def.h"
+#include CONFIG_DESKTOP_BATTERY_MEAS_DEF_PATH
 
 #define MODULE battery_meas
 #include <caf/events/module_state_event.h>

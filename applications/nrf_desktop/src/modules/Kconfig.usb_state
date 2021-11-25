@@ -24,6 +24,13 @@ config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 	  usb_state_def.h file in application configuration directory for given
 	  board and configuration.
 
+config DESKTOP_USB_DEF_PATH
+	string "Configuration file"
+	depends on DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+	default "usb_state_def.h"
+	help
+	  Location of configuration file for desktop USB state module.
+
 config DESKTOP_USB_PM_ENABLE
 	bool "Enable USB power manager integration"
 	depends on DESKTOP_USB_ENABLE

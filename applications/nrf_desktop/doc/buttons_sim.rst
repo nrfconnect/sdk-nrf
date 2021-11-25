@@ -29,7 +29,8 @@ To configure the |button_sim|:
 1. Enable and configure the :ref:`caf_buttons`.
    ``button_event`` is used to trigger the simulated button sequence.
 #. Enable the ``buttons_sim`` module by setting the :kconfig:`CONFIG_DESKTOP_BUTTONS_SIM_ENABLE` Kconfig option.
-#. Define the output key ID sequence in the :file:`buttons_sim_def.h` file located in the board-specific directory in the :file:`configuration` directory.
+#. Define the output key ID sequence in the configuration file specified by the :kconfig:`CONFIG_DESKTOP_BUTTONS_SIM_DEF_PATH` option.
+   The configuration file should be placed in the board-specific directory in the :file:`configuration` directory.
    The mapping from the defined key ID to the HID report ID and usage ID is defined in :file:`hid_keymap_def.h` (this might be different for different boards).
 #. Define the interval between subsequent simulated button presses (:kconfig:`CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL`).
    One second is used by default.

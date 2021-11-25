@@ -12,7 +12,7 @@
 #include <caf/events/button_event.h>
 #include "passkey_event.h"
 
-#include "passkey_buttons_def.h"
+#include CONFIG_DESKTOP_PASSKEY_DEF_PATH
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PASSKEY_LOG_LEVEL);

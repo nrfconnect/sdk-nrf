@@ -13,9 +13,6 @@ rsource "Kconfig.wheel"
 rsource "Kconfig.battery_charger"
 rsource "Kconfig.battery_meas"
 rsource "Kconfig.passkey"
-
-module = DESKTOP_BOARD
-module-str = board module
-source "subsys/logging/Kconfig.template.log_config"
+rsource "Kconfig.board"
 
 endmenu

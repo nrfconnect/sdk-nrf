@@ -13,6 +13,12 @@ config DESKTOP_FN_KEYS_ENABLE
 
 if DESKTOP_FN_KEYS_ENABLE
 
+config DESKTOP_FN_KEYS_DEF_PATH
+	string "Configuration file"
+	default "fn_keys_def.h"
+	help
+	  Location of configuration file for desktop function keys module.
+
 config DESKTOP_FN_KEYS_SWITCH
 	hex "Fn button"
 	default 0x0

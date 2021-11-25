@@ -15,7 +15,7 @@
 
 #include <caf/key_id.h>
 
-#include "fn_keys_def.h"
+#include CONFIG_DESKTOP_FN_KEYS_DEF_PATH
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FN_KEYS_LOG_LEVEL);
