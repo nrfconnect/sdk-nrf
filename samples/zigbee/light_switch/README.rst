@@ -300,7 +300,6 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/zephyr.h`
 * :file:`include/device.h`
 * :ref:`zephyr:logging_api`
-* :ref:`zephyr:pwm_api`
 
 The following dependencies are added by the multiprotocol Bluetooth LE extension:
 
