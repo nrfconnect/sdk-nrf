@@ -119,6 +119,7 @@
 .. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/create_app.html
 .. _`Building an application`: https://nrfconnect.github.io/vscode-nrf-connect/build_app.html
 .. _`Testing an application`: https://nrfconnect.github.io/vscode-nrf-connect/test_app.html
+.. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/west.html
 
 .. ### Source: developer.nordicsemi.com
 
