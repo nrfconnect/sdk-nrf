@@ -164,8 +164,24 @@ The recommended option is to build and configure the OpenThread Border Router on
 This option provides most of the functionalities available in the OpenThread Border Router, such as border routing capabilities needed for establishing Thread communication with a mobile phone on a Wi-Fi network.
 However, this approach requires you to download the OpenThread Border Router repository and install the Border Router manually on the Raspberry Pi.
 
-To set up and configure the OpenThread Border Router, follow the official `OpenThread Border Router Codelab tutorial`_ on the OpenThread documentation portal.
-Omit the *Build and flash RCP firmware* section, because that section duplicates the steps already performed in the `Configuring a radio co-processor`_ section of this guide.
+To set up and configure the OpenThread Border Router, follow the official `OpenThread Border Router Codelab tutorial`_ on the OpenThread documentation portal with the below modifications:
+
+* After cloning the repository in the *Get OTBR code* section, make sure to check out the compatible commit id:
+
+   .. code-block:: console
+
+      cd ot-br-posix
+      git pull --unshallow
+      git checkout 8ae81c5
+
+* After the *Build and install OTBR* section, configure RCP device's UART baud rate in *otbr-agent*.
+  Modify the :file:`/etc/default/otbr-agent` configuration file with default RCP baud rate:
+
+  .. code-block:: console
+
+     spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000
+
+* Omit the *Build and flash RCP firmware* section, because that section duplicates the steps already performed in the `Configuring a radio co-processor`_ section of this guide.
 
 Running OTBR using Docker
 =========================
@@ -198,7 +214,7 @@ To install and configure the OpenThread Border Router using the Docker container
 
    .. code-block:: console
 
-      docker pull openthread/latest
+      docker pull nrfconnect/otbr:8ae81c5
 
 #. Connect the radio co-processor that you configured in :ref:`ug_thread_tools_tbr_rcp` to the Border Router device.
 #. Start the OpenThread Border Router container using one of the following commands depending on the hardware platform:
@@ -207,7 +223,9 @@ To install and configure the OpenThread Border Router using the Docker container
 
       sudo docker run -it --rm --privileged --name otbr --network otbr -p 8080:80 \
       --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
-      --volume /dev/:/dev/ openthread/latest --radio-url spinel+hdlc+uart:///dev/ttyACM0
+      --volume /dev/ttyACM0:/dev/radio nrfconnect/otbr:8ae81c5 --radio-url spinel+hdlc+uart:///dev/radio?uart-baudrate=1000000
+
+   Replace ``/dev/ttyACM0`` with the device node name of the OpenThread radio co-processor.
 
 #. Form the Thread network using one of the following options:
 
