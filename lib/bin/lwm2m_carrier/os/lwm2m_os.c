@@ -433,9 +433,74 @@ int lwm2m_os_at_notif_register_handler(void *context, lwm2m_os_at_cmd_handler_t 
 	return at_notif_register_handler(context, handler);
 }
 
+static char at_xoperid(void)
+{
+	char xoperid[20];
+	char oper_id = 0;
+
+	int err = at_cmd_write("AT%XOPERID", xoperid, sizeof(xoperid),
+			       (enum at_cmd_state *)NULL);
+
+	/* Expected result: "%XOPERID: <oper_id>" */
+	if ((err == 0) && (strncmp(xoperid, "%XOPERID: ", 10) == 0) &&
+	    (strlen(xoperid) >= 11)) {
+		oper_id = xoperid[10] - '0';
+	}
+
+	return oper_id;
+}
+
+static bool at_cnum_failure(int err, enum at_cmd_state state)
+{
+	/* Check for AT response ERROR or +CME ERROR: 0 */
+	return ((err == -ENOEXEC) ||
+		((state == AT_CMD_ERROR_CME) && (err == 0)));
+}
+
+static int retry_at_cnum(const char *const cmd, char *buf, size_t buf_len,
+			 enum at_cmd_state *state)
+{
+	/*
+	 * Handle a situation when SIM does not have subscriber MSISDN.
+	 *
+	 * This happens on new a SIM which have not been registered on the
+	 * network yet. Handle this by retry every 10 seconds for up to
+	 * 10 minutes to let the registration happen.
+	 */
+
+	for (int i = 0; i < 60; i++) {
+		k_sleep(K_SECONDS(10));
+
+		int err = at_cmd_write(cmd, buf, buf_len, state);
+
+		if (!at_cnum_failure(err, *state)) {
+			return err;
+		}
+	}
+
+	return -ENOEXEC;
+}
+
 int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len)
 {
-	return at_cmd_write(cmd, buf, buf_len, (enum at_cmd_state *)NULL);
+	enum at_cmd_state state = AT_CMD_OK;
+	int err = at_cmd_write(cmd, buf, buf_len, &state);
+
+	if (at_cnum_failure(err, state) && (strcmp(cmd, "AT+CNUM") == 0)) {
+		/* Retry AT+CNUM only for specific operators. */
+		if (at_xoperid() == 1) {
+			err = retry_at_cnum(cmd, buf, buf_len, &state);
+		}
+	}
+
+	if ((err == 0) && (state != AT_CMD_OK)) {
+		/* Application has enabled AT+CMEE=1 and state indicates an error.
+		 * Report this as if the modem returned ERROR.
+		 */
+		err = -ENOEXEC;
+	}
+
+	return err;
 }
 
 static void at_params_list_get(struct at_param_list *dst, struct lwm2m_os_at_param_list *src)
