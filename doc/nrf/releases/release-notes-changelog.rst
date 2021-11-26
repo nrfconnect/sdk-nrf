@@ -58,6 +58,11 @@ Zigbee
 * Removed experimental support for Green Power Combo Basic functionality.
 * Changed the default logging level in Zigbee applications to ``INF`` from Zephyr's :ref:`zephyr:logging_api` default level, which is set to ``ERR`` by default.
 
+Gazell
+------
+
+* Added support for nRF52 Series.
+
 Applications
 ============
 
