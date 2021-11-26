@@ -4,8 +4,9 @@
 #
 
 config NRF_CLOUD_CELL_POS
-	bool "Enable nRF Cloud Cellular Positioning"
+	bool "Enable nRF Cloud Cellular Positioning over MQTT"
 	imply FPU
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
+	depends on NRF_CLOUD_MQTT
 	select CJSON_LIB

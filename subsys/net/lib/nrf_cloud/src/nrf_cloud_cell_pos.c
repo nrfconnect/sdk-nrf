@@ -23,7 +23,6 @@ int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const ce
 					const bool request_loc, cJSON **req_obj_out);
 
 #include "nrf_cloud_codec.h"
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 #include "nrf_cloud_transport.h"
 
 #define CELL_POS_JSON_CELL_LOC_KEY_DOREPLY	"doReply"
@@ -50,7 +49,6 @@ int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info *const cells_inf,
 	cJSON_Delete(cell_pos_req_obj);
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const cells_inf,
 					const bool request_loc, cJSON **req_obj_out)
