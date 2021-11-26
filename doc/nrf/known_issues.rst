@@ -962,7 +962,7 @@ NCSDK-11234: Statically definied "pcd_sram" partition may cause ARM usage fault
   Inconsistency between SRAM memory partitions in Partition Manager and DTS could lead to improper memory usage.
   For example, one SRAM region may be used for multiple purposes at the same time.
 
-**Workaround:** Ensure that partitions defined by DTS and Partition Manager are consistent.
+  **Workaround:** Ensure that partitions defined by DTS and Partition Manager are consistent.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
