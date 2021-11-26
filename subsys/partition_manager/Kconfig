@@ -34,6 +34,17 @@ config SRAM_BASE_ADDRESS
 
 menu "Zephyr subsystem configurations"
 
+DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
+
+config RPMSG_NRF53_SRAM_SIZE
+	hex "RPMsg shared memory size"
+	default "$(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_IPC_SHM))"
+	depends on BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
+	depends on PARTITION_MANAGER_ENABLED
+	help
+	  This option specifies size of the memory region to be used
+	  for the RPMsg shared memory
+
 if FILE_SYSTEM_LITTLEFS
 partition=LITTLEFS
 partition-size=0x6000
@@ -72,23 +83,6 @@ rsource "Kconfig.template.partition_size"
 endif
 
 endmenu # Zephyr subsystem configurations
-
-
-menu "Zephyr samples configurations"
-
-if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
-
-DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
-
-config RPMSG_NRF53_SRAM_SIZE
-	# Hidden configuration to expose DT property as kconfig variable
-	hex
-	default "$(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_IPC_SHM))"
-
-endif
-
-endmenu # Zephyr samples configurations
-
 menu "NCS subsystem configurations"
 
 endmenu # NCS subsystem configurations
