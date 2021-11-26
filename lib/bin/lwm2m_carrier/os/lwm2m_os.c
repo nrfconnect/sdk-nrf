@@ -359,7 +359,17 @@ int lwm2m_os_at_notif_register_handler(void *context,
 
 int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len)
 {
-	return at_cmd_write(cmd, buf, buf_len, (enum at_cmd_state *)NULL);
+	enum at_cmd_state state = AT_CMD_OK;
+	int err = at_cmd_write(cmd, buf, buf_len, &state);
+
+	if ((err == 0) && (state != AT_CMD_OK)) {
+		/* Application has enabled AT+CMEE=1 and state indicates an error.
+		 * Report this as if the modem returned ERROR.
+		 */
+		err = -ENOEXEC;
+	}
+
+	return err;
 }
 
 static void at_params_list_get(struct at_param_list *dst,
