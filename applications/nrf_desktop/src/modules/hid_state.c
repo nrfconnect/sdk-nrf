@@ -1453,7 +1453,7 @@ static bool handle_button_event(const struct button_event *event)
 	struct hid_keymap *map = hid_keymap_get(event->key_id);
 
 	if (!map || !map->usage_id) {
-		LOG_WRN("No mapping, button ignored");
+		LOG_DBG("No mapping, button ignored");
 	} else {
 		/* Keydown increases ref counter, keyup decreases it. */
 		int16_t value = (event->pressed != false) ? (1) : (-1);
