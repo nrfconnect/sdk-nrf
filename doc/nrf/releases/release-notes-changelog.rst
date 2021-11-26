@@ -533,6 +533,7 @@ Other libraries
 
   * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+  * Fixed a bug where the fp context could be overwritten by other threads if both threads are using Non-secure-callable functions (secure services).
 
 * :ref:`mod_memfault`:
 

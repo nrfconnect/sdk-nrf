@@ -19,8 +19,8 @@ void before_nse(void)
 
 void after_nse(void)
 {
-	k_sched_unlock();
 	z_arm_restore_fp_context(&context_buffer);
+	k_sched_unlock();
 }
 
 #ifdef CONFIG_SPM_SERVICE_REBOOT
