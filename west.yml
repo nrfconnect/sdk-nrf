@@ -134,6 +134,16 @@ manifest:
       repo-path: sdk-cjson
       path: modules/lib/cjson
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
+    - name: homekit
+      repo-path: sdk-homekit
+      revision: cfc7a55ba1c6461f72e6c671b7f6520966b49f93
+      groups:
+      - homekit
+    - name: find-my
+      repo-path: sdk-find-my
+      revision: 7d5abb066c35c01a65ee6c0c5525ff13caec939c
+      groups:
+      - find-my
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -160,16 +170,6 @@ manifest:
       remote: nordicsemi
       revision: 24f1b2b0c64c694b7f9ac1b7eab60b39236ca0bf
       path: modules/lib/cddl-gen
-    - name: homekit
-      repo-path: sdk-homekit
-      revision: cfc7a55ba1c6461f72e6c671b7f6520966b49f93
-      groups:
-      - homekit
-    - name: find-my
-      repo-path: sdk-find-my
-      revision: 7d5abb066c35c01a65ee6c0c5525ff13caec939c
-      groups:
-      - find-my
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
       revision: 0.27.3
