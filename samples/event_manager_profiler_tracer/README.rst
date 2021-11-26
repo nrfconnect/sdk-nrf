@@ -1,4 +1,4 @@
-.. _event_manager_profiling_sample:
+.. _event_manager_profiling_tracer_sample:
 
 Event Manager profiling tracer
 ##############################
@@ -44,7 +44,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/event_manager_profiler`
+.. |sample path| replace:: :file:`samples/event_manager_profiler_tracer`
 
 .. include:: /includes/build_and_run.txt
 

@@ -2,7 +2,7 @@ sample:
   description: Sample showing usage of profiling Event Manager events
   name: Event Manager profiler tracer sample
 tests:
-  samples.event_manager_profiler:
+  samples.event_manager_profiler_tracer:
     build_only: true
     integration_platforms:
       - nrf52dk_nrf52832

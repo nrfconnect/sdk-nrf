@@ -9,15 +9,15 @@
  * Although these defines are globally visible they must not be used directly.
  */
 
-#ifndef _EVENT_MANAGER_PROFILER_PRIV_H_
-#define _EVENT_MANAGER_PROFILER_PRIV_H_
+#ifndef _EVENT_MANAGER_PROFILER_TRACER_PRIV_H_
+#define _EVENT_MANAGER_PROFILER_TRACER_PRIV_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Wrappers used for defining event infos */
-#ifdef CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION
+#ifdef CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION
 #define EM_MEM_ADDRESS_LABEL "_em_mem_address_",
 #define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
 
@@ -25,10 +25,10 @@ extern "C" {
 #define EM_MEM_ADDRESS_LABEL
 #define MEM_ADDRESS_TYPE
 
-#endif /* CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION */
+#endif /* CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION */
 
 
-#ifdef CONFIG_EVENT_MANAGER_PROFILER_PROFILE_EVENT_DATA
+#ifdef CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA
 #define _ARG_LABELS_DEFINE(...) \
 	{EM_MEM_ADDRESS_LABEL __VA_ARGS__}
 #define _ARG_TYPES_DEFINE(...) \
@@ -40,7 +40,7 @@ extern "C" {
 #define _ARG_TYPES_DEFINE(...) \
 	 {MEM_ADDRESS_TYPE}
 
-#endif /* CONFIG_EVENT_MANAGER_PROFILER_PROFILE_EVENT_DATA */
+#endif /* CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA */
 
 
 /* Declarations and definitions - for more details refer to public API. */
@@ -68,4 +68,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _EVENT_MANAGER_PROFILER_PRIV_H_ */
+#endif /* _EVENT_MANAGER_PROFILER_TRACER_PRIV_H_ */

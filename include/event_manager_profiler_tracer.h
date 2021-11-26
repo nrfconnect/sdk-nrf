@@ -5,21 +5,21 @@
  */
 
 /** @file
- * @brief Event Manager Profiler header.
+ * @brief Event Manager profiler tracer header.
  */
 
-#ifndef _EVENT_MANAGER_PROFILER_H_
-#define _EVENT_MANAGER_PROFILER_H_
+#ifndef _EVENT_MANAGER_PROFILER_TRACER_H_
+#define _EVENT_MANAGER_PROFILER_TRACER_H_
 
 
 /**
- * @defgroup event_manager_profiler Event Manager Profiler
- * @brief Event Manager Profiler
+ * @defgroup event_manager_profiler_tracer Event Manager profiler tracer
+ * @brief Event Manager profiler tracer
  *
  * @{
  */
 
-#include <event_manager_profiler_priv.h>
+#include <event_manager_profiler_tracer_priv.h>
 #include <profiler.h>
 
 #ifdef __cplusplus
@@ -80,4 +80,4 @@ struct profiler_info {
  * @}
  */
 
-#endif /* _EVENT_MANAGER_PROFILER_H_ */
+#endif /* _EVENT_MANAGER_PROFILER_TRACER_H_ */

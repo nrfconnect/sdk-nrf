@@ -10,7 +10,7 @@
 #include <zephyr.h>
 #include <net/lwm2m.h>
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 #include <drivers/sensor.h>
 
 #ifdef __cplusplus
