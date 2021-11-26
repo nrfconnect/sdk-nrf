@@ -30,7 +30,7 @@ Configuration
 A predefined signal on the GPIO is used to simultaneously generate synchronization profiler events on both devices.
 For this reason, you must enable the :kconfig:`CONFIG_GPIO` option.
 
-You must also enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER` Kconfig option.
+You must also enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 The profiler synchronization module generates a :ref:`profiler` event (``sync_event``) that is not an :ref:`event_manager` event.
 For this reason, the ``sync_event`` execution is not traced.
 

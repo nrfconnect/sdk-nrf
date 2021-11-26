@@ -202,7 +202,8 @@ extern "C" {
 		},										\
 		.init_log_enable		= init_log_en,					\
 		.log_event			= (IS_ENABLED(CONFIG_LOG) ? (log_fn) : (NULL)),	\
-		.trace_data			= (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER) ?	\
+		.trace_data			= (IS_ENABLED					\
+							(CONFIG_EVENT_MANAGER_PROFILER_TRACER) ?\
 							    (trace_data_pointer) : (NULL)),	\
 	}
 

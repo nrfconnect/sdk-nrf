@@ -14,7 +14,7 @@
  */
 
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 
 
 /** @brief Asset Tracker led states in the application. */

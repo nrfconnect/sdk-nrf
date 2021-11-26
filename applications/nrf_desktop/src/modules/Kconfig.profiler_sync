@@ -9,7 +9,7 @@ menu "Profiler sync"
 config DESKTOP_PROFILER_SYNC_GPIO_ENABLE
 	bool "Enable profiler sync based on GPIO"
 	depends on GPIO
-	depends on EVENT_MANAGER_PROFILER
+	depends on EVENT_MANAGER_PROFILER_TRACER
 	help
 	  This option can be used to synchronize timestamps for profiler events
 	  on two devices.

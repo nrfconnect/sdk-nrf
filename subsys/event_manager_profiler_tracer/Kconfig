@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config EVENT_MANAGER_PROFILER
+config EVENT_MANAGER_PROFILER_TRACER
 	depends on EVENT_MANAGER
 	bool "Log events to Profiler"
 	select PROFILER
@@ -12,13 +12,13 @@ config EVENT_MANAGER_PROFILER
 	  Event Manager will use profiler event count equal to Event Manager profiled event count
 	  + 2 events for processing event start/end.
 
-if EVENT_MANAGER_PROFILER
+if EVENT_MANAGER_PROFILER_TRACER
 
-config EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION
+config EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION
 	bool "Trace events execution"
 	default y
 
-config EVENT_MANAGER_PROFILER_PROFILE_EVENT_DATA
+config EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA
 	bool "Profile data connected with event"
 
-endif # EVENT_MANAGER_PROFILER
+endif # EVENT_MANAGER_PROFILER_TRACER

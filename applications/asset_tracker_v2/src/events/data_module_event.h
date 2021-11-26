@@ -14,7 +14,7 @@
  */
 
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 #include "cloud/cloud_codec/cloud_codec.h"
 
 #ifdef __cplusplus

@@ -5,10 +5,10 @@
  */
 
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(event_manager_profiler, CONFIG_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(event_manager_profiler_tracer, CONFIG_EVENT_MANAGER_LOG_LEVEL);
 
 #define IDS_COUNT (CONFIG_EVENT_MANAGER_MAX_EVENT_CNT + 2)
 
@@ -23,7 +23,7 @@ void event_manager_trace_event_execution(const struct event_header *eh, bool is_
 	size_t event_idx = event_cnt + (is_start ? 0 : 1);
 	size_t trace_evt_id = profiler_event_ids[event_idx];
 
-	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION) ||
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION) ||
 	    !is_profiling_enabled(trace_evt_id)) {
 		return;
 	}
@@ -56,10 +56,10 @@ void event_manager_trace_event_submission(const struct event_header *eh, const v
 
 	profiler_log_start(&buf);
 
-	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
 		profiler_log_add_mem_address(&buf, eh);
 	}
-	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_PROFILE_EVENT_DATA)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA)) {
 		((const struct profiler_info *)profiler_info)->profile_fn(&buf, eh);
 	}
 
@@ -104,7 +104,7 @@ static void trace_register_events(void)
 		profiler_event_ids[event_idx] = profiler_event_id;
 	}
 
-	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
 		trace_register_execution_tracking_events();
 	}
 }
