@@ -227,7 +227,7 @@ class RepoAnalyzer:
             # warn about.)
             if (not shortlog_has_sauce(sl, self._downstream_sauce) and
                     not is_revert):
-                log.wrn('bad or missing sauce tag: {} ("{}")'.format(sha, sl))
+                log.wrn(f'{self._dp.name}: bad or missing sauce tag: {sha} ("{sl}")')
 
             downstream_out[sha] = c
             log.dbg('** added oot patch: {} ("{}")'.format(sha, sl),
