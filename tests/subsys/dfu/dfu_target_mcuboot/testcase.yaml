@@ -1,12 +1,10 @@
 tests:
   dfu.dfu_target_mcuboot:
     tags: dfu mcuboot
-    # nrfx is used to ensure that variables are stored in RAM, so no qemu
-    # or native posix
-    platform_exclude: qemu_cortex_m3 qemu_x86 native_posix
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52dk_nrf52832
       - nrf51dk_nrf51422
       - nrf9160dk_nrf9160
-      - nrf5340dk_nrf5340
+      - nrf5340dk_nrf5340_cpuapp
+      - native_posix

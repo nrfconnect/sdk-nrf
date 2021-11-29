@@ -41,6 +41,16 @@ static void test_dfu_ctx_mcuboot_set_b1_file(void)
 	zassert_true(strcmp("s0", update) == 0, NULL);
 }
 
+#ifdef CONFIG_BOARD_NATIVE_POSIX
+static void test_dfu_ctx_mcuboot_set_b1_file__ptr_placement(void)
+{
+	/* This test cannot be executed on native posix as there is
+	 * no mechanism in place do decude if an address maps to non-volatile
+	 * storage or RAM
+	 */
+	ztest_test_skip();
+}
+#else
 static void test_dfu_ctx_mcuboot_set_b1_file__ptr_placement(void)
 {
 	int err;
@@ -50,6 +60,7 @@ static void test_dfu_ctx_mcuboot_set_b1_file__ptr_placement(void)
 	err = dfu_ctx_mcuboot_set_b1_file(flash_ptr, s0_active, &update);
 	zassert_true(err != 0, "Did not fail when given flash pointer");
 }
+#endif /* CONFIG_BOARD_NATIVE_POSIX */
 
 
 static void test_dfu_ctx_mcuboot_set_b1_file__no_separator(void)
