@@ -13,7 +13,7 @@ The Asset Tracker v2 application introduces a set of new features, which are not
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
 * Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
 * Batching of data - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GPS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
 Implementation of the above features required a rework of the existing application.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
@@ -105,7 +105,7 @@ The device modes and their descriptions are listed in the following table:
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout    | Sample and publish data at a minimum of the time interval specified by the parameter. Not dependent on movement.                     | 3600 seconds   |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GPS timeout                    | Timeout for acquiring a GPS fix during sampling of the data.                                                                         | 60 seconds     |
+| GPS timeout                    | Timeout for acquiring a GNSS fix during sampling of the data.                                                                        | 60 seconds     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for the accelerometer readings to be considered as a valid movement. | 10 m/s²        |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
@@ -203,7 +203,7 @@ The following table shows the LED behavior demonstrated by the application:
 +===========================+=========================+=======================+
 | LTE connection search     | Yellow, blinking        | LED1 blinking         |
 +---------------------------+-------------------------+-----------------------+
-| GPS fix search            | Purple, blinking        | LED2 blinking         |
+| GNSS fix search           | Purple, blinking        | LED2 blinking         |
 +---------------------------+-------------------------+-----------------------+
 | Publishing data           | Green, blinking         | LED3 blinking         |
 +---------------------------+-------------------------+-----------------------+
@@ -351,9 +351,9 @@ The default values for the device configuration parameters can be set by manipul
 
    This configuration sets the Accelerometer threshold value.
 
-.. option:: CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GPS timeout
+.. option:: CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GNSS timeout
 
-   This configuration sets the GPS timeout value.
+   This configuration sets the GNSS timeout value.
 
 
 .. _mandatory_config:

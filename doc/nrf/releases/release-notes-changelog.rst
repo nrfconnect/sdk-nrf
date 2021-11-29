@@ -668,6 +668,7 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`library_template` - added a template for documenting libraries.
   * :ref:`ug_nrf5340` - Added a note about varying folder names of the network core child image when programming with nrfjprog.
   * :ref:`ug_nrf5340` - Updated the :ref:`ug_nrf5340_ses_multi_image` to better match the programming procedure.
+  * Updated documentation to use the acronym GNSS instead of GPS when not talking explicitly about the GPS system.
 
 * Libraries:
 

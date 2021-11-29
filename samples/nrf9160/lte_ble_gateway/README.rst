@@ -19,7 +19,7 @@ The sample connects using Bluetooth LE to a Thingy:52 running the factory pre-lo
 When the connection is established, it starts collecting data from two sensors:
 
 * The flip state of the Thingy:52
-* The simulated GPS position data
+* The simulated GNSS position data
 
 The sample aggregates the data from both sensors in memory.
 You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
@@ -42,7 +42,7 @@ User interface
 
 Two buttons and two switches are used to enter a pairing pattern to associate a specific development kit with an nRF Cloud user account.
 
-When the connection is established, set switch 2 to **N.C.** to send simulated GPS data to nRF Cloud once every 2 seconds.
+When the connection is established, set switch 2 to **N.C.** to send simulated GNSS data to nRF Cloud once every 2 seconds.
 
 See the :ref:`asset_tracker_user_interface` in the :ref:`asset_tracker` documentation for detailed information about the different LED states used by the sample.
 
@@ -114,7 +114,7 @@ After programming the main controller with the sample, you can test it as follow
    #. After reboot, the kit connects to nRF Cloud, and the pattern disappears from the web page.
 #. Observe that LED 4 is turned on to indicate that the connection is established.
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
-#. Set switch 2 in the position marked as **N.C.** and observe that simulated GPS data is sent to nRF Cloud.
+#. Set switch 2 in the position marked as **N.C.** and observe that simulated GNSS data is sent to nRF Cloud.
 #. Make sure that the Thingy:52 has established a connection to the application.
    This is indicated by its led blinking green.
 #. Flip the Thingy:52, with the USB port pointing upward, to trigger the sending of the sensor data to nRF Cloud.
