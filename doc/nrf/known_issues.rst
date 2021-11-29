@@ -64,11 +64,6 @@ nRF9160
 Asset tracker
 =============
 
-.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-CIA-351: FOTA image download issues with Azure
-  If a Device Firmware Upgrade (FOTA) is scheduled when the device is in the LTE Power Saving Mode, there is the likelihood of the firmware image being downloaded twice.
-
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6898: Setting :kconfig:`CONFIG_SECURE_BOOT` does not work
@@ -111,6 +106,21 @@ IRIS-2676: Missing support for FOTA on nRF Cloud
 					* cef289b559b92186cc54f0257b8c9adc0997f334
 					* 156d4cf3a568869adca445d43a786d819ae10250
 					* f520159f0415f011ae66efb816384a8f7bade83d
+
+Asset Tracker v2
+================
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+CIA-351: Connectivity issues with Azure IoT Hub
+  If a c2d message is sent to the device while the device is in LTE Power Saving Mode, the TCP connection will most likely be terminated by the server.
+  Known symptoms of this is frequent reconnections to cloud, that messages sent to Azure IoT Hub never arrives, and that FOTA images are downloaded twice.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+CIA-463: Wrong network mode parameter reported to cloud
+  The network mode string present in `deviceInfo` (nRF Cloud) and `dev` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain the wrong network modes.
+  The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
 
 Other issues
 ============
