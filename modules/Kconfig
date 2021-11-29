@@ -6,5 +6,5 @@
 
 rsource "cddl-gen/Kconfig"
 rsource "mbedtls/Kconfig"
-rsource "memfault/Kconfig"
+rsource "memfault-firmware-sdk/Kconfig"
 rsource "tfm/zephyr/Kconfig"
