@@ -67,3 +67,21 @@ properties:
         required: false
         description: |
             Gpio of the SOC controlling ANT-SEL pin of the SKY66112-11 device.
+
+    csd-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CSD pin of the SKY66112-11 device.
+
+    cps-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CPS pin of the SKY66112-11 device.
+
+    chl-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CHL pin of the SKY66112-11 device.
