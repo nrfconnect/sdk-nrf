@@ -28,13 +28,13 @@ Overview
 
 LwM2M is an application layer protocol based on CoAP over UDP.
 It is designed to expose various resources for reading, writing, and executing through an LwM2M server in a very lightweight environment.
-The client sends data such as button and switch states, accelerometer data, temperature, and GPS position to the LwM2M server.
+The client sends data such as button and switch states, accelerometer data, temperature, and GNSS position to the LwM2M server.
 It can also receive activation commands such as buzzer activation and light control.
 
 .. note::
-   The GPS module interferes with the LTE connection.
-   If GPS is not needed or if the device is in an area with poor connection, disable the GPS module.
-   You can disable the GPS module by setting the configuration option :kconfig:`CONFIG_APP_GPS` to ``n``.
+   The GNSS module interferes with the LTE connection.
+   If GNSS is not needed or if the device is in an area with poor connection, disable the GNSS module.
+   You can disable the GNSS module by setting the configuration option :kconfig:`CONFIG_APP_GPS` to ``n``.
 
 
 The following LwM2M objects are implemented in this sample:
@@ -356,16 +356,16 @@ LwM2M objects options
    Disabled objects will not be visible in the server.
    This configuration option can be used for other LwM2M objects also by modifying the option accordingly.
 
-.. option:: CONFIG_APP_GPS - Configuration for enabling GPS functionality
+.. option:: CONFIG_APP_GPS - Configuration for enabling GNSS functionality
 
-   The sample configuration is used to enable the GPS.
-   This configuration might interfere with LTE if the GPS conditions are not optimal.
-   Disable this option if GPS is not needed.
+   The sample configuration is used to enable the GNSS.
+   This configuration might interfere with LTE if the GNSS conditions are not optimal.
+   Disable this option if GNSS is not needed.
 
-.. option::  CONFIG_GPS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GPS
+.. option::  CONFIG_GPS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS
 
-   The configuration is used to prioritize GPS over LTE during the search for first fix.
-   Enabling this option makes it significantly easier for the GPS module to find a position but will also affect performance for the rest of the application during the search for first fix.
+   The configuration is used to prioritize GNSS over LTE during the search for first fix.
+   Enabling this option makes it significantly easier for the GNSS module to find a position but will also affect performance for the rest of the application during the search for first fix.
 
 .. option:: CONFIG_ENV_SENSOR_USE_SIM - Configuration to enable simulated sensor data
 
@@ -509,11 +509,11 @@ Testing
    #. Press **Button 1** on nRF9160 DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
    #. Check that the button press event has been registered on the LwM2M server by confirming that the press count has been updated.
    #. Retrieve sensor data from various sensors and check if values are reasonable.
-   #. Test GPS module:
+   #. Test GNSS module:
 
       a. Ensure that :kconfig:`CONFIG_GPS_PRIORITY_ON_FIRST_FIX` is enabled.
-      #. Ensure that you are in a location with good GPS signal, preferably outside.
-      #. Wait for the GPS to receive a fix, which will be displayed in the terminal.
+      #. Ensure that you are in a location with good GNSS signal, preferably outside.
+      #. Wait for the GNSS to receive a fix, which will be displayed in the terminal.
          It might take several minutes for the first fix.
 
    #. Try to enable or disable some sensors in menuconfig and check if the sensors

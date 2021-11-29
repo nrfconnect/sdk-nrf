@@ -10,7 +10,7 @@ nRF9160: Asset Tracker
 .. note::
    The Asset Tracker application is deprecated and succeeded by the :ref:`asset_tracker_v2` application.
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Cloud`_ through LTE, transmit GPS and sensor data, and retrieve information about the device.
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Cloud`_ through LTE, transmit GNSS and sensor data, and retrieve information about the device.
 
 Overview
 ********
@@ -19,7 +19,7 @@ The application uses the LTE link control driver to establish a network connecti
 It then collects various data locally, and transmits the data to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
 The data is visualized in nRF Cloud's web interface.
 
-The collected data includes the GPS position, accelerometer readings (the device's physical orientation), and data from various environment sensors.
+The collected data includes the GNSS position, accelerometer readings (the device's physical orientation), and data from various environment sensors.
 
 .. list-table::
    :header-rows: 1
@@ -28,8 +28,8 @@ The collected data includes the GPS position, accelerometer readings (the device
    * - Sensor data
      - nRF Cloud sensor type
      - Data unit
-   * - GPS coordinates
-     - GPS
+   * - GNSS coordinates
+     - GNSS
      - NMEA Gxxx string
    * - Accelerometer data
      - FLIP
@@ -49,7 +49,7 @@ The collected data includes the GPS position, accelerometer readings (the device
 
 On the nRF9160 DK, the application uses simulated sensor data by default, but it can be configured with Kconfig options to use real sensors to collect data.
 On the Thingy:91, onboard sensors are used by default.
-GPS is enabled by default on both the kits.
+GNSS is enabled by default on both the kits.
 
 In addition to the sensor data, the application retrieves information from the LTE modem, such as the signal strength, battery voltage, and current operator.
 This information is available in nRF Cloud under the section **Cellular Link Monitor**.
@@ -113,7 +113,7 @@ The buttons and switches have the following functions when the connection is est
 
 Button 1 (SW3 on Thingy:91):
     * Send a BUTTON event to nRF Cloud.
-    * Enable or disable GPS operation (long press the button for a minimum of 10 seconds).
+    * Enable or disable GNSS operation (long press the button for a minimum of 10 seconds).
 
 Switch 1 (only on nRF9160 DK):
     * Toggle to simulate orientation change (flipping) of the kit.
@@ -158,13 +158,13 @@ On the Thingy:91, the application state is indicated by a single RGB LED as foll
    * - Blue
      - Connected, sending environment data
    * - Purple
-     - Searching for GPS
+     - Acquiring GNSS position
    * - Green
-     - GPS has fix, sending GPS and environment data
+     - GNSS has fix, sending GNSS and environment data
    * - Red
      - Error
 
-If multicell location services are used and GPS is not enabled, the LED colors change depending on the number of neighboring cell towers reported by the modem as follows:
+If multicell location services are used and GNSS is not enabled, the LED colors change depending on the number of neighboring cell towers reported by the modem as follows:
 
    * Blue = one cell tower
    * Purple = two cell towers
@@ -189,7 +189,7 @@ Alternatively, you can manually set the configuration options to match the conte
 Using nRF Cloud A-GPS or P-GPS
 ******************************
 By default, this application enables :ref:`lib_nrf_cloud_agps` (Assisted GPS) support.
-Each time the GPS unit attempts to get a location fix, it may require additional information from  `nRF Cloud`_ to speed up the time to get that fix.
+Each time the GNSS unit attempts to get a location fix, it may require additional information from  `nRF Cloud`_ to speed up the time to get that fix.
 
 Alternatively, :ref:`lib_nrf_cloud_pgps` (Predicted GPS) downloads and stores assistance predictions in Flash for one or two weeks, and does not require the cloud to help with each fix.
 
@@ -201,7 +201,7 @@ In order to use A-GPS and P-GPS at the same time, use the following instead:
 
 Using nRF Cloud Cellular Positioning
 ************************************
-If the accuracy of GPS is not required, battery life is very important, and reporting an approximate location is desired, cellular positioning is an option.
+If the accuracy of GNSS is not required, battery life is very important, and reporting an approximate location is desired, cellular positioning is an option.
 
 With cellular positioning:
 
@@ -279,7 +279,7 @@ After programming the application and all prerequisites to your kit, test the As
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
 #. Select the device from your device list on nRF Cloud, and observe that sensor data and modem information is received from the kit.
 #. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to nRF Cloud.
-#. Press Button 1 (SW3 on Thingy:91) for a minimum of 10 seconds to enable GPS tracking.
+#. Press Button 1 (SW3 on Thingy:91) for a minimum of 10 seconds to enable GNSS tracking.
    The kit must be outdoors in clear space for a few minutes to get the first position fix.
 #. Optionally send AT commands from the terminal, and observe that the response is received.
 

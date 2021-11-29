@@ -9,15 +9,15 @@ GNSS AT commands
 
 The following commands list contains GNSS-related AT commands.
 
-Run GPS
-=======
+Run GNSS
+========
 
-The ``#XGPS`` command controls the GPS.
+The ``#XGPS`` command controls the GNSS.
 
 Set command
 -----------
 
-The set command allows you to start and stop the GPS.
+The set command allows you to start and stop the GNSS.
 
 Syntax
 ~~~~~~
@@ -28,11 +28,11 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Stop GPS
-* ``1`` - Start GPS
+* ``0`` - Stop GNSS
+* ``1`` - Start GNSS
 
 The ``<interval>`` parameter represents the GNSS fix interval in seconds.
-It must be set when starting the GPS.
+It must be set when starting the GNSS.
 It accepts the following integer values:
 
 * ``0`` - Single-fix navigation mode.
@@ -265,16 +265,16 @@ Example
 
   OK
 
-Run GPS with nRF Cloud A-GPS
-============================
+Run GNSS with nRF Cloud A-GPS
+=============================
 
-The ``#XAGPS`` command runs the GPS together with the nRF Cloud A-GPS service.
+The ``#XAGPS`` command runs the GNSS together with the nRF Cloud A-GPS service.
 This requires access to nRF Cloud through the LTE network for receiving A-GPS data.
 
 Set command
 -----------
 
-The set command allows you to start and stop the GPS together with the nRF Cloud A-GPS service.
+The set command allows you to start and stop the GNSS together with the nRF Cloud A-GPS service.
 
 Syntax
 ~~~~~~
@@ -285,11 +285,11 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Stop GPS with A-GPS
-* ``1`` - Start GPS with A-GPS
+* ``0`` - Stop GNSS with A-GPS
+* ``1`` - Start GNSS with A-GPS
 
 The ``<interval>`` parameter represents the GNSS fix interval in seconds.
-It must be set when starting the GPS.
+It must be set when starting the GNSS.
 It accepts the following integer values:
 
 * ``0`` - Single-fix navigation mode.
@@ -384,16 +384,16 @@ Example
   OK
 
 
-Run GPS with nRF Cloud P-GPS
-============================
+Run GNSS with nRF Cloud P-GPS
+=============================
 
-The ``#XPGPS`` command runs the GPS together with the nRF Cloud P-GPS service.
+The ``#XPGPS`` command runs the GNSS together with the nRF Cloud P-GPS service.
 This requires access to nRF Cloud through the LTE network for receiving P-GPS data.
 
 Set command
 -----------
 
-The set command allows you to start and stop the GPS together with the nRF Cloud P-GPS service.
+The set command allows you to start and stop the GNSS together with the nRF Cloud P-GPS service.
 
 Syntax
 ~~~~~~
@@ -404,11 +404,11 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Stop GPS with P-GPS
-* ``1`` - Start GPS with P-GPS
+* ``0`` - Stop GNSS with P-GPS
+* ``1`` - Start GNSS with P-GPS
 
 The ``<interval>`` parameter represents the GNSS fix interval in seconds.
-It must be set when starting the GPS.
+It must be set when starting the GNSS.
 It accepts the following integer values:
 
 * Ranging from ``10`` to ``1800`` - Periodic navigation mode.
