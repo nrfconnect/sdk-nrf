@@ -20,7 +20,6 @@ if MULTICELL_LOCATION
 
 config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
-	depends on NRF_CLOUD_REST
 	depends on MODEM_JWT
 	help
 	  Use nRF Cloud location service

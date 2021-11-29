@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if defined(CONFIG_MODEM_JWT)
 #include <net/nrf_cloud.h>
 #include <zephyr.h>
 #include <logging/log.h>
@@ -69,4 +68,3 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 
 	return err;
 }
-#endif /* CONFIG_MODEM_JWT */

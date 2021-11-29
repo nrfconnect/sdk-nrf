@@ -18,7 +18,18 @@
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
+/* Verify that MQTT or REST is enabled */
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST),
+	"CONFIG_NRF_CLOUD_MQTT or CONFIG_NRF_CLOUD_REST transport must be enabled");
+
+
 #if defined(CONFIG_NRF_CLOUD_MQTT)
+/* Verify that CELL_POS is enabled if MQTT is enabled */
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_NRF_CLOUD_CELL_POS),
+	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_CELL_POS must be enabled");
+
 static struct multicell_location nrf_cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
 #else

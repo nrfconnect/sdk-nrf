@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS
+if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT
 
 config NRF_CLOUD_HOST_NAME
 	string "nRF Cloud server hostname"
