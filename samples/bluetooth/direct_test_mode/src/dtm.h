@@ -273,14 +273,14 @@ enum dtm_vs_subcmd {
 	/* Set transmission power, value -40..+4 dBm in steps of 4 */
 	SET_TX_POWER = 2,
 
-	/* Switch nRF21540 FEM antenna. */
-	NRF21540_ANTENNA_SELECT = 3,
+	/* Switch front-end module (FEM) antenna. */
+	FEM_ANTENNA_SELECT = 3,
 
-	/* Set nRF21540 FEM gain value. */
-	NRF21540_GAIN_SET = 4,
+	/* Set front-end module (FEM) gain value. */
+	FEM_GAIN_SET = 4,
 
-	/* Set nRF21540 FEM active delay set. */
-	NRF21540_ACTIVE_DELAY_SET = 5,
+	/* Set front-end module (FEM) active delay set. */
+	FEM_ACTIVE_DELAY_SET = 5,
 };
 
 /* DTM Packet Type field */

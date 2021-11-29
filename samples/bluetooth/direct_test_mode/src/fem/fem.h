@@ -65,7 +65,7 @@ int fem_power_down(void);
  *       a specific settle time for the device (in microseconds) and is triggered by
  *       the PA pin. Check your FEM specification to obtain that value.
  *       Suitable timing can be achieved by the @p active_delay parameters.
- *       This function triggers the @ref NRF_RADIO_TASK_TXEN task when active_event
+ *       This function triggers the @ref NRF_RADIO_TASK_TXEN task when activate_event
  *       occurs or triggers it immediately when @ref FEM_EXECUTE_NOW is used.
  *
  * @param[in] activate_event An event that triggers start of procedure - this
@@ -90,7 +90,7 @@ int fem_tx_configure(uint32_t activate_event, uint32_t deactivate_event,
  *       specific settle time for device in microseconds and is triggered by
  *       the LNA pin. Check your FEM specification to obtain that value.
  *       Suitable timing can be achieved by the @p active_delay parameters.
- *       This function triggers the NRF_RADIO_TASK_RXEN task when active_event
+ *       This function triggers the NRF_RADIO_TASK_RXEN task when activate_event
  *       occurs or triggers it immediately when @ref FEM_EXECUTE_NOW is used.
  *
  * @param[in] activate_event An event that triggers start of procedure - this
