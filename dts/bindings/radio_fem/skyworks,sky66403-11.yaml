@@ -1,0 +1,13 @@
+# Copyright (c) 2021 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a representation of the Skyworks SKY66403-11 Radio Front-End module.
+    It is supplementing the generic representation of FEM with settling time and
+    gain values appropriate for SKY66403-11 device.
+
+include:
+  - name: generic-fem-two-ctrl-pins.yaml
+  - name: skyworks,sky66112-11.yaml
+
+compatible: "skyworks,sky66403-11"
