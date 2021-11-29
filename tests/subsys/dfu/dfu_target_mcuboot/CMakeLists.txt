@@ -20,9 +20,16 @@ target_sources(app
 target_include_directories(app
   PRIVATE
   ${ZEPHYR_BASE}/../nrf/subsys/dfu/include
-  . # To get 'pm_config.h'
+  include # To get 'pm_config.h'
   ${ZEPHYR_BASE}/../nrf/include/dfu
   )
+
+if (CONFIG_BOARD_NATIVE_POSIX)
+  target_include_directories(app
+    PRIVATE
+    include/stub_nrfx # To get 'nrfx.h'
+    )
+endif()
 
 target_compile_options(app
   PRIVATE
