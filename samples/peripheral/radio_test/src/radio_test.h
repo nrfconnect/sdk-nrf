@@ -19,7 +19,7 @@
 /** IEEE 802.15.4 maximum channel. */
 #define IEEE_MAX_CHANNEL	26
 
-#define NRF21540_USE_DEFAULT_GAIN 0xFF
+#define FEM_USE_DEFAULT_GAIN 0xFF
 
 /**@brief Radio transmit and address pattern. */
 enum transmit_pattern {
@@ -54,12 +54,12 @@ enum radio_test_mode {
 	MODULATED_TX_DUTY_CYCLE,
 };
 
-/**@brief Radio test nRF21540 configuration */
-struct radio_test_nrf21540 {
-	/* nRF21540 activation delay. */
+/**@brief Radio test front-end module (FEM) configuration */
+struct radio_test_fem {
+	/* Front-end module activation delay. */
 	uint32_t active_delay;
 
-	/* nRF21540 TX gain. */
+	/* Front-end module TX gain. */
 	uint8_t gain;
 };
 
@@ -148,10 +148,10 @@ struct radio_test_config {
 		} modulated_tx_duty_cycle;
 	} params;
 
-#if CONFIG_NRF21540_FEM
-	/* nRF21540 configuration. */
-	struct radio_test_nrf21540 nrf21540;
-#endif /* CONFIG_NRF21540_FEM */
+#if CONFIG_FEM
+	/* Front-end module (FEM) configuration. */
+	struct radio_test_fem fem;
+#endif /* CONFIG_FEM */
 };
 
 /**@brief Radio RX statistics. */
