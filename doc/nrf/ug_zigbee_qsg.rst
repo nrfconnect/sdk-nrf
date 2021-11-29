@@ -160,15 +160,15 @@ To program the samples, complete the following steps:
 
 #. Generate the network coordinator application:
 
-   a. In the Applications panel, hover with your mouse cursor over the application name and click the :guilabel:`Add Build Configuration` button that appears next to it.
-   #. In the configuration options on the :guilabel:`Generate Configuration` screen, select the board onto which you want to program the sample.
+   a. In the Applications panel, click the :guilabel:`No build configuration - Click to create one` button.
+   #. In the configuration options on the :guilabel:`Add Build Configuration` screen, select the board onto which you want to program the sample.
       See the `Requirements`_ section for the list of available build target names.
       For the purpose of this quick start guide, leave the default values for other options.
 
       .. figure:: images/zigbee_qsg_vsc_generate_config_section.png
          :alt: nRF Connect for Visual Studio Code - Generate Configuration panel
 
-   #. Click :guilabel:`Generate Config`.
+   #. Click :guilabel:`Build Configuration`.
       When the process starts, a Zigbee Coordinator panel appears under the Applications panel.
       The generation process takes some time and you can observe its progress in the :guilabel:`nRF Connect` terminal.
 
