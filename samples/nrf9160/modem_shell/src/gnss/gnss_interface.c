@@ -36,7 +36,11 @@
 
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
 	defined(CONFIG_SUPL_CLIENT_LIB)
-BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library can not be enabled at the same time");
+BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at the same time");
+#endif
+
+#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_REST), "Only REST transport supported for nRF Cloud");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
