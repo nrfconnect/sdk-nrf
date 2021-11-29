@@ -171,7 +171,7 @@ static void print_attr_update(zb_zcl_parsed_hdr_t *zcl_hdr, zb_bufid_t bufid)
 			LOG_INF("Received value updates from the remote node (unknown address)");
 		} else {
 			LOG_INF("Received value updates from the remote node 0x%s",
-				print_buf);
+				log_strdup(print_buf));
 		}
 	}
 
@@ -194,7 +194,7 @@ static void print_attr_update(zb_zcl_parsed_hdr_t *zcl_hdr, zb_bufid_t bufid)
 				zcl_hdr->cluster_id,
 				attr_resp->attr_id,
 				attr_resp->attr_type,
-				print_buf);
+				log_strdup(print_buf));
 		}
 
 		ZB_ZCL_GENERAL_GET_NEXT_REPORT_ATTR_REQ(bufid, attr_resp);
