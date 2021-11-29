@@ -10,6 +10,8 @@ on:
     branches:
       - main
       - 'v*-branch'
+    tags:
+      - v*
 
 env:
   # Doxygen >= 1.8.18 is required. This can be removed once ubuntu-latest ships
@@ -84,13 +86,16 @@ jobs:
             echo "publish2 dev PR-${{ github.event.number }} __FILE__" > monitor.txt
             echo "${{ github.event.number }}" > pr.txt
           else
-            # basename will work for both branches and tags
-            branch=$(basename "${{ github.ref }}")
-            if [[ $branch == "main" ]]; then
-              echo "publish2 main latest __FILE__" > monitor.txt
+            VERSION_REGEX="^v([0-9\.]+)$"
+            if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
+              VERSION=${BASH_REMATCH[1]}
+            elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
+              VERSION="latest"
             else
-              echo "publish2 main ${branch} __FILE__" > monitor.txt
+              echo "Not a release or latest, skipping publish"
+              exit 0
             fi
+            echo "publish2 main ${VERSION} __FILE__" > monitor.txt
           fi
 
       - name: Archive cache
