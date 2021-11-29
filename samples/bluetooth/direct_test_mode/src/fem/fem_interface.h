@@ -21,9 +21,9 @@ extern "C" {
 struct fem_interface_api {
 	int (*power_up)(void);
 	int (*power_down)(void);
-	int (*tx_configure)(uint32_t active_event, uint32_t deactive_event,
+	int (*tx_configure)(uint32_t activate_event, uint32_t deactivate_event,
 			    uint32_t active_delay);
-	int (*rx_configure)(uint32_t active_event, uint32_t deactive_event,
+	int (*rx_configure)(uint32_t activate_event, uint32_t deactivate_event,
 			    uint32_t active_delay);
 	void (*txrx_configuration_clear)(void);
 	int (*txrx_stop)(void);
@@ -52,7 +52,7 @@ uint32_t fem_radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
 
 /**@brief Function for getting the radio ramp-up time in a receive mode.
  *
- * @param[in] fast The radio is in a fast ramp-up mode.
+ * @param[in] fast The radio is in the fast ramp-up mode.
  * @param[in] mode Radio mode.
  *
  * @retval Radio ramp-up time in microseconds.
