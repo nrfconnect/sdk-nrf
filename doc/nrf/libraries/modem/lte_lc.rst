@@ -219,6 +219,17 @@ To enable modem sleep and TAU pre-warning notifications, enable the following op
 
 Additional configurations related to these features can be found in the API documentation for the link controller.
 
+Connection fallback mode
+========================
+It is possible to try to switch between LTE-M and NB-IoT after a certain time period if a connection has not been established.
+This is useful when the connection to either of these networks becomes unavailable.
+You can also configure the switching period between the network modes.
+If a connection cannot be established by using the fallback mode, the library reports an error.
+You can use the following configuration options to configure the connection fallback mode:
+
+* :kconfig:`CONFIG_LTE_NETWORK_USE_FALLBACK`
+* :kconfig:`CONFIG_LTE_NETWORK_TIMEOUT`
+
 API documentation
 *****************
 
