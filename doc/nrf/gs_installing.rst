@@ -374,6 +374,8 @@ To be able to cross-compile your applications for Arm targets, you must install 
    Other toolchain versions might not work with this version of the |NCS|.
    Similarly, other versions of the |NCS| might require a different toolchain version.
 
+   |tfm_gnu_version_incompatibility|
+
 To set up the toolchain, complete the following steps:
 
 .. _toolchain_setup:
