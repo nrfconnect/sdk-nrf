@@ -19,8 +19,7 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
-     <option value="v1-8-0" selected>v1.8.0</option>
-     <option value="v1-7-1">v1.7.1</option>
+     <option value="v1-7-1" selected>v1.7.1</option>
      <option value="v1-7-0">v1.7.0</option>
      <option value="v1-6-1">v1.6.1</option>
      <option value="v1-6-0">v1.6.0</option>
@@ -667,11 +666,6 @@ Subsystems
 
 Bluetooth® LE
 =============
-
-.. rst-class:: v1-8-0
-
-DRGN-16506: MPSL timeslot request
-  In some cases, requesting an MPSL timeslot with MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE takes longer than in previous versions.
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
