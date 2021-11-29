@@ -678,7 +678,7 @@ static int hci_driver_open(void)
 
 	err = configure_supported_features();
 	if (err) {
-		return -err;
+		return err;
 	}
 
 	err = configure_memory_usage();
