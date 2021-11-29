@@ -529,7 +529,7 @@ Other libraries
 
 * :ref:`profiler` library:
 
-  * Updated Python scripts to use multiple processes that communicate over sockets.
+  * Updated Python scripts to use multiple processes that communicate over pipes.
   * Increase the number of supported profiler events.
   * Added a special profiler event for indicating a situation where the profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
 
