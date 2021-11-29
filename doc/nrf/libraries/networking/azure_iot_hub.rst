@@ -26,7 +26,7 @@ In order to connect to Azure IoT Hub, an Azure account and an Azure IoT Hub inst
 See `Creating an Azure IoT Hub instance using the Azure portal`_ for more information.
 
 .. note::
-   While `Registering the device with Azure IoT Hub`_, make sure that you select ``X.509 CA Signed`` as the *Authentication type*.
+   If you do not use DPS to provision devices to your IoT Hub, make sure that you select ``X.509 CA Signed`` as the *Authentication type* while `Registering the device with Azure IoT Hub`_.
 
 The connection to Azure IoT Hub with MQTT is secured using TLS.
 For testing purposes, see `Creating Azure IoT Hub certificates`_ for the steps to create certificates and a private key for the leaf device, and to register the generated test root certificate to be used with an IoT hub.
@@ -81,6 +81,7 @@ To connect to Azure IoT Hub without using DPS, complete the following minimum re
 1. In the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select the desired IoT hub.
 #. In the overview page, locate and copy the ``Hostname`` and configure :kconfig:`CONFIG_AZURE_IOT_HUB_HOSTNAME` to this address.
 #. Set the option :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` to the device ID. The device ID must match the device ID used while creating the certificates.
+#. Make sure that the device is already registered with your Azure IoT Hub, or follow the instructions in `Registering the device with Azure IoT Hub`_.
 #. Set :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used in :ref:`azure_iot_hub_flash_certs`.
 
 
