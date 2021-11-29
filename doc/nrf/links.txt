@@ -103,6 +103,8 @@
 .. _`Installing the manifest tool`: https://github.com/PelionIoT/manifest-tool#installing-the-manifest-tool
 .. _`Using the manifest tool`: https://github.com/PelionIoT/manifest-tool#using-the-manifest-tool
 
+.. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
@@ -429,6 +431,8 @@
 .. _`Registering the device with Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal#register-a-new-device-in-the-iot-hub
 
 .. _`Windows Hardware Lab Kit`: https://docs.microsoft.com/en-us/windows-hardware/test/hlk/
+
+.. _`Windows path length limitations`: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
 
 .. ### Source: ietf.org
 

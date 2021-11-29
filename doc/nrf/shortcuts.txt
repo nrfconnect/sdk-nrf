@@ -13,7 +13,6 @@
 
 .. |test_sample| replace:: After programming the sample to your development kit, test it by performing the following steps:
 
-
 .. |connect_kit| replace:: Connect the kit to the computer using a USB cable.
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 
@@ -88,6 +87,8 @@
 .. |external_flash_size| replace:: external flash memory with minimum 4MB
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
+.. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
+   To avoid this issue, shorten the build folder name, for example, from ``build_nrf5340dk_nrf5340_cpuapp_ns`` to ``build``, or shorten the path to the build folder in some other way.
 
 .. |gps_tradeoffs| replace:: For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
 
@@ -98,3 +99,6 @@
 .. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 
 .. |thingy53_unreleased| replace:: As of the |NCS| |release| release, Thingy:53 is an unreleased product that will be released in the near future.
+
+.. |tfm_gnu_version_incompatibility| replace:: Do not use GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major* due to `TF-M sample incompatibility issue`_.
+   These versions do not work correctly when compiling binaries for Cortex-M Secure Extensions.

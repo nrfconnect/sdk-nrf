@@ -14,6 +14,9 @@ These user guides contain platform-specific instructions for building and progra
 For additional information, check the user guide for the hardware platform that you are using.
 For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`precompiled_fw` and :ref:`building_pgming` for information about programming a Thingy:91.
 
+.. note::
+   |application_sample_long_path_windows|
+
 .. _gs_programming_vsc:
 
 Building with the VS Code extension
