@@ -408,15 +408,23 @@ static int link_default_pdp_context_auth_set(void)
 	return 0;
 }
 
-static int link_enable_rel14_features(void)
+static int link_enable_disable_rel14_features(bool enable)
 {
 	int ret;
 
-	ret = nrf_modem_at_printf("AT%%REL14FEAT=1,1,1,1,1");
+	if (enable) {
+		ret = nrf_modem_at_printf("AT%%REL14FEAT=1,1,1,1,1");
+	} else {
+		ret = nrf_modem_at_printf("AT%%REL14FEAT=0,0,0,0,0");
+	}
+
 	if (ret < 0) {
-		mosh_warn("Release 14 features AT-command failed, err %d", ret);
+		mosh_warn("Release 14 features %s AT-command failed, err %d",
+			((enable) ? "enable" : "disable"),
+			ret);
 	} else if (ret > 0) {
-		mosh_warn("Release 14 features AT-command error, type %d err %d",
+		mosh_warn("Release 14 features %s AT-command error, type %d err %d",
+			((enable) ? "enable" : "disable"),
 			nrf_modem_at_err_type(ret), nrf_modem_at_err(ret));
 	}
 	return 0;
@@ -557,10 +565,8 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 		return_value = lte_lc_offline();
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
-		if (rel14_used) {
-			/* Enable Rel14 features before going to normal mode */
-			link_enable_rel14_features();
-		}
+		/* Enable/disable Rel14 features before going to normal mode */
+		link_enable_disable_rel14_features(rel14_used);
 
 		/* (Re)register for PDN lib notifications */
 		link_shell_pdn_events_subscribe();
