@@ -66,6 +66,9 @@ Check and configure the following library options that are used by the sample:
 
 * :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Sets the Azure IoT Hub device ID. Alternatively, enable :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option and set the device ID at run time in :c:struct:`azure_iot_hub_config` passed to the :c:func:`azure_iot_hub_init` function.
 * :kconfig:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored.
+
+If DPS is used, configure the following library options:
+
 * :kconfig:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
 * :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope.
 
@@ -81,7 +84,6 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/azure_iot_hub`
 .. include:: /includes/build_and_run_nrf9160.txt
-.. include:: /includes/spm.txt
 
 Testing
 =======
