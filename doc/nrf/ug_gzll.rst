@@ -70,7 +70,7 @@ The radio and timer interrupt handlers should run at priority level 0 (highest p
 To avoid blocking Gazell operations, applications can run at priority level 2 or higher.
 
 You can customize Gazell at runtime for a range of different applications.
-See the :ref:`nrfxlib:gzll` and :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
+See the :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
 
 .. note:
    Editing the header file containing the default and constant parameters does not change their value when compiling a new project.
