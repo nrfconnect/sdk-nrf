@@ -13,8 +13,8 @@
 #include <nrfx_timer.h>
 #include <zephyr.h>
 
-#if CONFIG_NRF21540_FEM
-#include "nrf21540.h"
+#if CONFIG_FEM
+#include "fem.h"
 #endif
 
 /* IEEE 802.15.4 default frequency. */
@@ -49,52 +49,54 @@ static const nrfx_timer_t timer = NRFX_TIMER_INSTANCE(0);
 static bool sweep_proccesing;
 
 
-#if CONFIG_NRF21540_FEM
-static struct radio_test_nrf21540 nrf21540;
+#if CONFIG_FEM
+static struct radio_test_fem fem;
 
-static int nrf21540_configure(bool rx, nrf_radio_mode_t mode,
-			      struct radio_test_nrf21540 *nrf21540)
+static int fem_configure(bool rx, nrf_radio_mode_t mode,
+			 struct radio_test_fem *fem)
 {
 	int err;
 
-	/* nRF21540 is kept powered during sweeping */
+	/* FEM is kept powered during sweeping */
 	if (!sweep_proccesing) {
-		err = nrf21540_power_up();
+		err = fem_power_up();
 		if (err) {
 			return err;
 		}
 	}
 
-	if (nrf21540->active_delay == 0) {
-		nrf21540->active_delay =
-			nrf21540_default_active_delay_calculate(false, mode);
+	if (fem->active_delay == 0) {
+		fem->active_delay =
+			fem_default_active_delay_calculate(false, mode);
 	}
 
 	if (rx) {
-		return nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
-					     nrf_radio_event_address_get(
+		return fem_rx_configure(FEM_EXECUTE_NOW,
+					nrf_radio_event_address_get(
 						NRF_RADIO,
 						NRF_RADIO_EVENT_DISABLED),
-					     nrf21540->active_delay);
+					fem->active_delay);
 	}
 
 	/* Sweeping is done from the interrupt context do not trigger SPI
 	 * transfer in the interrupt.
 	 */
-	if ((nrf21540->gain != NRF21540_USE_DEFAULT_GAIN) &&
+	if ((fem->gain != FEM_USE_DEFAULT_GAIN) &&
 	    !sweep_proccesing) {
-		err = nrf21540_tx_gain_set(nrf21540->gain);
+		err = fem_tx_gain_set(fem->gain);
 		if (err) {
+			printk("%d: out of range FEM gain value or setting gain is not supported\n",
+				fem->gain);
 			return err;
 		}
 	}
 
-	return nrf21540_tx_configure(NRF21540_EXECUTE_NOW,
-				     nrf_radio_event_address_get(NRF_RADIO,
-						NRF_RADIO_EVENT_DISABLED),
-				     nrf21540->active_delay);
+	return fem_tx_configure(FEM_EXECUTE_NOW,
+				nrf_radio_event_address_get(NRF_RADIO,
+					NRF_RADIO_EVENT_DISABLED),
+				fem->active_delay);
 }
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 
 static uint8_t rnd8(void)
 {
@@ -293,15 +295,15 @@ static void radio_disable(void)
 	}
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_txrx_configuration_clear();
-	(void) nrf21540_txrx_stop();
+#if CONFIG_FEM
+	(void) fem_txrx_configuration_clear();
+	(void) fem_txrx_stop();
 
-	/* Do not powerdown nRF21540 during sweeping. */
+	/* Do not powerdown front-end module (FEM) during sweeping. */
 	if (!sweep_proccesing) {
-		(void) nrf21540_power_down();
+		(void) fem_power_down();
 	}
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 }
 
 static void radio_unmodulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel)
@@ -314,11 +316,11 @@ static void radio_unmodulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t 
 
 	radio_channel_set(mode, channel);
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_configure(false, mode, &nrf21540);
+#if CONFIG_FEM
+	(void) fem_configure(false, mode, &fem);
 #else
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 }
 
 static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel,
@@ -363,11 +365,11 @@ static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t ch
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_END_MASK);
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_configure(false, mode, &nrf21540);
+#if CONFIG_FEM
+	(void) fem_configure(false, mode, &fem);
 #else
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
 		/* Do nothing */
 	}
@@ -390,8 +392,8 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK);
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_configure(true, mode, &nrf21540);
+#if CONFIG_FEM
+	(void) fem_configure(true, mode, &fem);
 #else
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 #endif
@@ -401,11 +403,11 @@ static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 {
 	current_channel = channel;
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_power_up();
+#if CONFIG_FEM
+	(void) fem_power_up();
 
-	if (nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
-		(void) nrf21540_tx_gain_set(nrf21540.gain);
+	if (fem.gain != FEM_USE_DEFAULT_GAIN) {
+		(void) fem_tx_gain_set(fem.gain);
 	}
 #endif
 
@@ -462,19 +464,19 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
 	nrf_radio_txpower_set(NRF_RADIO, txpower);
 	radio_channel_set(mode, channel);
 
-#if CONFIG_NRF21540_FEM
-	(void) nrf21540_power_up();
+#if CONFIG_FEM
+	(void) fem_power_up();
 
-	if (nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
-		(void) nrf21540_tx_gain_set(nrf21540.gain);
+	if (fem.gain != FEM_USE_DEFAULT_GAIN) {
+		(void) fem_tx_gain_set(fem.gain);
 	}
 
-	if (nrf21540.active_delay == 0) {
-		nrf21540.active_delay =
-			nrf21540_default_active_delay_calculate(false, mode);
+	if (fem.active_delay == 0) {
+		fem.active_delay =
+			fem_default_active_delay_calculate(false, mode);
 	}
 
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 
 	/* We let the TIMER start the radio transmission again. */
 	nrfx_timer_disable(&timer);
@@ -493,9 +495,9 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
 
 void radio_test_start(const struct radio_test_config *config)
 {
-#if CONFIG_NRF21540_FEM
-	nrf21540.active_delay = config->nrf21540.active_delay;
-	nrf21540.gain = config->nrf21540.gain;
+#if CONFIG_FEM
+	fem.active_delay = config->fem.active_delay;
+	fem.gain = config->fem.gain;
 #endif
 
 	switch (config->type) {
@@ -623,16 +625,16 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 	}
 
 	if (event_type == NRF_TIMER_EVENT_COMPARE1) {
-#if CONFIG_NRF21540_FEM
-		(void) nrf21540_txrx_configuration_clear();
-		(void) nrf21540_txrx_stop();
-		(void) nrf21540_tx_configure(NRF21540_EXECUTE_NOW,
-				nrf_radio_event_address_get(NRF_RADIO,
-						NRF_RADIO_EVENT_DISABLED),
-				nrf21540.active_delay);
+#if CONFIG_FEM
+		(void) fem_txrx_configuration_clear();
+		(void) fem_txrx_stop();
+		(void) fem_tx_configure(FEM_EXECUTE_NOW,
+					nrf_radio_event_address_get(NRF_RADIO,
+								    NRF_RADIO_EVENT_DISABLED),
+					fem.active_delay);
 #else
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
-#endif /* CONFIG_NRF21540_FEM */
+#endif /* CONFIG_FEM */
 	}
 }
 
@@ -676,14 +678,6 @@ void radio_handler(const void *context)
 int radio_test_init(struct radio_test_config *config)
 {
 	nrf_rng_task_trigger(NRF_RNG, NRF_RNG_TASK_START);
-
-#if CONFIG_NRF21540_FEM
-	int err = nrf21540_init();
-
-	if (err) {
-		return err;
-	}
-#endif /* CONFIG_NRF21540_FEM */
 
 	timer_init(config);
 	IRQ_CONNECT(TIMER0_IRQn, IRQ_PRIO_LOWEST,

@@ -10,8 +10,12 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
 # Application sources
+target_sources_ifdef(CONFIG_FEM app
+			PRIVATE ../../bluetooth/direct_test_mode/src/fem/fem.c)
 target_sources_ifdef(CONFIG_NRF21540_FEM app
-	PRIVATE ../../bluetooth/direct_test_mode/src/fem/nrf21540.c)
+			PRIVATE ../../bluetooth/direct_test_mode/src/fem/nrf21540.c)
+target_sources_ifdef(CONFIG_GENERIC_FEM app
+			PRIVATE ../../bluetooth/direct_test_mode/src/fem/generic_fem.c)
 zephyr_include_directories(../../bluetooth/direct_test_mode/src/fem/)
 
 FILE(GLOB app_sources src/*.c)
