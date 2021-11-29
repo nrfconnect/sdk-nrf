@@ -89,6 +89,13 @@ config NORDIC_QSPI_NOR
 
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
+
+config FLASH_LAYOUT_PAGE_SIZE
+	hex
+	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+	help
+	  Hidden option used to expose page size of chosen flash.
+
 config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
