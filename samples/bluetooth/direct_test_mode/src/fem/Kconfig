@@ -5,25 +5,87 @@
 #
 
 DT_COMPAT_NORDIC_NRF21540 := nordic,nrf21540-fem
+DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
+
+config NRF21540_FEM_SUPPORTED
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540))
+
+config GENERIC_FEM_SUPPORTED
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_GENERIC_FEM_2_CTRL_PIN))
+
+config FEM
+	bool "Front-end module (FEM) support"
+	default y
+	depends on NRF21540_FEM_SUPPORTED || GENERIC_FEM_SUPPORTED
+	help
+	  Controls if front-end module (FEM) is to be configured and enabled.
+	  Default type of FEM to use depends on which compatible nodes are in devicetree.
+
+if FEM
+
+choice FEM_CHOICE
+	prompt "Radio front-end module (FEM) type"
 
 config NRF21540_FEM
-	bool "nRF21540 Front-End-Module"
-	depends on $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540))
-	default y
+	bool "nRF21540 front-end module"
+	depends on NRF21540_FEM_SUPPORTED
 	select SPI if !SOC_NRF5340_CPUNET
 	select NRFX_SPIM0 if SOC_NRF5340_CPUNET
 	select NRFX_TIMER2
 	help
-	  Enable nRF21540 Front-End-Module support
+	  Enable nRF21540 front-end module support.
+
+config GENERIC_FEM
+	bool "Generic front-end module with two-pin control"
+	depends on GENERIC_FEM_SUPPORTED
+	select NRFX_TIMER2
+	help
+	  FEM device has a generic two-pin control interface.
+
+endchoice #FEM_CHOICE
 
 if NRF21540_FEM
 
 config NRF21540_FEM_GPIOTE_TX_EN
-	int "GPIOTE channel number used to control TX_EN pin of the front-end module"
+	int "GPIOTE channel number used to control TX_EN pin of the front-end Module"
 	default 7
 
 config NRF21540_FEM_GPIOTE_RX_EN
-	int "GPIOTE channel number used to control RX_EN pin of the front-end module"
+	int "GPIOTE channel number used to control RX_EN pin of the front-end Module"
 	default 6
 
 endif # NRF21540_FEM
+
+if GENERIC_FEM
+
+# The Skyworks front-end module devices specific configuration.
+choice SKYWORKS_MODE
+	prompt "Skyworks front-end module mode"
+	default SKYWORKS_LOW_POWER_MODE
+
+config SKYWORKS_LOW_POWER_MODE
+	bool "Low power-mode"
+	help
+	  Skywork front-end module low-power mode or mode selection is handled by user hardware.
+
+config SKYWORKS_HIGH_POWER_MODE
+	bool "High power-mode"
+	depends on $(dt_node_has_prop,nrf_radio_fem,chl-gpios)
+	help
+	  Skyworks front-end module high-power mode.
+
+config SKYWORKS_BYPASS_MODE
+	bool "Bypass mode"
+	depends on $(dt_node_has_prop,nrf_radio_fem,cps-gpios)
+	help
+	  Skyworks front-end module bypass mode. Bypass path for the integrated LNA.
+	  For more details check your device product specification.
+
+
+endchoice # SKYWORKS_MODE
+
+endif # GENERIC_FEM
+
+endif # FEM

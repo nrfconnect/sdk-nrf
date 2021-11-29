@@ -5,6 +5,7 @@
  */
 #include <string.h>
 
+#include <init.h>
 #include <device.h>
 #include <drivers/gpio.h>
 #include <drivers/spi.h>
@@ -34,8 +35,10 @@
 #error "No PPI or DPPI"
 #endif
 
-#include "radio_def.h"
-#include "nrf21540.h"
+#include "fem_interface.h"
+
+/* nRF21540 Front-End-Module maximum gain register value */
+#define NRF21540_TX_GAIN_Max 31
 
 #define NRF21540_TIMER_INSTANCE 2
 
@@ -74,6 +77,10 @@
 #define ANT_SEL_PIN DT_GPIO_PIN(NRF21540_NODE, ant_sel_gpios)
 #define ANT_SEL_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, ant_sel_gpios)
 
+#define PDN_SETTLE_TIME DT_PROP(NRF21540_NODE, pdn_settle_time_us)
+#define TX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, tx_en_settle_time_us)
+#define RX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, rx_en_settle_time_us)
+
 #if defined(NRF5340_XXAA_NETWORK)
 /* NRF5340 Network Core has only one SPIM0 instance. */
 static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
@@ -89,6 +96,14 @@ static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
 #define NRF21540_GPIO_POLARITY_GET(_dt_property)                     \
 	((DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), _dt_property) & \
 	GPIO_ACTIVE_LOW) ? false : true)
+
+enum nrf21540_ant {
+	/** Antenna 1 output. */
+	NRF21540_ANT1,
+
+	/** Antenna 2 output. */
+	NRF21540_ANT2
+};
 
 enum nrf21540_trx {
 	NRF21540_TX,
@@ -167,95 +182,10 @@ struct nrf_uarte_config {
 };
 #endif /* defined(NRF5340_XXAA_NETWORK) */
 
-static uint32_t active_evt;
-static uint32_t deactive_evt;
+static uint32_t activate_evt;
+static uint32_t deactivate_evt;
 
 static atomic_t state = NRF21540_STATE_OFF;
-
-static uint32_t radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
-{
-	uint32_t ramp_up;
-
-	switch (mode) {
-	case NRF_RADIO_MODE_BLE_1MBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_TX_1M_FAST_US :
-				 RADIO_RAMP_UP_TX_1M_US;
-		break;
-
-	case NRF_RADIO_MODE_BLE_2MBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_TX_2M_FAST_US :
-				 RADIO_RAMP_UP_TX_2M_US;
-		break;
-#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
-	case NRF_RADIO_MODE_BLE_LR125KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_TX_S8_FAST_US :
-				 RADIO_RAMP_UP_TX_S8_US;
-		break;
-
-	case NRF_RADIO_MODE_BLE_LR500KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_TX_S2_FAST_US :
-				 RADIO_RAMP_UP_TX_S2_US;
-		break;
-#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
-
-#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
-	case NRF_RADIO_MODE_IEEE802154_250KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_IEEE_FAST_US :
-				 RADIO_RAMP_UP_IEEE_US;
-		break;
-#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
-
-	default:
-		ramp_up = fast ? RADIO_RAMP_UP_DEFAULT_FAST_US :
-				 RADIO_RAMP_UP_DEFAULT_US;
-		break;
-	}
-
-	return ramp_up;
-}
-
-static uint32_t radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
-{
-	uint32_t ramp_up;
-
-	switch (mode) {
-	case NRF_RADIO_MODE_BLE_1MBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_RX_1M_FAST_US :
-				 RADIO_RAMP_UP_RX_1M_US;
-		break;
-
-	case NRF_RADIO_MODE_BLE_2MBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_RX_2M_FAST_US :
-				 RADIO_RAMP_UP_RX_2M_US;
-		break;
-
-#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
-	case NRF_RADIO_MODE_BLE_LR125KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_RX_S8_FAST_US :
-				 RADIO_RAMP_UP_RX_S8_US;
-		break;
-
-	case NRF_RADIO_MODE_BLE_LR500KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_RX_S2_FAST_US :
-				 RADIO_RAMP_UP_RX_S2_US;
-		break;
-#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
-
-#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
-	case NRF_RADIO_MODE_IEEE802154_250KBIT:
-		ramp_up = fast ? RADIO_RAMP_UP_IEEE_FAST_US :
-				 RADIO_RAMP_UP_IEEE_US;
-		break;
-#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
-
-	default:
-		ramp_up = fast ? RADIO_RAMP_UP_DEFAULT_FAST_US :
-				 RADIO_RAMP_UP_DEFAULT_US;
-		break;
-	}
-
-	return ramp_up;
-}
 
 static inline nrf_radio_task_t nrf21540_radio_task_get(enum nrf21540_trx dir)
 {
@@ -348,7 +278,7 @@ static void event_configure(enum nrf21540_trx dir, uint32_t event,
 			task_addr);
 		nrfx_gppi_channels_enable(BIT(gppi_ch));
 
-		if (event == NRF21540_EXECUTE_NOW) {
+		if (event == FEM_EXECUTE_NOW) {
 
 			nrf_timer_task_trigger(nrf21540_cfg.timer.p_reg,
 					       NRF_TIMER_TASK_START);
@@ -447,7 +377,7 @@ static int gppi_channel_config(void)
 	return 0;
 }
 
-int nrf21540_init(void)
+static int nrf21540_init(void)
 {
 	int err;
 
@@ -477,7 +407,7 @@ int nrf21540_init(void)
 	return 0;
 }
 
-int nrf21540_power_up(void)
+static int nrf21540_power_up(void)
 {
 	int err;
 
@@ -498,7 +428,7 @@ int nrf21540_power_up(void)
 		goto error;
 	}
 
-	k_busy_wait(NRF21540_PD_PG_TIME_US);
+	k_busy_wait(PDN_SETTLE_TIME);
 
 error:
 	atomic_set(&state, err ? NRF21540_STATE_OFF : NRF21540_STATE_READY);
@@ -506,7 +436,7 @@ error:
 	return err;
 }
 
-int nrf21540_power_down(void)
+static int nrf21540_power_down(void)
 {
 	int err;
 
@@ -522,7 +452,7 @@ int nrf21540_power_down(void)
 	return err;
 }
 
-int nrf21540_antenna_select(enum nrf21540_ant ant)
+static int nrf21540_antenna_select(enum fem_antenna ant)
 {
 	int err = 0;
 	uint32_t prev_state;
@@ -534,12 +464,12 @@ int nrf21540_antenna_select(enum nrf21540_ant ant)
 	}
 
 	switch (ant) {
-	case NRF21540_ANT1:
+	case FEM_ANTENNA_1:
 		err = gpio_pin_set(nrf21540_cfg.ant_sel.port,
 				   nrf21540_cfg.ant_sel.pin, 0);
 		break;
 
-	case NRF21540_ANT2:
+	case FEM_ANTENNA_2:
 		err = gpio_pin_set(nrf21540_cfg.ant_sel.port,
 				   nrf21540_cfg.ant_sel.pin, 1);
 
@@ -682,7 +612,7 @@ static int spim_gain_transfer(uint8_t gain)
 	return 0;
 }
 
-int nrf21540_tx_gain_set(uint8_t gain)
+static int nrf21540_tx_gain_set(uint8_t gain)
 {
 	int err;
 	NRF_UARTE_Type *uarte_inst = NRF_UARTE0;
@@ -753,7 +683,7 @@ error:
 }
 
 #else
-int nrf21540_tx_gain_set(uint8_t gain)
+static int nrf21540_tx_gain_set(uint32_t gain)
 {
 	int err;
 	uint8_t buf[NRF21540_SPI_LENGTH_BYTES];
@@ -803,30 +733,30 @@ error:
 }
 #endif
 
-int nrf21540_tx_configure(uint32_t active_event, uint32_t deactive_event,
-			  uint32_t active_delay)
+static int nrf21540_tx_configure(uint32_t activate_event, uint32_t deactivate_event,
+				 uint32_t activation_delay)
 {
 	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
-	active_evt = active_event;
-	deactive_evt = deactive_event;
+	activate_evt = activate_event;
+	deactivate_evt = deactivate_event;
 
-	/* Configure pin active event. */
-	event_configure(NRF21540_TX, active_event, true, active_delay);
+	/* Configure pin activation event. */
+	event_configure(NRF21540_TX, activate_evt, true, activation_delay);
 
-	if (deactive_event != NRF21540_EVENT_UNUSED) {
-		/* Configure pin deactive event. */
-		event_configure(NRF21540_TX, deactive_event, false,
-				active_delay);
+	if (deactivate_evt != FEM_EVENT_UNUSED) {
+		/* Configure pin deactivation event. */
+		event_configure(NRF21540_TX, deactivate_evt, false,
+				activation_delay);
 	}
 
 	return 0;
 }
 
-int nrf21540_rx_configure(uint32_t active_event, uint32_t deactive_event,
-			  uint32_t active_delay)
+static int nrf21540_rx_configure(uint32_t activate_event, uint32_t deactivate_event,
+				 uint32_t activation_delay)
 {
 	int err;
 
@@ -841,23 +771,23 @@ int nrf21540_rx_configure(uint32_t active_event, uint32_t deactive_event,
 		return err;
 	}
 
-	active_evt = active_event;
-	deactive_evt = deactive_event;
+	activate_evt = activate_event;
+	deactivate_evt = deactivate_event;
 
-	/* Configure pin active event. */
-	event_configure(NRF21540_RX, active_event, true, active_delay);
+	/* Configure pin activation event. */
+	event_configure(NRF21540_RX, activate_evt, true, activation_delay);
 
 
-	if (deactive_event != NRF21540_EVENT_UNUSED) {
-		/* Configure pin deactive event. */
-		event_configure(NRF21540_RX, deactive_event, false,
-				active_delay);
+	if (deactivate_evt != FEM_EVENT_UNUSED) {
+		/* Configure pin deactivation event. */
+		event_configure(NRF21540_RX, deactivate_evt, false,
+				activation_delay);
 	}
 
 	return 0;
 }
 
-int nrf21540_txrx_stop(void)
+static int nrf21540_txrx_stop(void)
 {
 	nrf_gpiote_task_force(NRF_GPIOTE,
 			      nrf21540_cfg.rx_en.gpiote_channel,
@@ -876,7 +806,7 @@ int nrf21540_txrx_stop(void)
 			    nrf21540_cfg.spi_cs.gpio_pin, 0);
 }
 
-void nrf21540_txrx_configuration_clear(void)
+static void nrf21540_txrx_configuration_clear(void)
 {
 	nrfx_gppi_channels_disable(BIT(nrf21540_cfg.pin_set_ch));
 	nrfx_gppi_event_endpoint_clear(nrf21540_cfg.pin_set_ch,
@@ -890,10 +820,10 @@ void nrf21540_txrx_configuration_clear(void)
 		nrf_gpiote_task_address_get(NRF_GPIOTE,
 			nrf_gpiote_set_task_get(nrf21540_cfg.rx_en.gpiote_channel)));
 
-	if (active_evt != NRF21540_EXECUTE_NOW) {
+	if (activate_evt != FEM_EXECUTE_NOW) {
 		nrfx_gppi_channels_disable(BIT(nrf21540_cfg.timer_ch));
 		nrfx_gppi_event_endpoint_clear(nrf21540_cfg.timer_ch,
-					       active_evt);
+					       activate_evt);
 		nrfx_gppi_task_endpoint_clear(nrf21540_cfg.timer_ch,
 			nrf_timer_task_address_get(nrf21540_cfg.timer.p_reg,
 						   NRF_TIMER_TASK_START));
@@ -903,9 +833,9 @@ void nrf21540_txrx_configuration_clear(void)
 			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	}
 
-	if (deactive_evt != NRF21540_EVENT_UNUSED) {
+	if (deactivate_evt != FEM_EVENT_UNUSED) {
 		nrfx_gppi_channels_disable(BIT(nrf21540_cfg.pin_clr_ch));
-		nrfx_gppi_event_endpoint_clear(nrf21540_cfg.pin_clr_ch, deactive_evt);
+		nrfx_gppi_event_endpoint_clear(nrf21540_cfg.pin_clr_ch, deactivate_evt);
 		nrfx_gppi_task_endpoint_clear(nrf21540_cfg.pin_clr_ch,
 			nrf_gpiote_task_address_get(NRF_GPIOTE,
 				nrf_gpiote_clr_task_get(nrf21540_cfg.tx_en.gpiote_channel)));
@@ -918,12 +848,38 @@ void nrf21540_txrx_configuration_clear(void)
 	atomic_set(&state, NRF21540_STATE_READY);
 }
 
-uint32_t nrf21540_default_active_delay_calculate(bool rx, nrf_radio_mode_t mode)
+static uint32_t nrf21540_default_active_delay_calculate(bool rx, nrf_radio_mode_t mode)
 {
 	bool fast_ramp_up = nrf_radio_modecnf0_ru_get(NRF_RADIO);
 
-	return rx ? (radio_rx_ramp_up_delay_get(fast_ramp_up, mode) -
-		     NRF21540_PG_RX_TIME_US) :
-		    (radio_tx_ramp_up_delay_get(fast_ramp_up, mode) -
-		     NRF21540_PG_TX_TIME_US);
+	return rx ? (fem_radio_rx_ramp_up_delay_get(fast_ramp_up, mode) -
+		     TX_EN_SETTLE_TIME) :
+		    (fem_radio_tx_ramp_up_delay_get(fast_ramp_up, mode) -
+		     RX_EN_SETTLE_TIME);
 }
+
+static const struct fem_interface_api nrf21540_api = {
+	.power_up = nrf21540_power_up,
+	.power_down = nrf21540_power_down,
+	.tx_configure = nrf21540_tx_configure,
+	.rx_configure = nrf21540_rx_configure,
+	.txrx_configuration_clear = nrf21540_txrx_configuration_clear,
+	.txrx_stop = nrf21540_txrx_stop,
+	.tx_gain_set = nrf21540_tx_gain_set,
+	.default_active_delay_calculate = nrf21540_default_active_delay_calculate,
+	.antenna_select = nrf21540_antenna_select
+};
+
+static int nrf21540_setup(const struct device *dev)
+{
+	int err;
+
+	err = nrf21540_init();
+	if (err) {
+		return err;
+	}
+
+	return fem_interface_api_set(&nrf21540_api);
+}
+
+SYS_INIT(nrf21540_setup, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
