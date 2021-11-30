@@ -107,13 +107,13 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/guides/FourKindsOfData.html#time-stamping
+.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/guides/FourKindsOfData.html#time-stamping
 
-.. _`nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/aws/Index.html
-.. _`nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/azure/Index.html
-.. _`nRF Asset Tracker web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/app/Index.html
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/aws/GettingStarted/Index.html
-.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/azure/GettingStarted/Index.html
+.. _`nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/aws/Index.html
+.. _`nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/azure/Index.html
+.. _`nRF Asset Tracker web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/app/Index.html
+.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/aws/GettingStarted/Index.html
+.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/azure/GettingStarted/Index.html
 
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
 .. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/create_app.html
