@@ -68,11 +68,13 @@ jobs:
           ninja -C doc/_build
 
       - name: Build cache
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') }}
         working-directory: ncs/nrf
         run: |
             python3 doc/_scripts/cache_create.py -b doc/_build -o cache
 
       - name: Prepare extra cache files
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') }}
         working-directory: ncs/nrf/cache
         run: |
           mkdir extra && cd extra
@@ -99,6 +101,7 @@ jobs:
           fi
 
       - name: Archive cache
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') }}
         uses: actions/upload-artifact@v2
         with:
           name: cache
