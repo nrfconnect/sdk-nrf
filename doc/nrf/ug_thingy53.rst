@@ -18,9 +18,6 @@ Thingy:53 integrates the following components:
 * nRF21540 RF FEM - Range extender with integrated power amplifier (PA)/low-noise amplifier (LNA).
 * nPM1100 PMIC - Power Management IC with integrated dual-mode buck regulator and battery charger.
 
-For more information on the product, see the `Thingy:53 product page`_ and the `Nordic Thingy:53 User Guide`_.
-The |NCS| provides support for developing applications on the Thingy:53.
-
 .. _thingy53_serialports:
 
 Connecting to Thingy:53 serial ports
@@ -43,14 +40,15 @@ This allows the Thingy:53 to connect to Edge Impulse Studio over Bluetooth LE us
 The firmware allows you to capture sensor data, which in turn you can use to train and test machine learning models in Edge Impulse Studio.
 You can deploy trained machine learning models to the Nordic Thingy:53 through an over-the-air (OTA) update using Bluetooth LE, or update over USB using `nRF Connect Programmer`_.
 
-See the `Nordic Semi Thingy:53 page`_ in the `Edge Impulse`_ documentation on how to use the Nordic Thingy:53 with the nRF Edge Impulse mobile application and Edge Impulse Studio.
-
 There are also multiple samples in the |NCS| that you can run on the Nordic Thingy:53.
 
 .. _thingy53_precompiled_fw:
 
 Programming precompiled firmware images
 ***************************************
+
+.. note::
+   As the Thingy:53 is not officially released yet, you cannot download the precompiled images.
 
 Precompiled firmware image files are useful in the following scenarios:
 
@@ -63,7 +61,7 @@ Downloading precompiled firmware images
 
 To obtain precompiled images for updating the firmware, perform the following steps:
 
-1. Go to the `Thingy:53 product page`_ and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled applications`.
+1. Go to the Thingy:53 product page (when available) and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled applications`.
 #. Download and extract the latest Thingy:53 firmware package.
 #. Check the :file:`CONTENTS.txt` file in the extracted folder for the location and names of the different firmware images.
 
