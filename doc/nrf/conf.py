@@ -146,7 +146,6 @@ html_redirect_pages = [
 # -- Options for zephyr.warnings_filter ----------------------------------------
 
 warnings_filter_config = str(NRF_BASE / "doc" / "nrf" / "known-warnings.txt")
-warnings_filter_silent = False
 
 # Options for external_content -------------------------------------------------
 
