@@ -91,6 +91,14 @@ config GNSS_SAMPLE_ASSISTANCE_SUPL
 	bool "Use SUPL A-GPS"
 	select SUPL_CLIENT_LIB
 
+config GNSS_SAMPLE_ASSISTANCE_MINIMAL
+	bool "Use factory almanac, LTE network time and MCC based location"
+	select GNSS_SAMPLE_LTE_ON_DEMAND
+	select SETTINGS
+	select FCB
+	select FLASH
+	select FLASH_MAP
+
 endchoice
 
 if !GNSS_SAMPLE_ASSISTANCE_NONE
@@ -143,6 +151,18 @@ config GNSS_SAMPLE_LOW_ACCURACY
 	bool "Allow low accuracy fixes"
 	help
 	  Allows fixes with lower accuracy.
+
+if GNSS_SAMPLE_ASSISTANCE_MINIMAL && GNSS_SAMPLE_LOW_ACCURACY
+
+config GNSS_SAMPLE_ASSISTANCE_REFERENCE_ALT
+	int "Reference altitude for 3-sat first fix in meters"
+	range -32767 32767
+	default -32767
+	help
+	  Reference altitude for 3-sat first fix in meters above the reference ellipsoid surface.
+	  The default value -32767 implies that reference altitude is not injected.
+
+endif # GNSS_SAMPLE_ASSISTANCE_MINIMAL && GNSS_SAMPLE_LOW_ACCURACY
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

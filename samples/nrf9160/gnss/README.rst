@@ -9,37 +9,9 @@ nRF9160: GNSS
    :local:
    :depth: 2
 
-This sample demonstrates how to retrieve `GNSS`_ data.
+This sample demonstrates how to use the :ref:`nrfxlib:gnss_interface` to control the `GNSS`_ module.
 It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agps` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
 Assistance data is downloaded from nRF Cloud using `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.
-
-The sample first initializes the GNSS interface.
-Then it handles events from the interface, reads the associated data and outputs information to the console.
-Because `NMEA`_ data needs to be read as soon as an NMEA event is received, a :ref:`Zephyr message queue <zephyr:message_queues_v2>` is used for buffering the NMEA strings.
-The event handler function reads the received NMEA strings and puts those into the message queue.
-The consumer loop reads from the queue and outputs the strings to the console.
-
-When A-GPS and/or P-GPS support is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
-Downloading the data can take some time and the workqueue ensures that the main thread is not blocked during the operation.
-
-See :ref:`nrfxlib:gnss_interface` for more information.
-
-Overview
-********
-
-This sample operates in two different output modes.
-
-In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and NMEA strings.
-The sample can also be configured to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
-The NMEA-only mode can be used to visualize the data from the GNSS using a third-party tool.
-
-You can enable A-GPS and P-GPS support for both the default mode (PVT and NMEA) and the NMEA-only mode.
-When assistance support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
-The sample then displays the information in the terminal about the download process.
-Finally, after the download completes, the sample switches back to the previous display mode.
-
-By default, the sample runs in continuous tracking mode.
-It can also be configured to run in periodic mode, where fixes are acquired periodically with the configured interval.
 
 Requirements
 ************
@@ -51,6 +23,50 @@ The sample supports the following development kit:
    :rows: nrf9160dk_nrf9160_ns
 
 .. include:: /includes/spm.txt
+
+Overview
+********
+
+The sample first initializes the GNSS module.
+Then it handles events from the interface, reads the associated data and outputs information to the console.
+Because `NMEA`_ data needs to be read as soon as an NMEA event is received, a :ref:`Zephyr message queue <zephyr:message_queues_v2>` is used for buffering the NMEA strings.
+The event handler function reads the received NMEA strings and puts those into the message queue.
+The consumer loop reads from the queue and outputs the strings to the console.
+
+By default, the sample runs in continuous tracking mode.
+You can also configure it to run in periodic mode, where fixes are acquired periodically with the set interval.
+
+Output modes
+============
+
+This sample operates in two different output modes.
+
+In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and NMEA strings.
+You can also configure the sample to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
+In the NMEA-only mode, you can visualize the data from the GNSS using a third-party tool.
+
+A-GPS and P-GPS
+===============
+
+When support for A-GPS or P-GPS, or both, is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
+Downloading the data can take some time.
+The workqueue ensures that the main thread is not blocked during the operation.
+
+You can enable A-GPS and P-GPS support for both the default mode (PVT and NMEA) and the NMEA-only mode.
+When assistance support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
+The sample then displays the information in the terminal about the download process.
+Finally, after the download completes, the sample switches back to the previous display mode.
+
+Minimal assistance
+==================
+
+GNSS satellite acquisition can also be assisted by providing factory almanac, GPS time and coarse location to the GNSS module.
+Using this information, GNSS can calculate which satellites it should search for and what are the expected Doppler frequencies.
+
+The sample includes a factory almanac that is written to the file system when the sample starts.
+The date for the factory almanac generation is in the :file:`factory_almanac.h` file.
+The almanac gets inaccurate with time and should be updated occasionally.
+GNSS can use an almanac until it is two years old, but generally it should be updated every few months.
 
 Configuration
 *************
@@ -76,6 +92,11 @@ CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL - To use an external GNSS antenna
 
 CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GPS
    This configuration option enables A-GPS usage.
+
+.. _CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL:
+
+CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL - To use minimal assistance
+   This configuration option enables assistance with factory almanac, time and location.
 
 .. _CONFIG_GNSS_SAMPLE_MODE_PERIODIC:
 
@@ -207,3 +228,4 @@ It uses the following `sdk-nrfxlib`_ library:
 It uses the following Zephyr library:
 
 * :ref:`net_socket_offloading`
+* :ref:`settings_api`

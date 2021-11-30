@@ -163,6 +163,19 @@ static void agps_data_get(struct k_work *item)
 
 	int err;
 
+	/* With minimal assistance, assistance is injected only when GNSS starts for the
+	 * first time.
+	 */
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL)) {
+		static bool assistance_done;
+
+		if (assistance_done) {
+			return;
+		}
+
+		assistance_done = true;
+	}
+
 	requesting_assistance = true;
 
 	LOG_INF("Assistance data needed, ephe 0x%08x, alm 0x%08x, flags 0x%02x",
@@ -208,25 +221,18 @@ static int modem_init(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		date_time_register_handler(date_time_evt_handler);
+	}
+
 	if (lte_lc_init() != 0) {
 		LOG_ERR("Failed to initialize LTE link controller");
 		return -1;
 	}
 
-	if (IS_ENABLED(CONFIG_DATE_TIME)) {
-		date_time_register_handler(date_time_evt_handler);
-	}
-
-#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
 #if defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
 	lte_lc_register_handler(lte_lc_event_handler);
-#endif /* CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND */
-
-	if (lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS) != 0) {
-		LOG_ERR("Failed to enable GNSS");
-		return -1;
-	}
-#else
+#elif !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
 	lte_lc_psm_req(true);
 
 	LOG_INF("Connecting to LTE network");
@@ -273,14 +279,22 @@ static int sample_init(void)
 	k_work_init(&agps_data_get_work, agps_data_get);
 
 	err = assistance_init(&agps_work_q);
-#endif
+#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
 
 	return err;
 }
 
 static int gnss_init_and_start(void)
 {
-	/* Configure GNSS */
+#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
+	/* Enable GNSS. */
+	if (lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS) != 0) {
+		LOG_ERR("Failed to activate GNSS functional mode");
+		return -1;
+	}
+#endif /* CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE || CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND */
+
+	/* Configure GNSS. */
 	if (nrf_modem_gnss_event_handler_set(gnss_event_handler) != 0) {
 		LOG_ERR("Failed to set GNSS event handler");
 		return -1;
@@ -361,7 +375,7 @@ static int gnss_init_and_start(void)
 
 static bool output_paused(void)
 {
-#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || !defined(CONFIG_GNSS_SAMPLE_LOG_LEVEL_INF)
+#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_LOG_LEVEL_OFF)
 	return false;
 #else
 	return (requesting_assistance || assistance_is_active()) ? true : false;

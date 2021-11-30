@@ -94,13 +94,15 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	int err;
 
+	assistance_active = true;
+
 	LOG_INF("Sending request for P-GPS predictions to nRF Cloud...");
 
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
 
-		return;
+		goto exit;
 	}
 
 	struct nrf_cloud_rest_context rest_ctx = {
@@ -127,7 +129,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 		nrf_cloud_pgps_request_reset();
 
-		return;
+		goto exit;
 	}
 
 	LOG_INF("Processing P-GPS response");
@@ -138,10 +140,13 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 		nrf_cloud_pgps_request_reset();
 
-		return;
+		goto exit;
 	}
 
 	LOG_INF("P-GPS response processed");
+
+exit:
+	assistance_active = false;
 }
 
 static void inject_pgps_data_work_fn(struct k_work *work)
@@ -149,6 +154,8 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 	ARG_UNUSED(work);
 
 	int err;
+
+	assistance_active = true;
 
 	LOG_INF("Injecting P-GPS ephemerides");
 
@@ -161,6 +168,8 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 	if (err) {
 		LOG_ERR("Failed to request P-GPS updates");
 	}
+
+	assistance_active = false;
 }
 
 static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
@@ -173,8 +182,6 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 
 	case PGPS_EVT_REQUEST:
-		assistance_active = true;
-
 		memcpy(&pgps_request, event->request, sizeof(pgps_request));
 
 		k_work_submit_to_queue(work_q, &get_pgps_data_work);
