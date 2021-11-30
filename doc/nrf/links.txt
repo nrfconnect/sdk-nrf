@@ -163,7 +163,7 @@
 .. _`Registering device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/using_zigbee__z_c_l.html#register_zigbee_device
 
 .. _`ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zb__comm__signals.html#ga18f5e7ddfefb7d01ef98f696a9694d79
-.. _`ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zgp__sink.html#ga3eb4631c12c345991be2461566c150e9
+.. _`ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zb__comm__signals.html#ga3eb4631c12c345991be2461566c150e9
 .. _`ZB_ZDO_SIGNAL_SKIP_STARTUP`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zb__comm__signals.html#gab2b9e7a13fd471d7bb642655d825a04e
 .. _`ZB_BDB_SIGNAL_DEVICE_FIRST_START`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zb__comm__signals.html#gab55565980ef0580712f8dc160b01ea06
 .. _`ZB_BDB_SIGNAL_DEVICE_REBOOT`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zb__comm__signals.html#ga3e9d86f42d2c6c27240f423a40fb152b
@@ -590,7 +590,7 @@
 .. _`Memfault Docs`: https://docs.memfault.com/
 .. _`Memfault SDK`: https://docs.memfault.com/docs/embedded/introduction/
 .. _`Memfault nRF Connect SDK integration guide`: https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide
-.. _`create a new project in Memfault`: https://docs.memfault.com/docs/platform/create-new-project
+.. _`create a new project in Memfault`: https://docs.memfault.com/docs/platform/projects-and-fleets#creating-a-new-project
 .. _`Memfault Terminology`: https://docs.memfault.com/docs/platform/memfault-terminology/
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
