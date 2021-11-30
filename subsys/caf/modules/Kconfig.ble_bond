@@ -10,4 +10,4 @@ config CAF_BLE_BOND_SUPPORTED
 	depends on CAF_BLE_COMMON_EVENTS
 	help
 	  The module does not have a generic implementation in CAF. Make sure to provide your own
-	  implementaion of the module if you enable this option.
+	  implementation of the module if you enable this option.
