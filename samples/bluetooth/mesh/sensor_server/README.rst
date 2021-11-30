@@ -80,7 +80,7 @@ The models are used for the following purposes:
 * Sensor Server provides sensor data to one or more :ref:`mesh sensor observers <bt_mesh_sensor_cli_readme>`.
 * Sensor Setup Server is used for configuration of the Sensor Server.
 
-The model handling is implemented in :file:src/model_handler.c.
+The model handling is implemented in :file:`src/model_handler.c`.
 It uses the TEMP_NRF5 or BME680 temperature sensor depending on the platform.
 The :ref:dk_buttons_and_leds_readme library is used to detect button presses.
 
