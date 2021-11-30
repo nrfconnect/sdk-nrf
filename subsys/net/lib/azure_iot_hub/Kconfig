@@ -70,7 +70,7 @@ config AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN
 
 config AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN
 	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)."
-	default 1024
+	default 2304
 
 config AZURE_IOT_HUB_DEVICE_ID_MAX_LEN
 	int "Maximum length of device ID"
