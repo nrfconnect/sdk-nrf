@@ -70,7 +70,6 @@ if nrf_mapping:
 # -- Options for zephyr.warnings_filter ----------------------------------------
 
 warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "known-warnings.txt")
-warnings_filter_silent = False
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
