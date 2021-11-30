@@ -52,6 +52,7 @@ static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 static int image_type = DFU_TARGET_IMAGE_TYPE_ANY;
 static char *fota_path;
 static char *fota_host;
+static int current_update_instance = -1;
 static int fota_sec_tag;
 #define MAX_INSTANCE_COUNT CONFIG_LWM2M_FIRMWARE_INSTANCE_COUNT
 
@@ -211,12 +212,6 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		image_type = dfu_target_img_type(data, data_len);
 		LOG_INF("Image type %d", image_type);
 
-		if (image_type < 0) {
-			LOG_ERR("Invalid DFU target image type");
-			ret = -ENOMSG;
-			goto cleanup;
-		}
-
 		switch (image_type) {
 		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
 		case DFU_TARGET_IMAGE_TYPE_FULL_MODEM:
@@ -236,6 +231,10 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 			}
 			break;
 		default:
+			LOG_ERR("Invalid DFU target image type");
+			ret = -ENOMSG;
+			goto cleanup;
+		}
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 		if (image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
@@ -346,15 +345,16 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
-		lwm2m_firmware_set_update_state(STATE_IDLE);
+		lwm2m_firmware_set_update_state(current_update_instance, STATE_IDLE);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		image_type = fota_download_target();
 		LOG_INF("FOTA download finished, target %d", image_type);
-		lwm2m_firmware_set_update_state(STATE_DOWNLOADED);
+		lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADED);
 		break;
 	}
 	k_free(fota_host);
+	current_update_instance = -1;
 	fota_host = NULL;
 	fota_path = NULL;
 }
@@ -372,8 +372,9 @@ static void start_fota_download(struct k_work *work)
 
 	if (ret < 0) {
 		LOG_ERR("fota_download_start() failed, return code %d", ret);
-		lwm2m_firmware_set_update_state(STATE_IDLE);
+		lwm2m_firmware_set_update_state(current_update_instance, STATE_IDLE);
 		k_free(fota_host);
+		current_update_instance = -1;
 		fota_host = NULL;
 		fota_path = NULL;
 	}
@@ -435,16 +436,15 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	}
 	strncpy(fota_host, (char *)data, len);
 	fota_host[len] = 0;
+	current_update_instance = obj_inst_id;
 
 	k_work_submit(&download_work);
-	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
+	lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADING);
 	return 0;
 }
 
 int lwm2m_init_firmware(void)
 {
-	int ret;
-
 	k_work_init_delayable(&reboot_work, reboot_work_handler);
 	k_work_init(&download_work, start_fota_download);
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
