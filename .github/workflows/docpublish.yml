@@ -37,7 +37,7 @@ jobs:
         working-directory: cache
         run: |
           # don't do anything if monitor.txt doesn't exist (no publish)
-          if [[ ! -f "extra/monitor.txt"]]; then
+          if [[ ! -f "extra/monitor.txt" ]]; then
             exit 0
           fi
 
