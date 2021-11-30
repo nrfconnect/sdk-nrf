@@ -132,6 +132,11 @@ int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update)
 	return 0;
 }
 
+int z_impl_zsock_inet_pton(sa_family_t family, const char *src, void *dst)
+{
+	return 0;
+}
+
 /* END stubs and mocks */
 
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE

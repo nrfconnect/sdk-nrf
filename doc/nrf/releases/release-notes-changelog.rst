@@ -178,6 +178,11 @@ Bootloader libraries
 
 * Added a separate section for :ref:`lib_bootloader`.
 
+Libraries for networking
+------------------------
+* :ref:`lib_fota_download` library:
+  * Skipping host name check when connecting to TLS service using just IP address.
+
 Modem libraries
 ---------------
 

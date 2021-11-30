@@ -9,6 +9,7 @@
 #include <net/fota_download.h>
 #include <net/download_client.h>
 #include <pm_config.h>
+#include <net/socket.h>
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
@@ -286,6 +287,19 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		fragment_size, DFU_TARGET_IMAGE_TYPE_ANY);
 }
 
+static bool is_ip_address(const char *host)
+{
+	struct sockaddr sa;
+
+	if (zsock_inet_pton(AF_INET, host, sa.data) == 1) {
+		return true;
+	} else if (zsock_inet_pton(AF_INET6, host, sa.data) == 1) {
+		return true;
+	}
+
+	return false;
+}
+
 int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
@@ -303,7 +317,6 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 		.sec_tag = sec_tag,
 		.pdn_id = pdn_id,
 		.frag_size_override = fragment_size,
-		.set_tls_hostname = (sec_tag != -1),
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {
@@ -312,6 +325,10 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	if (downloading) {
 		return -EALREADY;
+	}
+
+	if (sec_tag != -1 && !is_ip_address(host)) {
+		config.set_tls_hostname = true;
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
