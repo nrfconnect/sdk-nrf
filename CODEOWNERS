@@ -31,7 +31,7 @@
 /applications/pelion_client/              @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
 # Boards
-/boards/                                  @ioannisg @anangl
+/boards/                                  @SebastianBoe @anangl
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
@@ -92,7 +92,7 @@ Kconfig*                                  @tejlmand
 /lib/pdn/                                 @lemrey @rlubos
 /lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
-/lib/fatal_error/                         @ioannisg
+/lib/fatal_error/                         @SebastianBoe
 /lib/sms/                                 @trantanen
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @tokangas
@@ -110,7 +110,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @trond-snekvik
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @alwa-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @alwa-nordic
-/samples/bootloader/                      @hakonfam @ioannisg
+/samples/bootloader/                      @hakonfam @SebastianBoe
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
@@ -127,7 +127,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
-/samples/spm/                             @lemrey @hakonfam @ioannisg
+/samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/peripheral/radio_test/           @kapi-no
@@ -146,7 +146,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @trond-snekvik
 /subsys/bluetooth/controller/             @rugeGerritsen
-/subsys/bootloader/                       @hakonfam @ioannisg
+/subsys/bootloader/                       @hakonfam @SebastianBoe
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
@@ -167,10 +167,10 @@ Kconfig*                                  @tejlmand
 /subsys/pcd/                              @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/shell/                            @nordic-krch
-/subsys/spm/                              @ioannisg
-/subsys/nonsecure/                        @ioannisg
+/subsys/spm/                              @SebastianBoe
+/subsys/nonsecure/                        @SebastianBoe
 /modules/                                 @tejlmand
-/modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
+/modules/tfm/                             @oyvindronningstad @SebastianBoe @hakonfam
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
