@@ -61,7 +61,14 @@ nRF21540 front-end module
 
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
-The nRF21540 transmitted power gain, antenna and an activation delay can be configured using the user interface :ref:`radio_test_ui`.
+You can configure the nRF21540 front-end module (FEM) transmitted power gain, antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
+
+Skyworks front-end module
+=========================
+
+.. include:: /includes/sample_dtm_radio_test_skyworks.txt
+
+You can configure the Skyworks front-end module (FEM) antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
 
 .. _radio_test_ui:
 
@@ -82,9 +89,9 @@ User interface
    * - end_channel
      - <channel>
      - End channel for the sweep (in MHz, as difference from 2400 MHz).
-   * - nRF21540
+   * - fem
      - <sub_cmd>
-     - Set nRF21540 Front-End-Module parameters.
+     - Set front-end module (FEM) parameters.
    * - output_power
      - <sub_cmd>
      - Output power set.
