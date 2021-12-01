@@ -6,6 +6,7 @@
 
 #include <init.h>
 #include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(board_nonsecure, CONFIG_BOARD_LOG_LEVEL);
@@ -29,11 +30,23 @@ static int thingy91_magpio_configure(void)
 		return 0;
 	}
 
+	err = nrf_modem_lib_get_init_ret();
+	if (err < 0) {
+		LOG_ERR("nrf_modem_lib_get_init_ret failed, error: %d", err);
+		return err;
+	} else if (err > 0) {
+		LOG_WRN("A modem firmware upgrade has been performed, reboot is expected.");
+
+		/** If a modem firmware upgrade has been performed, calls to nrf_modem_at_
+		 *  are expected to fail until a reboot has been carried out.
+		 */
+		return err;
+	}
+
 	LOG_DBG("AT CMD: %s", log_strdup(AT_CMD_TRACE));
 	err = nrf_modem_at_printf(AT_CMD_TRACE);
 	if (err) {
 		LOG_ERR("XMODEMTRACE received unexpected response");
-		__ASSERT_NO_MSG(false);
 		return -EIO;
 	}
 
