@@ -742,6 +742,8 @@
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 
+.. _`SKY66114-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66114-11
+
 .. _`Matter`: https://buildwithmatter.com/
 
 .. _`GN`: https://gn.googlesource.com/gn/

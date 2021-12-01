@@ -124,17 +124,24 @@ nRF21540 front-end module
 
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
-You can configure the transmitted power gain and activation delay in nRF21540 using vendor-specific commands, see `Vendor-specific packet payload`_.
+You can configure the transmitted power gain, antenna output and activation delay in nRF21540 using vendor-specific commands, see `Vendor-specific packet payload`_.
+
+Skyworks front-end module
+=========================
+
+.. include:: /includes/sample_dtm_radio_test_skyworks.txt
+
+You can configure the antenna output and activation delay for the Skyworks front-end module (FEM) using vendor-specific commands, see `Vendor-specific packet payload`_.
 
 Vendor-specific packet payload
 ==============================
 
 The Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type, also called payload parameter, with binary value ``11`` for a Vendor Specific packet payload.
 
-The DTM command is interpreted as a Vendor-Specific one when both the following conditions are met:
+The DTM command is interpreted as a vendor-specific one when both the following conditions are met:
 
 * Its CMD field is set to Transmitter Test, binary ``10``.
-* Its PKT field is set to Vendor-Specific, binary ``11``.
+* Its PKT field is set to vendor-specific, binary ``11``.
 
 Vendor specific commands can be divided into different categories as follows:
 
@@ -148,16 +155,17 @@ Vendor specific commands can be divided into different categories as follows:
   The two most significant bits are calculated by the DTM module.
   This is possible because the 6 least significant bits of all valid TX power values are unique.
   The TX power can be modified only when no Transmitter Test or Receiver Test is running.
-* If the Length field is set to ``3`` (symbol ``NRF21540_ANTENNA_SELECT``), the Frequency field sets the nRF21540 FEM antenna.
+* If the Length field is set to ``3`` (symbol ``FEM_ANTENNA_SELECT``), the Frequency field sets the front-end module (FEM) antenna output.
   The valid values are:
 
      * 0 - ANT1 enabled, ANT2 disabled
      * 1 - ANT1 disabled, ANT2 enabled
 
-* If the Length field is set to ``4`` (symbol ``NRF21540_GAIN_SET``), the Frequency field sets the nRF21540 FEM TX gain value in arbitrary units.
-  The valid gain values are specified in the nRF21540 product-specific range from 0 to 31.
-* If the Length field is set to ``5`` (symbol ``NRF21540_ACTIVE_DELAY_SET``), the Frequency field sets the nRF21540 FEM activation delay in microseconds relative to a radio start.
-  By default, this value is set to (radio ramp-up time - nRF21540 TX/RX settling time).
+* If the Length field is set to ``4`` (symbol ``FEM_GAIN_SET``), the Frequency field sets the front-end module (FEM) TX gain value in arbitrary units.
+  The valid gain values are specified in your product-specific front-end module (FEM).
+  For example, in the nRF21540 front-end module, the gain range is 0 - 31.
+* If the Length field is set to ``5`` (symbol ``FEM_ACTIVE_DELAY_SET``), the Frequency field sets the front-end module (FEM) activation delay in microseconds relative to the radio start.
+  By default, this value is set to (radio ramp-up time - front-end module (FEM) TX/RX settling time).
 * All other values of Frequency and Length field are reserved.
 
 The DTM-to-Serial adaptation layer

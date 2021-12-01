@@ -1,0 +1,66 @@
+The Skyworks SKY66114 and SKY66403 are front-end module (FEM) devices that support the 2-pin PA/LNA interface.
+You can also use other Skyworks FEM devices that provide the same hardware interface.
+
+.. note::
+   The functionalities designated as ``PA`` and ``LNA`` apply to the ``ctx-gpios`` and ``crx-gpios`` pins listed below, respectively.
+
+To use the generic FEM implementation with SKY66114, complete the following steps:
+
+1. Add the following node in the devicetree file:
+
+   .. code-block::
+
+      / {
+         nrf_radio_fem: name_of_fem_node {
+            compatible = "skyworks,sky66114-11", "generic-fem-two-ctrl-pins";
+            ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+            crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+         };
+      };
+
+#. Replace the pin numbers provided for each of the required properties:
+
+   * ``ctx-gpios`` - GPIO characteristic of the device that controls the ``CTX`` signal of SKY66114-11.
+   * ``crx-gpios`` - GPIO characteristic of the device that controls the ``CRX`` signal of SKY66114-11.
+
+   These properties correspond to the ``CTX`` and ``CRX`` pins of SKY66114-11 supported by software FEM.
+
+   The type ``phandle-array`` is used in Zephyr's devicetree to describe GPIO signals.
+   The first element ``&gpio0`` refers to the GPIO port ("port 0" is selected in the example).
+   The second element is the pin number of that port.
+   The last element must be ``GPIO_ACTIVE_HIGH`` for SKY66114-11, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
+
+   Set the state of the other control pins according to the SKY66114-11 documentation.
+   See the official `SKY66114-11 page`_ for more information.
+
+Optional properties
+-------------------
+
+The following properties are optional and you can add them to the devicetree node if needed:
+
+* Properties that control the other pins:
+   * ``csd-gpios`` - GPIO characteristic of the device that controls the ``CSD`` signal of SKY66114-11.
+   * ``cps-gpios`` - GPIO characteristic of the device that controls the ``CPS`` signal of SKY66114-11.
+   * ``chl-gpios`` - GPIO characteristic of the device that controls the ``CHL`` signal of SKY66114-11.
+   * ``ant-sel-gpios`` - GPIO characteristic of the device that controls the ``ANT_SEL`` signal of devices that support antenna diversity, for example SKY66403-11.
+
+* Properties that control the timing of interface signals:
+
+  * ``ctx-settle-time-us`` - Minimal time interval between asserting the ``CTX`` signal and starting the radio transmission, in microseconds.
+  * ``crx-settle-time-us`` - Minimal time interval between asserting the ``CRX`` signal and starting the radio reception, in microseconds.
+
+  The default values of these properties are appropriate for default hardware and most use cases.
+  You can override them if you need additional capacitors, for example when using custom hardware.
+  In such cases, add the property name under the required properties in the devicetree node and set a new custom value.
+
+  .. note::
+    These values have some constraints.
+    For details, see the official documentation at the `SKY66114-11 page`_.
+
+Use case of incomplete physical connections to the FEM module
+-------------------------------------------------------------
+
+The devicetree configuration allows you to use a minimal pin configuration.
+Connect all unused pins to the fixed logic level as instructed in the official documentation.
+For example ``csd-gpios`` is an optional pin that sets the device into sleep mode.
+If this pin is not controlled by the driver, it must be connected to the fixed logic level.
