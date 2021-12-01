@@ -12,7 +12,7 @@ Building and programming an application
 For additional information, check the user guide for the hardware platform that you are using.
 These user guides contain platform-specific instructions for building and programming.
 For additional information, check the user guide for the hardware platform that you are using.
-For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`precompiled_fw` and :ref:`building_pgming` for information about programming a Thingy:91.
+For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`Programming precompiled firmware images <programming_thingy>` and :ref:`building_pgming` for information about programming a Thingy:91.
 
 .. note::
    |application_sample_long_path_windows|
@@ -80,12 +80,12 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    .. build_SES_projimport_open_end
 
-   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160_ns`` build target:
+   The following figure shows an example configuration for the Asset Tracker v2 application built for the ``nrf9160dk_nrf9160_ns`` build target:
 
    .. figure:: images/ses_config.png
-      :alt: Opening the Asset Tracker project
+      :alt: Opening the Asset Tracker v2 project
 
-      Opening the Asset Tracker project
+      Opening the Asset Tracker v2 project
 
    .. build_SES_projimport_start
 

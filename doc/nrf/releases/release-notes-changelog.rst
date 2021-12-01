@@ -448,4 +448,6 @@ In addition to documentation related to the changes listed above, the following 
   * Added new section :ref: `ug_radio_fem_direct_support`.
   * Added more information about supported protocols and hardware.
 
+* Added the :ref:`ug_thingy91_gsg` guide and reworked the :ref:`ug_thingy91` user guide.
+
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
