@@ -45,19 +45,6 @@ config GENERIC_FEM
 	  FEM device has a generic two-pin control interface.
 
 endchoice #FEM_CHOICE
-
-if NRF21540_FEM
-
-config NRF21540_FEM_GPIOTE_TX_EN
-	int "GPIOTE channel number used to control TX_EN pin of the front-end Module"
-	default 7
-
-config NRF21540_FEM_GPIOTE_RX_EN
-	int "GPIOTE channel number used to control RX_EN pin of the front-end Module"
-	default 6
-
-endif # NRF21540_FEM
-
 if GENERIC_FEM
 
 # The Skyworks front-end module devices specific configuration.
@@ -82,7 +69,6 @@ config SKYWORKS_BYPASS_MODE
 	help
 	  Skyworks front-end module bypass mode. Bypass path for the integrated LNA.
 	  For more details check your device product specification.
-
 
 endchoice # SKYWORKS_MODE
 

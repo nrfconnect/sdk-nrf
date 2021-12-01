@@ -18,6 +18,7 @@
 #include <hal/nrf_uarte.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+#include <nrfx_gpiote.h>
 
 #if defined(NRF5340_XXAA_NETWORK)
 #include <nrfx_spim.h>
@@ -212,9 +213,12 @@ static uint32_t gpio_port_num_decode(NRF_GPIO_Type *reg)
 	return 0;
 }
 
-static void gpiote_configure(void)
+static int gpiote_configure(void)
 {
-	nrf21540_cfg.tx_en.gpiote_channel = CONFIG_NRF21540_FEM_GPIOTE_TX_EN;
+	if (nrfx_gpiote_channel_alloc(&nrf21540_cfg.tx_en.gpiote_channel) != NRFX_SUCCESS) {
+		return -ENXIO;
+	}
+
 	nrf21540_cfg.tx_en.abs_pin =
 		NRF_GPIO_PIN_MAP(
 			gpio_port_num_decode((NRF_GPIO_Type *) TX_EN_REG),
@@ -222,7 +226,10 @@ static void gpiote_configure(void)
 	nrf21540_cfg.tx_en.active_high =
 		NRF21540_GPIO_POLARITY_GET(tx_en_gpios);
 
-	nrf21540_cfg.rx_en.gpiote_channel = CONFIG_NRF21540_FEM_GPIOTE_RX_EN;
+	if (nrfx_gpiote_channel_alloc(&nrf21540_cfg.rx_en.gpiote_channel) != NRFX_SUCCESS) {
+		return -ENXIO;
+	}
+
 	nrf21540_cfg.rx_en.abs_pin =
 		NRF_GPIO_PIN_MAP(
 			gpio_port_num_decode((NRF_GPIO_Type *) RX_EN_REG),
@@ -243,6 +250,8 @@ static void gpiote_configure(void)
 			(nrf_gpiote_polarity_t)GPIOTE_CONFIG_POLARITY_None,
 			(nrf_gpiote_outinit_t)!nrf21540_cfg.rx_en.active_high);
 	nrf_gpiote_task_enable(NRF_GPIOTE, nrf21540_cfg.rx_en.gpiote_channel);
+
+	return 0;
 }
 
 static void event_configure(enum nrf21540_trx dir, uint32_t event,
@@ -392,7 +401,10 @@ static int nrf21540_init(void)
 		return err;
 	}
 
-	gpiote_configure();
+	err = gpiote_configure();
+	if (err) {
+		return err;
+	}
 
 	err = gppi_channel_config();
 	if (err) {
