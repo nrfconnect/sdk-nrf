@@ -340,6 +340,9 @@
 .. _`Connecting your device to nRF Cloud`:
 .. _`Connecting your device to nRF Connect for Cloud`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/connecting_nrf_cloud.html
 
+.. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
+
+
 .. ### Source: devzone.nordicsemi.com
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
@@ -607,6 +610,7 @@
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
 .. _`nRF Cloud Patch Device State`:
 .. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
+.. _`nRF Cloud REST API (v1)`:
 .. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api

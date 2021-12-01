@@ -11,22 +11,22 @@ Working with Thingy:91
 
 
 Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
-
-Thingy:91 integrates the following components:
-
-* nRF9160 SiP - supporting LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS)
-* nRF52840 SoC - supporting Bluetooth® Low Energy and Near Field Communication (NFC)
+Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
 
 You can find more information on the product in the `Thingy:91 product page`_ and in the `Nordic Thingy:91 User Guide`_.
 The |NCS| provides support for developing applications on the Thingy:91.
 
+This guide gives you more information on the various aspects of Thingy:91.
+
 .. _thingy91_serialports:
 
-Connecting to Thingy:91 serial ports
-************************************
+Connecting to Thingy:91
+***********************
 
 For connecting to Thingy:91, you can use `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal.
-In the case of LTE Link Monitor or Trace Collector, the baud rate for the communication is set automatically.
+
+Using serial ports
+==================
 
 If you prefer to use a standard serial terminal, the baud rate has to be specified manually.
 
@@ -44,29 +44,42 @@ Thingy:91 uses the following UART baud rate configuration:
      - 1000000
 
 
-Firmware
-********
+Using LTE Link Monitor
+======================
 
-The firmware of Thingy:91 has been developed using the |NCS|.
-It is open source, and can be modified according to specific needs.
-The :ref:`asset_tracker_v2` application firmware, enables the device to use the environment sensors and tracking the device using GNSS.
+You can use the `LTE Link Monitor`_ application to get debug output and send AT commands to the Thingy:91.
+In the case of LTE Link Monitor or Trace Collector, the baud rate for the communication is set automatically.
 
-The data, along with information about the device, is transmitted to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where it can be visualized.
-See :ref:`asset_tracker_v2` for more information on the asset tracker application.
+To connect to the Thingy:91 using LTE Link Monitor, complete the following steps:
+
+1. Open `nRF Connect for Desktop`_.
+#. Find LTE Link Monitor in the list of applications and click :guilabel:`Install`.
+#. Connect the Thingy:91 to a computer with a micro-Universal Serial Bus (USB) cable.
+#. Make sure that the Thingy:91 is powered on.
+#. Launch the LTE Link Monitor application.
+#. In the navigation bar, click :guilabel:`Select device`.
+   A drop-down menu appears.
+#. In the menu, select Thingy:91.
+#. In the LTE Link Monitor terminal, send an AT command to the modem.
+   If the connection is working, the modem responds with OK.
+
+The terminal view shows all of the Asset Tracker v2 debug output as well as the AT commands and their results.
+For information on the available AT commands, see `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_.
+
 
 Operating modes
-===============
+***************
 
 Thingy:91 contains RGB indicator LEDs, which indicate the operating state of the device as described in the :ref:`LED indication <led_indication>` section of the :ref:`asset_tracker_v2_ui_module`.
 
 GNSS
-====
+****
 
 Thingy:91 has a GNSS receiver, which, if activated, allows the device to be located globally using GNSS signals.
 In :ref:`asset_tracker_v2`, GNSS is activated by default.
 
 LTE Band Lock
-=============
+*************
 
 The modem within Thingy:91 can be configured to use specific LTE bands by using the band lock AT command.
 See :ref:`nrf9160_ug_band_lock` and the `band lock section in the AT Commands reference document`_ for additional information.
@@ -74,67 +87,11 @@ The preprogrammed firmware configures the modem to use the bands currently certi
 When building the firmware, you can configure which bands should be enabled.
 
 LTE-M / NB-IoT switching
-========================
+************************
 
 Thingy:91 has a multimode modem, which enables it to support automatic switching between LTE-M and NB-IoT.
 A built-in parameter in the Thingy:91 firmware determines whether the modem first attempts to connect in LTE-M or NB-IoT mode.
 If the modem fails to connect using this preferred mode within the default timeout period (10 minutes), the modem switches to the other mode.
-
-
-Modem firmware
-==============
-
-The functionality of the multimode modem of Thingy:91 is based on its firmware, which is available as a precompiled binary.
-You can download the modem firmware from the `Thingy:91 product website (downloads)`_.
-The downloadable zip file contains both the full firmware images that can be programmed using an external debug probe and the firmware images that can be used for updating the firmware through the built-in bootloader.
-
-.. _precompiled_fw:
-
-Programming precompiled firmware images
-***************************************
-
-Precompiled firmware image files are useful in the following scenarios:
-
-* Restoring the firmware to its initial image
-
-* Updating the application firmware to a newly released version
-
-* Updating the modem firmware
-
-Downloading precompiled firmware images
-========================================
-
-To obtain precompiled firmware images for updating the firmware, perform the following steps:
-
-	1. Go to the `Thingy:91 product page`_ and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled application and modem firmware`.
-	#. Download and extract the latest Thingy:91 firmware package.
-	#. Check the :file:`CONTENTS.txt` file in the extracted folder for the location and names of the different firmware images.
-
-.. _programming_usb:
-
-Quick programming of precompiled firmware images
-=================================================
-
-When you have the precompiled firmware images ready, you can directly program the images onto the Thingy:91 using the `nRF Connect Programmer`_ app, which is available in `nRF Connect for Desktop`_.
-
-In this method, the Thingy:91 is connected directly to your PC through USB.
-This method makes use of the :doc:`mcuboot:index-ncs` feature and the inbuilt serial recovery mode of Thingy:91.
-You can program either the nRF9160 SiP or the nRF52840 SoC component on the Thingy:91.
-
-Alternatively, you can use an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33 to program applications on a Thingy:91.
-
-See `Programming application and modem firmware on Thingy:91`_ for the detailed procedures to program a Thingy:91 using nRF Connect Programmer.
-
-Updating the modem firmware
-===========================
-
-You can update the modem firmware of Thingy:91 using any of the following methods:
-
-* Using USB (MCUboot)
-* Using an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33
-
-See `Programming application and modem firmware on Thingy:91`_ for the detailed steps to update the modem firmware.
-
 
 .. _building_pgming:
 
@@ -192,7 +149,7 @@ You can choose the method based on the availability or absence of an external de
 
 .. note::
 
-   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer<programming_usb>`.
+   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer <programming_usb>`.
    In this scenario, use the :file:`app_signed.hex` firmware image file.
 
 .. note::
@@ -202,6 +159,11 @@ You can choose the method based on the availability or absence of an external de
    The default RSA keys must only be used for development.
    In a final product, you must use your own, secret keys.
    See :ref:`ug_fw_update_development_keys` for more information.
+
+Building and programming using VS Code extension
+================================================
+
+|vsc_extension_instructions|
 
 .. _build_pgm_segger:
 
@@ -215,9 +177,9 @@ Building and programming using SEGGER Embedded Studio
 ..
 
    .. figure:: images/ses_thingy_configuration.png
-      :alt: Opening the Asset tracker application
+      :alt: Opening the Asset tracker v2 application
 
-      Opening the Asset tracker application for the thingy91_nrf9160_ns build target
+      Opening the Asset tracker v2 application for the thingy91_nrf9160_ns build target
 
    .. note::
 

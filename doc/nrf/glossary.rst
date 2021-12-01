@@ -200,6 +200,9 @@ Glossary
    Integrated Circuit (IC)
       A semiconductor chip consisting of fabricated transistors, resistors, and capacitors.
 
+   Integrated Circuit Card Identifier (ICCID)
+      A unique serial number of a SIM card.
+
    Integrated Development Environment (IDE)
       A software application that provides facilities for software development.
 
@@ -403,6 +406,9 @@ Glossary
       A method to describe changes in one or more source code files.
       It does not require a repository.
       Sometimes it is improperly used as a synonym of :term:`commit <Commit>`.
+
+   Personal Unblocking Key (PUK)
+      A key used to to reset a PIN that has been lost or forgotten for a SIM card.
 
    Power Amplifier (PA)
       A device used to increase the transmit power level of a radio signal.
