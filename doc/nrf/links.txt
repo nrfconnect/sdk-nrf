@@ -221,6 +221,8 @@
 
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
 
+.. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
@@ -238,6 +240,7 @@
 .. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9160%2Fgps.html&cp=2_0_0_7
 
 .. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
+.. _`nRF9160 DK GPS`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/gps.html
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_modem_firmware.html
 .. _`Updating the nRF Cloud certificate`:
 .. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
@@ -637,6 +640,9 @@
 .. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
 
 .. ### Source: other
+
+.. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
+
 
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
 

@@ -15,6 +15,7 @@ For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160
    :caption: Subpages:
 
    ug_nrf91_features
+   ug_nrf9160_gs
    ug_nrf9160
    ug_thingy91_gsg
    ug_thingy91

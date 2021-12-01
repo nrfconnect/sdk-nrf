@@ -476,6 +476,8 @@ In addition to documentation related to the changes listed above, the following 
 
   * Reduced the ToC levels of the subpages.
 
+* Added :ref:`ug_nrf9160_gs` and removed now redundant modem firmware section from :ref:`ug_nrf9160`.
+
 * Reorganized the contents of the :ref:`ug_radio_fem` section:
 
   * Added new section :ref: `ug_radio_fem_nrf21540_spi_gpio`.
