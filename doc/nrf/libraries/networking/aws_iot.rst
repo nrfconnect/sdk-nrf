@@ -62,8 +62,8 @@ To establish a connection to the AWS IoT message broker, set the following optio
 
 To configure the required library options, complete the following steps:
 
-1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` > :guilabel:`Manage` > :guilabel:`things` and click on the entry for the *thing* created during the steps of :ref:`creating_a_thing_in_AWS_IoT`.
-#. Navigate to :guilabel:`interact`, find the ``Rest API Endpoint`` and set the configurable option :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
+1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` > :guilabel:`Settings`.
+#. Find the ``Endpoint`` address and set the configurable option :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
 #. Set the option :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
 #. Set the security tag configuration :kconfig:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160-based kit`_.
 
