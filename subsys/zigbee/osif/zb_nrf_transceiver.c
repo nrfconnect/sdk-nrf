@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr.h>
 #include <kernel.h>
 #include <device.h>
 #include <sys/byteorder.h>
@@ -25,6 +26,9 @@
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_PKT_TIMESTAMP), "Timestamp is required");
 BUILD_ASSERT(!IS_ENABLED(CONFIG_IEEE802154_NET_IF_NO_AUTO_START),
 	     "Option not supported");
+
+/* Required by workaround for KRKNWK-12301. */
+#define NO_ACK_DELAY_MS           23U
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 
@@ -363,6 +367,10 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 	case -ENOMSG:
 		zb_macll_transmit_failed(ZB_TRANS_NO_ACK);
 		zigbee_event_notify(ZIGBEE_EVENT_TX_FAILED);
+
+		/* Workaround for KRKNWK-12301. */
+		k_sleep(K_MSEC(NO_ACK_DELAY_MS));
+		/* End of workaround. */
 		break;
 	case -EBUSY:
 	case -EIO:
