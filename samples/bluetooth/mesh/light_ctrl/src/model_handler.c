@@ -18,7 +18,7 @@ struct lightness_ctx {
 	uint16_t target_lvl;
 	uint16_t current_lvl;
 	uint32_t time_per;
-	uint16_t rem_time;
+	uint32_t rem_time;
 };
 
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
