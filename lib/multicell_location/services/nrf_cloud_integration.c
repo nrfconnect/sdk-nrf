@@ -76,8 +76,14 @@ static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_r
 		nrf_cloud_location.latitude = result->lat;
 		nrf_cloud_location.longitude = result->lon;
 		nrf_cloud_location.accuracy = (double)result->unc;
+
+		k_sem_give(&location_ready);
+	} else {
+		/* Reset the semaphore to unblock location_service_get_cell_location_nrf_cloud()
+		 * and make it return an error.
+		 */
+		k_sem_reset(&location_ready);
 	}
-	k_sem_give(&location_ready);
 }
 
 int location_service_get_cell_location_nrf_cloud(
@@ -98,14 +104,15 @@ int location_service_get_cell_location_nrf_cloud(
 		LOG_ERR("Cloud connection is not established");
 		return err;
 	} else if (err) {
-		LOG_ERR("Failed to request cell pos data, error: %d", err);
+		LOG_ERR("Failed to request cellular positioning data, error: %d", err);
 		return err;
 	}
 
 	LOG_INF("Cellular positioning request sent");
 
 	if (k_sem_take(&location_ready, K_SECONDS(20)) == -EAGAIN) {
-		LOG_ERR("Cellular positioning data request timed out");
+		LOG_ERR("Cellular positioning data request timed out or "
+			"cloud did not return a location");
 		return -ETIMEDOUT;
 	}
 
