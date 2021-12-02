@@ -15,6 +15,7 @@
 #include "config_event.h"
 #include "hid_event.h"
 #include <caf/events/ble_common_event.h>
+#include <caf/events/power_manager_event.h>
 
 #define MODULE dfu
 #include <caf/events/module_state_event.h>
@@ -149,6 +150,10 @@ static void terminate_dfu(void)
 	(void)k_work_cancel_delayable(&background_store);
 	flash_area = NULL;
 	sync_offset = 0;
+
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_EVENTS)) {
+		power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_MAX);
+	}
 }
 
 static void dfu_timeout_handler(struct k_work *work)
@@ -427,6 +432,9 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 		terminate_dfu();
 	} else {
 		LOG_INF("DFU started");
+		if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_EVENTS)) {
+			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
+		}
 		k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
 	}
 }
@@ -484,6 +492,10 @@ static void handle_dfu_sync(uint8_t *data, size_t *size)
 static void handle_reboot_request(uint8_t *data, size_t *size)
 {
 	LOG_INF("System reboot requested");
+
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_EVENTS)) {
+		power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
+	}
 
 	*size = sizeof(bool);
 	data[0] = true;
