@@ -63,6 +63,11 @@ config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	default 1084 if SOC_NRF5340_CPUAPP
 	default 1024
 
+# TF-M support in OpenThread is experimental
+config BUILD_WITH_TFM
+	bool
+	select EXPERIMENTAL
+
 endmenu
 
 endif
