@@ -391,6 +391,63 @@ KRKNWK-6408: ``diag`` command not supported
 Zigbee
 ======
 
+.. rst-class:: v1-8-0
+
+KRKNWK-12017: Zigbee End Device doesn't recover from broken rejoin procedure
+  If the Device Announcement packet is not acknowledged by the End Device's parent, joiner logic is stopped and device doesn't recover.
+
+  **Workaround**: Complete the following steps to detect when the rejoin procedure breaks and reset the device:
+
+  1. Introduce helper variable ``joining_signal_received``.
+  #. Extend ``zigbee_default_signal_handler()`` by completing the following steps:
+
+      a. Set ``joining_signal_received`` to ``true`` in the following signals: ``ZB_BDB_SIGNAL_DEVICE_FIRST_START``, ``ZB_BDB_SIGNAL_DEVICE_REBOOT``, ``ZB_BDB_SIGNAL_STEERING``.
+      #. If ``leave_type`` is set to ``ZB_NWK_LEAVE_TYPE_REJOIN``, set ``joining_signal_received`` to ``false`` in the ``ZB_ZDO_SIGNAL_LEAVE`` signal.
+      #. Handle the ``ZB_NLME_STATUS_INDICATION`` signal to detect when End Device failed to transmit packet to its parent, reported by signal's status ``ZB_NWK_COMMAND_STATUS_PARENT_LINK_FAILURE``.
+
+  See the following snippet for an example:
+
+  .. code-block:: c
+
+     /* TODO: Add helper variable that will be used for detecting broken rejoin procedure. */
+     /* Flag indicating if joining signal has been received since restart or leave with rejoin. */
+     bool joining_signal_received = false;
+     /* TODO: Extend the zigbee_default_signal_handler() function. */
+     case ZB_BDB_SIGNAL_DEVICE_FIRST_START:
+         ...
+         joining_signal_received = true;
+         break;
+     case ZB_BDB_SIGNAL_DEVICE_REBOOT:
+         ...
+         joining_signal_received = true;
+         break;
+
+     case ZB_BDB_SIGNAL_STEERING:
+         ...
+         joining_signal_received = true;
+         break;
+
+     case ZB_ZDO_SIGNAL_LEAVE:
+         if (status == RET_OK) {
+             zb_zdo_signal_leave_params_t *leave_params = ZB_ZDO_SIGNAL_GET_PARAMS(sig_hndler, zb_zdo_signal_leave_params_t);
+             LOG_INF("Network left (leave type: %d)", leave_params->leave_type);
+             /* Set joining_signal_received to false so broken rejoin procedure can be detected correctly. */
+             if (leave_params->leave_type == ZB_NWK_LEAVE_TYPE_REJOIN) {
+                 joining_signal_received = false;
+             }
+         ...
+     case ZB_NLME_STATUS_INDICATION: {
+         zb_zdo_signal_nlme_status_indication_params_t *nlme_status_ind =
+             ZB_ZDO_SIGNAL_GET_PARAMS(sig_hndler, zb_zdo_signal_nlme_status_indication_params_t);
+         if (nlme_status_ind->nlme_status.status == ZB_NWK_COMMAND_STATUS_PARENT_LINK_FAILURE) {
+             /* Check for broken rejoin procedure and restart the device to recover. */
+             if (stack_initialised && !joining_signal_received) {
+                 zb_reset(0);
+             }
+         }
+         break;
+     }
+
 .. rst-class:: v1-6-1 v1-6-0
 
 KRKNWK-8211: Leave signal generated twice
