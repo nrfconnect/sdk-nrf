@@ -92,6 +92,7 @@ Bluetooth samples
 * Updated:
 
   * :ref:`peripheral_rscs` - Corrected the number of bytes for setting the Total Distance Value and specified the data units.
+  * :ref`direct_test_mode` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
 
 nRF9160 samples
 ---------------
@@ -103,6 +104,11 @@ nRF9160 samples
 * :ref:`gnss_sample` sample:
 
   * Added support for minimal assistance using factory almanac, time and location.
+
+Other samples
+-------------
+
+:ref:`radio_test` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
 
 Drivers
 =======
