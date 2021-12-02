@@ -295,6 +295,7 @@ OpenThread samples
 
   * Support for ``nrf5340dk_nrf5340_cpuapp_ns`` build target for :ref:`zephyr:nrf5340dk_nrf5340`.
     This allows to build the OpenThread samples with Trusted Firmware-M and the PSA crypto API support.
+    This platform is experimental, so :ref:`nrfxlib:ot_libs` will not be generated for it.
 
 Zigbee samples
 --------------
