@@ -524,6 +524,11 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 	return gnss_inject_agps_data();
 }
 
+static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_get_agps_expiry();
+}
+
 static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
 {
 	return print_help(shell, argc, argv);
@@ -982,6 +987,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  cmd_gnss_agps_filter),
 	SHELL_CMD(filtephem, &sub_gnss_agps_filtered,
 		  "Enable/disable AGPS filtered ephemerides.", cmd_gnss_agps_filtered),
+	SHELL_CMD_ARG(expiry, NULL, "Query A-GPS data expiry information from GNSS.",
+		      cmd_gnss_agps_expiry, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 

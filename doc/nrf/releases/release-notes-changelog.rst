@@ -224,6 +224,8 @@ nrf9160 Samples
         In AT command mode, a maximum of 10 AT commands can be pipelined with ``|`` as the delimiter character between pipelined AT commands.
       * Threading support for the ``ping`` command.
       * Iperf3 usage over Zephyr native TCP/IP stack and nRF9160 LTE default context.
+      * Support for the GNSS features introduced in modem firmware v1.3.2.
+        This includes several new fields in the PVT notification and a command to query the expiry times of assistance data.
 
   * :ref:`nrf_cloud_rest_fota` sample:
 
