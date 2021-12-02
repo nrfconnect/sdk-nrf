@@ -832,7 +832,7 @@ static int update_handler(struct bt_mesh_model *model)
 	srv->handlers->light_get(srv, NULL, &status);
 	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
 	       status.remaining_time);
-	lvl_status_encode(model->pub->msg, &status, LIGHT_USER_REPR);
+	lvl_status_encode(model->pub->msg, &status, ACTUAL);
 	return 0;
 }
 
