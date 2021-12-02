@@ -342,6 +342,14 @@ int gnss_inject_agps_data(void);
 int gnss_enable_pgps(void);
 
 /**
+ * @brief Queries A-GPS data expiry information from GNSS.
+ *
+ * @return 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_get_agps_expiry(void);
+
+/**
  * @brief Configures how much PVT information is printed out.
  *
  * @param level 0 = PVT output disabled
