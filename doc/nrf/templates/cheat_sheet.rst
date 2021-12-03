@@ -50,7 +50,8 @@ Lists
 Diagrams
 ========
 
-You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. msc::`` directive and including the MSC content, for example:
+You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. msc::`` directive and including the MSC content, using the syntax described for example here: http://www.mcternan.me.uk/mscgen/.
+Example:
 
 .. code-block:: none
 
