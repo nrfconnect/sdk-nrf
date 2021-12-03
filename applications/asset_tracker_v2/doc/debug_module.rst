@@ -17,7 +17,7 @@ By default, it subscribes to all the events in the system and implements support
 Features
 ********
 
-This section lists the various features supported by the module.
+This section documents the various features implemented by the module.
 
 Memfault
 ========
@@ -79,7 +79,7 @@ This module has no internal states.
 Module events
 *************
 
-The :file:`asset_tracker_v2/src/events/debug_module_event.h` header file contains a list of various events emitted by the module.
+The :file:`asset_tracker_v2/src/events/debug_module_event.h` header file contains a list of various events sent by the module.
 
 Dependencies
 ************

@@ -21,42 +21,74 @@
 extern "C" {
 #endif
 
-/** @brief Cloud event types submitted by Cloud module. */
+/** @brief Event types submitted by the cloud module. */
 enum cloud_module_event_type {
+	/** Cloud service is connected. */
 	CLOUD_EVT_CONNECTED,
+
+	/** Cloud service is disconnected. */
 	CLOUD_EVT_DISCONNECTED,
+
+	/** Connecting to a cloud service. */
 	CLOUD_EVT_CONNECTING,
+
+	/** Connection has timed out. */
 	CLOUD_EVT_CONNECTION_TIMEOUT,
+
+	/** A new device configuration has been received from cloud.
+	 *  The payload associated with this event is of type @ref cloud_data_cfg (config).
+	 */
 	CLOUD_EVT_CONFIG_RECEIVED,
+
+	/** An empty device configuration has been received from cloud. */
 	CLOUD_EVT_CONFIG_EMPTY,
+
+	/** FOTA has been performed, a reboot of the application is needed. */
 	CLOUD_EVT_FOTA_DONE,
+
+	/** Sending of data to cloud has been attempted.
+	 *  The payload associated with this event is of type @ref cloud_module_data_ack (ack).
+	 */
 	CLOUD_EVT_DATA_ACK,
+
+	/** The cloud module has performed all procedures to prepare for
+	 *  a shutdown of the system. The event carries the ID (id) of the module.
+	 */
 	CLOUD_EVT_SHUTDOWN_READY,
+
+	/** An irrecoverable error has occurred in the cloud module. Error details are
+	 *  attached in the event structure.
+	 */
 	CLOUD_EVT_ERROR
 };
 
-struct cloud_module_event_data {
-	char *buf;
-	size_t len;
-};
-
+/** @brief Structure used to acknowledge messages sent to the cloud module. */
 struct cloud_module_data_ack {
+	/** Pointer to data that was attempted to be sent. */
 	void *ptr;
+	/** Length of data that was attempted to be sent. */
 	size_t len;
 	/* Flag to signify if the data was sent or not. */
 	bool sent;
 };
 
-/** @brief Cloud event. */
+/** @brief Cloud module event. */
 struct cloud_module_event {
+	/** Cloud module event header. */
 	struct event_header header;
+	/** Cloud module event type. */
 	enum cloud_module_event_type type;
 
 	union {
+		/** Variable that contains a new configuration received from the cloud service. */
 		struct cloud_data_cfg config;
+		/** Variable that contains data that was attempted to be sent. Could be used
+		 *  to free allocated data post transmission.
+		 */
 		struct cloud_module_data_ack ack;
-		/* Module ID, used when acknowledging shutdown requests. */
+		/** Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
+		/** Code signifying the cause of error. */
 		int err;
 	} data;
 };

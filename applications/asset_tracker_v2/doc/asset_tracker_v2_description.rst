@@ -12,8 +12,8 @@ The Asset Tracker v2 application introduces a set of new features, which are not
 * Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
 * Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
-* Batching of data - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* Batching of data - Data is batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
+* Configurable at run-time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
 Implementation of the above features required a rework of the existing application.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
@@ -24,18 +24,20 @@ Hence, this application is not backward compatible to the :ref:`asset_tracker` a
 Overview
 ********
 
-The application samples sensor data and publishes the data to a connected cloud service over TCP/IP through LTE.
-As of now, the application supports the following cloud services and the corresponding cloud-side instances:
+The application samples sensor data and publishes the data to a connected cloud service over `IP`_ through `LTE`_.
+The application supports the following cloud services and corresponding cloud-side instances:
 
-+---------------------------+---------------------------------------------------------------------------------------+
-| Cloud service             | Cloud-side instance                                                                   |
-+===========================+=======================================================================================+
-| `AWS IoT Core`_           | `nRF Asset Tracker for AWS`_                                                          |
-+---------------------------+---------------------------------------------------------------------------------------+
-| `Azure IoT Hub`_          | `nRF Asset Tracker for Azure`_                                                        |
-+---------------------------+---------------------------------------------------------------------------------------+
-| `nRF Cloud`_              | `nRF Cloud documentation`_                                                            |
-+---------------------------+---------------------------------------------------------------------------------------+
++------------------+--------------------------------+
+| Cloud service    | Cloud-side instance            |
++==================+================================+
+| `AWS IoT Core`_  | `nRF Asset Tracker for AWS`_   |
++------------------+--------------------------------+
+| `Azure IoT Hub`_ | `nRF Asset Tracker for Azure`_ |
++------------------+--------------------------------+
+| `nRF Cloud`_     | `nRF Cloud documentation`_     |
++------------------+--------------------------------+
+
+For more information on the cloud services, protocols, and technologies supported by the application, see the :ref:`Supported cloud services <supported_cloud_services>` table.
 
 Firmware architecture
 =====================
@@ -80,14 +82,13 @@ The application supports the following data types:
 | Neighbor cells | Neighbor cell measurements | APP_DATA_NEIGHBOR_CELLS                       |
 +----------------+----------------------------+-----------------------------------------------+
 
-The sets of sensor data that are published to the cloud service consist of relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
+Sensor data published to the cloud service contain relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
 
-Device modes
-============
+Real-time configurations
+========================
 
-The application can be either in an active or in a passive state depending on the applied device mode.
-The device mode is a part of the application's real-time configurations.
-The device modes and their descriptions are listed in the following table:
+You can alter the core behavior of the application at run-time by updating the application's real-time configurations.
+The real-time configurations supported by the application are listed in the following table:
 
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Real-time Configurations       | Description                                                                                                                          | Default values |
@@ -96,73 +97,61 @@ The device modes and their descriptions are listed in the following table:
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |  Active  |                     | Sample and publish data at regular intervals.                                                                                        |                |
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|          | Active wait time    | Number of seconds between each sampling/publication.                                                                                 | 120 seconds    |
+|          | Active wait time    | Number of seconds between each sampling/publication in active mode.                                                                  | 120 seconds    |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|  Passive |                     | Sample and publish data only if movement has been detected.                                                                          |                |
+|  Passive |                     | Sample and publish data upon movement.                                                                                               |                |
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|          | Movement resolution | Sample and publish data after detecting movement.                                                                                    |                |
-|          |                     | Wait for a duration specified by the parameter until a movement triggers the next update.                                            | 120 seconds    |
+|          | Movement resolution | Number of seconds between each sampling/publication in passive mode, given that the device is moving.                                | 120 seconds    |
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|          | Movement timeout    | Sample and publish data at a minimum of the time interval specified by the parameter. Not dependent on movement.                     | 3600 seconds   |
+|          | Movement timeout    | Number of seconds between each sampling/publication in passive mode, whether the device is moving or not.                            | 3600 seconds   |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GPS timeout                    | Timeout for acquiring a GNSS fix during sampling of the data.                                                                        | 60 seconds     |
+| GPS timeout                    | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 60 seconds     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for the accelerometer readings to be considered as a valid movement. | 10 m/s²        |
+| Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for accelerometer readings to be considered valid movement.          | 10 m/s²        |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| No Data List (NOD)             | List containing :ref:`data types <app_data_types>` that is not included when the application samples data.                           | No entries     |
-|                                | Currently, the application supports only APP_DATA_GNSS and APP_DATA_NEIGHBOR_CELLS.                                                  | (Request all)  |
+| No Data List (NOD)             | A list containing :ref:`data types <app_data_types>` that are not sampled by the application. Used to disable sampling from          | No entries     |
+|                                | sensor sources. Currently, the application supports APP_DATA_GNSS and APP_DATA_NEIGHBOR_CELLS in the NOD list.                       | (Request all)  |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 
-See :ref:`Kconfig options for default device configuration values <default_config_values>` for a list of configuration options that can set the default values of the device configuration parameters.
+You can alter the default values of the real-time configurations at compile time by setting the options listed in :ref:`Default device configuration options <default_config_values>`.
 
 .. note::
-   The configurations that are used depend on the application state.
-   For instance, in active mode, the ``Movement resolution`` and the ``Movement timeout`` parameters are not used.
+   The application supports two different device modes, ``passive mode`` and ``active mode``.
+   Depending on the device mode, specific configurations are used.
+   For example, in active mode, ``Active wait time`` is used, but ``Movement resolution`` and ``Movement timeout`` are not.
 
-The following flow charts shows the functioning of the application in active and passive states.
-The charts also show the relationship between data sampling, publishing, and device configurations.
-All the configurations that are not essential to this relationship are abstracted for simplicity.
+
+The following flow charts show the operation of the application in the active and passive mode.
+The charts also show the relationship between data sampling, publishing, and the real-time configurations.
+All configurations that are not essential to this relationship are abstracted away.
 
 .. figure:: /images/asset_tracker_v2_active_state.svg
     :alt: Active state flow chart
 
-    Active state flow chart
+    Active mode flow chart
 
-In the active state, the application samples and publishes data at regular intervals that are set by the ``Active wait timeout`` configuration.
+In the active mode, the application samples and publishes data at regular intervals that are set by the ``Active wait timeout`` configuration.
 
 .. figure:: /images/asset_tracker_v2_passive_state.svg
-    :alt: Passive state flow chart
+    :alt: Passive mode flow chart
 
-    Passive state flow chart
+    Passive mode flow chart
 
-In the passive state, the application will only sample and publish upon movement.
-This reduces the amount of data transferred over the air and the numerous processing cycles.
-The flow chart does not include the timer that acts on the ``Movement timeout`` configuration.
-This timer is enabled when the application enters the passive state.
-When the timer expires, the application will initiate data sampling and publishing.
-The timer ensures that if there is no movement, the application still sends updates to the cloud service.
-The timeout acts as a failsafe in the case of zero movement for the asset wearing the tracker over a long time.
-Ideally, the ``Movement timeout`` parameter should be set to a value much higher than the value of ``Movement resolution``.
+In the passive mode, the application samples and publishes data upon two occurrences:
 
-The device retrieves its real-time configurations from the cloud service in either of the following ways:
-
-* Upon every established connection to the cloud service, the application will always request its cloud-side device state that contains the latest real-time configurations.
-* When the device exits `Power Saving Mode (PSM)`_ to publish data, and if the cloud-side device configuration has been updated while the device was in PSM, the application will request for the newly changed configuration.
-
-The application always acknowledges any newly applied device configurations back to the cloud service.
+* When the timer controlled by the ``Movement resolution`` configuration expires and movement is detected.
+* When the timer controlled by the ``Movement timeout`` configuration expires.
+  This timer acts as failsafe if no movement is detected for extended periods of time.
+  Essentially, it makes sure that the application always publishes data at some rate, regardless of movement.
 
 .. note::
-   The application always stores any new configuration obtained from the cloud service to the flash memory.
-   If the device reboots unexpectedly in areas without LTE coverage, the application will have access to the configuration that was applied last.
+   The application receives its latest real-time configuration in one of two ways:
 
-Data buffers
-============
+   * Upon every established connection to the configured cloud service.
+   * When the device exits `Power Saving Mode (PSM)`_ to publish data.
 
-Data sampled from the onboard modem and the external sensors is stored in ring buffers.
-Newly sampled data is always published prior to the old, buffered data.
-
-The application has LTE and cloud connection awareness.
-Upon a disconnect from the cloud service, the application keeps the sensor data that has been buffered and empty the buffers in batch messages when the application reconnects to the cloud service.
+   The application maintains its real-time configuration in the non-volatile flash memory.
+   If the device unexpectedly reboots, the application still has access to the real-time configuration that was last applied.
 
 Requirements
 ************
@@ -186,17 +175,17 @@ The application uses the following buttons on the nRF9160-based development kits
 Additionally, the application displays LED behavior that corresponds to the task performed by the application.
 The following table shows the purpose of each supported button:
 
-+--------+-----------------------------------+---------------------------------------------------------------------------------------------+
-| Button | Thingy:91                         | nRF9160 DK                                                                                  |
-+========+===================================+=============================================================================================+
-| 1      | Send message to the cloud service | Send message to the cloud service.                                                          |
-+--------+-----------------------------------+---------------------------------------------------------------------------------------------+
-| 2      |                                   | Send message to the cloud service.                                                          |
-|        |                                   +---------------------------------------------------------------------------------------------+
-|        |                                   | Fake movement. No external accelerometer in nRF9160 DK to trigger movement in passive mode. |
-+--------+-----------------------------------+---------------------------------------------------------------------------------------------+
++--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
+| Button | Thingy:91                           | nRF9160 DK                                                                                                       |
++========+=====================================+==================================================================================================================+
+| 1      | Send a message to the cloud service | Send message to the cloud service.                                                                               |
++--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
+| 2      |                                     | Send message to the cloud service.                                                                               |
+|        |                                     +------------------------------------------------------------------------------------------------------------------+
+|        |                                     | Fake movement. For testing purposes, the nRF9160 DK does not have an external accelerometer to trigger movement. |
++--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
 
-The following table shows the LED behavior demonstrated by the application:
+The following table describes the LED states in the application:
 
 +---------------------------+-------------------------+-----------------------+
 | State                     | Thingy:91 RGB LED       | nRF9160 DK solid LEDs |
@@ -221,17 +210,25 @@ The following table shows the LED behavior demonstrated by the application:
 Using the LwM2M carrier library
 *******************************
 
-This application supports the |NCS| :ref:`liblwm2m_carrier_readme` library that can be used to connect to the operator's device management platform.
+The application supports the |NCS| :ref:`liblwm2m_carrier_readme` library that you can use to connect to the operator's device management platform.
 See the library's documentation for more information and configuration options.
 
 To enable the LwM2M carrier library, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay-carrier.conf``
 
-In |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` to add the above CMake parameter.
-See :ref:`cmake_options` for more information.
+A-GPS and P-GPS
+***************
 
-Alternatively, you can manually set the configuration options to match the contents of the overlay configuration file.
+The application supports processing of incoming A-GPS and P-GPS data to reduce the GNSS Time-To-First-Fix (`TTFF`_).
+Requesting and processing of A-GPS data is a default feature of the application.
+See :ref:`nRF Cloud A-GPS and P-GPS <nrfcloud_agps_pgps>` for further details.
+To enable support for P-GPS, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay-pgps.conf``
+
+.. note::
+   |gps_tradeoffs|
 
 Configuration
 *************
@@ -240,65 +237,8 @@ The application has a Kconfig file with options that are specific to the Asset T
 These options can be used to enable and disable modules and modify their behavior and properties.
 |config|
 
-Setup
-=====
-
-The application is designed to support communication with different cloud services, a single service at a time.
-Currently, the application supports the following services and technologies in the connection:
-
-+--------------------------+---------------------------------+
-| Service                  | Technologies                    |
-+==========================+=================================+
-| `AWS IoT Core`_          |   `MQTT`_                       |
-|                          +---------------------------------+
-|                          |   `TLS`_                        |
-|                          +---------------------------------+
-|                          |   :ref:`FOTA <nrf9160_fota>`    |
-|                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_agps`     |
-|                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_pgps`     |
-+--------------------------+---------------------------------+
-| `Azure IoT Hub`_         |   `MQTT`_                       |
-|                          +---------------------------------+
-|                          |   `TLS`_                        |
-|                          +---------------------------------+
-|                          |   :ref:`FOTA <nrf9160_fota>`    |
-+                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_agps`     |
-|                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_pgps`     |
-+--------------------------+---------------------------------+
-| `nRF Cloud`_             |   `MQTT`_                       |
-|                          +---------------------------------+
-|                          |   `TLS`_                        |
-|                          +---------------------------------+
-|                          |   :ref:`FOTA <nrf9160_fota>`    |
-+                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_agps`     |
-+                          +---------------------------------+
-|                          |   :ref:`lib_nrf_cloud_pgps`     |
-+--------------------------+---------------------------------+
-
-When the application is configured to communicate with `AWS IoT Core`_ or `Azure IoT Hub`_, it supports processing of received A-GPS and P-GPS data through the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
-This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 SiP using the pre-established MQTT connection.
-This approach saves data and energy costs related to maintaining multiple connections.
-Requesting and processing of A-GPS data is enabled by default when building for all supported cloud providers.
-
-.. note::
-   |gps_tradeoffs|
-
-By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
-This enables the application to function out-of-the-box with nRF Cloud.
-However, nRF Cloud does not fully support the application firmware and has limitations.
-For more information, see :ref:`nrf_cloud_limitations`.
-To enable all features of the Asset Tracker v2, use the other supported cloud service implementations.
-
-.. note::
-   The Azure FOTA process is expected to change in the near future depending on the new `Azure Device Update for IoT Hub`_ that is currently in preview.
-
 Setting up the Asset Tracker cloud example
-------------------------------------------
+==========================================
 
 To set up the application to work with a specific cloud example, see the following documentation:
 
@@ -306,9 +246,18 @@ To set up the application to work with a specific cloud example, see the followi
 * AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_
 * Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_
 
-For every cloud service that is supported by this application, you must configure the corresponding *cloud library* by setting certain mandatory Kconfig options that are specific to the cloud library.
-For more information, see :ref:`Cloud-specific mandatory Kconfig options <mandatory_config>`.
+By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
+This enables the application to function out-of-the-box with nRF Cloud.
+However, nRF Cloud does not fully support the application firmware and has limitations.
+For more information, see :ref:`nrf_cloud_limitations`.
+To enable all features of the Asset Tracker v2, use any of the other supported cloud service implementations.
 
+.. note::
+   Before building and running the firmware, make sure you have set up the cloud side and provisioned the device with the correct TLS certificates.
+
+For every cloud service that is supported by this application, you must configure the corresponding *cloud client library* by setting certain mandatory Kconfig options.
+You can set these options in the designated :file:`overlay-<feature>.conf` file located in the root folder of the application.
+For more information on how to configure the application to communicate with a specific cloud service, see :ref:`Cloud module documentation <asset_tracker_v2_cloud_module>` and :ref:`Cloud-specific mandatory Kconfig options <mandatory_config>`.
 
 Configuration options
 =====================
@@ -320,30 +269,19 @@ Check and configure the following configuration options for the application:
 CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
    The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :ref:`CONFIG_ASSET_TRACKER_V2_APP_VERSION <CONFIG_ASSET_TRACKER_V2_APP_VERSION>` to the desired version.
 
-.. _CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM:
-
-CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of custom cloud client ID
-   This application configuration is used to enable the use of custom client ID for the respective cloud. By default, the application uses the IMEI of the nRF9160-based device as the client ID in the cloud connection.
-
-.. _CONFIG_CLOUD_CLIENT_ID:
-
-CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
-   This application configuration sets a custom client ID for the respective cloud. For setting a custom client ID, you need to set :ref:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM <CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM>` to ``y``.
-
-
 .. _default_config_values:
 
-The default values for the device configuration parameters can be set by manipulating the following configurations:
+To set the default values for the device configuration at compile time, manipulate the following configurations:
 
 .. _CONFIG_DATA_DEVICE_MODE:
 
 CONFIG_DATA_DEVICE_MODE - Configuration for the device mode
-   This application configuration sets the device mode.
+   This configuration sets the device mode.
 
 .. _CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS:
 
 CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS - Configuration for Active mode
-   This application configuration sets the Active mode timeout value.
+   This configuration sets the Active mode timeout value.
 
 .. _CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS:
 
@@ -364,36 +302,6 @@ CONFIG_DATA_ACCELEROMETER_THRESHOLD - Configuration for Accelerometer threshold
 
 CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GNSS timeout
    This configuration sets the GNSS timeout value.
-
-
-.. _mandatory_config:
-
-Mandatory library configuration
-===============================
-
-You can set the mandatory library-specific Kconfig options in the designated :file:`overlay-<feature>.conf` file located in the root folder of the application.
-
-Configurations for AWS IoT library
-----------------------------------
-
-These options are located in the :file:`overlay-aws.conf` file.
-
-* :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
-* :kconfig:`CONFIG_AWS_IOT_SEC_TAG`
-
-
-Configurations for Azure IoT Hub library
-----------------------------------------
-
-These options are located in the :file:`overlay-azure.conf` file.
-
-* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
-* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
-* :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
-* :kconfig:`CONFIG_AZURE_FOTA_SEC_TAG`
-
-.. note:
-   The nRF Cloud library does not require any library-specific Kconfig options to be set.
 
 Optional library configurations
 ===============================
@@ -418,12 +326,12 @@ The following configuration files are available in the application folder:
 * :file:`prj.conf` - Configuration file common for all build targets
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
-* :file:`overlay-aws.conf` - Configuration file to set AWS as cloud provider.
-* :file:`overlay-azure.conf` - Configuration file to set Azure as cloud provider.
-* :file:`overlay-pgps.conf` - Configuration file to enable P-GPS.
+* :file:`overlay-aws.conf` - Configuration file that enables communication with AWS IoT Core.
+* :file:`overlay-azure.conf` - Configuration file that enables communication with Azure IoT Hub.
+* :file:`overlay-pgps.conf` - Configuration file that enables P-GPS.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power, such as LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
-* :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_. To take advantage of all Memfault features in the application, you must build Memfault with the debug module enabled. To enable the debug module, include both :file:`overlay-debug.conf` and :file:`overlay-memfault.conf` in the ``west build`` command.
+* :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support. See :ref:`atv2_lwm2m_carrier_support` for more information.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
@@ -432,18 +340,13 @@ Board-specific configuration files are placed in the :file:`boards` folder and a
 DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
 They are placed in the :file:`boards` folder.
 When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
+An overlay file typically enables a specific feature and can be included with other overlay files to enable multiple features at the same time.
 
 Building and running
 ********************
 
-Before building and running the firmware ensure that the cloud side is set up.
-Also, the device must be provisioned and configured with the certificates according to the instructions for the respective cloud for the connection attempt to succeed.
-
-The application defaults to using nRF Cloud as the cloud provider.
-However, you can change the cloud provider by specifying the overlay file that corresponds to another supported cloud provider when building the application.
-Set the CMake variable ``OVERLAY_CONFIG`` when calling the ``west build`` command.
-You can set this variable to contain a list of overlays that will be patched in, each enabling a specific feature.
-See :ref:`building_with_overlays` on how to combine overlay configuration files to enable multiple features at the same time.
+To change the cloud service the application connects to, include the corresponding overlay file in the ``west build`` command.
+See :ref:`Building with overlays <building_with_overlays>` for information on how to build with overlay files.
 
 .. note::
 
@@ -466,7 +369,7 @@ See :ref:`building_with_overlays` on how to combine overlay configuration files 
 Building with overlays
 ======================
 
-To build with a Kconfig overlay, it must be passed to the build system, as shown in the following example:
+To build with a Kconfig overlay, pass it to the build system using the ``OVERLAY_CONFIG`` CMake variable, as shown in the following example:
 
 .. code-block:: console
 
@@ -480,6 +383,10 @@ To build with multiple overlay files, ``-DOVERLAY_CONFIG`` must be set to a list
 .. code-block:: console
 
    west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-aws.conf;overlay-debug.conf;overlay-memfault.conf"
+
+.. note::
+   To build with overlays enabled in |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` and add the CMake variable.
+   See :ref:`cmake_options` for more information.
 
 Testing
 =======
