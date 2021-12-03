@@ -457,27 +457,25 @@ static bool handle_power_down_event(const struct event_header *eh)
 		struct sensor_data *sd = &sensor_data[i];
 		const struct sm_sensor_config *sc = &sensor_configs[i];
 
-		/* Locking the scheduler to prevent a trigger between entering sleep
-		 * and processing suspending if trigger was not configured.
-		 */
+		/* Locking the scheduler to prevent concurrent access to sensor state. */
 		k_sched_lock();
-		if (sc->trigger) {
-			enter_sleep(sc, sd);
-		}
+		if (atomic_get(&sd->state) != SENSOR_STATE_ERROR) {
+			if (sc->trigger) {
+				enter_sleep(sc, sd);
+			} else if (atomic_get(&sd->state) == SENSOR_STATE_ACTIVE) {
+				int ret = 0;
 
-		if (atomic_get(&sd->state) == SENSOR_STATE_ACTIVE) {
-			int ret = 0;
+				if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
+					ret = pm_device_state_set(sd->dev, sc->suspend_pm_state);
+				}
 
-			if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
-				ret = pm_device_state_set(sd->dev, sc->suspend_pm_state);
-			}
-
-			if (ret) {
-				LOG_ERR("Sensor %s cannot be suspended (%d)",
-					sc->dev_name, ret);
-				update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
-			} else {
-				update_sensor_state(sc, sd, SENSOR_STATE_SLEEP);
+				if (ret) {
+					LOG_ERR("Sensor %s cannot be suspended (%d)",
+						sc->dev_name, ret);
+					update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
+				} else {
+					update_sensor_state(sc, sd, SENSOR_STATE_SLEEP);
+				}
 			}
 		}
 		k_sched_unlock();
@@ -492,26 +490,28 @@ static bool handle_wake_up_event(const struct event_header *eh)
 		struct sensor_data *sd = &sensor_data[i];
 		const struct sm_sensor_config *sc = &sensor_configs[i];
 
-		if (atomic_get(&sd->state) == SENSOR_STATE_ERROR) {
-			/* Nothing to do */
-			continue;
-		}
-		if (sc->trigger)
-			sensor_trigger_set(sd->dev, &sc->trigger->cfg, NULL);
-
-		if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
+		/* Locking the scheduler to prevent concurrent access to sensor state. */
+		k_sched_lock();
+		if (atomic_get(&sd->state) != SENSOR_STATE_ERROR) {
 			int ret = 0;
 
-			ret = pm_device_state_set(sd->dev, PM_DEVICE_STATE_ACTIVE);
-			if (ret) {
-				LOG_ERR("Sensor %s cannot be activated (%d)",
-					sc->dev_name, ret);
-				update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
-				continue;
+			if (sc->trigger) {
+				sensor_trigger_set(sd->dev, &sc->trigger->cfg, NULL);
+			} else if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
+				ret = pm_device_state_set(sd->dev, PM_DEVICE_STATE_ACTIVE);
+				if (ret) {
+					LOG_ERR("Sensor %s cannot be activated (%d)",
+						sc->dev_name, ret);
+					update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
+				}
+			}
+
+			if (!ret) {
+				LOG_DBG("Sensor %s wake up", sc->dev_name);
+				sensor_wake_up_post(sc, sd);
 			}
 		}
-		LOG_DBG("Sensor %s wake up", sc->dev_name);
-		sensor_wake_up_post(sc, sd);
+		k_sched_unlock();
 	}
 	k_sem_give(&can_sample);
 	return false;
