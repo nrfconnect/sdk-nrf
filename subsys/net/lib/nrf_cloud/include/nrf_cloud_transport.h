@@ -128,7 +128,7 @@ void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
 			 struct nrf_cloud_data *m_endpoint);
 
 /**@brief Needed for keep alive. */
-void nct_process(void);
+int nct_process(void);
 
 /**
  * @brief Helper function to determine when next keep alive message should be

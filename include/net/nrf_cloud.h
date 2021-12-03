@@ -521,8 +521,11 @@ int nrf_cloud_disconnect(void);
 /**
  * @brief Function that must be called periodically to keep the module
  * functional.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
-void nrf_cloud_process(void);
+int nrf_cloud_process(void);
 
 /**
  * @brief The application has handled re-init after a modem FOTA update and the
