@@ -1052,6 +1052,7 @@ int nct_init(const char * const client_id)
 
 void nct_uninit(void)
 {
+	LOG_DBG("Uninitializing nRF Cloud transport");
 	dc_endpoint_free();
 	nct_reset_topics();
 
@@ -1357,15 +1358,16 @@ int nct_disconnect(void)
 	return mqtt_disconnect(&nct.client);
 }
 
-void nct_process(void)
+int nct_process(void)
 {
 	int err;
+	int ret;
 
 	err = mqtt_input(&nct.client);
 	if (err) {
 		LOG_ERR("MQTT input error: %d", err);
 		if (err != -ENOTCONN) {
-			return;
+			return err;
 		}
 	} else if (nct.client.unacked_ping) {
 		LOG_DBG("Previous MQTT ping not acknowledged");
@@ -1375,17 +1377,24 @@ void nct_process(void)
 		if (err && (err != -EAGAIN)) {
 			LOG_ERR("MQTT ping error: %d", err);
 		} else {
-			return;
+			return err;
 		}
+	}
+
+	ret = nct_disconnect();
+	if (ret) {
+		LOG_ERR("Error disconnecting from cloud: %d", ret);
 	}
 
 	struct nct_evt evt = { .status = err };
 
 	evt.type = NCT_EVT_DISCONNECTED;
-	err = nct_input(&evt);
-	if (err) {
-		LOG_ERR("Error sending event to application:%d", err);
+	ret = nct_input(&evt);
+	if (ret) {
+		LOG_ERR("Error sending event to application: %d", err);
+		err = ret;
 	}
+	return err;
 }
 
 int nct_keepalive_time_left(void)

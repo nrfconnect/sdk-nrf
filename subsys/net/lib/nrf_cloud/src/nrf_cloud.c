@@ -428,9 +428,9 @@ void nct_apply_update(const struct nrf_cloud_evt * const evt)
 	app_event_handler(evt);
 }
 
-void nrf_cloud_process(void)
+int nrf_cloud_process(void)
 {
-	nct_process();
+	return nct_process();
 }
 
 #if IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
@@ -489,12 +489,24 @@ start:
 
 		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			nrf_cloud_process();
+			ret = nrf_cloud_process();
+			if ((ret < 0) && (ret != -EAGAIN)) {
+				LOG_DBG("Disconnecting; nrf_cloud_process returned an error: %d",
+					ret);
+				evt.status = NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE;
+				break;
+			}
 			continue;
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
-			nrf_cloud_process();
+			ret = nrf_cloud_process();
+			if ((ret < 0) && (ret != -EAGAIN)) {
+				LOG_DBG("Disconnecting; nrf_cloud_process returned an error: %d",
+					ret);
+				evt.status = NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE;
+				break;
+			}
 
 			if (atomic_get(&transport_disconnected) == 1) {
 				LOG_DBG("The cloud socket is already closed");
@@ -816,9 +828,7 @@ static int api_send(const struct cloud_backend *const backend,
 static int api_ping(const struct cloud_backend *const backend)
 {
 	/* TODO: Do only ping, nrf_cloud_process() also checks for input. */
-	nrf_cloud_process();
-
-	return 0;
+	return nrf_cloud_process();
 }
 
 static int api_keepalive_time_left(const struct cloud_backend *const backend)
@@ -828,9 +838,7 @@ static int api_keepalive_time_left(const struct cloud_backend *const backend)
 
 static int api_input(const struct cloud_backend *const backend)
 {
-	nrf_cloud_process();
-
-	return 0;
+	return nrf_cloud_process();
 }
 
 static int api_user_data_set(const struct cloud_backend *const backend,
