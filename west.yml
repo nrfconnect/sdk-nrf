@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a652410da50e3b2ecab47ed705364b2643f4a46a
+      revision: v2.7.0-ncs1-rc2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -99,16 +99,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 94f4758d34b3b663ff489b66c189199c4ec63c06
+      revision: v1.7.99-ncs4-rc2
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 501d6b3a534d698090984043a4f583cbb846e2d1
+      revision: v1.8.0-rc2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: 336ef5f18546bea384fac0dcf3349ebf5125b885
+      revision: v1.3.99-ncs3-rc2
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -116,7 +116,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 154748803b3f83f15364b42eaf94c75fb977ac77
+      revision: v1.8.0-rc2
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -127,7 +127,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: dad0eae1feea407b99904c9918d3709c49d018db
+      revision: v1.8.0-rc2
       groups:
       - nrf-802154
     - name: cjson
@@ -136,12 +136,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: d3eb75fef123029a8f6d82c4f9b7fd0d237121d3
+      revision: v1.8.0-rc2
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 606262f0c901cad6e3257aabb519f0df57de36cf
+      revision: v1.8.0-rc2
       groups:
       - find-my
     # Other third-party repositories.
