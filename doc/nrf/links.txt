@@ -415,12 +415,20 @@
 
 .. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
 
+.. _`TCP`: https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+
 .. _`HSM`: https://en.wikipedia.org/wiki/Hardware_security_module
+
+.. _`IP`: https://en.wikipedia.org/wiki/Internet_protocol_suite
+
+.. _`LTE`: https://en.wikipedia.org/wiki/LTE_(telecommunication)
+
+.. _`TTFF`: https://en.wikipedia.org/wiki/Time_to_first_fix
 
 .. ### Source: doc.microsoft.com
 
 .. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
-.. _`Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/about-iot-hub
+.. _`Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/
 .. _`Creating an Azure IoT Hub instance using the Azure portal`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal
 .. _`Azure IoT Hub Device Provisioning Service (DPS)`: https://docs.microsoft.com/en-us/azure/iot-dps/
 .. _`Set up an Azure IoT Hub Device Provisioning Service (DPS) instance`: https://docs.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision
@@ -619,6 +627,7 @@
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
+.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/Reference/Interacting/MQTT
 
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Guides/GettingStarted/FOTA/
 

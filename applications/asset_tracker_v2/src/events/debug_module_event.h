@@ -34,8 +34,8 @@ enum debug_module_event_type {
 	 */
 	DEBUG_EVT_MEMFAULT_DATA_READY,
 
-	/** Event submitted by the debug module upon an irrecoverable error. The event includes
-	 *  a code indicating the cause of error.
+	/** An irrecoverable error has occurred in the debug module. Error details are
+	 *  attached in the event structure.
 	 */
 	DEBUG_EVT_ERROR
 };
@@ -52,6 +52,7 @@ struct debug_module_event {
 
 	union {
 		struct debug_module_memfault_data memfault;
+		/** Code signifying the cause of error. */
 		int err;
 	} data;
 };

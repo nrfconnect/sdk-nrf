@@ -63,7 +63,7 @@ config CLOUD_CONNECT_RETRIES
 	default 10
 	help
 	  If the cloud module exceeds the number of reconnection attempts it will
-	  send out a reboot request event.
+	  send out an error event.
 
 rsource "../cloud/Kconfig"
 

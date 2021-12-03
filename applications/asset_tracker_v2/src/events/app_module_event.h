@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-/** @brief Application event types submitted by Application module. */
+/** @brief Event types submitted by Application module. */
 enum app_module_event_type {
 	/** Signal that the application has done necessary setup, and
 	 *  now started.
@@ -63,7 +63,7 @@ enum app_module_event_type {
 	 */
 	APP_EVT_SHUTDOWN_READY,
 
-	/** An error has occurred in the application module. Error details are
+	/** An irrecoverable error has occurred in the application module. Error details are
 	 *  attached in the event structure.
 	 */
 	APP_EVT_ERROR
@@ -91,6 +91,7 @@ struct app_module_event {
 	enum app_module_data_type data_list[APP_DATA_COUNT];
 
 	union {
+		/** Code signifying the cause of error. */
 		int err;
 		/* Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
