@@ -77,6 +77,7 @@ The following :ref:`nrf_desktop_config_channel` options are available to perform
 * :ref:`start <dfu_start>` - Starts the new update image transmission.
 * :ref:`data <dfu_data>` - Passes a chunk of the update image data from the host to the device.
 * :ref:`sync <dfu_sync>` - Checks the progress of the update image transmission.
+* :ref:`module_variant <dfu_bootloader_var>` - Provides the host with the information about the bootloader variant used on the device.
 
 .. _dfu_fwinfo:
 
@@ -148,6 +149,12 @@ sync
    The update tool can fetch the ``sync`` option before starting the update process to see at which offset the update is to be restarted.
 
    Fetching the ``sync`` option also triggers moving the image data from the RAM buffer to flash.
+
+.. _dfu_bootloader_var:
+
+module_variant
+   Perform the fetch operation on this option to get the information about the bootloader variant that is being used on the device.
+
 
 Writing data to flash
 =====================

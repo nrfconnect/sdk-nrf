@@ -204,7 +204,7 @@ After the device reboots, the process always starts from the beginning.
 For more information, see nRF Desktop's :ref:`nrf_desktop_dfu`.
 The DFU functionality on the host computer is implemented in the :file:`nrf/scripts/hid_configurator/modules/dfu.py` file.
 
-The ``dfu`` command reads the version of the firmware running on the device and compares it with the firmware version in the update image at the provided path.
+The ``dfu`` command reads the version of the firmware and the bootloader variant that are running on the device and compares them with the firmware version and the bootloader variant in the update image at the provided path.
 If the process is to be continued, the script uploads the image data to the device.
 When the upload is completed, the script reboots the device.
 

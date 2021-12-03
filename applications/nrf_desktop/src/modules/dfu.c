@@ -53,12 +53,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  #define IMAGE0_ADDRESS		PM_S0_IMAGE_ADDRESS
  #define IMAGE1_ID		PM_S1_IMAGE_ID
  #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
+ #define BOOTLOADER_NAME	"B0"
 #elif CONFIG_BOOTLOADER_MCUBOOT
  #include <dfu/mcuboot.h>
  #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
  #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
  #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID
  #define IMAGE1_ADDRESS		PM_MCUBOOT_SECONDARY_ADDRESS
+ #define BOOTLOADER_NAME	"MCUBOOT"
 #else
  #error Bootloader not supported.
 #endif
@@ -86,6 +88,7 @@ enum dfu_opt {
 	DFU_OPT_SYNC,
 	DFU_OPT_REBOOT,
 	DFU_OPT_FWINFO,
+	DFU_OPT_VARIANT,
 
 	DFU_OPT_COUNT
 };
@@ -95,7 +98,8 @@ const static char * const opt_descr[] = {
 	[DFU_OPT_DATA] = "data",
 	[DFU_OPT_SYNC] = "sync",
 	[DFU_OPT_REBOOT] = "reboot",
-	[DFU_OPT_FWINFO] = "fwinfo"
+	[DFU_OPT_FWINFO] = "fwinfo",
+	[DFU_OPT_VARIANT] = OPT_DESCR_MODULE_VARIANT
 };
 
 static uint8_t dfu_slot_id(void)
@@ -489,6 +493,15 @@ static void handle_dfu_sync(uint8_t *data, size_t *size)
 	__ASSERT_NO_MSG(pos == data_size);
 }
 
+static void handle_dfu_bootloader_variant(uint8_t *data, size_t *size)
+{
+	LOG_INF("System bootloader variant requested");
+
+	*size = strlen(BOOTLOADER_NAME);
+	__ASSERT_NO_MSG((*size != 0) && (*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
+	strcpy(data, BOOTLOADER_NAME);
+}
+
 static void handle_reboot_request(uint8_t *data, size_t *size)
 {
 	LOG_INF("System reboot requested");
@@ -650,6 +663,10 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 
 	case DFU_OPT_SYNC:
 		handle_dfu_sync(data, size);
+		break;
+
+	case DFU_OPT_VARIANT:
+		handle_dfu_bootloader_variant(data, size);
 		break;
 
 	default:

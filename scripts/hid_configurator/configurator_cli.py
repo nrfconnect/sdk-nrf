@@ -45,7 +45,7 @@ def perform_dfu(dev, args):
         return
     img_ver_dev = info.get_fw_version()
 
-    img_file = DfuImage(args.dfu_image, info, dev.get_board_name())
+    img_file = DfuImage(args.dfu_image, info, dev.get_board_name(), dev.get_complete_module_name('dfu')[len('{}/'.format('dfu')):])
 
     img_file_bin = img_file.get_dfu_image_bin_path()
     if img_file_bin is None:
@@ -57,6 +57,10 @@ def perform_dfu(dev, args):
     img_ver_file = img_file.get_dfu_image_version()
     if img_ver_file is None:
         print('Cannot read image version from file')
+        return
+
+    if dev.get_complete_module_name('dfu')[len('{}/'.format('dfu')):] != img_file.get_dfu_image_bootloader_var():
+        print('Bootloader types does not match')
         return
 
     print('Current FW version from device: ' +
@@ -133,6 +137,7 @@ def perform_fwinfo(dev, args):
 
     if info:
         print(info)
+        print('  Bootloader variant: ' + dev.get_complete_module_name('dfu')[len('{}/'.format('dfu')):])
     else:
         print('FW info request failed')
 

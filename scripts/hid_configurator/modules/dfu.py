@@ -19,7 +19,6 @@ import imgtool.image
 
 DFU_SYNC_INTERVAL = 1
 
-
 class DFUInfo:
     _DFU_STATE_INACTIVE = 0x00
     _DFU_STATE_ACTIVE   = 0x01
@@ -181,6 +180,10 @@ def b0_get_dfu_image_version(dfu_bin):
     return version
 
 
+def b0_get_dfu_image_bootloader_var():
+    return 'B0'
+
+
 def mcuboot_is_dfu_file_correct(dfu_bin):
     res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
@@ -205,14 +208,20 @@ def mcuboot_get_dfu_image_version(dfu_bin):
     return ver
 
 
+def mcuboot_get_dfu_image_bootloader_var():
+    return 'MCUBOOT'
+
+
 B0_API = {
     'get_dfu_image_version' : b0_get_dfu_image_version,
+    'get_dfu_image_bootloader_var' : b0_get_dfu_image_bootloader_var,
     'get_dfu_image_name' : b0_get_dfu_image_name,
     'is_dfu_file_correct' : b0_is_dfu_file_correct,
 }
 
 MCUBOOT_API = {
     'get_dfu_image_version' : mcuboot_get_dfu_image_version,
+    'get_dfu_image_bootloader_var' : mcuboot_get_dfu_image_bootloader_var,
     'get_dfu_image_name' : mcuboot_get_dfu_image_name,
     'is_dfu_file_correct' : mcuboot_is_dfu_file_correct,
 }
@@ -226,7 +235,7 @@ BOOTLOADER_APIS = {
 class DfuImage:
     MANIFEST_FILE = "manifest.json"
 
-    def __init__(self, dfu_package, dev_fwinfo, board_name):
+    def __init__(self, dfu_package, dev_fwinfo, dev_board_name, dev_bootloader_variant):
         assert isinstance(dev_fwinfo, FwInfo)
         self.image_bin_path = None
 
@@ -254,13 +263,15 @@ class DfuImage:
 
         if self.bootloader_api is not None:
             assert 'get_dfu_image_version' in self.bootloader_api
+            assert 'get_dfu_image_bootloader_var' in self.bootloader_api
             assert 'get_dfu_image_name' in self.bootloader_api
             assert 'is_dfu_file_correct' in self.bootloader_api
 
             self.image_bin_path = DfuImage._parse_dfu_image_bin_path(self.temp_dir.name,
                                                                      self.manifest,
                                                                      dev_fwinfo,
-                                                                     board_name,
+                                                                     dev_board_name,
+                                                                     dev_bootloader_variant,
                                                                      self.bootloader_api)
 
     @staticmethod
@@ -301,7 +312,7 @@ class DfuImage:
         return board_name.split('_')[0]
 
     @staticmethod
-    def _parse_dfu_image_bin_path(dfu_folder, manifest, dev_fwinfo, board_name, bootloader_api):
+    def _parse_dfu_image_bin_path(dfu_folder, manifest, dev_fwinfo, dev_board_name, dev_bootloader_variant, bootloader_api):
         flash_area_id = dev_fwinfo.get_flash_area_id()
         if flash_area_id not in (0, 1):
             print('Invalid area ID in FW info')
@@ -315,7 +326,7 @@ class DfuImage:
             if f['file'] != dfu_image_name:
                 continue
 
-            if DfuImage._get_config_channel_board_name(f['board']) != board_name:
+            if DfuImage._get_config_channel_board_name(f['board']) != dev_board_name:
                 continue
 
             dfu_bin_path = os.path.join(dfu_folder, f['file'])
@@ -324,6 +335,9 @@ class DfuImage:
                 continue
 
             if not bootloader_api['is_dfu_file_correct'](dfu_bin_path):
+                continue
+
+            if dev_bootloader_variant != bootloader_api['get_dfu_image_bootloader_var']():
                 continue
 
             return dfu_bin_path
@@ -339,6 +353,9 @@ class DfuImage:
         else:
             return self.bootloader_api['get_dfu_image_version'](self.image_bin_path)
 
+    def get_dfu_image_bootloader_var(self):
+        return self.bootloader_api['get_dfu_image_bootloader_var']()
+
     def __del__(self):
         try:
             self.temp_dir.cleanup()
@@ -347,7 +364,12 @@ class DfuImage:
 
 
 def fwinfo(dev):
-    success, fetched_data = dev.config_get('dfu', 'fwinfo')
+    dfu_module_name = dev.get_complete_module_name('dfu')
+    if dfu_module_name:
+        success, fetched_data = dev.config_get(dfu_module_name , 'fwinfo')
+    else:
+        print('Module DFU not found')
+        return None
 
     if success and fetched_data:
         fw_info = FwInfo(fetched_data)
@@ -357,7 +379,12 @@ def fwinfo(dev):
 
 
 def fwreboot(dev):
-    success, fetched_data = dev.config_get('dfu', 'reboot')
+    dfu_module_name = dev.get_complete_module_name('dfu')
+    if dfu_module_name:
+        success, fetched_data = dev.config_get(dfu_module_name , 'reboot')
+    else:
+        print('Module DFU not found')
+        return False, False
 
     if (not success) or (fetched_data is None):
         return False, False
@@ -376,7 +403,12 @@ def fwreboot(dev):
 
 
 def dfu_sync(dev):
-    success, fetched_data = dev.config_get('dfu', 'sync')
+    dfu_module_name = dev.get_complete_module_name('dfu')
+    if dfu_module_name:
+        success, fetched_data = dev.config_get(dfu_module_name , 'sync')
+    else:
+        print('Module DFU not found')
+        return None
 
     if success and fetched_data:
         dfu_info = DFUInfo(fetched_data)
@@ -391,7 +423,12 @@ def dfu_start(dev, img_length, img_csum, offset):
     # verified by dfu sync at data exchange.
     event_data = struct.pack('<III', img_length, img_csum, offset)
 
-    success = dev.config_set('dfu', 'start', event_data)
+    dfu_module_name = dev.get_complete_module_name('dfu')
+    if dfu_module_name:
+        success = dev.config_set(dfu_module_name , 'start', event_data)
+    else:
+        print('Module DFU not found')
+        return False
 
     if success:
         logging.debug('DFU started')
@@ -543,7 +580,12 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
 
         # Send data to the device
         logging.debug('Send DFU request: offset {}, size {}'.format(offset, chunk_len))
-        success = dev.config_set('dfu', 'data', chunk_data)
+        dfu_module_name = dev.get_complete_module_name('dfu')
+        if dfu_module_name:
+            success = dev.config_set(dfu_module_name , 'data', chunk_data)
+        else:
+            print('Module DFU not found')
+            return False, offset
         if not success:
             print('Lost communication with the device')
             break

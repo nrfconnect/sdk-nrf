@@ -69,6 +69,13 @@ nRF9160: Asset Tracker v2
 
 * |no_changes_yet_note|
 
+nRF Desktop
+-----------
+
+* Added:
+
+  * Added possibility to ask for bootloader variant using config channel.
+
 Samples
 =======
 
@@ -149,6 +156,14 @@ Partition Manager
 -----------------
 
 * |no_changes_yet_note|
+
+HID Configurator
+----------------
+
+* Added:
+
+  * HID Configurator now recognizes the bootloader variant as a DFU module variant for the configuration channel communication.
+    The new implementation is not backward compatible, since new version of script checks for variant it expects firmware to support this request.
 
 MCUboot
 =======
