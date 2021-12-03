@@ -485,3 +485,10 @@ class NrfHidDevice():
 
     def config_set(self, module_name, option_name, value, poll_interval=POLL_INTERVAL_DEFAULT):
         return self._config_operation(module_name, option_name, False, value, poll_interval)
+
+    def get_complete_module_name(self, name):
+        """complete module name consist of module name + '/' + variant name."""
+        for key in self.dev_config:
+            if '{}/'.format(name) in key:
+                return key
+        return None
