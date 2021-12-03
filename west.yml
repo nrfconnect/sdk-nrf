@@ -104,7 +104,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 08aa48a772a2ad8374055e965784f0a65232531e
+      revision: 501d6b3a534d698090984043a4f583cbb846e2d1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -127,7 +127,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v1.8.0-rc1
+      revision: dad0eae1feea407b99904c9918d3709c49d018db
       groups:
       - nrf-802154
     - name: cjson
