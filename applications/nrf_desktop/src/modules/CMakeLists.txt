@@ -25,9 +25,6 @@ target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_BLE_QOS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_qos.c)
 
-target_sources_ifdef(CONFIG_SETTINGS
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/settings_loader.c)
-
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/info.c)
 

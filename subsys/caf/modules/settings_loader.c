@@ -12,10 +12,12 @@
 #define MODULE settings_loader
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_SETTINGS_LOADER_LOG_LEVEL);
+#include CONFIG_CAF_SETTINGS_LOADER_DEF_PATH
 
-#define THREAD_STACK_SIZE	CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE
+#include <logging/log.h>
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SETTINGS_LOADER_LOG_LEVEL);
+
+#define THREAD_STACK_SIZE	CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE
 #define THREAD_PRIORITY		K_PRIO_PREEMPT(K_LOWEST_APPLICATION_THREAD_PRIO)
 static struct k_thread thread;
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
@@ -48,7 +50,7 @@ static void start_loading_thread(void)
 
 static void load_settings(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD)) {
+	if (IS_ENABLED(CONFIG_CAF_SETTINGS_LOADER_USE_THREAD)) {
 		start_loading_thread();
 	} else {
 		int err = settings_load();
@@ -65,55 +67,36 @@ static void load_settings(void)
 
 static bool module_event_handler(const struct module_state_event *event)
 {
-	/* Settings need to be loaded after all client modules are ready. */
-	const void * const req_modules[] = {
-		MODULE_ID(main),
-#if CONFIG_DESKTOP_HIDS_ENABLE
-		MODULE_ID(hids),
-#endif
-#if CONFIG_DESKTOP_BAS_ENABLE
-		MODULE_ID(bas),
-#endif
-#if CONFIG_CAF_BLE_ADV
-		MODULE_ID(ble_adv),
-#endif
-#if CONFIG_DESKTOP_MOTION_SENSOR_ENABLE
-		MODULE_ID(motion),
-#endif
-#if CONFIG_DESKTOP_BLE_SCANNING_ENABLE
-		MODULE_ID(ble_scan),
-#endif
-#if CONFIG_DESKTOP_FAILSAFE_ENABLE
-		MODULE_ID(failsafe),
-#endif
-	};
+	static struct module_flags req_modules_bm;
 
-	static uint32_t req_state;
+	if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+		static bool initialized;
 
-	BUILD_ASSERT(ARRAY_SIZE(req_modules) < (8 * sizeof(req_state)),
-			"Array size bigger than number of bits");
+		__ASSERT_NO_MSG(!initialized);
+		initialized = true;
 
-	if (req_state == BIT_MASK(ARRAY_SIZE(req_modules))) {
-		/* Already initialized */
+		get_req_modules(&req_modules_bm);
+
+		/* In case user implemented empty get_req_modules function */
+		if (module_flags_check_zero(&req_modules_bm)) {
+			load_settings();
+			return false;
+		}
+	}
+
+	if (module_flags_check_zero(&req_modules_bm)) {
+		/* Settings already loaded */
 		return false;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(req_modules); i++) {
-		if (check_state(event, req_modules[i], MODULE_STATE_READY)) {
-			unsigned int flag = BIT(i);
+	if (event->state == MODULE_STATE_READY) {
+		module_flags_clear_bit(&req_modules_bm, module_idx_get(event->module_id));
 
-			/* Catch double initialization of any module */
-			__ASSERT_NO_MSG((req_state & flag) == 0);
-
-			req_state |= flag;
-
-			if (req_state == BIT_MASK(ARRAY_SIZE(req_modules))) {
-				load_settings();
-			}
-
-			break;
+		if (module_flags_check_zero(&req_modules_bm)) {
+			load_settings();
 		}
 	}
+
 	return false;
 }
 
