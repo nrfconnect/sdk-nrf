@@ -58,6 +58,18 @@ static inline const void *module_id_get(size_t idx)
 }
 
 /**
+ * @brief Get IDX of module with given id.
+ *
+ * @param[in] module_id ID of the module.
+ *
+ * @return Module IDX.
+ */
+static inline size_t module_idx_get(const void *module_id)
+{
+	return ((const size_t *)module_id - (const size_t *)__start_module_id_list);
+}
+
+/**
  * @brief Get name of the module with given id.
  *
  * @param[in] id Id of the module.
