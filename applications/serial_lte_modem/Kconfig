@@ -37,18 +37,14 @@ config SLM_EXTERNAL_XTAL
 #
 choice
 	prompt "UART for interconnect"
-	default SLM_CONNECT_UART_0
 	help
 		Selects which UART to use for interconnect:
 		-  UART 0
 		-  UART 2
 	config SLM_CONNECT_UART_0
 		bool "UART 0"
-	  select UART_0_NRF_HW_ASYNC
 	config SLM_CONNECT_UART_2
 		bool "UART 2"
-	  select UART_2_NRF_UARTE
-	  select UART_2_NRF_HW_ASYNC
 endchoice
 
 choice
@@ -78,8 +74,6 @@ config SLM_START_SLEEP
 
 config SLM_INTERFACE_PIN
 	int "Interface GPIO to wake up or exit idle mode"
-	default 6 if SLM_CONNECT_UART_0
-	default 31 if SLM_CONNECT_UART_2
 
 #
 # Socket

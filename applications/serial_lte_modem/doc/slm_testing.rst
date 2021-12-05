@@ -568,93 +568,93 @@ You must register the corresponding credentials on the server side.
 
 .. not tested
 
-    DTLS client
-    ===========
+DTLS client
+===========
 
-    The DTLS client requires connection-based UDP to trigger the DTLS establishment.
+The DTLS client requires connection-based UDP to trigger the DTLS establishment.
 
-    Before completing this test, you must update the Pre-shared Key (PSK) and the PSK identity to be used for the TLS connection in the modem.
-    The credentials must use the security tag 16842756.
+Before completing this test, you must update the Pre-shared Key (PSK) and the PSK identity to be used for the TLS connection in the modem.
+The credentials must use the security tag 16842756.
 
-    To store the credentials in the modem, enter the following AT commands:
+To store the credentials in the modem, enter the following AT commands:
 
-    .. parsed-literal::
-       :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-       **AT%CMNG=0,16842756,3,"6e7266393174657374"**
-       **AT%CMNG=0,16842756,4,"nrf91test"**
+   **AT%CMNG=0,16842756,3,"6e7266393174657374"**
+   **AT%CMNG=0,16842756,4,"nrf91test"**
 
-    You must register the same PSK and PSK identity on the server side.
+You must register the same PSK and PSK identity on the server side.
 
-    1. Establish and test a DTLS connection:
+1. Establish and test a DTLS connection:
 
-       a. List the credentials that are stored in the modem with security tag 16842755.
-
-	  .. parsed-literal::
-	     :class: highlight
-
-	     **AT%CMNG=1,16842756**
-	     %CMNG: 16842756,3,"0303030303030303030303030303030303030303030303030303030303030303"
-	     %CMNG: 16842756,4,"0404040404040404040404040404040404040404040404040404040404040404"
-	     OK
-
-       #. Open a TCP/DTLS socket that uses the security tag 16842756 and connect to a DTLS server on a specified port.
-	  Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
-
-	 .. parsed-literal::
-	     :class: highlight
-
-	     **AT#XSOCKET=1,2,0,16842756**
-	     #XSOCKET: 1,2,0,273
-	     OK
-
-	     **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
-	     #XCONNECT: 1
-	     OK
-
-       #. Send plain text data to the DTLS server and retrieve the returned data.
+   a. List the credentials that are stored in the modem with security tag 16842755.
 
 	  .. parsed-literal::
-	     :class: highlight
+		 :class: highlight
 
-	     **AT#XSEND="Test DTLS client"**
-	     #XSEND: 16
-	     OK
+		 **AT%CMNG=1,16842756**
+		 %CMNG: 16842756,3,"0303030303030303030303030303030303030303030303030303030303030303"
+		 %CMNG: 16842756,4,"0404040404040404040404040404040404040404040404040404040404040404"
+		 OK
 
-	     **AT#XRECV**
-	     PONG: b'Test DTLS client'
-	     #XRECV: 25
-	     OK
-
-       #. Close the socket.
+   #. Open a TCP/DTLS socket that uses the security tag 16842756 and connect to a DTLS server on a specified port.
+      Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
 
 	  .. parsed-literal::
-	     :class: highlight
+		 :class: highlight
 
-	     **AT#XSOCKET=0**
-	     #XSOCKET: 0,"closed"
-	     OK
+		 **AT#XSOCKET=1,2,0,16842756**
+		 #XSOCKET: 1,2,0,273
+		 OK
 
-    #. Test a DTLS client with UDP proxy service:
+		 **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
+		 #XCONNECT: 1
+		 OK
 
-       a. Create a UDP/DTLS client and connect to a server.
-	  Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
-	  Then read the information about the connection.
-
-	  .. parsed-literal::
-	     :class: highlight
-
-	     **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*\ **,16842756**
-	     #XUDPCLI: 2,"connected"
-	     OK
-
-       #. Disconnect from the server.
+   #. Send plain text data to the DTLS server and retrieve the returned data.
 
 	  .. parsed-literal::
-	     :class: highlight
+		 :class: highlight
 
-	     **AT#XUDPCLI=0**
-	     OK
+		 **AT#XSEND="Test DTLS client"**
+		 #XSEND: 16
+		 OK
+
+		 **AT#XRECV**
+		 PONG: b'Test DTLS client'
+		 #XRECV: 25
+		 OK
+
+   #. Close the socket.
+
+	  .. parsed-literal::
+		 :class: highlight
+
+		 **AT#XSOCKET=0**
+		 #XSOCKET: 0,"closed"
+		 OK
+
+#. Test a DTLS client with UDP proxy service:
+
+   a. Create a UDP/DTLS client and connect to a server.
+      Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
+      Then read the information about the connection.
+
+	  .. parsed-literal::
+		 :class: highlight
+
+		 **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*\ **,16842756**
+		 #XUDPCLI: 2,"connected"
+		 OK
+
+   #. Disconnect from the server.
+
+	  .. parsed-literal::
+		 :class: highlight
+
+		 **AT#XUDPCLI=0**
+		 OK
 
 TCP server
 ==========
@@ -1740,3 +1740,51 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          221-Goodbye. You uploaded 1 and downloaded 0 kbytes.
          221 Logout.
          OK
+
+.. _slm_testing_twi:
+
+TWI AT commands
+***************
+
+Complete the following steps to test the functionality provided by the i2c sensors on the Thingy:91 using the two-wire interface (TWI):
+
+1. Test the TWI list command using ``AT#XTWILS``.
+   As Thingy:91 connects to the sensors via i2c2, it shows that TWI2 is available:
+
+   ::
+
+      AT#XTWILS
+      #XTWILS: 2
+      OK
+
+2. Test the TWI write command using ``AT#XTWIW=2,"76","D0"``.
+   It performs a write operation to the device address ``0x76`` (BME680), and it writes ``D0`` to the device:
+
+   ::
+
+      AT#XTWIW=2,"76","D0"
+      OK
+
+3. Test the TWI read command using ``AT#XTWIR=2,"76",1``.
+   It performs a read operation to the device address ``0x76`` (BME680), and it reads 1 byte from the device:
+
+   ::
+
+      AT#XTWIR=2,"76",1
+
+      #XTWIR: 61
+      OK
+
+   The value returned (``61``) indicates ``0x61`` as the ``CHIP ID``.
+
+4. Test the TWI write-and-read command using ``AT#XTWIWR=2,"76","D0",1``.
+   It performs a write-then-read operation to the device address ``0x76`` (BME680) to get the ``CHIP ID`` of the device:
+
+   ::
+
+      AT#XTWIWR=2,"76","D0",1
+
+      #XTWIWR: 61
+      OK
+
+   The value returned (``61``) indicates ``0x61`` as the ``CHIP ID``.

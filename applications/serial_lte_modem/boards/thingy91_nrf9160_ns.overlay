@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart2 {
+	status="disabled";
+};
+
+&i2c2 {
+	status = "okay";
+};
+
+&button0 {
+	status = "disabled";
+};

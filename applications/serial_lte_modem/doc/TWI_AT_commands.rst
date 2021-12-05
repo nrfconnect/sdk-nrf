@@ -38,6 +38,9 @@ The ``<index>`` parameter corresponds to the following TWI instances:
 Example
 ~~~~~~~
 
+The following example is meant for Thingy:91.
+
+It shows that TWI2 (``i2c2``) is available.
 ::
 
    AT#XTWILS
@@ -95,6 +98,9 @@ There is no response.
 Example
 ~~~~~~~
 
+The following example is meant for Thingy:91.
+
+It performs a write operation to the device address ``0x76`` (BME680), and it writes ``D0`` to the device.
 ::
 
    AT#XTWIW=2,"76","D0"
@@ -155,6 +161,10 @@ Response syntax
 Example
 ~~~~~~~
 
+The following example is meant for Thingy:91.
+
+It performs a read operation to the device address ``0x76`` (BME680), and it reads 1 byte from the device.
+The value returned (``61``) indicates ``0x61`` as the ``CHIP ID``.
 ::
 
    AT#XTWIR=2,"76",1
@@ -219,15 +229,32 @@ Response syntax
 * The ``<data>`` parameter is a hexadecimal string.
   It represents the data read from the peripheral device.
 
-Example
-~~~~~~~
+Examples
+~~~~~~~~
 
-::
+* The following example is meant for Thingy:91.
 
-   AT#XTWIWR=2,"76","D0",1
+  It performs a write-then-read operation to the device address ``0x76`` (BME680) to get the ``CHIP ID`` of the device.
+  The value returned (``61``) indicates ``0x61`` as the ``CHIP ID``.
 
-   #XTWIWR: 61
-   OK
+  ::
+
+     AT#XTWIWR=2,"76","D0",1
+
+     #XTWIWR: 61
+     OK
+
+* The following example is meant for Thingy:91.
+
+  It performs a write-then-read operation to the device address ``0x38`` (BH1749) to get the ``MANUFACTURER ID`` of the device.
+  The value returned (``E0``) indicates ``0xE0`` as the ``MANUFACTURER ID`` of the device.
+
+  ::
+
+     AT#XTWIWR=2,"38","92",1
+
+     #XTWIWR: E0
+     OK
 
 Read command
 ------------

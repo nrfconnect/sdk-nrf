@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 &uart2 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
@@ -8,7 +14,6 @@
 	cts-pin = <13>;
 	hw-flow-control;
 };
-
 
 &i2c2 {
 	status = "disabled";
