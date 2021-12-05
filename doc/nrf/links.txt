@@ -768,3 +768,7 @@
 
 .. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
 .. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
+
+.. _`Termite`: https://www.compuphase.com/software_termite.htm
+
+.. _`Teraterm`: https://ttssh2.osdn.jp/index.html.en
