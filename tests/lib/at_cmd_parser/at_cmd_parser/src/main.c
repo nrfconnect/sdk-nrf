@@ -161,6 +161,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 0,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("+TEST"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("+TEST", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to +TEST");
 
@@ -172,6 +173,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 2,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("Hello World!"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("Hello World!", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to Hello World!");
 
@@ -192,6 +194,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 0,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("%TEST"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("%TEST", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to %TEST");
 
@@ -203,6 +206,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 2,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("Hello World!"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("Hello World!", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to Hello World!");
 
@@ -217,6 +221,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 0,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("%TEST"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("%TEST", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to %TEST");
 
@@ -229,6 +234,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 2,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("Hello World!"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("Hello World!", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should "
 		      "equal to Hello World!");
@@ -244,6 +250,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 0,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("+TEST"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("+TEST", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to +TEST");
 
@@ -256,6 +263,7 @@ static void test_params_string_parsing(void)
 	zassert_equal(0, at_params_string_get(&test_list2, 2,
 					      tmpbuf, &tmpbuf_len),
 		      "Get string should not fail");
+	zassert_equal(strlen("FOOBAR"), tmpbuf_len, "String length mismatch");
 	zassert_equal(0, memcmp("FOOBAR", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should "
 		      "equal to FOOBAR");
