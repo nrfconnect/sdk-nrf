@@ -105,6 +105,10 @@ manifest:
       repo-path: sdk-mcuboot
       revision: pull/191/head
       path: bootloader/mcuboot
+    - name: mbedtls-nrf
+      path: mbedtls
+      repo-path: sdk-mbedtls
+      revision: mbedtls-2.26.0
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
@@ -157,11 +161,6 @@ manifest:
       path: test/cmock/vendor/unity
       revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
       remote: throwtheswitch
-    - name: mbedtls-nrf
-      path: mbedtls
-      repo-path: mbedtls
-      revision: mbedtls-2.26.0
-      remote: armmbed
     - name: Alexa-Gadgets-Embedded-Sample-Code
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
