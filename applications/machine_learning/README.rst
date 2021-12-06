@@ -79,6 +79,31 @@ By default, the application uses pretrained machine leaning models deployed in `
 The application displays LED effects that correspond to the machine learning results.
 For more detailed information, see the `User interface`_ section.
 
+Power management
+================
+
+Reducing power consumption is important for every battery-powered device.
+
+In the nRF Machine Learning application, application modules are automatically suspended or turned off if the device is not in use for a predefined period.
+The application uses :ref:`caf_power_manager` for this purpose.
+This means that Zephyr power management is forced to the :c:enumerator:`PM_STATE_ACTIVE` state when the device is in either the Power management active or the Power management suspended state, but the power off state is forced directly by :ref:`caf_power_manager` as Zephyr's :c:enumerator:`PM_STATE_SOFT_OFF` state.
+
+* In the :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE` state, the device is in working condition, Bluetooth is advertising whenever required and all the connections are maintained.
+* In the :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` state, the device maintains the active Bluetooth connection.
+* In the :c:enumerator:`POWER_MANAGER_LEVEL_OFF` state, the CPU is switched to the off mode.
+
+In the suspended and OFF states, most of the functionalities are disabled.
+For example, LEDs and sensors are turned off and Bluetooth advertising is stopped.
+
+Any button press can wake up the device.
+
+For the Thingy:53, the sensor supports a trigger that can be used for active power management.
+As long as the device detects acceleration, the board is kept in the active state.
+When the board is in the :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` state, it can be woken up by acceleration threshold by moving the device.
+
+You can define the time interval after which the peripherals are suspended or powered off in the :kconfig:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` option.
+By default, this period is set to 120 seconds.
+
 .. _nrf_machine_learning_app_architecture:
 
 Firmware architecture
