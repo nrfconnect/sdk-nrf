@@ -13,7 +13,7 @@ if SENSOR_MODULE
 
 config SENSOR_THREAD_STACK_SIZE
 	int "Sensor module thread stack size"
-	default 1024
+	default 1152
 
 rsource "../ext_sensors/Kconfig"
 
