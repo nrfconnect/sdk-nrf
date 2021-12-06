@@ -10,3 +10,4 @@ pyyaml
 azure-storage-blob
 sphinx_markdown_tables
 markdown<3.3.5 # Workaround for ryanfox/sphinx-markdown-tables#34
+mistune<2.0 # Workaround for https://github.com/CrossNox/m2r2/issues/40
