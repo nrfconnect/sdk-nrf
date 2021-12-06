@@ -10,6 +10,7 @@
 #include <device.h>
 #include <drivers/gpio.h>
 #include <hal/nrf_power.h>
+#include <helpers/nrfx_reset_reason.h>
 
 #include <event_manager.h>
 #include <profiler.h>
@@ -132,6 +133,10 @@ static void system_off(void)
 		set_power_state(POWER_STATE_OFF);
 		LOG_WRN("System turned off");
 		LOG_PANIC();
+		/* Clear RESETREAS to avoid starting serial recovery if nobody
+		 * has cleared it already.
+		 */
+		nrfx_reset_reason_clear(nrfx_reset_reason_get());
 		pm_power_state_force((struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
 	} else {
 		LOG_WRN("System suspended");
