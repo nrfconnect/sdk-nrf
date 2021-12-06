@@ -36,7 +36,7 @@ config DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS
 
 config DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE
 	int "Debug module Memfault thread stack size"
-	default 1024
+	default 1152
 
 config DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX
 	int "Fragment size of data transmitted to memfault"
