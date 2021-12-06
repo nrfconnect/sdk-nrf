@@ -200,19 +200,20 @@ Bluetooth samples
 * :ref:`peripheral_hids_mouse` and :ref:`central_uart` samples now come with the :ref:`ble_rpc_host` child image configuration overlay.
   The overlay shows how to configure an application running a serialized Bluetooth Low Energy Host.
   These samples run out the box with the :ref:`ble_rpc` library.
+* Added :ref:`central_and_peripheral_hrs` sample.
 
 Bluetooth mesh samples
 ----------------------
 
 * Added:
 
-  * :ref:`bluetooth_ble_peripheral_lbs_coex` sample, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
+  * :ref:`bluetooth_ble_peripheral_lbs_coex`, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
   * Support for :ref:`zephyr:nrf21540dk_nrf52840`.
-  * :ref:`central_and_peripheral_hrs` sample.
 
 * Updated:
 
-  * Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+  * :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+  * :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_sensor_server` with support for :ref:`zephyr:thingy53_nrf5340`.
   * Updated some samples to use DTS overlays instead of KConfig configuration files for setting up external flash memory.
 
 HomeKit samples
@@ -347,7 +348,12 @@ Bluetooth libraries
   * Added support for the GATT API serialization.
   * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
 
-Added:
+* :ref:`bt_mesh` library:
+
+  * Aligned the Silvair EnOcean Proxy Server model implementation with rev 1.2 of the Silvair EnOcean Switch Mesh Proxy Server specification.
+  * Fixed an issue where the Sensor Client API can be used as non-blocking by passing NULL to the arguments that are used to fill the response.
+
+  Added:
 
 * :ref:`lib_hrs_client_readme`
 
