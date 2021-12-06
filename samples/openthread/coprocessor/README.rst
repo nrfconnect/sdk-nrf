@@ -66,7 +66,7 @@ The sample supports the following development kits for testing the network statu
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 To test the sample, you need at least one development kit.
 Additional development kits programmed with the Co-processor sample can be used for the :ref:`optional testing of network joining <ot_coprocessor_sample_testing_more_boards>`.
