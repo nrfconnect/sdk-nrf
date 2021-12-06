@@ -122,6 +122,20 @@ In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included f
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
+Bluetooth mesh
+==============
+
+Bluetooth mesh is a mesh networking solution based on Bluetooth Low Energy, developed by the Bluetooth® Special Interest Group (SIG).
+It is optimized for creating large-scale device networks, and implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
+
+Bluetooth mesh networking allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth Low Energy protocol to exchange messages between the mesh nodes in the network.
+
+The |NCS| contains a variety of :ref:`Bluetooth mesh samples <ble_samples>` that target nRF52 Series devices.
+In addition, you can run the :ref:`Bluetooth mesh samples <zephyr:bluetooth-samples>` that are included from Zephyr.
+
+For available libraries, see :ref:`bt_mesh` (|NCS|) and :ref:`zephyr:bluetooth_mesh` (Zephyr).
+See the :ref:`ug_bt_mesh` user guide for information about how to utilize the supplied libraries and work with Bluetooth mesh.
+
 Enhanced ShockBurst
 ===================
 
