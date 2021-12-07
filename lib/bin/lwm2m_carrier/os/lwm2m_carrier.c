@@ -42,7 +42,6 @@ void lwm2m_carrier_thread_run(void)
 	}
 
 	lwm2m_carrier_run();
-	CODE_UNREACHABLE;
 }
 
 K_THREAD_DEFINE(lwm2m_carrier_thread, LWM2M_CARRIER_THREAD_STACK_SIZE,
