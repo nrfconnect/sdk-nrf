@@ -236,7 +236,7 @@ int lwm2m_carrier_init(const lwm2m_carrier_config_t *config);
 /**
  * @brief LWM2M carrier library main function.
  *
- * This is a non-return function, intended to run on a separate thread.
+ * Intended to run on a separate thread. The function will exit only on non-recoverable errors.
  */
 void lwm2m_carrier_run(void);
 
