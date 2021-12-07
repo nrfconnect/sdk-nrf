@@ -373,7 +373,7 @@ For more detailed information about building the machine learning model in the |
 
 .. tip::
    The nRF Machine Learning application configurations available in the |NCS| do not require providing an API key to download the model.
-   The model is download from web, but no authentication is required.
+   The model is downloaded from the web, but no authentication is required.
 
 Testing
 =======

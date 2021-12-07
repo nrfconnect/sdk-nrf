@@ -100,7 +100,7 @@ If the model is to receive messages, create an opcode list that will define a li
 To create the opcode list, initialize an array of :c:struct:`bt_mesh_model_op` type with the following required parameters:
 
 1. Message opcode, :c:member:`bt_mesh_model_op.opcode`, to register a message to be received by the model.
-#. Minimal message length, :c:member:`bt_mesh_model_op.min_len`, that prevents the model from receiving messages shorter than the specified value.
+#. Minimal message length, :c:member:`bt_mesh_model_op.len`, that prevents the model from receiving messages shorter than the specified value.
 #. Message handler, :c:member:`bt_mesh_model_op.func`, which is used to process the received message.
 
 The last element in the opcode list is always the :c:macro:`BT_MESH_MODEL_OP_END` macro:
