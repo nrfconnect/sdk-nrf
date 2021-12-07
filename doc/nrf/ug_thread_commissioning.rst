@@ -197,10 +197,10 @@ The commissioning uses the following passwords and credentials:
   .. note::
         The Commissioning Credential has 6 bytes minimum and 255 bytes maximum and is composed in the UTF-8 format, without character exclusions.
 
-* *Commissioning Key (PSKc)* - Pre-shared key for the Commissioner based on the Commissioning Credential, which is used to establish the Commissioner Session between the Commissioner and Border Agent.
+* *Commissioning Key (PSKc)* - Preshared key for the Commissioner based on the Commissioning Credential, which is used to establish the Commissioner Session between the Commissioner and Border Agent.
   All devices in the Thread network store the PSKc.
 * *Joining Device Credential (PSKd)* - Passphrase for authenticating a new Joiner device, used to establish a secure session between the Commissioner and the Joiner.
-  When encoded in binary, this passphrase is referred to as pre-shared key for the device.
+  When encoded in binary, this passphrase is referred to as preshared key for the device.
 
   .. note::
         The Joining Device Credential is composed of at least 6 and no more than 32 uppercase alphanumeric ASCII characters (base32-thread, 0 to 9 and A to Y, with the exclusion of I, O, Q, and Z).
@@ -249,7 +249,7 @@ Programming the DKs
 Program both development kits with the :ref:`ot_cli_sample` sample or program both of them with the :ref:`ot_coprocessor_sample` sample.
 See the sample's page for details.
 
-After programming the DKs and turning them on, both devices will be pre-commissioned and will form a Thread network.
+After programming the DKs and turning them on, both devices will be precommissioned and will form a Thread network.
 This network needs to be manually disabled.
 
 .. _thread_ot_commissioning_configuring_on-mesh_disabling:
@@ -394,7 +394,7 @@ Complete the following steps for the sample of your choice:
             wpanctl:leader_if> commissioner start
             Commissioner started
 
-#. Set up a pre-shared key for the Joiner device by running the following command:
+#. Set up a preshared key for the Joiner device by running the following command:
 
    .. tabs::
 

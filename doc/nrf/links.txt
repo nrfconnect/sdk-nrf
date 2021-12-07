@@ -176,6 +176,7 @@
 .. _`zb_zcl_device_callback_param_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#ga0dfcc989252b93252f8bb1d27d2639fa
 .. _`zb_zcl_device_callback_id_t`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gad27454b213ce8a00540ebc75288966ad
 .. _`ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group___z_b___z_c_l___i_n_i_t_i_a_l_i_z_a_t_i_o_n.html#gga35caa2e3a9ef37535b1f75e0fe919266a8a87688c465e80b46ad821741a60fe84
+.. _`zb_bdb_set_legacy_device_support`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.9.0.1/group__zboss__bdb__comm__params.html#ga8bf3b3beef192c00bcdca17ad1240921
 
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 
@@ -505,7 +506,7 @@
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 .. _`OpenThread logging`: https://openthread.io/guides/build/logs
 
-.. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
+.. _`OpenThread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
 .. _`OpenThread Border Router`: https://openthread.io/guides/border-router
 .. _`OpenThread Border Router Codelab tutorial`: https://openthread.io/codelabs/openthread-border-router
 .. _`OpenThread Border Router Codelab tutorial step 3`: https://openthread.io/codelabs/openthread-border-router#2

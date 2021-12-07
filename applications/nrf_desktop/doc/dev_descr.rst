@@ -38,4 +38,4 @@ Implementation details
 **********************
 
 The module uses :c:macro:`BT_GATT_SERVICE_DEFINE` to define the custom GATT Service.
-More detailed information regarding GATT are available in Zephyr's :ref:`zephyr:bt_gatt` documentation.
+More detailed information regarding GATT is available in Zephyr's :ref:`zephyr:bt_gatt` documentation.

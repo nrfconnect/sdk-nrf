@@ -39,7 +39,7 @@ This will prevent blocking the system workqueue, but it requires creating an add
 The stack size for the background thread is defined as :kconfig:`CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE`.
 
 .. tip::
-   Using separate thread is recommended for nRF Desktop keyboards.
+   Using a separate thread is recommended for nRF Desktop keyboards.
    The :ref:`caf_buttons` uses the system workqueue to scan the keyboard matrix.
    Loading the settings in the system workqueue context could block the workqueue and result in missing key presses on system reboot.
    For this reason, :kconfig:`CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD` is enabled for keyboard reference design (nRF52832 Desktop Keyboard)

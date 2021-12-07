@@ -64,19 +64,19 @@ On the Bluetooth Central device, if only one instance is used, reports from all 
 In other cases, reports from each of the bonded peripherals will be forwarded to a dedicated HID-class USB device instance.
 The same instance is used after reconnection.
 
-USB wake-up configuration
-=========================
+USB wakeup configuration
+========================
 
-The nRF Desktop device can work as a source of wake-up events for the host device if connected through the USB.
+The nRF Desktop device can work as a source of wakeup events for the host device if connected through the USB.
 
 To use the feature, select :kconfig:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`.
 
 When host enters the suspended state, the USB will be suspended as well.
 With this feature enabled, this state change is used to suspend the nRF Desktop device (see :ref:`nrf_desktop_power_manager`).
-When the nRF Desktop device wakes up from standby, the |usb_state| will issue a wake-up request on the USB.
+When the nRF Desktop device wakes up from standby, the |usb_state| will issue a wakeup request on the USB.
 
 .. note::
-    The USB wake-up request is transmitted to the host only if the host enables this request before suspending the USB.
+    The USB wakeup request is transmitted to the host only if the host enables this request before suspending the USB.
 
 
 Implementation details

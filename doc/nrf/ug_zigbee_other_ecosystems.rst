@@ -67,4 +67,4 @@ The following instructions can help you troubleshoot the connection problem:
 #. Make sure that the device is scanning through all channels to find the Zigbee network.
    For example, verify that the :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is correctly set.
 #. Check if the device is compatible with Zigbee 3.0.
-   If it *not* compatible, enable the legacy mode by including a call to :c:func:`zb_bdb_set_legacy_device_support`.
+   If it is *not* compatible, enable the legacy mode by including a call to `zb_bdb_set_legacy_device_support`_.
