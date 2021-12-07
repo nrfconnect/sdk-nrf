@@ -43,3 +43,22 @@ You must be aware of these additions when you start writing your own application
 * The |NCS| build system extends Zephyr's with support for multi-image builds.
   You can find out more about these in the :ref:`ug_multi_image` section.
 * The |NCS| adds a partition manager, responsible for partitioning the available flash memory.
+* The |NCS| build system generates zip files containing binary images and a manifest for use with nRF Cloud FOTA.
+
+.. _app_build_fota:
+
+Building FOTA images
+********************
+
+The |NCS| build system places output images in the :file:`<build folder>/zephyr` folder.
+
+If :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
+If you have also set the options :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER`, the application will be able to process FOTA updates.
+If you have set the options :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT`, a similar file :file:`dfu_mcuboot.zip` will also be created.
+You can use this file to perform FOTA updates of MCUboot itself.
+
+The :file:`app_update.bin` file is a signed version of your application.
+The signature matches to what MCUboot expects and allows this file to be used as an update.
+The build system creates a :file:`manifest.json` file using information in the :file:`zephyr.meta` output file.
+This includes the Zephyr and |NCS| git hashes for the commits used to build the application.
+If your working tree contains uncommitted changes, the build system adds the suffix ``-dirty`` to the relevant version field.
