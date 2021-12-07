@@ -1,5 +1,6 @@
 tests:
-  modules.lib.cddl_gen:
+  modules.lib.cddl_gen.raw_encode:
     tags: cddl-gen
+    platform_allow: native_posix
     integration_platforms:
       - native_posix
